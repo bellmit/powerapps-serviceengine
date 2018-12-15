@@ -6,10 +6,7 @@ import org.junit.Test;
 
 import com.powerapps.http.helpers.FileHelper;
 
-public class FileHelperTest {
-  
-  private String RESOURCE_PATH = "../serverconfig/"; 
-  
+public class FileHelperTest {  
   
   @Test
   public void class_path_resource_cannot_be_null() {
