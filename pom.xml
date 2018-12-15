@@ -1,293 +1,292 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.powerapps</groupId>
-  <artifactId>powerapps-serviceengine</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+    <groupId>com.powerapps</groupId>
+    <artifactId>powerapps-serviceengine</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-  <name>powerapps-serviceengine</name>
-  <url>http://maven.apache.org</url>
+    <name>powerapps-serviceengine</name>
+    <url>http://maven.apache.org</url>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
-    <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>activation</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-
-
-    <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.8.2</version>
-    </dependency>
+        <!-- https://mvnrepository.com/artifact/javax.activation/activation -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
 
 
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.2</version>
+        </dependency>
 
-    <!-- https://mvnrepository.com/artifact/log4j/log4j -->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
-    </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
-    <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>javax.mail</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    
-    
-            <dependency>
+
+        <!-- https://mvnrepository.com/artifact/log4j/log4j -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.kollect.etl</groupId>
             <artifactId>etl-utils</artifactId>
             <scope>compile</scope>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-    
-    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
-<!-- <dependency> -->
-<!--     <groupId>com.fasterxml.jackson.core</groupId> -->
-<!--     <artifactId>jackson-core</artifactId> -->
-<!--     <version>2.9.7</version> -->
-<!-- </dependency> -->
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+        <!-- <dependency> -->
+        <!--     <groupId>com.fasterxml.jackson.core</groupId> -->
+        <!--     <artifactId>jackson-core</artifactId> -->
+        <!--     <version>2.9.7</version> -->
+        <!-- </dependency> -->
 
 
-<!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
-<dependency>
-    <groupId>org.codehaus.jackson</groupId>
-    <artifactId>jackson-core-asl</artifactId>
-    <version>1.9.13</version>
-</dependency>
-
-    
-
-
-
-
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty-util</artifactId>
-      <version>6.1.26</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <version>6.1.26</version>
-    </dependency>
-
-
-    <dependency>
-      <groupId>com.powerapps</groupId>
-      <artifactId>ftp</artifactId>
-      <version>..</version>
-      <systemPath>${basedir}/lib/ftp.jar</systemPath>
-      <scope>system</scope>
-    </dependency>
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>ptrserver</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/ptrserver.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>ptrform</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/ptrform.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>pcclientlib</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/pcclientlib.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>pcinterface</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/pcinterface.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>ptribatis</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/ptribatis.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>ptrutil</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/ptrutil.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>ptrwebclient</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/ptrwebclient.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>slinterface</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/slinterface.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>slserver</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/slserver.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>slserverlib</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/slserverlib.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>toplink</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/toplink.jar</systemPath>
-      <version>..</version>
-    </dependency>
-
-<!--     <dependency> -->
-<!--       <artifactId>com.powerapps</artifactId> -->
-<!--       <groupId>pcserver</groupId> -->
-<!--       <scope>system</scope> -->
-<!--       <systemPath>${basedir}/lib/pcserver.jar</systemPath> -->
-<!--       <version>..</version> -->
-<!--     </dependency> -->
-
-    <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>bouncy-castle-api</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/bouncy-castle-api.jar</systemPath>
-      <version>..</version>
-    </dependency>
-    
-    
-    
+        <!-- https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-core-asl -->
         <dependency>
-      <artifactId>com.powerapps</artifactId>
-      <groupId>xhtml-core-renderer</groupId>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/xhtml-core-renderer.jar</systemPath>
-      <version>..</version>
-    </dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
 
 
 
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>9.4.1212</version>
-    </dependency>
-
-
-    <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-      <version>1.3.3</version>
-    </dependency>
 
 
 
-    <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>2.6</version>
-    </dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>6.1.26</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <version>6.1.26</version>
+        </dependency>
 
 
-    <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.2</version>
-    </dependency>
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>ftp</artifactId>
+            <version>..</version>
+            <systemPath>${basedir}/lib/ftp.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>ptrserver</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ptrserver.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>ptrform</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ptrform.jar</systemPath>
+            <version>..</version>
+        </dependency>
 
 
-    <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
-    <!-- <dependency> -->
-    <!-- <groupId>javax.servlet</groupId> -->
-    <!-- <artifactId>javax.servlet-api</artifactId> -->
-    <!-- <version>4.0.1</version> -->
-    <!-- <scope>provided</scope> -->
-    <!-- </dependency> -->
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>pcclientlib</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/pcclientlib.jar</systemPath>
+            <version>..</version>
+        </dependency>
 
 
 
-    <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
-    <!-- <dependency> -->
-    <!-- <groupId>org.bouncycastle</groupId> -->
-    <!-- <artifactId>bcprov-jdk15on</artifactId> -->
-    <!-- <version>1.59</version> -->
-    <!-- </dependency> -->
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>pcinterface</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/pcinterface.jar</systemPath>
+            <version>..</version>
+        </dependency>
 
-  </dependencies>
-  
-<reporting>
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>ptribatis</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ptribatis.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>ptrutil</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ptrutil.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>ptrwebclient</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/ptrwebclient.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>slinterface</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/slinterface.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>slserver</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/slserver.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>slserverlib</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/slserverlib.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>toplink</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/toplink.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+        <!--     <dependency> -->
+        <!--       <artifactId>com.powerapps</artifactId> -->
+        <!--       <groupId>pcserver</groupId> -->
+        <!--       <scope>system</scope> -->
+        <!--       <systemPath>${basedir}/lib/pcserver.jar</systemPath> -->
+        <!--       <version>..</version> -->
+        <!--     </dependency> -->
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>bouncy-castle-api</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/bouncy-castle-api.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+
+        <dependency>
+            <artifactId>com.powerapps</artifactId>
+            <groupId>xhtml-core-renderer</groupId>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/xhtml-core-renderer.jar</systemPath>
+            <version>..</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4.1212</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.3.3</version>
+        </dependency>
+
+
+
+        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+        <!-- <dependency> -->
+        <!-- <groupId>javax.servlet</groupId> -->
+        <!-- <artifactId>javax.servlet-api</artifactId> -->
+        <!-- <version>4.0.1</version> -->
+        <!-- <scope>provided</scope> -->
+        <!-- </dependency> -->
+
+
+
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
+        <!-- <dependency> -->
+        <!-- <groupId>org.bouncycastle</groupId> -->
+        <!-- <artifactId>bcprov-jdk15on</artifactId> -->
+        <!-- <version>1.59</version> -->
+        <!-- </dependency> -->
+
+    </dependencies>
+
+    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -303,6 +302,22 @@
     </reporting>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>config</directory>
+            </resource>
+            <resource>
+                <directory>serverconfig</directory>
+            </resource>
+        </resources>
         <plugins>
             <!-- maven checkstyle plugin -->
             <plugin>
@@ -311,10 +326,10 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>validate</id>
+                        <id>checkstyle-validation</id>
                         <phase>validate</phase>
                         <configuration>
-                        <failOnViolation>false</failOnViolation>
+                            <failOnViolation>false</failOnViolation>
                             <configLocation>${basedir}/static_analysis/checkstyle.xml</configLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>false</consoleOutput>
@@ -334,7 +349,7 @@
                 <version>3.0.4</version>
                 <configuration>
 
-                <encoding>UTF-8</encoding>
+                    <encoding>UTF-8</encoding>
                     <!-- Enables analysis which takes more memory but finds 
                         more bugs. If you run out of memory, changes the value of the effort element 
                         to 'low'. -->
@@ -347,9 +362,9 @@
                 </configuration>
                 <executions>
                     <!-- Ensures that FindBugs inspects source code when 
-                        project is compiled. Binds findbugs check to build compile phase -->
+                        project is compiled. Binds findbugs check goal to maven build compile phase -->
                     <execution>
-                        <id>analyze-compile</id>
+                        <id>findbugs-validation</id>
                         <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
@@ -396,8 +411,8 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>  
-  
-  
-  
+    </build>
+
+
+
 </project>
