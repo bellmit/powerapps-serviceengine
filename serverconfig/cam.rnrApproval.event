@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Approval &amp; Approving Authority" type="comment">
+  <exec statement="getCamRnrLatestTreatment" type="select"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="IS_RNR" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getCamRnrSchedule"/>
+    <query value="getCamRnrApprovedSchedule"/>
+    <query value="getCamRnrRemarksOth"/>
+    <target value="SCHEDULE_LIST"/>
+    <target value="APPROVED_PAYMENT_PLAN1"/>
+    <target value="APPROVAL_OTHER_TERM"/>
+   </exec>
+   <exec statement="getCamRnrTreatmentInformation" type="select"/>
+  </exec>
+  <exec text="Switch Schedule Table (MG/HP)" type="comment">
+   <exec message="SHOW" target="scheduleHp" type="formattext"/>
+   <exec message="HIDE" target="scheduleMg" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PRODUCT_TYPE_CATEGORY" operator="=" rhsvalue="PF"/>
+    </conditions>
+    <exec message="SHOW" target="scheduleMg" type="formattext"/>
+    <exec message="HIDE" target="scheduleHp" type="formattext"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

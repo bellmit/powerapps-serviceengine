@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_18" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_18" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Legal Worklist&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_18_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Legal Worklist" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_2" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_19" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_19" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Worklist Management&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_19_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Legal Worklist&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_18_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Legal Worklist &gt; Worklist Management" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_2" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_20" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_20" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Visual Distribution&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_20_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Legal Worklist&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_18_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Legal Worklist &gt; Visual Distribution" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_2" type="copy"/>
+ </exec>
+</event>

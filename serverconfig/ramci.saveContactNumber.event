@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTACT_NUMBER_1" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="CONTACT_NUMBER_1" to="NO" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_1" operator="=" rhsvalue="MOBILE"/>
+   </conditions>
+   <exec from="ONE" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_1" operator="=" rhsvalue="HOUSE"/>
+   </conditions>
+   <exec from="TWO" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_1" operator="=" rhsvalue="OFFICE"/>
+   </conditions>
+   <exec from="THREE" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_1" operator="=" rhsvalue="EMAIL"/>
+   </conditions>
+   <exec from="FOUR" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec statement="insertRamciContactNumber" type="insert"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTACT_NUMBER_2" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="CONTACT_NUMBER_2" to="NO" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_2" operator="=" rhsvalue="MOBILE"/>
+   </conditions>
+   <exec from="ONE" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_2" operator="=" rhsvalue="HOUSE"/>
+   </conditions>
+   <exec from="TWO" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_2" operator="=" rhsvalue="OFFICE"/>
+   </conditions>
+   <exec from="THREE" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_2" operator="=" rhsvalue="EMAIL"/>
+   </conditions>
+   <exec from="FOUR" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec statement="insertRamciContactNumber" type="insert"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTACT_NUMBER_3" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="CONTACT_NUMBER_3" to="NO" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_3" operator="=" rhsvalue="MOBILE"/>
+   </conditions>
+   <exec from="ONE" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_3" operator="=" rhsvalue="HOUSE"/>
+   </conditions>
+   <exec from="TWO" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_3" operator="=" rhsvalue="OFFICE"/>
+   </conditions>
+   <exec from="THREE" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_3" operator="=" rhsvalue="EMAIL"/>
+   </conditions>
+   <exec from="FOUR" to="CONTACT_TYPE_ID" type="copy"/>
+  </exec>
+  <exec statement="insertRamciContactNumber" type="insert"/>
+ </exec>
+</event>

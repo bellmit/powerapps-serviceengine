@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec argument="DATES" query="getAuctionSetupDates" type="query"/>
+ <exec from="CURRENT_DATE" key="CURRENT_DATE" to="DATES" type="copyintolist"/>
+ <exec argument="DATES" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="DATE" operator="less than value of" rhsvalue="CURRENT_DATE"/>
+   </conditions>
+   <exec message="FE2E2E" target="COLOR" type="formattext"/>
+  </exec>
+ </exec>
+ <exec from="DATES" key="DATES" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED_DATE" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SELECTED_DATE" key="SELECTED_DATE" type="copyintolist"/>
+ </exec>
+</event>

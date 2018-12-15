@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="wlgInformationService.xml">
+
+
+	<delete id="deleteAccTreatmentInfo">
+		DELETE FROM PTRACC_TREATMENT_INFO
+  </delete>
+
+	<!-- INSERTS LIST OF ACCOUNT_ID TO UPDATE -->
+
+	<insert id="insertListAccTreatmentInfo" parameterClass="map">
+
+		INSERT INTO PTRACC_TREATMENT_INFO (ACCOUNT_ID, ASSIGNMENT_DATE)
+		(select a.id, date(dd.data_date + 1 months) - day((dd.data_date + 1 months) - 1 days) days
+		from ptraccount a, ptrproduct_type_ref ptr,ptrdata_date dd
+		where a.product_type_id = ptr.product_type_id
+		and ptr.product_type_group in ('OD'))
+  </insert>
+
+	<insert id="insertListAccTreatmentMGInfo" parameterClass="map">
+
+		INSERT INTO PTRACC_TREATMENT_INFO (ACCOUNT_ID, ASSIGNMENT_DATE)
+		(select a.id, ((date(dd.data_date + 1 months) - day((dd.data_date + 1 months) - 1 days) days) + 1 days)
+		from ptraccount a, ptrproduct_type_ref ptr,ptrdata_date dd
+		where a.product_type_id = ptr.product_type_id
+		and ptr.product_type_group in ('MG','TL'))
+  </insert>
+
+	<!-- UPDATES PROMISES COUNT FOR THE MONTH -->
+
+	<update id="updatePromiseForAccTreatmentInfo" parameterClass="map">
+
+		UPDATE PTRACC_TREATMENT_INFO info SET (PROMISES_TAKEN, PROMISES_KEPT, PROMISES_BROKEN) =
+		(select count(distinct proc.treatment_process_id) as PROMISES_TAKEN,
+		count(distinct proc2.treatment_process_id) as PROMISES_KEPT,
+		count(distinct proc3.treatment_process_id) as PROMISES_BROKEN
+		from
+		ptraccount a
+		LEFT OUTER JOIN PTRACC_TREATMENT_PLAN plan ON (a.id = plan.account_id)
+		LEFT OUTER JOIN PTRTREATMENT_PROCESS proc on (plan.treatment_plan_id = proc.treatment_plan_id and proc.PROCESS_TYPE_ID=2)
+		LEFT OUTER JOIN PTRTREATMENT_PROCESS proc2 on (proc.treatment_process_id = proc2.treatment_process_id and proc2.PROCESS_TYPE_ID=2 and proc2.PROCESS_STATUS_ID = 15004)
+		LEFT OUTER JOIN PTRTREATMENT_PROCESS proc3 on (proc.treatment_process_id = proc3.treatment_process_id and proc3.PROCESS_TYPE_ID=2 and proc3.PROCESS_STATUS_ID in (15001,15005)),
+		ptrdata_date dd
+		where
+		month(proc.created_date) = month(dd.data_date)
+		and year(proc.created_date) = year(dd.data_date)
+		and info.account_id = a.id
+		group by a.ID, dd.data_date)
+  </update>
+
+	<!-- UPDATES CALL COUNT FOR THE MONTH -->
+
+	<update id="updateCallsForAccTreatmentInfo" parameterClass="map">
+
+		UPDATE PTRACC_TREATMENT_INFO info SET CALL_COUNT =
+		(select count(distinct proc.treatment_process_id) as CALL_COUNT
+		from ptraccount a
+		left outer join ptracc_treatment_plan plan on (a.id = plan.account_id)
+		left outer join ptrtreatment_process proc on (plan.treatment_plan_id = proc.treatment_plan_id and proc.process_type_id = 8),
+		ptrdata_date dd
+		where month(proc.created_date) = month(dd.data_date)
+		and year(proc.created_date) = year(dd.data_date)
+		and a.id = info.account_id
+		group by a.id)
+    </update>
+
+
+	<!--
+		This script inserts DRAWING LIMIT required for 95% utilization <update id="updateDrawingLimForAccTreatmentInfo" parameterClass="map"> UPDATE PTRACC_TREATMENT_INFO info set DRAWING_LIMIT = (select
+		draw_limit from ptroverdraft_tier odt where odt.account_id = info.account_id and odt.expiration_date > current date order by expiration_date asc fetch first 1 row only) </update> This is replaced by
+		a overdraft_tier access in workListService.xml
+	-->
+
+	<!-- This script inserts SCORE for all account that have been scored -->
+
+	<insert id="insertScoringLevel" parameterClass="map">
+		INSERT INTO PTRCONFIDENCE_LEVEL (ACCOUNT_ID,FIELD_VALUE )
+		(select a.id,b.field_value
+		from ptraccount a
+		inner join ptrscoring_data b on (a.id = b.account_id)
+		inner join ptrrule_dict_item c on (b.dictionary_element_id = c.item_id)
+		inner join ptrrule_dict_item_ref d on (b.field_value = BIGINT(d.ref_id) and c.ref_group_id = d.ref_group_id)
+		where b.run_id = (select max(x.run_id)
+		from ptrscoring_data x
+		where b.account_id = x.account_id and x.dictionary_element_id = b.dictionary_element_id)
+		and c.display_name = 'Risk Level' )
+    </insert>
+
+	<delete id="deleteScoringLevel" parameterClass="map">
+		DELETE FROM PTRCONFIDENCE_LEVEL
+    </delete>
+
+	<!-- This script clears and inserts the sum of all collateral market value tied to the account -->
+
+	<delete id="deleteAccMarketValue">
+		DELETE FROM ptraccount_mkt_value
+  </delete>
+
+	<insert id="insertAccMarketValue" parameterClass="map">
+
+		insert into ptraccount_mkt_value
+		(account_id, market_value)
+		(select acr.account_id,
+		sum(c.CURRENT_VALUE)
+		from ptraccount_collateral_rel acr, ptrcollateral c
+		where c.id = acr.collateral_id
+		group by acr.account_id
+		)
+   </insert>
+
+
+	<!-- This script clears and inserts the sum of all O/S value for all the TL, MG, OD a/c's tied to the CIF -->
+
+	<delete id="deleteCIFTotalOS">
+		delete from ptrcustomer_total_os
+   </delete>
+
+	<insert id="insertCIFTotalOS" parameterClass="map">
+
+		insert into PTRCUSTOMER_TOTAL_OS (customer_id, total_outstanding)
+		(select customer_id, sum(
+		(case when ptc.product_type_category_code = 'OD' then
+		abs (a.OUTSTANDING_AMT)
+		else
+		CASE WHEN current date = a.SCHEDULED_PAYMENT_DUE_DATE THEN
+		coalesce(a.OUTSTANDING_AMT,0) +
+		(coalesce(a.ASS_LATE_CHARGES,0) - coalesce(a.PAID_LATE_CHARGES,0)) +
+		coalesce(a.OTHER_CHARGES,0) +
+		coalesce(a.MISC_CHARGES,0) + coalesce(a.BILLED_INTEREST_AMOUNT,0)
+		ELSE
+		coalesce(a.OUTSTANDING_AMT,0) +
+		(coalesce(a.ASS_LATE_CHARGES,0) - coalesce(a.PAID_LATE_CHARGES,0)) +
+		coalesce(a.OTHER_CHARGES,0) +
+		coalesce(a.MISC_CHARGES,0) + coalesce(a.BILLED_INTEREST_AMOUNT_OD,0)
+		END
+		end)) as TOTAL_OUTSTANDING
+		from ptraccount a
+		left outer join ptrproduct_type_ref pr on (a.product_type_id = pr.product_type_id)
+		inner join ptrproduct_type_category_ref ptc on (pr.product_type_category_id = ptc.product_type_category_id)
+		where ptc.product_type_category_code in ('MG','TL','OD')
+		group by customer_id
+		)
+   </insert>
+
+	<insert id="insertODTempPaymentsOneTime" parameterClass="map">
+		insert into PTRTEMP_PAYMENTS (
+		ID,ACCOUNT_ID,PRODUCT_TYPE_CATEGORY_ID,
+		PAYMENT_DUE_DATE,
+		EXCESS_DATE,
+		REMARKS,
+		ASSIGNMENT_DATE)
+		(SELECT (nextval for PTRTEMP_PAYMENTS_ID),hist.ACCOUNT_ID, pr.product_type_category_id,hist.PAYMENT_DUE_DATE,
+		hist.EXCESS_DATE, 'Month Beginning Status', hist.ASSIGNMENT_DATE from
+		PTRACCOUNT a
+		inner join PTRPRODUCT_TYPE_REF pr on a.product_type_id =
+		pr.product_type_id
+		inner join PTRACC_WL_ASSIGN_HISTORY hist on
+		hist.account_id = a.id
+		where pr.product_type_category_id in (14)
+		and assignment_date = date('05/01/2009'))
+          </insert>
+
+	<insert id="insertMGTempPaymentsOneTime" parameterClass="map">
+		insert into PTRTEMP_PAYMENTS (
+		ID,ACCOUNT_ID,PRODUCT_TYPE_CATEGORY_ID,
+		PAYMENT_DUE_DATE,
+		EXCESS_DATE,
+		REMARKS,
+		ASSIGNMENT_DATE)
+		(SELECT (nextval for PTRTEMP_PAYMENTS_ID),hist.ACCOUNT_ID, pr.product_type_category_id,hist.PAYMENT_DUE_DATE,
+		hist.EXCESS_DATE, 'Month Beginning Status', hist.ASSIGNMENT_DATE from
+		PTRACCOUNT a
+		inner join PTRPRODUCT_TYPE_REF pr on a.product_type_id =
+		pr.product_type_id
+		inner join PTRACC_WL_ASSIGN_HISTORY hist on
+		hist.account_id = a.id
+		where pr.product_type_category_id in (8,11)
+		and assignment_date = date('05/02/2009'))
+     </insert>
+
+	<insert id="insertODTempPayments" parameterClass="map">
+		insert into PTRTEMP_PAYMENTS (
+		ID,ACCOUNT_ID,PRODUCT_TYPE_CATEGORY_ID,
+		PAYMENT_DUE_DATE,
+		EXCESS_DATE,
+		REMARKS,
+		ASSIGNMENT_DATE)
+		(SELECT (nextval for PTRTEMP_PAYMENTS_ID),hist.ACCOUNT_ID, pr.product_type_category_id,hist.PAYMENT_DUE_DATE,
+		hist.EXCESS_DATE, 'Month Beginning Status', hist.ASSIGNMENT_DATE from
+		PTRACCOUNT a
+		inner join PTRPRODUCT_TYPE_REF pr on a.product_type_id =
+		pr.product_type_id
+		inner join PTRACC_WL_RECENT_ASSIGN hist on
+		hist.account_id = a.id
+		where pr.product_type_category_id in (14)
+		and assignment_date = current date)
+     </insert>
+
+	<insert id="insertMGTempPayments" parameterClass="map">
+		insert into PTRTEMP_PAYMENTS (
+		ID,ACCOUNT_ID,PRODUCT_TYPE_CATEGORY_ID,
+		PAYMENT_DUE_DATE,
+		EXCESS_DATE,
+		REMARKS,
+		ASSIGNMENT_DATE)
+		(SELECT (nextval for PTRTEMP_PAYMENTS_ID),hist.ACCOUNT_ID, pr.product_type_category_id,hist.PAYMENT_DUE_DATE,
+		hist.EXCESS_DATE, 'Month Beginning Status', hist.ASSIGNMENT_DATE from
+		PTRACCOUNT a
+		inner join PTRPRODUCT_TYPE_REF pr on a.product_type_id =
+		pr.product_type_id
+		inner join PTRACC_WL_RECENT_ASSIGN hist on
+		hist.account_id = a.id
+		where pr.product_type_category_id in (8,11)
+		and assignment_date = current date)
+     </insert>
+	
+	<insert id="insertTempMGPaymentsDaily" parameterClass="map">
+		insert into PTRACCOUNT_SCORING_PAYMENTS (
+		ID,UPDATE_DATE,ACCOUNT_ID,PRODUCT_TYPE_CATEGORY_ID,
+		TRANSACTION_DATE,AMOUNT,PAYMENT_DUE_DATE)
+			      (
+		SELECT
+		(nextval for PTRACCOUNT_SCORING_PAYMENTS_ID),
+		current date,a.ID, pr.product_type_category_id,
+		date(a.last_paymt_date) ,last_paymt_amt,a.PAYMENT_DUE_DATE
+		from
+		PTRACCOUNT a
+		inner join  PTRPRODUCT_TYPE_REF pr on a.product_type_id = pr.product_type_id,
+		ptrdata_date dd
+		where
+		pr.product_type_category_id in (8,11)
+		and (date(a.last_paymt_date) = date(dd.data_date))
+		and date(a.payment_due_date) >  ( select date(payment_due_date) from PTRACCOUNT_SCORING_PAYMENTS where account_id = a.id order by payment_due_date desc fetch first row only)
+			      )
+	</insert>
+
+	<insert id="insertTempODPaymentsDaily" parameterClass="map">
+		insert into PTRACCOUNT_SCORING_PAYMENTS (
+		ID,UPDATE_DATE,ACCOUNT_ID,PRODUCT_TYPE_CATEGORY_ID,
+		TRANSACTION_DATE)
+				   (
+		SELECT
+		(nextval for PTRACCOUNT_SCORING_PAYMENTS_ID),
+		current date,
+		a.ID as ACCOUNT_ID,
+		pr.product_type_category_id,
+		dd.data_date
+		from PTRACCOUNT a
+		inner join  PTRPRODUCT_TYPE_REF pr on a.product_type_id = pr.product_type_id,ptrdata_date dd
+		where  pr.product_type_category_id in (14) and
+		(a.excess_date is null and ( month(a.DATE_LAST_ACTIVE) = month(current date) )) and
+		not exists (select 1 from PTRACCOUNT_SCORING_PAYMENTS where (month(update_date) = month(current date) and year(update_date) = year(current date)) and account_id = a.id order by update_date desc fetch first row only)
+
+				  )
+	</insert>
+
+	<insert id="insertTempODNoExcessPaymentsDaily" parameterClass="map">
+		insert into PTRACCOUNT_SCORING_PAYMENTS (
+		ID,UPDATE_DATE,ACCOUNT_ID,PRODUCT_TYPE_CATEGORY_ID,
+		TRANSACTION_DATE)
+				  (
+		SELECT
+		(nextval for PTRACCOUNT_SCORING_PAYMENTS_ID),
+		current date,
+		a.ID as ACCOUNT_ID,
+		pr.product_type_category_id,
+		(current date - day(current date) day +1 day)
+		from PTRACCOUNT a
+		inner join  PTRPRODUCT_TYPE_REF pr on a.product_type_id = pr.product_type_id
+		left outer join ( select account_id,sum(draw_limit) as drawing_limit, sum(authorized_limit) as authorized_limit from ptroverdraft_tier group by account_id ) odt on (odt.account_id = a.id), ptrdata_date dd
+		where
+		pr.product_type_category_id in (14)
+		and (case   WHEN odt.DRAWING_LIMIT > 0 THEN coalesce((coalesce(a.OUTSTANDING_AMT,0)/abs(coalesce(ODT.DRAWING_LIMIT,0)))*-100,0) WHEN odt.DRAWING_LIMIT = 0  and ODT.AUTHORIZED_LIMIT > 0 THEN coalesce((coalesce(a.OUTSTANDING_AMT,0)/abs(coalesce(ODT.AUTHORIZED_LIMIT,0)))*-100,0) end ) &lt;   100
+		and (a.excess_date is null and not ((month(a.DATE_LAST_ACTIVE) = month(current date) and  year(a.DATE_LAST_ACTIVE) = year(current date))))
+		and  not exists ( select 1 from PTRACCOUNT_SCORING_PAYMENTS where  ( month(update_date) = month(current date) and  year(update_date) = year(current date) )  and account_id = a.id order by update_date desc fetch first row only)
+
+				 )
+	</insert>
+	
+	<delete id="deleteODTempPayments">
+		delete from PTRTEMP_PAYMENTS where account_id in (select account_id from ptraccount where product_type_id in ( select product_type_id from ptrproduct_type_ref where product_type_category_id in (14) ))
+		and ASSIGNMENT_DATE = current date
+     </delete>
+
+	<delete id="deleteMGTempPayments">
+		delete from PTRTEMP_PAYMENTS where account_id in (select account_id from ptraccount where product_type_id in ( select product_type_id from ptrproduct_type_ref where product_type_category_id in (8,11) ))
+		and ASSIGNMENT_DATE = current date
+  </delete>
+
+</sqlMap>

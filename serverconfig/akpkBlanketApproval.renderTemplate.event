@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec from="CURRENT_DATE" key="CURRENT_DATE" to="RESULT_LIST" type="copyintolist"/>
+ <exec argument="RESULT_LIST" type="loop">
+  <exec statement="getTemplateVersionDocumentId" type="select"/>
+  <exec argument="LETTER_PATH" property="LETTER_PATH" type="serverproperty"/>
+  <exec message="akpk{0}-{1,date,yyyy-MM-dd-hh-mm-ss}" target="FILE_NAME" type="formattext">
+   <key value="ACCOUNT_NUMBER"/>
+   <key value="CURRENT_DATE"/>
+  </exec>
+  <exec directorydatepattern="yyyy-MM-dd" exportformat="PDF" filenameprefix="FILE_NAME" from="DOCUMENT_ID" path="LETTER_PATH" printer="PRINTER" type="generate3_6_1"/>
+ </exec>
+</event>

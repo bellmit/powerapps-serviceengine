@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="NAV_CODE" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="NAV_CODE" target="VALUE_CODE" type="formattext"/>
+  <exec from="NAV_CODE" to="VALUE" type="copy"/>
+  <exec to="LOGON_USER" type="user"/>
+  <exec statement="deleteUserSetting" type="delete"/>
+  <exec statement="insertUserSettings" type="insert"/>
+ </exec>
+</event>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="USER_ID" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="USER_ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec from="agentId" to="USER_ID" type="copy"/>
+ </exec>
+ <exec statement="getUserUserType" type="select"/>
+ <exec from="TYPE_CODE" to="USER_TYPE_CODE" type="copy"/>
+</event>

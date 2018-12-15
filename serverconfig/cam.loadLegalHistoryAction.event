@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="ACCOUNT_ID" key="ACCOUNT_ID" type="copyintolist"/>
+ <exec from="CUSTOMER_ID" key="CUSTOMER_ID" type="copyintolist"/>
+ <exec from="AGENCY_ASSIGNMENT_ID" key="AGENCY_ASSIGNMENT_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ACCOUNT_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec statement="getTrue" type="select"/>
+   <exec argument="ACTION" query="getCamLegalHistoryAction" type="query"/>
+   <exec argument="ACTION" type="loop">
+    <exec argument="ADDITIONAL_DETAILS" query="getCamLegalHistoryAdditionalDetails" type="query"/>
+    <exec argument="EXPENSES" query="getActionExpenseReference" type="query"/>
+    <exec type="parallelquery">
+     <query value="getActionSavedExpenses"/>
+     <target value="SAVED_EXPENSES"/>
+    </exec>
+    <exec from="SAVED_EXPENSES" key="EXPENSES_ID" to="EXPENSES" type="merge"/>
+    <exec argument="ADDITIONAL_DETAILS" type="loop">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="CHECKBOX"/>
+      </conditions>
+      <exec from="CHECKBOX" to="VALUE" type="copy"/>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="TEXT"/>
+      </conditions>
+      <exec from="TEXT" to="VALUE" type="copy"/>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="NUMBER"/>
+      </conditions>
+      <exec from="NUMBER" to="VALUE" type="copy"/>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="AMOUNT"/>
+      </conditions>
+      <exec from="AMOUNT" to="VALUE" type="copy"/>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="PERCENTAGE"/>
+       <condition lhsfield="PERCENTAGE" operator="is not empty" rhsvalue=""/>
+      </conditions>
+      <exec lhs="PERCENTAGE" rhs="100" target="VALUE" type="multiply"/>
+      <exec message="{0} %" target="VALUE" type="formattext">
+       <key value="VALUE"/>
+      </exec>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="CALENDAR"/>
+      </conditions>
+      <exec from="CALENDAR" to="VALUE" type="copy"/>
+     </exec>
+    </exec>
+   </exec>
+   <exec argument="REMARK_HISTORY" query="getCamLegalHistoryRemarks" type="query"/>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="employeeService">
+	<resultMap id="getEmployeeTypes" class="hmap" extends="global.ref">
+		<result property="LOAD_EMPLOYEES" javaType="boolean" />
+	</resultMap>
+	<select id="getEmployeeTypes" resultMap="getEmployeeTypes">
+		<include refid="selectAllRef" />
+		,
+		<include refid="true" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		,
+		<include refid="true" />
+		from ptremployee_type_ref
+	</select>
+	<select id="getEmployeeTypesForEditing" resultMap="global.ref">
+		<include refid="refselect" />
+		from ptremployee_type_ref
+	</select>
+	<select id="getEmployeeCitizenships" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		from ptrcountry_ref
+	</select>
+	<select id="getEmployeePosition" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		from PTREMPLOYEE_POSITION_REF
+	</select>
+	<select id="getEmployeeAgencies" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		from ptragency
+	</select>
+	<resultMap id="getEmployeeList" class="hmap">
+		<result property="EMPLOYEE_TYPE" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="EMPLOYEE_ID" javaType="string" />
+		<result property="EMAIL_ADDRESS" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+		<result property="DESIGNATION" javaType="string" />
+		<result property="REMARKS" javaType="string" />
+		<result property="REPORT_TO" javaType="string" />
+		<result property="CREATED_TIME" javaType="ts" />
+		<result property="CREATED_BY" javaType="string" />
+		<result property="UPDATED_TIME" javaType="ts" />
+		<result property="UPDATED_BY" javaType="string" />
+		<result property="ON_LEAVE" javaType="boolean" />
+		<result property="EMPLOYEE_POSITION" javaType="string" />
+	</resultMap>
+	<select id="getEmployeeList" resultMap="getEmployeeList">
+		SELECT
+		R.DESCRIPTION AS EMPLOYEE_TYPE,
+		E.FIRST_NAME,
+		E.MIDDLE_NAME,
+		E.LAST_NAME,
+		E.EMPLOYEE_NO,
+		E.EMAIL_ADDRESS,
+		E.DISABLE,
+		E.DESIGNATION,
+		E.REMARKS,
+		E.REPORT_TO,
+		E.CREATED_TIME,
+		E.CREATED_BY,
+		E.UPDATED_TIME,
+		E.UPDATED_BY,
+		E.ON_LEAVE,
+		P.DESCRIPTION
+		FROM PTREMPLOYEE E 
+		INNER JOIN PTREMPLOYEE_TYPE_REF R ON R.ID=E.TYPE_ID
+		LEFT JOIN PTREMPLOYEE_POSITION_REF P ON P.ID=E.POSITION_ID
+		WHERE 1=1
+		<isNotEqual property="INCLUDE_ALL" compareValue="true">
+		and e.DISABLE =<include refid="false"/>
+		</isNotEqual>
+		<isNotNull property="EMPLOYEE_TYPE_ID">
+		and e.TYPE_ID = #EMPLOYEE_TYPE_ID#
+		</isNotNull>	
+		<isNotEmpty property="DESIGNATION">
+		and upper(e.DESIGNATION) like '%'||upper(#DESIGNATION#)||'%'
+		</isNotEmpty>
+		<isNotEmpty property="EMPLOYEE_NAME">
+		and(upper(E.FIRST_NAME) like '%'||upper(#EMPLOYEE_NAME#)||'%' or  
+		upper(E.MIDDLE_NAME) like '%'||upper(#EMPLOYEE_NAME#)||'%' or  
+		upper(E.LAST_NAME) like '%'||upper(#EMPLOYEE_NAME#)||'%' or
+		upper(E.EMPLOYEE_NO) like '%'||upper(#EMPLOYEE_NAME#)||'%')
+		</isNotEmpty>	
+	</select>
+	
+	<insert id="insertEmployee" parameterClass="map">
+		INSERT INTO PTREMPLOYEE(ID, EMPLOYEE_NO,TYPE_ID,FIRST_NAME,MIDDLE_NAME,LAST_NAME,DATE_OF_BIRTH,IDENTITY_NUMBER,OLD_IDENTITY_NUMBER,
+		CITIZENSHIP_ID,HIRED_DATE,DEPARTMENT,DESIGNATION,EMAIL_ADDRESS,AGENCY_ID,CREATED_TIME,CREATED_BY,REMARKS,REPORT_TO,ON_LEAVE,POSITION_ID)
+		VALUES(nextval('ptremployee_id'),#EMPLOYEE_ID#,#EMPLOYEE_TYPE_ID#,#FIRST_NAME#,#MIDDLE_NAME#,#LAST_NAME#,#DATE_OF_BIRTH#,#IC_NUMBER#,#OLD_IC_NUMBER#,
+		#CITIZENSHIP_ID#,#HIRED_DATE#,#DEPARTMENT#,#DESIGNATION#,#EMAIL_ADDRESS#,#AGENCY_ID#,#CURRENT_TIME#,#LOGON_USER#,#REMARKS#,#REPORT_TO#,#ON_LEAVE#,#POSITION_ID#)
+	</insert>
+	
+	<update id="updateEmployee" parameterClass="map">
+		UPDATE PTREMPLOYEE SET FIRST_NAME = #FIRST_NAME#, MIDDLE_NAME = #MIDDLE_NAME#, LAST_NAME = #LAST_NAME#, DATE_OF_BIRTH = #DATE_OF_BIRTH#,
+		IDENTITY_NUMBER = #IC_NUMBER#, OLD_IDENTITY_NUMBER = #OLD_IC_NUMBER#, CITIZENSHIP_ID = #CITIZENSHIP_ID#,HIRED_DATE = #HIRED_DATE#,
+		DEPARTMENT = #DEPARTMENT#, DESIGNATION = #DESIGNATION#, EMAIL_ADDRESS = #EMAIL_ADDRESS#,AGENCY_ID = #AGENCY_ID#,UPDATED_TIME = #CURRENT_TIME#,
+		UPDATED_BY = #LOGON_USER#, REMARKS = #REMARKS#,REPORT_TO = #REPORT_TO#, DISABLE = #DISABLE#, ON_LEAVE = #ON_LEAVE# , POSITION_ID = #POSITION_ID#
+		WHERE EMPLOYEE_NO=#EMPLOYEE_ID#
+	</update>
+	
+	<resultMap id="getEmployeeForEditing" class="hmap">
+		<result property="EMPLOYEE_ID" javaType="string" />
+		<result property="EMPLOYEE_TYPE_ID" javaType="long" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="DATE_OF_BIRTH" javaType="date" />
+		<result property="IC_NUMBER" javaType="string" />
+		<result property="OLD_IC_NUMBER" javaType="string" />
+		<result property="CITIZENSHIP_ID" javaType="long" />
+		<result property="HIRED_DATE" javaType="date" />
+		<result property="DEPARTMENT" javaType="string" />
+		<result property="DESIGNATION" javaType="string" />
+		<result property="EMAIL_ADDRESS" javaType="string" />
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="REMARKS" javaType="string" />
+		<result property="REPORT_TO" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+		<result property="ON_LEAVE" javaType="boolean" />
+		<result property="POSITION_ID" javaType="long" />
+	</resultMap>
+	<select id="getEmployeeForEditing" resultMap="getEmployeeForEditing">
+		SELECT EMPLOYEE_NO,TYPE_ID,FIRST_NAME,MIDDLE_NAME,LAST_NAME,DATE_OF_BIRTH,
+		IDENTITY_NUMBER,OLD_IDENTITY_NUMBER,CITIZENSHIP_ID,HIRED_DATE,DEPARTMENT,DESIGNATION,EMAIL_ADDRESS,AGENCY_ID,REMARKS,REPORT_TO,
+		DISABLE,ON_LEAVE,POSITION_ID
+		from PTREMPLOYEE where EMPLOYEE_NO = #EMPLOYEE_ID#		
+	</select>
+	
+	<resultMap id="getEmployeeUsers" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="USER_EXPIRY_DATE" javaType="date" />
+		<result property="LOGON_STATUS" javaType="boolean" />
+		<result property="ACTIVE_STATUS" javaType="boolean" />
+	</resultMap>
+	<select id="getEmployeeUsers" resultMap="getEmployeeUsers">
+		select user_id,user_exp_date,case when logon_status = 'T' then true else false end,
+		case when active_status ='Y' then true else false end from ptruser u
+		inner join ptremployee e on u.employee_id = e.id
+		where employee_no = #EMPLOYEE_ID#	
+	</select>
+	
+	<resultMap id="getEmployeeReportTo" class="hmap">
+		<result property="EMPLOYEE_ID" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+	</resultMap>
+	<select id="getEmployeeReportTo" resultMap="getEmployeeReportTo">
+		SELECT '' as EMPLOYEE_ID,'' as FIRST_NAME, '' as MIDDLE_NAME, '' as LAST_NAME , <include refid="false"/> <include refid="fromdual"/>
+		UNION
+		SELECT EMPLOYEE_NO,FIRST_NAME,MIDDLE_NAME,LAST_NAME,DISABLE
+		from PTREMPLOYEE where TYPE_ID !=2		
+	</select>
+</sqlMap>

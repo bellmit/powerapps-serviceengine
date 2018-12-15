@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec count="4" to="FILTERS" type="createlist"/>
+ <exec argument="FILTERS" index="ID" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec message="ALL" target="CODE" type="formattext"/>
+   <exec message="All" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec message="MAINTAINED" target="CODE" type="formattext"/>
+   <exec message="Maintained" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="3"/>
+   </conditions>
+   <exec message="IMPROVED" target="CODE" type="formattext"/>
+   <exec message="Improved" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="4"/>
+   </conditions>
+   <exec message="DETERIORIATE" target="CODE" type="formattext"/>
+   <exec message="Deteriorate" target="DESCRIPTION" type="formattext"/>
+  </exec>
+ </exec>
+ <exec event="kpi.userTree" ignoreresult="true" type="raise"/>
+ <exec from="TREE" key="TREE" type="copyintolist"/>
+ <exec from="FILTERS" key="FILTERS" type="copyintolist"/>
+</event>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTENT" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec content="CONTENT" documentid="DOCUMENT_ID" documenttype="9" type="storedecisiontree"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec recordcount="" statement="updateAbortEvaluationTreeContent" type="update"/>
+   <exec message="Abort Evaluation Strategy updated" target="MESSAGE" type="formattext"/>
+   <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+   <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+   <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+  </exec>
+ </exec>
+</event>

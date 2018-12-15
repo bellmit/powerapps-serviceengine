@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec query="getKpiWorklistCategory" type="query"/>
+ <exec type="loop">
+  <exec from="ID" to="CATEGORY_ID" type="copy"/>
+  <exec argument="WORKLISTS" query="getKpiWorklist" type="query"/>
+ </exec>
+</event>

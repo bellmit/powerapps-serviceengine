@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getWorklistProductCode" type="select"/>
+ <exec type="parallelquery">
+  <query value="getLegalWorklistProductTypes"/>
+  <query value="getLegalWorklistAccountStatus"/>
+  <query value="getLegalWorklistRegions"/>
+  <query value="genericAllList"/>
+  <target value="PRODUCTS"/>
+  <target value="ACCOUNT_STATUS"/>
+  <target value="REGIONS"/>
+  <target value="BOOLEANS"/>
+ </exec>
+ <exec from="PRODUCTS" key="PRODUCTS" type="copyintolist"/>
+ <exec from="ACCOUNT_STATUS" key="ACCOUNT_STATUS" type="copyintolist"/>
+ <exec from="REGIONS" key="REGIONS" type="copyintolist"/>
+ <exec from="BOOLEANS" key="BOOLEANS" type="copyintolist"/>
+ <exec from="CATEGORY_CODE" key="CATEGORY_CODE" type="copyintolist"/>
+</event>

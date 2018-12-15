@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="agencyWorklistManagementService.xml">
+
+
+<resultMap id="getWlmWorkListLite-map" class="hmap">
+<result property="EXTRACT_TO_DIALER" column="EXTRACT_TO_DIALER" javaType="java.lang.Boolean"/>
+<result property="BRANCH_CENTRE_ID" column="BRANCH_CENTRE_ID" javaType="long"/>
+<result property="WORK_LIST_ID" column="WORK_LIST_ID" javaType="long"/>
+<result property="WORK_LIST_CATEGORY_DESC" javaType="java.lang.String"/>
+<result property="WORK_LIST_CATEGORY_ID" javaType="java.lang.Long"/>
+<result property="WORK_LIST_NAME" column="WORK_LIST_NAME"/>
+<result property="DESCRIPTION" column="DESCRIPTION"/>
+<result property="CREATED" column="CREATED"/>
+<result property="CREATOR_ID" column="CREATOR_ID"/>
+<result property="IS_FOR_UNASSIGNED_AGENCY" column="IS_FOR_UNASSIGNED_AGENCY" javaType="boolean"/>
+<result property="AGENCY_TYPE_ID" column="AGENCY_TYPE_ID" javaType="long"/> 
+<result property="AGENCY_TYPE_CODE" column="AGENCY_TYPE_CODE"/> 
+<result property="AGENCY_TYPE_DESC" column="AGENCY_TYPE_DESC"/> 
+<result property="TOTAL_ACCOUNTS" column="TOTAL_ACCOUNTS" javaType="long"/> 
+</resultMap>
+
+
+<select id="getWlmWorkListLite" resultMap="getWlmWorkListLite-map">
+select
+a.EXTRACT_TO_DIALER,
+a.BRANCH_CENTRE_ID,
+a.WORK_LIST_ID,
+a.WORK_LIST_CATEGORY_DESC,
+a.WORK_LIST_CATEGORY_ID,
+a.WORK_LIST_NAME,
+a.DESCRIPTION,
+a.CREATED,
+a.CREATOR_ID,
+a.IS_FOR_UNASSIGNED_AGENCY,
+a.AGENCY_TYPE_ID,
+a.AGENCY_TYPE_CODE,
+a.AGENCY_TYPE_DESC,
+coalesce(b.TOTAL_ACCOUNTS,0) as TOTAL_ACCOUNTS
+from
+(
+SELECT
+EXTRACT_TO_DIALER,
+BRANCH_CENTRE_ID,
+WORK_LIST_ID,
+catref.DESCRIPTION as WORK_LIST_CATEGORY_DESC,
+w.WORK_LIST_CATEGORY as WORK_LIST_CATEGORY_ID,
+WORK_LIST_NAME as WORK_LIST_NAME,
+WORK_LIST_DESC as DESCRIPTION,
+WORK_LIST_CREATE_DATE as CREATED,
+WORK_LIST_CREATOR_ID as CREATOR_ID,
+FOR_UNASSIGNED as IS_FOR_UNASSIGNED_AGENCY,
+w.AGENCY_TYPE_ID,
+a.code as AGENCY_TYPE_CODE,
+a.description as AGENCY_TYPE_DESC
+FROM PTRAGENCY_WORK_LIST w
+left join ptragency_type_ref a on (w.agency_type_id = a.id)
+left join PTRWORK_LIST_CATEGORY_REF catref on w.WORK_LIST_CATEGORY = catref.id
+WHERE (w.DISABLE is null or w.DISABLE != true)
+and w.work_list_group =  #WORK_LIST_GROUP_ID#
+and w.agency_id = #AGENCY_ID#
+)
+a left outer
+join
+(
+select
+w.work_list_id, count(*) as TOTAL_ACCOUNTS
+from PTRAGENCY_WORK_LIST_ASSIGNMENT a left outer
+join PTRAGENCY_WORK_LIST w on (a.work_list_id = w.WORK_LIST_ID)
+group by w.WORK_LIST_ID
+)
+b on (b.WORK_LIST_ID = a.work_list_id)
+order by upper(a.WORK_LIST_NAME) asc
+</select>
+
+
+ <insert id="insertWlmWorkListLite">
+  <selectKey resultClass="long" keyProperty="WORK_LIST_ID">
+     <include refid="sequencePrefix"/>PTRAGENCY_WORK_LIST_ID<include refid="sequenceSuffix"/>
+  </selectKey>
+    INSERT INTO PTRAGENCY_WORK_LIST (
+    WORK_LIST_ID, 
+    WORK_LIST_NAME, 
+    WORK_LIST_CREATE_DATE, 
+    WORK_LIST_CREATOR_ID, 
+    WORK_LIST_DESC, 
+    TREATMENT_STAGE_ID, 
+    FOR_UNASSIGNED,
+    DISABLE,
+    SORT_PRIORITY, 
+    WORK_LIST_GROUP, 
+    EXTRACT_TO_DIALER,
+    BRANCH_CENTRE_ID,
+    WORK_LIST_CATEGORY,
+    AGENCY_ID)
+    VALUES 
+    (#WORK_LIST_ID#, #WORK_LIST_NAME#, #WORK_LIST_CREATE_DATE#, #USER_ID#, #DESCRIPTION#, 80001, 0, false, 0, #WORK_LIST_GROUP#,
+    #EXTRACT_TO_DIALER#,#BRANCH_CENTRE_ID#,#WORK_LIST_CATEGORY_ID#,#AGENCY_ID#)
+ </insert>
+
+
+  <update id="updateWorkListLite">
+    UPDATE PTRAGENCY_WORK_LIST SET WORK_LIST_NAME = #WORK_LIST_NAME#, 
+    WORK_LIST_CREATE_DATE = #UPDATE_TIME#, 
+    WORK_LIST_CREATOR_ID = #USER_ID#, 
+    WORK_LIST_DESC = #DESCRIPTION#,
+    EXTRACT_TO_DIALER = #EXTRACT_TO_DIALER#,
+    BRANCH_CENTRE_ID = #BRANCH_CENTRE_ID#,
+    WORK_LIST_CATEGORY = #WORK_LIST_CATEGORY_ID#
+    WHERE WORK_LIST_ID = #WORK_LIST_ID#
+  </update>
+ 
+ <update id="updateWorklistAsDisabledLite" parameterClass="map">
+UPDATE PTRAGENCY_WORK_LIST SET DISABLE = true
+WHERE WORK_LIST_ID = #WORK_LIST_ID#
+</update>
+
+<update id="updateAgencyAccountWorkListForCurrentAssignmentLite">
+update PTRAGENCY_WORK_LIST_ASSIGNMENT
+set
+WORK_LIST_ID = #WORK_LIST_ID#, 
+OUTSTANDING_AMT = #OUTSTANDING_AMT#,
+NLB = #NLB#,
+OUTSTANDING_BALANCE = #OUTSTANDING_BALANCE#,
+TOTAL_DELQ_AMT = #TOTAL_DELQ_AMT#, 
+CYC_DEL_ID = #CYC_DEL_ID#, 
+OLDEST_OVERDUE_DATE = #OLDEST_OVERDUE_DATE#, 
+MONTHS_IN_ARREARS = #MONTHS_IN_ARREARS#, 
+SCORING_ID = #CONFIDENCE_LEVEL_ID#, 
+PAYMENT_DUE_DATE = #PAYMENT_DUE_DATE#, 
+ASSIGNMENT_TYPE_ID = 2,
+CSCORE_ID = #CSCORE_ID#, 
+CSCORE_DATE = #CSCORE_DATE#,
+ASSIGNMENT_DATE = #ASSIGNMENT_DATE#,
+USER_ID = #USER_ID#
+where ACCOUNT_ID = #ACCOUNT_ID#
+</update>
+
+
+<insert id="insertAgencyAccountWorkListAssignmentLite">
+insert into PTRAGENCY_WORK_LIST_ASSIGNMENT
+(ACCOUNT_ID, WORK_LIST_ID, ASSIGNMENT_TYPE_ID, ASSIGNMENT_DATE, ASSIGNMENT_SOURCE_ID, USER_ID)
+values
+(#ACCOUNT_ID#,#WORK_LIST_ID#,#ASSIGNMENT_TYPE_ID#,#ASSIGNMENT_DATE#,#ASSIGNMENT_SOURCE_ID#,#USER_ID#)
+</insert>
+
+<update id="updateAgencyAccountAssignmentWorkListIdLite" parameterClass="java.util.Map">
+  update PTRAGENCY_WORK_LIST_ASSIGNMENT 
+  set       
+  WORK_LIST_ID = #WORK_LIST_ID#,
+  ASSIGNMENT_DATE =  cast(#ASSIGNMENT_DATE# AS DATE),
+  USER_ID = CAST(#USER_ID# AS VARCHAR(50))
+  where ACCOUNT_ID = #ACCOUNT_ID#
+</update>
+
+  <resultMap id="getAgencyWorkListUsers-map" class="hmap">
+     <result property="USER_ID" javaType="string"/>
+     <result property="FIRST_NAME"  javaType="string"/>
+     <result property="ACTIVE_STATUS" javaType="string"/>
+     <result property="REPORTS_TO" javaType="string"/>
+     <result property="EMAIL"  javaType="string"/>
+     <result property="IS_DEFAULT_USER" javaType="java.lang.Boolean"/>
+  </resultMap>
+  
+<select id="getAgencyWorkListUsers" resultMap="getAgencyWorkListUsers-map" parameterClass="map">
+select 
+usr.user_id, 
+emp.first_name as first_name, 
+usr.active_status,
+emp.report_to as reports_to,
+usr.user_email_address,
+uwl.is_default_user
+from
+ptragency_work_list wl
+inner join ptragency_user_work_list_assign uwl on wl.work_list_id = uwl.work_list_id
+inner join ptruser usr on uwl.user_id = usr.user_id
+left join ptremployee emp on usr.employee_id = emp.id
+where wl.work_list_id = #WORK_LIST_ID:BIGINT#
+and
+usr.active_status = 'Y'
+</select>
+
+<insert id="insertAgencyUserWorkListAssignmentLite">
+insert into ptragency_user_work_list_assign 
+(assigner_user_id, USER_ID, WORK_LIST_ID, EFFECTIVE_DATE)
+values 
+(#ASSIGNER_ID#,#USER_ID#,#WORK_LIST_ID#,#EFFECTIVE_DATE#)
+</insert>
+
+
+<update id="updateAgencyUserAssignmentLite" parameterClass="java.util.Map">
+  update ptragency_user_work_list_assign 
+  set assigner_user_id = #ASSIGNER_ID#
+  WHERE WORK_LIST_ID = #WORK_LIST_ID# 
+  and USER_ID = #USER_ID#
+  
+</update>
+
+<delete id="deleteWlmAgencyUsers" parameterClass="map">
+    delete from ptragency_user_work_list_assign where USER_ID in 
+    (<iterate conjunction="," property="USERS">#USERS[]#</iterate>)
+    and WORK_LIST_ID = #WORK_LIST_ID:BIGINT#
+</delete>
+ 
+<resultMap class="hmap" id="getWlmDefaultUserLite-map">
+<result javaType="string" property="DEFAULT_USER_NAME"/>
+</resultMap>
+<select id="getWlmDefaultUserLite" resultMap="getWlmDefaultUserLite-map">
+SELECT usr.USER_ID ||' - '||emp.FIRST_NAME as DEFAULT_USER_NAME
+FROM
+PTRAGENCY_WORK_LIST wl
+inner join PTRAGENCY_USER_WORK_LIST_ASSIGN uwl on (wl.WORK_LIST_ID = uwl.WORK_LIST_ID)
+inner join PTRUSER usr on (uwl.USER_ID = usr.USER_ID)
+left join PTREMPLOYEE emp on (usr.EMPLOYEE_ID = emp.id)
+WHERE 
+wl.WORK_LIST_ID = #WORK_LIST_ID:BIGINT#
+and usr.ACTIVE_STATUS = 'Y' 
+and uwl.IS_DEFAULT_USER = true
+</select>
+
+<update id="updateNullifyWorkListDefaultUserLite" parameterClass="java.util.Map">
+UPDATE ptragency_user_work_list_assign set IS_DEFAULT_USER = null where WORK_LIST_ID = #WORK_LIST_ID#
+</update>
+
+<update id="updateWorkListDefaultUserLite" parameterClass="java.util.Map">
+UPDATE ptragency_user_work_list_assign set IS_DEFAULT_USER = true where WORK_LIST_ID = #WORK_LIST_ID# 
+AND USER_ID IN (<iterate conjunction="," property="SELECTED_USER">#SELECTED_USER[]#</iterate>)
+</update>
+
+<resultMap class="hmap" id="getWlmCollectorUsersLite-map">
+<result javaType="string" property="USER_ID"/>
+<result javaType="string" property="NAME"/>
+<result javaType="string" property="ACTIVE"/>
+</resultMap>
+<select id="getWlmCollectorUsersLite" resultMap="getWlmCollectorUsersLite-map">
+SELECT
+U.USER_ID as USER_ID,
+coalesce(EMP.FIRST_NAME, 'N/A') as NAME,
+ACTIVE_STATUS
+FROM PTRUSER U
+LEFT OUTER JOIN PTREMPLOYEE EMP ON (U.EMPLOYEE_ID=EMP.ID)
+WHERE 
+
+<!-- U.USER_GROUP_ID in  -->
+<!-- (-0 -->
+<!-- <isNotEmpty property="USER_GROUPS">, -->
+<!-- <iterate conjunction="," property="USER_GROUPS">#USER_GROUPS[]#</iterate> -->
+<!-- </isNotEmpty>) and -->
+
+(U.ACTIVE_STATUS NOT IN ('D', 'N'))
+and (U.disable is null or U.disable = false)
+and (emp.on_leave is null or emp.on_leave = false)
+and u.agency_id = #AGENCY_ID#
+order by upper(EMP.FIRST_NAME) asc    
+</select>
+</sqlMap>

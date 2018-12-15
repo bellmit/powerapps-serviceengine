@@ -1,0 +1,1467 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="treeService">
+
+<resultMap class="hmap" id="getDicisionTreeType">
+<result property="TREE_TYPE_ID" javaType="long"/>
+</resultMap>
+
+<select id="getDicisionTreeTypeSms" resultMap="getDicisionTreeType">
+select ID from PTRDECISION_TREE_TYPE_REF where CODE='SMS'
+</select>
+<select id="getDicisionTreeTypeLetter" resultMap="getDicisionTreeType">
+select ID from PTRDECISION_TREE_TYPE_REF where CODE='LETTER'
+</select>
+<select id="getDecisionTreeTypeVisitation" resultMap="getDicisionTreeType">
+select ID from PTRDECISION_TREE_TYPE_REF where CODE='VISITATION'
+</select>
+<select id="getDecisionTreeTypeECA" resultMap="getDicisionTreeType">
+select ID from PTRDECISION_TREE_TYPE_REF where CODE='ECA'
+</select>
+<select id="getDecisionTreeTypeLegal" resultMap="getDicisionTreeType">
+select ID from PTRDECISION_TREE_TYPE_REF where CODE='LEGAL'
+</select>
+
+<resultMap class="hmap" id="getTreatmentSubtypeForTreeConditions">
+<result property="SUBTYPE_CODE" javaType="string"/>
+</resultMap>
+
+<select id="getTreatmentSubtypeForTreeConditions" resultMap="getTreatmentSubtypeForTreeConditions">
+select CODE from PTRTREATMENT_SUBTYPE_REF where ID=#SUBTYPE_ID#
+</select>
+
+<resultMap id="getTreeDocumentId" class="hmap">
+ <result property="DOCUMENT_ID" javaType="long"/>
+</resultMap>
+<select id="getTreeDocumentId" resultMap="getTreeDocumentId">
+ 	select DOCUMENT_ID from PTRDECISION_TREE where ID=#TREE_ID#
+</select>
+
+<resultMap class="hmap" id="getVisualTreeBucket">
+<result property="ID" javaType="long"/>
+<result property="CODE" javaType="string"/>
+<result property="DESCRIPTION" javaType="string"/>
+</resultMap>
+
+<select id="getVisualTreeSmsBucket" resultMap="getVisualTreeBucket">
+select t.ID, t.NAME, t.DESCRIPTION from PTRTEMPLATE t
+inner join ptrtemplate_type_ref ty on ty.id=t.template_type_id
+where ty.CODE='SMS' and t.DISABLE=false
+</select>
+<select id="getVisualTreeLetterBucket" resultMap="getVisualTreeBucket">
+select t.ID, t.NAME, t.DESCRIPTION from PTRTEMPLATE t
+inner join ptrtemplate_type_ref ty on ty.id=t.template_type_id
+where ty.CODE='LETTER' and t.DISABLE=false
+</select>
+<select id="getVisualTreeVisitationBucket" resultMap="getVisualTreeBucket">
+select u.id, u.user_id, u.user_id
+from ptruser u
+inner join ptremployee e on e.id=u.employee_id
+where (u.disable=false or u.disable is null) and (u.user_type_id=1 or u.user_type_id is null)
+order by u.user_id
+</select>
+
+<select id="getTreeSmsSubtypes" resultMap="global.ref">
+select ID, CODE, DESCRIPTION, DISABLE, SORT_PRIORITY from PTRTREATMENT_SUBTYPE_REF where TYPE_ID=13 and DISABLE=false
+</select>
+<select id="getTreeLetterSubtypes" resultMap="global.ref">
+select ID, CODE, DESCRIPTION, DISABLE, SORT_PRIORITY from PTRTREATMENT_SUBTYPE_REF where TYPE_ID=14 and DISABLE=false
+</select>
+<select id="getTreeVisitationSubtypes" resultMap="global.ref">
+select ID, CODE, DESCRIPTION, DISABLE, SORT_PRIORITY from PTRTREATMENT_SUBTYPE_REF where TYPE_ID=15 and DISABLE=false
+</select>
+
+<select id="getTreeAssignSubtypes" resultMap="global.ref">
+select s.ID, s.CODE, s.DESCRIPTION, s.DISABLE, s.SORT_PRIORITY from PTRTREATMENT_SUBTYPE_REF s
+inner join PTRDECISION_TREE_TEMPLATE_REL rel on rel.SUBTYPE_ID=s.ID
+where rel.TREE_TYPE_ID=#TREE_TYPE_ID# and rel.TREE_ID=#TREE_ID# and rel.TEMPLATE_ID=#TEMPLATE_ID#
+</select>
+
+<resultMap id="getDecisionTreeByType" class="hmap">
+ <result property="ID" javaType="long"/>
+ <result property="DESCRIPTION" javaType="string"/>
+ <result property="DISABLE" javaType="boolean"/>
+ <result property="SORT_PRIORITY" javaType="long"/>
+</resultMap>
+<select id="getDecisionTreeByType" resultMap="getDecisionTreeByType">
+select id,case when IS_BATCH=true then TREE_NAME||' - '||'Batch' else TREE_NAME end,DISABLE,1 as SORT_PRIORITY from PTRDECISION_TREE 
+where TREE_TYPE_ID=#TREE_TYPE_ID# and DISABLE=false
+</select> 
+
+<resultMap class="hmap" id="getVisualTree100PercentChecker">
+	<result javaType="long" property="IS_ENABLED"/>
+</resultMap>
+<select id="getVisualTree100PercentChecker" parameterClass="map" resultMap="getVisualTree100PercentChecker">
+	select case when COALESCE(#TOTAL_PERCENTAGE:NUMERIC#,0) &lt;= 1 then 1 
+				when COALESCE(#TOTAL_PERCENTAGE:NUMERIC#,0) = 0 then 1
+				when COALESCE(#TOTAL_PERCENTAGE:NUMERIC#,0) is null then 1
+				else 0 END as IS_ENABLED <include refid="fromdual"/>
+</select>	
+
+<insert id="insertVisualTree" parameterClass="map"> 
+<selectKey resultClass="long" keyProperty="ID">
+<include refid="sequencePrefix"/>PTRDECISION_TREE_ID<include refid="sequenceSuffix"/>
+</selectKey>
+insert into PTRDECISION_TREE
+(DOCUMENT_ID, TREE_NAME, TREE_TYPE_ID, UPDATED_TIME, ID, DISABLE, CREATED_TIME, CREATED_USER_ID, UPDATED_USER_ID, IS_BATCH)
+values (#DOCUMENT_ID#, #TREE_NAME#, #TREE_TYPE_ID#, #UPDATED_TIME#, #ID#, false, #UPDATED_TIME#, #UPDATED_USER_ID#, #UPDATED_USER_ID#, coalesce(#IS_BATCH#,false))
+</insert>
+
+<resultMap class="hmap" id="getVisualTreeForEditing">
+<result property="TREE_NAME" javaType="string"/>
+<result property="IS_BATCH" javaType="boolean"/>
+</resultMap>
+
+<select id="getVisualTreeForEditing" resultMap="getVisualTreeForEditing">
+select TREE_NAME, IS_BATCH from PTRDECISION_TREE where ID=#TREE_ID# and TREE_TYPE_ID=#TREE_TYPE_ID#
+</select>
+
+<update id="updateVisualTreeIsBatchToFalse" parameterClass="map">
+update PTRDECISION_TREE set IS_BATCH=false where TREE_TYPE_ID=#TREE_TYPE_ID#
+</update>
+
+<update id="updateVisualTree" parameterClass="map">
+		update PTRDECISION_TREE set IS_BATCH = #IS_BATCH#,
+		UPDATED_TIME = #UPDATED_TIME#, UPDATED_USER_ID=#UPDATED_USER_ID#, tree_name=#TREE_NAME# where ID =
+		#TREE_ID#
+	</update>
+
+<update id="updateVisualTreeContent" parameterClass="map">
+		update PTRDECISION_TREE set DOCUMENT_ID = #DOCUMENT_ID#,
+		UPDATED_TIME = #UPDATED_TIME#, UPDATED_USER_ID=#UPDATED_USER_ID# where ID =
+		#TREE_ID#
+	</update>
+	
+	
+
+<update id="updateVisualTreeToDisable" parameterClass="map">
+update PTRDECISION_TREE set DISABLE=true, 
+UPDATED_TIME = #UPDATED_TIME#, UPDATED_USER_ID=#UPDATED_USER_ID# where ID = #TREE_ID#
+</update>
+
+<delete id="deleteVisualTreeTemplateRel" parameterClass="map">
+delete from ptrdecision_tree_template_rel where tree_id=#TREE_ID#
+</delete>
+
+<insert id="insertVisualTreeTemplateRel" parameterClass="map">
+insert into ptrdecision_tree_template_rel (tree_type_id,tree_id,template_id,subtype_id)
+values (#TREE_TYPE_ID#,#TREE_ID#,#TEMPLATE_ID#,#SUBTYPE_ID#)
+</insert>
+
+<insert id="updateVisualTreeTemplateRel" parameterClass="map">
+update ptrdecision_tree_template_rel set SUBTYPE_ID=#SUBTYPE_ID# where
+TEMPLATE_ID=#TEMPLATE_ID# and TREE_ID=#TREE_ID# and TREE_TYPE_ID=#TREE_TYPE_ID#
+</insert>
+
+<resultMap id="getDecisionTreeCondition" class="hmap">
+ <result property="FIELD_NAME" javaType="string"/>
+ <result property="FIELD_TYPE" javaType="string"/>
+ <result property="FIELD_DESCRIPTION" javaType="string"/>
+ <result property="DISCRETE_VALUE_DESCRIPTION" javaType="string"/>
+ <result property="DISCRETE_VALUE_ID" javaType="long"/>
+ <result property="DISCRETE_VALUE_DISABLED" javaType="boolean"/>
+</resultMap>
+
+<sql id="allTreeType">
+ref.LETTER,
+ref.SMS,
+ref.VISITATION,
+ref.ECA,
+ref.LEGAL
+</sql>
+
+<sql id="allTreeCondition">
+select 
+ref.FIELD_NAME,
+ref.FIELD_TYPE,
+ref.FIELD_DESCRIPTION,
+ref.DISCRETE_VALUE_DESCRIPTION,
+ref.DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrdecision_tree_condition_ref ref 
+where (ref.DISABLE is null or ref.DISABLE = false) and (ref.REFERENCE is null or ref.REFERENCE != 1)
+</sql>
+
+<sql id="underConstructionCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='UNDER_CONSTRUCTION_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="uncontactableAccountCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='UNCONTACTABLE_ACCOUNT_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="rejectStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='RR_REJECTED_STATUS_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="dibsCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='DIBS' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="akpkFlagTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_AKPK_FLAG' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="stateCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from PTRSTATE_REF sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='STATE_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="specialStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrspecial_status_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='SPECIAL_STATUS' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="ecaAssignedCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='ECA_ASSIGNED_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="contactSourceCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='CONTACT_SOURCE_TYPE_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="addressSourceCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='ADDRESS_SOURCE_TYPE_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="employerDefaultReasonCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptremployer_default_reason_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='EMPLOYER_DEFAULT_REASON_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="customerDefaultReasonCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrreason_of_default_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='CUSTOMERS_REASON_OF_DEFAULT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="worklistCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from (select work_list_id as id, work_list_name as description, disable, work_list_group from ptrwork_list) sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='WORK_LIST_ID_RECLASSIFICATION' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="priorityPaymentCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrpayment_method_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='PRIORITY_PAYMENT_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="accountStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptraccount_status_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='ACCOUNT_STATUS_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="productGroupCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/> 
+from ptrproduct_type_category_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='PRODUCT_TYPE_CATEGORY_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="productTypeCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrproduct_type_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='PRODUCT_TYPE_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="bankRegionCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrregion_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='BANK_REGION_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="rnrTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_RNR' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="bankruptTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_BANKRUPT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="newDisbursementTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_NEW_DISBURSEMENT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="deceasedTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_DECEASED' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="tpdTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_TPD' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="tpdRejectedTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_TPD_REJECTED' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="exStaffTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_EX_STAFF' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="fraudTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_FRAUD' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="settlementProposalTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_SETTLEMENT_PROPOSAL' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="securityDepositTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_SECURITY_DEPOSIT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="debtSalesTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_DEBT_SALES' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="memotariumTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_MORATORIUM' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="redemptionStatementTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_REDEMPTION_STATEMENT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="adminIssueTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/> 
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_ADMIN_ISSUE' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="centreCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.CODE||' - '||sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrbank_branch_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='CENTRE' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="currentLegalActionCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrlegal_action_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='CURRENT_LEGAL_ACTION' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="financingTypeCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrproduct_type_category_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='FINANCING_TYPE' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="npfFlagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='NPF_FLAG' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="selfCureCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='SELF_CURE' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="defaultReasonCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrreason_of_default_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='DEFAULT_REASON' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="branchCodeCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.CODE||' - '||sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrbank_branch_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='BRANCH_CODE' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="callStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrtreatment_type_status_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='CALL_STATUS' and sr.TYPE_ID=8 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="lastLegalActionCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+ty.description||' - '||sb.DESCRIPTION||' - '||sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrlegal_action_ref sr,ptrdecision_tree_condition_ref ref, ptrtreatment_subtype_ref sb, ptrtreatment_type_ref ty
+where ref.FIELD_NAME='LAST_LEGAL_ACTION' and sr.subtype_id=sb.id and sb.type_id=ty.id 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="transactionTypeCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.CODE||' - '||sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrtransaction_type_ref sr,ptrdecision_tree_condition_ref ref
+where ref.FIELD_NAME='TRANSACTION_CODE' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="legalWorklistCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.CODE as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrlegal_worklist sr,ptrdecision_tree_condition_ref ref
+where ref.FIELD_NAME='LEGAL_WORKLIST_NAME' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="abandonedTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_ABANDONED' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="auctionTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_AUCTION' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="auctionBalanceTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_AUCTION_BALANCE' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="auctionDepositTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_AUCTION_DEPOSIT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="bldTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_BLD' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="dibsTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_DIBS' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="ecaMonitoringTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_ECA_MONITORING' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="epfWithdrawalTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_EPF_WITHDRAWAL' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="externalCollectionAgenciesTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_EXTERNAL_COLLECTION_AGENCIES' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="legalMonitoringTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_LEGAL_MONITORING' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="pendingBppTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_PENDING_BPP' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="refundCourtDepositTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_REFUND_COURT_DEPOSIT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="refundOADepositTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_REFUND_OA_DEPOSIT' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="repoTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_REPO' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="repoRedeemTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_REPO_REDEEM' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="shortfallTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_SHORTFALL' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="underConstructionTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_UNDER_CONSTRUCTION' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="writeOffTagCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='AT_WRITE_OFF' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="holdMailCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from PTRHOLD_MAIL_CODE_REF sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='HOLD_MAIL' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="employmentStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from PTREMPLOYMENT_STATUS_REF sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='EMPLOYMENT_STATUS_ID' 
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="currentLegalActionStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from PTRTREATMENT_STATUS_REF sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='CURRENT_LEGAL_ACTION_STATUS' and sr.ID in (15004,15005,15001,15007)
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="guarantorTypeCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptrcustomer_account_relation_type_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='GUARANTOR_TYPE' and not sr.code='P'
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="legalStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from PTRTREATMENT_STATUS_REF sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='LEGAL_STATUS' and sr.ID in (15004,15005,15001,15007)
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="financingStatusCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from PTRACCOUNT_STATUS_REF sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='FINANCING_STATUS'
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+<sql id="noPaymentSinceDisbursementCondition">
+select 
+ref.FIELD_NAME AS FIELD_NAME,
+ref.FIELD_TYPE AS FIELD_TYPE,
+ref.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+ref.DISCRETE_VALUE_DISABLED,
+<include refid="allTreeType"/>
+from ptryes_no_ref sr,ptrdecision_tree_condition_ref ref 
+where ref.FIELD_NAME='NO_PAYMENT_SINCE_DISBURSEMENT'
+and (ref.DISABLE is null or ref.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+</sql>
+
+
+
+
+<sql id="getDecisionTreeConditions">
+select 
+FIELD_NAME,
+FIELD_TYPE,
+FIELD_DESCRIPTION,
+DISCRETE_VALUE_DESCRIPTION,
+DISCRETE_VALUE_ID,
+DISCRETE_VALUE_DISABLED 
+FROM (
+<include refid="allTreeCondition"/> union
+<include refid="underConstructionCondition"/> union
+<include refid="uncontactableAccountCondition"/> union
+<include refid="rejectStatusCondition"/> union
+<include refid="dibsCondition"/> union
+<include refid="akpkFlagTagCondition"/> union
+<include refid="stateCondition"/> union
+<include refid="specialStatusCondition"/> union
+<include refid="ecaAssignedCondition"/> union
+<include refid="contactSourceCondition"/> union
+<include refid="addressSourceCondition"/> union
+<include refid="employerDefaultReasonCondition"/> union
+<include refid="customerDefaultReasonCondition"/> union
+<include refid="worklistCondition"/> union
+<include refid="priorityPaymentCondition"/> union
+<include refid="accountStatusCondition"/> union
+<include refid="productGroupCondition"/> union
+<include refid="productTypeCondition"/> union
+<include refid="bankRegionCondition"/> union
+<include refid="rnrTagCondition"/> union
+<include refid="bankruptTagCondition"/> union
+<include refid="newDisbursementTagCondition"/> union
+<include refid="deceasedTagCondition"/> union
+<include refid="tpdTagCondition"/> union
+<include refid="tpdRejectedTagCondition"/> union
+<include refid="exStaffTagCondition"/> union
+<include refid="fraudTagCondition"/> union
+<include refid="settlementProposalTagCondition"/> union
+<include refid="securityDepositTagCondition"/> union
+<include refid="debtSalesTagCondition"/> union
+<include refid="memotariumTagCondition"/> union
+<include refid="redemptionStatementTagCondition"/> union
+<include refid="adminIssueTagCondition"/> union
+<include refid="centreCondition"/> union
+<include refid="currentLegalActionCondition"/> union
+<include refid="financingTypeCondition"/> union
+<include refid="financingTypeCondition"/> union
+<include refid="npfFlagCondition"/> union
+<include refid="selfCureCondition"/> union
+<include refid="defaultReasonCondition"/> union
+<include refid="branchCodeCondition"/> union
+<include refid="callStatusCondition"/> union
+<include refid="lastLegalActionCondition"/> union
+<include refid="transactionTypeCondition"/> union
+<include refid="legalWorklistCondition"/> union
+<include refid="abandonedTagCondition"/> union
+<include refid="auctionTagCondition"/> union
+<include refid="auctionBalanceTagCondition"/> union
+<include refid="auctionDepositTagCondition"/> union
+<include refid="bldTagCondition"/> union
+<include refid="dibsTagCondition"/> union
+<include refid="ecaMonitoringTagCondition"/> union
+<include refid="epfWithdrawalTagCondition"/> union
+<include refid="externalCollectionAgenciesTagCondition"/> union
+<include refid="legalMonitoringTagCondition"/> union
+<include refid="pendingBppTagCondition"/> union
+<include refid="refundCourtDepositTagCondition"/> union
+<include refid="refundOADepositTagCondition"/> union
+<include refid="repoTagCondition"/> union
+<include refid="repoRedeemTagCondition"/> union
+<include refid="shortfallTagCondition"/> union
+<include refid="underConstructionTagCondition"/> union
+<include refid="writeOffTagCondition"/> union
+<include refid="holdMailCondition"/> union
+<include refid="employmentStatusCondition"/> union
+<include refid="currentLegalActionStatusCondition"/> union
+<include refid="guarantorTypeCondition"/> union
+<include refid="legalStatusCondition"/> union
+<include refid="financingStatusCondition"/> union
+<include refid="noPaymentSinceDisbursementCondition"/>
+) AS A
+</sql> 
+
+<sql id="getDecisionTreeConditionByTreeType">
+<isEqual property="TREE_TYPE_ID" compareValue="1">
+where SMS=true
+</isEqual>
+<isEqual property="TREE_TYPE_ID" compareValue="2">
+where LETTER=true
+</isEqual>
+<isEqual property="TREE_TYPE_ID" compareValue="3">
+where VISITATION=true
+</isEqual>
+<isEqual property="TREE_TYPE_ID" compareValue="4">
+where ECA=true
+</isEqual>
+<isEqual property="TREE_TYPE_ID" compareValue="5">
+where LEGAL=true
+</isEqual>
+order by FIELD_DESCRIPTION, UPPER(DISCRETE_VALUE_DESCRIPTION) 
+</sql>
+
+<select id="getDecisionTreeCondition" resultMap="getDecisionTreeCondition">
+<include refid="getDecisionTreeConditions"/>
+<include refid="getDecisionTreeConditionByTreeType"/>
+</select>
+
+<select id="getLegalTreeCondition" resultMap="getDecisionTreeCondition">
+<include refid="getDecisionTreeConditions"/>
+where LEGAL=true
+order by FIELD_DESCRIPTION, UPPER(DISCRETE_VALUE_DESCRIPTION) 
+</select>
+
+<resultMap class="hmap" id="getDecisionTreeDocumentId">
+<result property="DOCUMENT_ID" javaType="long"/>
+<result property="TREE_TYPE_ID" javaType="long"/>
+<result property="TREE_TYPE" javaType="string"/>
+</resultMap>
+
+<select id="getDecisionTreeDocumentId" resultMap="getDecisionTreeDocumentId">
+select 
+d.document_id, 
+d.tree_type_id,
+dt.description 
+from ptrdecision_tree d
+inner join ptrdecision_tree_type_ref dt on dt.id=d.tree_type_id
+where d.ID=#TREE_ID#
+</select>
+
+<select id="getDecisionTreeSmsBatch" resultMap="getDecisionTreeDocumentId">
+select 
+d.document_id, 
+d.tree_type_id,
+dt.description 
+from ptrdecision_tree d
+inner join ptrdecision_tree_type_ref dt on dt.id=d.tree_type_id
+where dt.CODE='SMS' and d.IS_BATCH=true and d.disable=false
+</select>
+<select id="getDecisionTreeLetterBatch" resultMap="getDecisionTreeDocumentId">
+select 
+d.document_id, 
+d.tree_type_id,
+dt.description 
+from ptrdecision_tree d
+inner join ptrdecision_tree_type_ref dt on dt.id=d.tree_type_id
+where dt.CODE='LETTER' and d.IS_BATCH=true and d.disable=false
+</select>
+<select id="getDecisionTreeVisitationBatch" resultMap="getDecisionTreeDocumentId">
+select 
+d.document_id, 
+d.tree_type_id,
+dt.description 
+from ptrdecision_tree d
+inner join ptrdecision_tree_type_ref dt on dt.id=d.tree_type_id
+where dt.CODE='VISITATION' and d.IS_BATCH=true and d.disable=false
+</select>
+
+<resultMap class="hmap" id="getDecisionTreeTemplateRel">
+<result property="TEMPLATE_ID" javaType="long"/>
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="DOCUMENT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getDecisionTreeTemplateRel" resultMap="getDecisionTreeTemplateRel">
+select rel.template_id, rel.subtype_id, v.document_id
+ from ptrdecision_tree_template_rel rel
+inner join ptrtemplate_version v on v.template_id=rel.template_id and v.disable=false
+where rel.tree_id=#TREE_ID#
+</select>
+
+<delete id="deleteSmsAssignment" parameterClass="map">
+delete from ptrsms_assignment
+</delete>
+<delete id="deleteLetterAssignment" parameterClass="map">
+delete from ptrletter_assignment
+</delete>
+<delete id="deleteVisitationAssignment" parameterClass="map">
+delete from ptrvisitation_assignment
+</delete>
+
+<insert id="insertSmsAssignment" parameterClass="map">
+insert into ptrsms_assignment (ACCOUNT_ID,CUSTOMER_ID,TEMPLATE_ID,SUBTYPE_ID,CONTACT_ID,CONTACT_NO,MESSAGE_TEXT,RUN_ID)
+values (#ACCOUNT_ID#,#CUSTOMER_ID#,#TEMPLATE_ID#,#SUBTYPE_ID#,#CONTACT_ID#,#CONTACT_NO#,#MESSAGE_TEXT#,#RUN_ID#)
+</insert>
+<insert id="insertLetterAssignment" parameterClass="map">
+insert into ptrletter_assignment (ACCOUNT_ID,CUSTOMER_ID,TEMPLATE_ID,SUBTYPE_ID,CONTACT_ID,RUN_ID)
+values (#ACCOUNT_ID#,#CUSTOMER_ID#,#TEMPLATE_ID#,#SUBTYPE_ID#,#CONTACT_ID#,#RUN_ID#)
+</insert>
+<insert id="insertVisitationAssignment" parameterClass="map">
+insert into ptrvisitation_assignment (ACCOUNT_ID,CUSTOMER_ID,CONTACT_ID,VISITATION_STAFF_ID,RUN_ID)
+values (#ACCOUNT_ID#,#CUSTOMER_ID#,#CONTACT_ID#,#VISITATION_STAFF_ID#,#RUN_ID#)
+</insert>
+
+<insert id="insertSmsAssignmentHistory" parameterClass="map">
+<selectKey resultClass="long" keyProperty="ID">
+<include refid="sequencePrefix"/>ptrsms_assignment_history_id<include refid="sequenceSuffix"/>
+</selectKey>
+insert into ptrsms_assignment_history (ID,ACCOUNT_ID,CUSTOMER_ID,TEMPLATE_ID,SUBTYPE_ID,CONTACT_ID,CONTACT_NO,MESSAGE_TEXT,RUN_ID)
+values (#ID#,#ACCOUNT_ID#,#CUSTOMER_ID#,#TEMPLATE_ID#,#SUBTYPE_ID#,#CONTACT_ID#,#CONTACT_NO#,#MESSAGE_TEXT#,#RUN_ID#)
+</insert>
+<insert id="insertLetterAssignmentHistory" parameterClass="map">
+<selectKey resultClass="long" keyProperty="ID">
+<include refid="sequencePrefix"/>ptrletter_assignment_history_id<include refid="sequenceSuffix"/>
+</selectKey>
+insert into ptrletter_assignment_history (ID,ACCOUNT_ID,CUSTOMER_ID,TEMPLATE_ID,SUBTYPE_ID,CONTACT_ID,RUN_ID)
+values (#ID#,#ACCOUNT_ID#,#CUSTOMER_ID#,#TEMPLATE_ID#,#SUBTYPE_ID#,#CONTACT_ID#,#RUN_ID#)
+</insert>
+<insert id="insertVisitationAssignmentHistory" parameterClass="map">
+<selectKey resultClass="long" keyProperty="ID">
+<include refid="sequencePrefix"/>ptrvisitation_assignment_history_id<include refid="sequenceSuffix"/>
+</selectKey>
+insert into ptrvisitation_assignment_history (ID,ACCOUNT_ID,CUSTOMER_ID,CONTACT_ID,VISITATION_STAFF_ID,RUN_ID)
+values (#ID#,#ACCOUNT_ID#,#CUSTOMER_ID#,#CONTACT_ID#,#VISITATION_STAFF_ID#,#RUN_ID#)
+</insert>
+
+<resultMap class="hmap" id="getSmsAssignmentRunHistoryId">
+<result property="RUN_ID" javaType="long"/>
+</resultMap>
+
+<select id="getSmsAssignmentRunHistoryId" resultMap="getSmsAssignmentRunHistoryId">
+<include refid="sequencePrefix"/>ptrsms_assignment_run_history_id<include refid="sequenceSuffix"/><include refid="fromdual"/>
+</select>
+<select id="getLetterAssignmentRunHistoryId" resultMap="getSmsAssignmentRunHistoryId">
+<include refid="sequencePrefix"/>ptrletter_assignment_run_history_id<include refid="sequenceSuffix"/><include refid="fromdual"/>
+</select>
+<select id="getVisitationAssignmentRunHistoryId" resultMap="getSmsAssignmentRunHistoryId">
+<include refid="sequencePrefix"/>ptrvisitation_assignment_run_history_id<include refid="sequenceSuffix"/><include refid="fromdual"/>
+</select>
+
+<insert id="insertSmsAssignmentRunHistory" parameterClass="map">
+insert into ptrsms_assignment_run_history (ID,START_TIME,CREATED_USER_ID,CREATED_TIME)
+values (#RUN_ID#,#START_TIME#,#CREATED_USER_ID#,#CREATED_TIME#)
+</insert>
+<insert id="insertLetterAssignmentRunHistory" parameterClass="map">
+insert into ptrletter_assignment_run_history (ID,START_TIME,CREATED_USER_ID,CREATED_TIME)
+values (#RUN_ID#,#START_TIME#,#CREATED_USER_ID#,#CREATED_TIME#)
+</insert>
+<insert id="insertVisitationAssignmentRunHistory" parameterClass="map">
+insert into ptrvisitation_assignment_run_history (ID,START_TIME,CREATED_USER_ID,CREATED_TIME)
+values (#RUN_ID#,#START_TIME#,#CREATED_USER_ID#,#CREATED_TIME#)
+</insert>
+
+<resultMap class="hmap" id="getMaxRunSmsAssignmentForExtraction">
+<result property="RUN_ID" javaType="long"/>
+</resultMap>
+
+<select id="getMaxRunSmsAssignmentForExtraction" resultMap="getMaxRunSmsAssignmentForExtraction">
+select max(ID) from ptrsms_assignment_run_history where is_archived=false and disable=false
+</select>
+<select id="getMaxRunLetterAssignmentForExtraction" resultMap="getMaxRunSmsAssignmentForExtraction">
+select max(ID) from ptrletter_assignment_run_history where is_archived=false and disable=false
+</select>
+
+<update id="updateSmsRunHistory" parameterClass="map">
+update ptrsms_assignment_run_history set is_archived=true, disable=true, end_time=#END_TIME#,
+updated_time=#UPDATED_TIME#, updated_user_id=#UPDATED_USER_ID# where ID=#RUN_ID#
+</update>
+<update id="updateLetterRunHistory" parameterClass="map">
+update ptrletter_assignment_run_history set is_archived=true, disable=true, end_time=#END_TIME#,
+updated_time=#UPDATED_TIME#, updated_user_id=#UPDATED_USER_ID# where ID=#RUN_ID#
+</update>
+
+<resultMap class="hmap" id="getSmsAssignmentForExtraction">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_ID" javaType="long"/>
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+<result property="CONTACT_NO" javaType="string"/>
+<result property="MESSAGE_TEXT" javaType="string"/>
+
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="STATUS_ID" javaType="long"/>
+<result property="CONTACT_ID" javaType="long"/>
+<result property="CONTACT_PERSON" javaType="string"/>
+
+<result property="TRUE" javaType="boolean"/>
+<result property="FALSE" javaType="boolean"/>
+<result property="PROCESS_TYPE_ID" javaType="long"/>
+<result property="PROCESS_TYPE_CODE" javaType="string"/>
+
+</resultMap>
+
+<select id="getSmsAssignmentForExtraction" resultMap="getSmsAssignmentForExtraction">
+select 
+sms.account_id, sms.customer_id, v.id as template_version_id, sms.contact_no, sms.message_text,
+sms.subtype_id, ty.id as type_status_id, ty.status_id, sms.contact_id, c.contact_name,
+<include refid="true"/>, <include refid="false"/>, ty.type_id, tr.code
+from ptrsms_assignment sms
+inner join ptrcontact_number c on c.id=sms.contact_id
+inner join ptrtemplate_version v on v.template_id=sms.template_id and v.disable=false
+inner join ptrtreatment_type_status_ref ty on ty.type_id=13 and ty.status_id=15004
+inner join ptrtreatment_type_ref tr on tr.id=ty.type_id
+where sms.run_id=#RUN_ID#
+</select>
+
+<resultMap class="hmap" id="getLetterAssignmentForExtraction">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_ID" javaType="long"/>
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+<result property="CONTACT_ID" javaType="long"/>
+<result property="SEND_TO_ID" javaType="string"/>
+
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="STATUS_ID" javaType="long"/>
+<result property="TRUE" javaType="boolean"/>
+<result property="FALSE" javaType="boolean"/>
+
+<result property="PROCESS_TYPE_ID" javaType="long"/>
+<result property="DOCUMENT_ID" javaType="long"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+</resultMap>
+
+<select id="getLetterAssignmentForExtraction" resultMap="getLetterAssignmentForExtraction">
+select 
+lett.account_id, lett.customer_id, v.id as template_version_id, lett.contact_id, addr.customer_id,
+lett.subtype_id, ty.id as type_status_id, ty.status_id, <include refid="true"/>, <include refid="false"/>, 
+ty.type_id, v.document_id, a.account_no
+from ptrletter_assignment lett
+inner join ptraccount a on a.id=lett.account_id
+inner join ptrsearch_address addr on addr.contact_id=lett.contact_id
+left join ptrcontact_number c on c.id=lett.contact_id
+inner join ptrtemplate_version v on v.template_id=lett.template_id and v.disable=false
+inner join ptrtreatment_type_status_ref ty on ty.type_id=13 and ty.status_id=15004
+inner join ptrtreatment_type_ref tr on tr.id=ty.type_id
+where lett.run_id=#RUN_ID#
+</select>
+
+</sqlMap>

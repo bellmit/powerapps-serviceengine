@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="ECA Verification"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="remove" operator="=" rhsvalue="SHOW"/>
+    <condition lhsfield="transfer" operator="=" rhsvalue="HIDE"/>
+   </conditions>
+   <exec from="AGENCY_ID" key="AGENCY_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec statement="removeEcaVerificationAccounts" type="delete"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="transfer" operator="=" rhsvalue="SHOW"/>
+    <condition lhsfield="remove" operator="=" rhsvalue="HIDE"/>
+   </conditions>
+   <exec from="NEW_AGENCY_ID" key="NEW_AGENCY_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="CONTRACT_ID" key="CONTRACT_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec recordcount="" statement="transferEcaVerificationAccounts" type="update"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="ECA Recommendation"/>
+  </conditions>
+  <exec from="NEW_AGENCY_ID" key="NEW_AGENCY_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+  <exec from="CONTRACT_ID" key="CONTRACT_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+  <exec argument="ACCOUNT_LIST" type="loop">
+   <exec recordcount="" statement="updateEcaRecommendationAccounts" type="update"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="ECA Approval"/>
+  </conditions>
+  <exec from="NEW_AGENCY_ID" key="NEW_AGENCY_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+  <exec from="CONTRACT_ID" key="CONTRACT_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+  <exec argument="ACCOUNT_LIST" type="loop">
+   <exec recordcount="" statement="updateEcaRecommendationAccounts" type="update"/>
+  </exec>
+ </exec>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="TRUE" key="CANCEL" type="copyintolist"/>
+ <exec message="Transferred!" target="MESSAGE" type="formattext"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+</event>

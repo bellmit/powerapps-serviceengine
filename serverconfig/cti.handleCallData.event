@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="ACCOUNT_DATA" query="getAccountForCall" type="query"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ACCOUNT_DATA" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec code="CTI_REQUEST_ACCOUNTNOT_FOUND" type="error">
+   <key value="accountNo"/>
+  </exec>
+ </exec>
+ <exec from="ACCOUNT_DATA" type="copy"/>
+</event>

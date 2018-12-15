@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="getAssignmentTreeForProcessing" type="select"/>
+  <exec argument="DEFAULT_CONTRACT" query="getDefaultContractForProcessing" type="query"/>
+  <exec statement="getExpectedAbortPeriodForAssignment" type="select"/>
+  <exec type="transaction">
+   <exec statement="clearAssignmentVerification" type="delete"/>
+  </exec>
+  <exec allocationsize="100" group="ACCOUNT_ID" statement="getEcaAssignmentData" threadcount="10" type="stream">
+   <exec to="ACCOUNT_LIST" type="copy"/>
+   <exec data="ACCOUNT_LIST" document="DOCUMENT_ID" identifier="ACCOUNT_ID" key="AGENCY_ID" type="executedecisiontree"/>
+   <exec from="CURRENT_TIME" key="CURRENT_TIME" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="LOGON_USER" key="LOGON_USER" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="SUBTYPE_ID" key="SUBTYPE_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="PROCESS_TYPE_ID" key="PROCESS_TYPE_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="EXPECTED_END_TIME" operator="is empty" rhsvalue=""/>
+    </conditions>
+    <exec adddays="DAYS" ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EXPECTED_END_TIME" truncate="false" type="date"/>
+   </exec>
+   <exec from="EXPECTED_END_TIME" key="EXPECTED_END_TIME" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="DEFAULT_CONTRACT" key="AGENCY_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SEND_VERIFICATION" operator="&lt;&gt;" rhsvalue="true"/>
+    </conditions>
+    <exec argument="ACCOUNT_LIST" condition="IS_MET_CONDITION" type="conditionalloop">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="AGENCY_ID" operator="is not empty" rhsvalue=""/>
+      </conditions>
+      <exec from="TRUE" to="IS_MET_CONDITION" type="copy"/>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="PROCESS_TYPE_ID" operator="=" rhsvalue="19"/>
+       </conditions>
+       <exec statement="createAssignment" type="insert"/>
+       <exec from="ID" to="AGENCY_ASSIGNMENT_ID" type="copy"/>
+       <exec statement="submitRecommendation" type="insert"/>
+      </exec>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="PROCESS_TYPE_ID" operator="&lt;&gt;" rhsvalue="19"/>
+       </conditions>
+       <exec statement="createLegalAssignment" type="insert"/>
+       <exec from="ID" to="AGENCY_ASSIGNMENT_ID" type="copy"/>
+       <exec statement="monitorAssignment" type="insert"/>
+       <exec statement="pendingAcknowledgement" type="insert"/>
+      </exec>
+      <exec statement="clearRejectedOnCreateAction" type="delete"/>
+      <exec statement="clearQueueOnCreateAction" type="delete"/>
+      <exec recordcount="ACCOUNT_LAST_ASSIGNMENT_SUMMARY_UPDATE_COUNT" statement="updateAccountLastAssignmentSummary" type="update"/>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="ACCOUNT_LAST_ASSIGNMENT_SUMMARY_UPDATE_COUNT" operator="=" rhsvalue="0"/>
+       </conditions>
+       <exec statement="insertAccountLastAssignmentSummary" type="insert"/>
+      </exec>
+     </exec>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SEND_VERIFICATION" operator="=" rhsvalue="true"/>
+    </conditions>
+    <exec from="ID" key="TREE_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec argument="ACCOUNT_LIST" condition="IS_MET_CONDITION" type="conditionalloop">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="AGENCY_ID" operator="is not empty" rhsvalue=""/>
+      </conditions>
+      <exec from="TRUE" to="IS_MET_CONDITION" type="copy"/>
+      <exec statement="insertAssignmentVerification" type="insert"/>
+     </exec>
+    </exec>
+   </exec>
+  </exec>
+  <exec message="Executed" target="MESSAGE" type="formattext"/>
+ </exec>
+</event>

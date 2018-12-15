@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="ID" to="TREATMENT_ID" type="copy"/>
+ <exec statement="getTreatmentInitiateRnr" type="select"/>
+ <exec type="parallelquery">
+  <query value="getYesNoPleaseSelect"/>
+  <target value="CONNECTED_PARTY_LIST"/>
+ </exec>
+ <exec event="rnr.initiateTableData" ignoreresult="true" type="raisewith"/>
+</event>

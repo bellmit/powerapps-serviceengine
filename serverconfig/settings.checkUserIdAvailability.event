@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="checkUserIdAvailability" type="select"/>
+ <exec count="1" type="createlist"/>
+ <exec from="VALID_USER_ID" key="VALID_USER_ID" type="copyintolist"/>
+</event>

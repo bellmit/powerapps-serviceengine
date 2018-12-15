@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_AKPK"/>
+   </conditions>
+   <exec statement="insertAkpkTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateAkpkApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertAkpkApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_BILLING"/>
+   </conditions>
+   <exec statement="insertBillingTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateBillingApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertBillingApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_DEBT_SALE"/>
+   </conditions>
+   <exec statement="insertDebtSalesTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateDebtSalesApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertDebtSalesApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_ECU"/>
+   </conditions>
+   <exec statement="insertEcuTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateEcuApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertEcuApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_LITIGATION"/>
+   </conditions>
+   <exec statement="insertLitigationTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateLitigationApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertLitigationApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_MIS"/>
+   </conditions>
+   <exec statement="insertMisTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateMisApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertMisApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_PRODUCT_OWNER"/>
+   </conditions>
+   <exec statement="insertProductOwnerTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateProductOwnerApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertProductOwnerApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_TAKAFUL"/>
+   </conditions>
+   <exec statement="insertTakafulTaggingData" type="insert"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateTakafulApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertTakafulApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_AKPK"/>
+   </conditions>
+   <exec recordcount="" statement="updateAkpkTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateAkpkApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertAkpkApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_BILLING"/>
+   </conditions>
+   <exec recordcount="" statement="updateBillingTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateBillingApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertBillingApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_DEBT_SALE"/>
+   </conditions>
+   <exec recordcount="" statement="updateDebtSalesTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateDebtSalesApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertDebtSalesApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_ECU"/>
+   </conditions>
+   <exec recordcount="" statement="updateEcuTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateEcuApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertEcuApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_LITIGATION"/>
+   </conditions>
+   <exec recordcount="" statement="updateLitigationTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateLitigationApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertLitigationApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_MIS"/>
+   </conditions>
+   <exec recordcount="" statement="updateMisTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateMisApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertMisApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_PRODUCT_OWNER"/>
+   </conditions>
+   <exec recordcount="" statement="updateProductOwnerTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateProductOwnerApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertProductOwnerApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_TAKAFUL"/>
+   </conditions>
+   <exec recordcount="" statement="updateTakafulTaggingData" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15004"/>
+    </conditions>
+    <exec recordcount="COUNT" statement="updateTakafulApprovedTaggingData" type="update"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+     </conditions>
+     <exec statement="insertTakafulApprovedTaggingData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+ <exec event="accounttagging.saveRel" ignoreresult="true" type="raisewith"/>
+</event>

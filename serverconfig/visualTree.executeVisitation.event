@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec from="EFFECTIVE_DATE" to="START_TIME" type="copy"/>
+ <exec from="EFFECTIVE_DATE" to="CREATED_TIME" type="copy"/>
+ <exec from="LOGON_USER" to="CREATED_USER_ID" type="copy"/>
+ <exec statement="getVisitationAssignmentRunHistoryId" type="select"/>
+ <exec type="transaction">
+  <exec statement="deleteVisitationAssignment" type="delete"/>
+  <exec statement="insertVisitationAssignmentRunHistory" type="insert"/>
+ </exec>
+ <exec allocationsize="100" group="ACCOUNT_ID" statement="getVisitationTreeCustomerAccountsForAssignment" threadcount="10" type="stream">
+  <exec to="CUSTOMER_DATA" type="copy"/>
+  <exec data="CUSTOMER_DATA" document="DOCUMENT_ID" identifier="ACCOUNT_ID" key="VISITATION_STAFF_ID" type="executedecisiontree"/>
+  <exec from="RUN_ID" key="RUN_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+  <exec argument="CUSTOMER_DATA" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="VISITATION_STAFF_ID" operator="exists" rhsvalue=""/>
+    </conditions>
+    <exec statement="insertVisitationAssignment" type="insert"/>
+    <exec statement="insertVisitationAssignmentHistory" type="insert"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

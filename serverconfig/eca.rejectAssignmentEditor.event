@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBTYPE_ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="getEcaSubtype" type="select"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED_DATA" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="PRODUCT_CATEGORY_ID" key="PRODUCT_CATEGORY_ID" to="SELECTED_DATA" type="copyintolist"/>
+  <exec from="TYPE_CODE" key="TYPE_CODE" to="SELECTED_DATA" type="copyintolist"/>
+  <exec from="PROCESS_TYPE_ID" key="PROCESS_TYPE_ID" to="SELECTED_DATA" type="copyintolist"/>
+ </exec>
+ <exec argument="SELECTED_DATA" type="loop">
+  <exec argument="ACCOUNT_LIST" query="getEcaPendingRecommendationAccountIds" type="query"/>
+ </exec>
+ <exec from="SELECTED_DATA" key="ACCOUNT_LIST" to="ACCOUNT_LIST" type="extract"/>
+ <exec size="500" source="ACCOUNT_LIST" target="DIVIDED_ACCOUNT_LIST" type="dividelist"/>
+ <exec from="MODULE" key="MODULE" to="DIVIDED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec argument="DIVIDED_ACCOUNT_LIST" type="loop">
+  <exec from="ACCOUNT_LIST" key="AGENCY_ASSIGNMENT_ID" to="ASSIGNMENTS" type="extract"/>
+  <exec from="ACCOUNT_LIST" key="ACCOUNT_ID" to="ACCOUNTS" type="extract"/>
+  <exec event="ecaAccountResults.data" ignoreresult="true" type="raisewith"/>
+ </exec>
+ <exec from="DIVIDED_ACCOUNT_LIST" key="ACCOUNT_LIST" to="ACCOUNT_LIST" type="extract"/>
+ <exec from="ACCOUNT_LIST" key="ACCOUNT_LIST" type="copyintolist"/>
+ <exec argument="ABORT_REASONS" query="getAbortReasonForMonitoring" type="query"/>
+ <exec from="ABORT_REASONS" key="ABORT_REASONS" type="copyintolist"/>
+</event>

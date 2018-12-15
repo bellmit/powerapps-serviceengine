@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getStageForEditing" type="select"/>
+ <exec from="CODE" key="CODE" type="copyintolist"/>
+ <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+ <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+</event>

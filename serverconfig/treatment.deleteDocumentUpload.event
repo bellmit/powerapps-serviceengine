@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="CONFIRM_UPDATE" key="CONFIRM_UPDATE" type="copyintolist"/>
+ <exec from="ID" key="ID" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED_ATTACHMENT_DOCUMENT_IDX" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SELECTED_ATTACHMENT_DOCUMENT_IDX" key="SELECTED_ATTACHMENT_DOCUMENT_ID" type="copyintolist"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED_ATTACHMENT_DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SELECTED_ATTACHMENT_DOCUMENT_ID" key="SELECTED_ATTACHMENT_DOCUMENT_ID" type="copyintolist"/>
+ </exec>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec statement="deleteTreatmentDocumentUpload" type="delete"/>
+  </exec>
+  <exec argument="DOCUMENT_ATTACHMENT_LIST" query="getTreatmentUploadedDocuments" type="query"/>
+  <exec argument="DOCUMENT_ATTACHMENT_SELECTION_LIST" query="getTreatmentUploadedDocumentsForSelection" type="query"/>
+ </exec>
+</event>

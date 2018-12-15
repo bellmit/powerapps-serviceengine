@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec query="getAvailableUsersForWorklist" type="query"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="FIRST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="FIRST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MIDDLE_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="EMPLOYEE_NAME"/>
+    <key value="MIDDLE_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LAST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="EMPLOYEE_NAME"/>
+    <key value="LAST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EMPLOYEE_NAME" operator="is empty" rhsvalue=""/>
+   </conditions>
+   <exec from="USER_ID" to="EMPLOYEE_NAME" type="copy"/>
+  </exec>
+ </exec>
+</event>

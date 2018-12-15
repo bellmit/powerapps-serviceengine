@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONFIRM_UPDATE" operator="exists" rhsvalue=""/>
+   <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec event="visual.executeAbort" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+</event>

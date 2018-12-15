@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="ROLE_LIST" query="getRoleList" type="query"/>
+ <exec count="1" type="createlist"/>
+ <exec from="ROLE_LIST" key="ROLE_LIST" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+ </exec>
+</event>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROCESS_TYPE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec type="parallelquery">
+   <query value="getDefaultTreatmentStatusType"/>
+   <query value="getCcrisAccountStatusTreatment"/>
+   <query value="getTreatmentTemplate"/>
+   <target value="TYPE_STATUS_LIST"/>
+   <target value="ACCOUNT_STATUS_LIST"/>
+   <target value="TEMPLATE_LIST"/>
+  </exec>
+  <exec from="TYPE_STATUS_LIST" key="TYPE_STATUS_LIST" type="copyintolist"/>
+  <exec from="ACCOUNT_STATUS_LIST" key="ACCOUNT_STATUS_LIST" type="copyintolist"/>
+  <exec from="TEMPLATE_LIST" key="TEMPLATE_LIST" type="copyintolist"/>
+ </exec>
+</event>

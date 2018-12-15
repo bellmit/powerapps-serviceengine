@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getTreatmentEmail" type="select"/>
+ <exec type="parallelquery">
+  <query value="getCategoryOfContact"/>
+  <query value="getTreatmentCustomers"/>
+  <query value="getTreatmentTemplate"/>
+  <query value="getTreatmentEmailAddresses"/>
+  <target value="CATEGORY_CONTACT_LIST"/>
+  <target value="CUSTOMER_LIST"/>
+  <target value="TEMPLATE_LIST"/>
+  <target value="CONTACT_LIST"/>
+ </exec>
+</event>

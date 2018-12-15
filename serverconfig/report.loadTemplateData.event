@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="TEMPLATES" query="getTemplateList" type="query"/>
+ <exec count="1" type="createlist"/>
+ <exec from="TEMPLATES" key="TEMPLATES" type="copyintolist"/>
+ <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+</event>

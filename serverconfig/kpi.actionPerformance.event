@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="BY_USER" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec type="parallelquery">
+   <query value="getKpiCallSummary"/>
+   <query value="getKpiPtpSummary"/>
+   <query value="getKpiCallSummaryCount"/>
+   <query value="getKpiPtpSummaryCount"/>
+   <target value="CALL_SUMMARY"/>
+   <target value="PROMISE_SUMMARY"/>
+   <target value="CALL_SUMMARY_COUNT"/>
+   <target value="PTP_SUMMARY_COUNT"/>
+  </exec>
+  <exec type="parallelquery">
+   <query value="getKpiSmsSummary"/>
+   <query value="getKpiSmsSummaryCount"/>
+   <query value="getKpiWorkedAccountSummary"/>
+   <query value="getKpiWorkedAccountContactedRateSummary"/>
+   <target value="SMS_SUMMARY"/>
+   <target value="SMS_SUMMARY_COUNT"/>
+   <target value="ACCOUNT_WORKED_SUMMARY"/>
+   <target value="ACCOUNT_CONTACTABLE_COUNT"/>
+  </exec>
+  <exec from="CALL_SUMMARY_COUNT" key="KEY" to="CALL_SUMMARY" type="merge"/>
+  <exec from="PTP_SUMMARY_COUNT" key="KEY" to="PROMISE_SUMMARY" type="merge"/>
+  <exec from="SMS_SUMMARY_COUNT" key="KEY" to="SMS_SUMMARY" type="merge"/>
+  <exec from="ACCOUNT_CONTACTABLE_COUNT" key="KEY" to="ACCOUNT_WORKED_SUMMARY" type="merge"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="BY_USER" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec type="parallelquery">
+   <query value="getKpiCallSummaryByUser"/>
+   <query value="getKpiCallSummaryUserCount"/>
+   <query value="getKpiPtpByUserSummary"/>
+   <query value="getKpiPtpSummaryByUserCount"/>
+   <target value="CALL_SUMMARY"/>
+   <target value="CALL_SUMMARY_COUNT"/>
+   <target value="PROMISE_SUMMARY"/>
+   <target value="PTP_SUMMARY_COUNT"/>
+  </exec>
+  <exec type="parallelquery">
+   <query value="getKpiSmsByUserSummary"/>
+   <query value="getKpiSmsSummaryByUserCount"/>
+   <query value="getKpiWorkedAccountByUserSummary"/>
+   <query value="getKpiWorkedAccountContactedRateByUserSummary"/>
+   <target value="SMS_SUMMARY"/>
+   <target value="SMS_SUMMARY_COUNT"/>
+   <target value="ACCOUNT_WORKED_SUMMARY"/>
+   <target value="ACCOUNT_CONTACTABLE_COUNT"/>
+  </exec>
+  <exec from="CALL_SUMMARY_COUNT" key="KEY" to="CALL_SUMMARY" type="merge"/>
+  <exec from="PTP_SUMMARY_COUNT" key="KEY" to="PROMISE_SUMMARY" type="merge"/>
+  <exec from="SMS_SUMMARY_COUNT" key="KEY" to="SMS_SUMMARY" type="merge"/>
+  <exec from="ACCOUNT_CONTACTABLE_COUNT" key="KEY" to="ACCOUNT_WORKED_SUMMARY" type="merge"/>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="VIEW_CALL_DETAILS" to="CALL_SUMMARY" type="copyintolist"/>
+ <exec from="TRUE" key="VIEW_PROMISE_DETAILS" to="PROMISE_SUMMARY" type="copyintolist"/>
+ <exec from="TRUE" key="VIEW_SMS_DETAILS" to="SMS_SUMMARY" type="copyintolist"/>
+ <exec from="TRUE" key="VIEW_ACCOUNTS_SUMMARY_DETAILS" to="ACCOUNT_WORKED_SUMMARY" type="copyintolist"/>
+ <exec from="CALL_SUMMARY" key="CALL_SUMMARY" type="copyintolist"/>
+ <exec from="PROMISE_SUMMARY" key="PROMISE_SUMMARY" type="copyintolist"/>
+ <exec from="SMS_SUMMARY" key="SMS_SUMMARY" type="copyintolist"/>
+ <exec from="ACCOUNT_WORKED_SUMMARY" key="ACCOUNT_WORKED_SUMMARY" type="copyintolist"/>
+</event>

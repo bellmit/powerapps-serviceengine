@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getActionDetails" type="select"/>
+ <exec statement="getProcessDetails" type="select"/>
+ <exec type="parallelquery">
+  <query value="getStatusForFollowUpEditor"/>
+  <query value="getActionRemarkHistory"/>
+  <target value="STATUSES"/>
+  <target value="REMARKS_HISTORY"/>
+ </exec>
+ <exec from="STATUSES" key="STATUSES" type="copyintolist"/>
+ <exec from="HEADER_TITLE" key="HEADER_TITLE" type="copyintolist"/>
+ <exec from="REMARKS_HISTORY" key="REMARKS_HISTORY" type="copyintolist"/>
+ <exec from="STATUS_ID" key="STATUS_ID" type="copyintolist"/>
+</event>

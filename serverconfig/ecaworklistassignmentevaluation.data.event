@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="DATA_LIST" query="getEcaAssignmentEvaluationTree" type="query"/>
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SHOW_ALL" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="FALSE" key="DISABLE" to="DATA_LIST" type="copyintolist"/>
+ </exec>
+ <exec from="DATA_LIST" key="DATA_LIST" type="copyintolist"/>
+ <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+</event>

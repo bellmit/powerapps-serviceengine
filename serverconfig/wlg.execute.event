@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="true" type="date"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PRODUCT_TYPE_FILTER" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="PRODUCT_TYPE_FILTER" to="PRODUCT_CATEGORY_ID" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TREE_TYPE_FILTER" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TREE_TYPE_FILTER" to="TYPE_ID" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TREE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="getWlTreeDocumentId" type="select"/>
+ </exec>
+ <exec text="Evaluate Pre - IL Accounts" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLG_TYPE_CODE" operator="=" rhsvalue="PRE_IL_WLG"/>
+   </conditions>
+   <exec text="Execute PL Pre IL" type="comment">
+    <exec event="wlg.executePreIlHp" ignoreresult="true" type="raise"/>
+   </exec>
+   <exec text="Execute UPL Pre IL" type="comment">
+    <exec event="wlg.executePreIlUpl" ignoreresult="true" type="raise"/>
+   </exec>
+   <exec text="Execute MG Pre IL" type="comment">
+    <exec event="wlg.executePreIlMg" ignoreresult="true" type="raise"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="batchService">
+
+<insert id="insertHostProcessing" parameterClass="map">
+<selectKey keyProperty="ID" resultClass="long"><include refid="sequencePrefix"/>PTRLOAD_DATA_PROCESSING_HISTORY_ID<include refid="sequenceSuffix"/></selectKey>
+insert into PTRLOAD_DATA_PROCESSING_HISTORY (ID, LOAD_EXECUTION_ID, PROCESS_NAME, EFFECTIVE_DATE, START_TIME)
+values (#ID#, #MAXIMUM_LOAD_EXECUTION_ID#, #PROCESS_NAME#, #EFFECTIVE_DATE#, #START_TIME#)
+</insert>
+<update id="updateHostProcessing" parameterClass="map">
+update PTRLOAD_DATA_PROCESSING_HISTORY
+set END_TIME = #END_TIME#
+where ID = #ID#
+</update>
+<resultMap id="getLastLoadForHostProcessing" class="java.util.HashMap">
+ <result property="LOAD_EXECUTION_ID" javaType="long"/>
+</resultMap>
+<select id="getLastLoadForHostProcessing" resultMap="getLastLoadForHostProcessing">
+SELECT max(LOAD_EXECUTION_ID)
+FROM PTRLOAD_DATA_PROCESSING_HISTORY
+WHERE PROCESS_NAME = #PROCESS_NAME#
+  AND END_TIME is not null
+</select>
+
+<resultMap id="getSettingsForHostProcessing" class="java.util.HashMap">
+ <result property="THREAD_COUNT" javaType="long"/>
+ <result property="COMMIT_SIZE" javaType="long"/>
+</resultMap>
+<select id="getSettingsForHostProcessing" resultMap="getSettingsForHostProcessing">
+   select  THREAD_COUNT, COMMIT_SIZE from
+ (VALUES
+  (10, 100, 'createPayments'),
+  (10, 100, 'evaluateSelfCure'),
+  (10, 100, 'clearSelfCure'),
+  (10, 100, 'createAgencyPayments'),
+  (10, 100, 'createAgencyCommission')
+ ) d
+ (THREAD_COUNT, COMMIT_SIZE, PROCESS_NAME) where PROCESS_NAME = #PROCESS_NAME#
+</select>
+<resultMap id="maximumLoadExecution" class="hmap">
+ <result property="MAXIMUM_LOAD_EXECUTION_ID"/>
+</resultMap>
+
+<!-- batch.createPayments -->
+
+<sql id="paymentTransaction">
+(ref.code in ('041','045','149','001','002') and t.input_source = 'Z' and ref.loan_or_overdraft_flag = t.loan_or_overdraft_flag)
+or
+(ref.code = '905' and t.input_source = 'G'  and ref.loan_or_overdraft_flag = t.loan_or_overdraft_flag)  
+or 
+(ref.code = '010' and t.input_source = 'W'  and ref.loan_or_overdraft_flag = t.loan_or_overdraft_flag)
+or
+(ref.code = '010' and t.input_source = 'Z'  and ref.loan_or_overdraft_flag = t.loan_or_overdraft_flag)
+or
+(ref.code = '166' and t.input_source = 'Z' and ref.loan_or_overdraft_flag = t.loan_or_overdraft_flag and t.gl_code = '6000370934')
+</sql>
+
+<select id="getTransactionMaximumLoadExecution" resultMap="maximumLoadExecution">
+select coalesce(MAX(LOAD_EXECUTION_ID),1) from PTRTRANSACTION
+</select>
+<select id="getDefaultLoadExecutionId" resultMap="maximumLoadExecution">
+select 1 <include refid="fromdual"/>
+</select>
+<resultMap id="getTransactionsForPaymentCreation" class="hmap">
+ <result property="TRANSACTION_ID" javaType="long"/>
+ <result property="ACCOUNT_ID" javaType="long"/>
+ <result property="POSTING_DATE" javaType="date"/>
+ <result property="PAYMENT_DUE_DATE" javaType="date"/>
+ <result property="AMOUNT" javaType="$"/>
+ <result property="AFFECTS_CODE" javaType="string"/>
+ <result property="TRANSACTION_TYPE_ID" javaType="long"/>
+ <result property="INPUT_SOURCE" javaType="string"/>
+ <result property="USER_ID" javaType="string"/>
+ <result property="GL_CODE" javaType="string"/>
+ <result property="LOAD_EXECUTION_ID" javaType="long"/>
+ <result property="PAYMENT_METHOD_ID" javaType="long"/>
+ <result property="LOAN_OR_OVERDRAFT_FLAG" javaType="string"/>
+</resultMap>
+<select id="getTransactionsForPaymentCreation" resultMap="getTransactionsForPaymentCreation">
+select 
+t.id,
+t.account_id,
+t.posting_date,
+t.payment_due_date,
+t.amount,
+t.affects_code,
+t.transaction_type_id,
+t.input_source,
+t.user_id,
+t.gl_code as gl_code,
+t.load_execution_id,
+case 
+when ref.code = '001' and t.input_source = 'Z' then 1 
+when ref.code = '002' and t.input_source = 'Z' then 2 
+when ref.code = '010' and t.input_source = 'W' then 3
+when ref.code = '041' and t.input_source = 'Z' then 4 
+when ref.code = '045' and t.input_source = 'Z' then 5 
+when ref.code = '149' and t.input_source = 'Z' then 6 
+when ref.code = '905' and t.input_source = 'G' then 7 
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code in ('144005','144018') ) then 8
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code = '141117' ) then 9
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code in ('141119','141907','144013') ) then 10
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code = '141101' ) then 11
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code in ('141103','144017')) then 12
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code in ('141204','144016') ) then 13
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code in ('141202','144006') ) then 14
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code = '144025' ) then 15
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code = '144026' ) then 16
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code = '141358' ) then 17
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code = '141914' ) then 18
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code = '211509' ) then 19
+when (ref.code = '010' and t.input_source = 'Z' and t.gl_code not in
+(
+'144005', '144018','141117','141119','141907','144013','141101','141103','144017','141204','144016','141202','144006','144025','144026','141358','141914','211509'
+)
+) then 20 
+else 0 end as payment_method_id,
+t.loan_or_overdraft_flag
+from ptrtransaction t
+inner join ptrtransaction_type_ref ref on t.transaction_type_id = ref.id  and ref.loan_or_overdraft_flag = t.loan_or_overdraft_flag
+where t.load_execution_id &gt; COALESCE(#LOAD_EXECUTION_ID#, -1) and #MAXIMUM_LOAD_EXECUTION_ID# >= t.load_execution_id
+and (<include refid="paymentTransaction"/>)
+and not exists
+(select 1 from ptrpayment_transaction pt where pt.transaction_id=t.id)
+<!-- order by t.load_execution_id, t.account_id -->
+</select>
+
+<insert id="insertPayment">
+INSERT INTO PTRPAYMENT_TRANSACTION
+(TRANSACTION_ID, ACCOUNT_ID, POSTING_DATE, AMOUNT, LOAD_EXECUTION_ID, AFFECTS_CODE,PAYMENT_DUE_DATE, 
+transaction_type_id, input_source, user_id, gl_code, PAYMENT_METHOD_ID, LOAN_OR_OVERDRAFT_FLAG)
+values
+(#TRANSACTION_ID#, #ACCOUNT_ID#, #POSTING_DATE#, #AMOUNT#, #LOAD_EXECUTION_ID#, #AFFECTS_CODE#,#PAYMENT_DUE_DATE#,
+#TRANSACTION_TYPE_ID#,#INPUT_SOURCE#,#USER_ID#,#GL_CODE#, #PAYMENT_METHOD_ID#, #LOAN_OR_OVERDRAFT_FLAG#
+)
+</insert>
+
+<resultMap id="selfCureData" class="hmap">
+ <result property="ACCOUNT_ID" javaType="long"/>
+ <result property="LAST_PAYMENT_DATE" javaType="date"/>
+ <result property="EVALUATION_DATE" javaType="date"/>
+ <result property="STATUS" javaType="boolean"/>
+</resultMap>
+
+<select id="selfCureData" resultMap="selfCureData">
+	select cp.account_id,a.last_payment_date,cast(#EFFECTIVE_DATE# as date),true as status
+	from ptrvw_current_month_total_payment cp 
+	inner join ptraccount a on a.id=cp.account_id
+	where cp.payment_status_id in (2,3)
+	and not exists(select 1 from ptrtreatment t where t.account_id=a.id and date(t.created_time) between cast(#BEGIN_OF_MONTH# as DATE) and a.last_payment_date)
+	and not exists(select 1 from PTRACC_SELF_CURE_STATUS sc where sc.account_id=a.id)
+</select>
+
+<insert id="insertSelfCure">
+	insert into PTRACC_SELF_CURE_STATUS(account_id,last_payment_date,evaluation_date,status)
+	values(#ACCOUNT_ID#,#LAST_PAYMENT_DATE#,#EVALUATION_DATE#,#STATUS#)
+</insert>
+
+<delete id="deleteSelfCure">
+	delete from PTRACC_SELF_CURE_STATUS
+</delete>
+
+<resultMap id="getAgencyPaymentForProcessing" class="hmap">
+ <result property="TRANSACTION_ID" javaType="long"/>
+ <result property="ACCOUNT_ID" javaType="long"/>
+ <result property="AGENCY_ID" javaType="long"/>
+ <result property="PAYMENT_METHOD_ID" javaType="long"/>
+ <result property="AMOUNT" javaType="$"/>
+ <result property="POSTING_DATE" javaType="date"/>
+ <result property="AGENCY_ASSIGNMENT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getAgencyPaymentForProcessing" resultMap="getAgencyPaymentForProcessing">
+	select p.transaction_id,p.account_id,ag.agency_id,p.payment_method_id,p.amount,posting_date,ag.id
+	from ptrpayment_transaction p
+	inner join ptraccount_agency_assignment ag on p.account_id=ag.account_id and ag.agency_id is not null
+	inner join ptrtreatment_subtype_ref s on s.id=ag.subtype_id and s.type_id=19
+	inner JOIN ptragency_effective_assignment e on e.agency_assignment_id=ag.id and p.posting_date &gt;= e.effective_date
+	where not exists(
+		select 1 from ptragency_payment_transaction ap where ap.agency_id=ag.agency_id and ap.transaction_id=p.transaction_id
+	)
+	and (ag.status_id=15007 or (ag.status_id !=15007 and p.posting_date &lt;=ag.aborted_date))
+</select>
+
+<insert id="insertAgencyPaymentTransaction">
+	INSERT INTO PTRAGENCY_PAYMENT_TRANSACTION(TRANSACTION_ID,AGENCY_ID,PAYMENT_METHOD_ID,AMOUNT,POSTING_DATE,AGENCY_ASSIGNMENT_ID)
+	VALUES(#TRANSACTION_ID#,#AGENCY_ID#,#PAYMENT_METHOD_ID#,#AMOUNT#,#POSTING_DATE#,#AGENCY_ASSIGNMENT_ID#)
+</insert>
+
+<select id="getGenerateAgencyInvoiceMaximumLoadExecution" resultMap="maximumLoadExecution">
+select 1  <include refid="fromdual"/>
+</select>
+
+</sqlMap>

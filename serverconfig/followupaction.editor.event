@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ACTION_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="ACTION_ID" operator="&lt;&gt;" rhsvalue="parent.ACTION_ID"/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec statement="getInstructionForEditing" type="select"/>
+  <exec argument="ADDITIONAL_DETAILS" query="getAssignedAdditionalDetails" type="query"/>
+  <exec from="CODE" key="CODE" type="copyintolist"/>
+  <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+  <exec from="TAT" key="TAT" type="copyintolist"/>
+  <exec from="VISUAL_ACTION" key="VISUAL_ACTION" type="copyintolist"/>
+  <exec from="ADDITIONAL_DETAILS" key="ADDITIONAL_DETAILS" type="copyintolist"/>
+  <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+ </exec>
+</event>

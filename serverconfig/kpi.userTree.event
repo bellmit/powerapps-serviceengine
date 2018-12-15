@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="parallelquery">
+  <query value="getKpiAllUserTree"/>
+  <query value="getKpiUserTree"/>
+  <target value="LEVEL_1"/>
+  <target value="LEVEL_2"/>
+ </exec>
+ <exec argument="LEVEL_2" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="FIRST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}" target="COLLECTOR_NAME" type="formattext">
+    <key value="FIRST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MIDDLE_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="COLLECTOR_NAME" type="formattext">
+    <key value="COLLECTOR_NAME"/>
+    <key value="MIDDLE_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LAST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="COLLECTOR_NAME" type="formattext">
+    <key value="COLLECTOR_NAME"/>
+    <key value="LAST_NAME"/>
+   </exec>
+  </exec>
+  <exec from="COLLECTOR_NAME" to="LEVEL_2_DESCRIPTION" type="copy"/>
+  <exec from="USER_ID" to="LEVEL_2" type="copy"/>
+ </exec>
+ <exec from="LEVEL_1" to="TREE" type="append"/>
+ <exec from="LEVEL_2" to="TREE" type="append"/>
+</event>

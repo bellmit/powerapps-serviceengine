@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTRACT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec recordcount="" statement="updateContract" type="update"/>
+  <exec message="Contract updated" target="MESSAGE" type="formattext"/>
+  <exec statement="clearContractTags" type="delete"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTRACT_ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="insertContract" type="insert"/>
+  <exec message="New contract added" target="MESSAGE" type="formattext"/>
+  <exec from="ID" to="CONTRACT_ID" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TAGS" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="CONTRACT_ID" key="CONTRACT_ID" to="TAGS" type="copyintolist"/>
+  <exec argument="TAGS" type="loop">
+   <exec statement="insertContractTags" type="insert"/>
+  </exec>
+ </exec>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+</event>

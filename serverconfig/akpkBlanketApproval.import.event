@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SPREADSHEET_LIST" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="ff3333" target="RED" type="formattext"/>
+  <exec from="FALSE" key="VALID" to="SPREADSHEET_LIST" type="copyintolist"/>
+  <exec from="RED" key="COLOR" to="SPREADSHEET_LIST" type="copyintolist"/>
+  <exec size="999" source="SPREADSHEET_LIST" target="DIVIDED_SPREADSHEET_LIST" type="dividelist"/>
+  <exec argument="DIVIDED_SPREADSHEET_LIST" type="loop">
+   <exec from="SPREADSHEET_LIST" key="ACCOUNT_NUMBER" to="ACCOUNT_NUMBERS" type="extract"/>
+   <exec type="parallelquery">
+    <query value="getVimValidAccounts"/>
+    <target value="VALID_ACCOUNTS"/>
+   </exec>
+   <exec from="VALID_ACCOUNTS" key="ACCOUNT_NUMBER" to="SPREADSHEET_LIST" type="merge"/>
+  </exec>
+  <exec from="DIVIDED_SPREADSHEET_LIST" key="SPREADSHEET_LIST" to="SPREADSHEET_LIST" type="extract"/>
+ </exec>
+ <exec from="SPREADSHEET_LIST" key="SPREADSHEET_LIST" type="copyintolist"/>
+</event>

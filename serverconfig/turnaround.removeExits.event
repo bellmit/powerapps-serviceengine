@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec argument="SELECTED_ENTRIES" type="loop">
+   <exec statement="deleteTurnaroundActions" type="delete"/>
+  </exec>
+  <exec count="1" type="createlist"/>
+  <exec message="Removed" target="MESSAGE" type="formattext"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="INIT" type="copyintolist"/>
+  <exec from="TRUE" key="LOAD" type="copyintolist"/>
+ </exec>
+</event>

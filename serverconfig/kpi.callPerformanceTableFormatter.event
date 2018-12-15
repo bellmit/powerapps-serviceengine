@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="ZERO" to="TOTAL_CALLS" type="copy"/>
+ <exec from="ZERO" to="TOTAL_PTP" type="copy"/>
+ <exec from="ZERO" to="TOTAL_PTP_KEPT" type="copy"/>
+ <exec from="ZERO" to="TOTAL_BROKEN_PTP" type="copy"/>
+ <exec from="ZERO" to="AMOUNT_COLLECTED" type="copy"/>
+ <exec from="ZERO" to="UNPAID" type="copy"/>
+ <exec from="ZERO" to="STAY_OVER" type="copy"/>
+ <exec from="ZERO" to="IMPROVED" type="copy"/>
+ <exec from="ZERO" to="PUSH_BACK" type="copy"/>
+ <exec from="ZERO" to="BEGIN_OUTSTANDING" type="copy"/>
+ <exec from="ZERO" to="TOTAL_GROSS_BALANCE" type="copy"/>
+ <exec from="ZERO" to="ACCUMULATED_PAYMENTS" type="copy"/>
+ <exec from="ZERO" to="TOTAL_PAID" type="copy"/>
+</event>

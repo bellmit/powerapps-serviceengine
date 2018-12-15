@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="assignmentEvaluationService">
+
+	<resultMap class="hmap" id="getLegalAssignmentEvaluationTree" extends="global.ref">
+		<result property="IS_BATCH" javaType="boolean"/>
+	</resultMap>
+
+	<select id="getLegalAssignmentEvaluationTree" resultMap="getLegalAssignmentEvaluationTree">
+		<include refid="refselect" /> ,is_batch 
+		FROM PTRLEGAL_ASSIGNMENT_TREE
+		WHERE SUBTYPE_ID =#SUBTYPE_ID#  <isNotNull property="PRODUCT_CATEGORY_ID">and PRODUCT_CATEGORY_ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		AND DISABLE = <include refid="false"/>
+		order by id desc
+	</select>
+	<select id="getECAProductCategoriesForAssignment" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM PTRPRODUCT_TYPE_CATEGORY_REF WHERE CODE IN('PF','PFI','AF')
+	</select>	
+	<resultMap id="getAssignmentEvaluationTreeDocumentId" class="hmap">
+		<result property="DOCUMENT_ID" javaType="long" />
+	</resultMap>
+	<select id="getAssignmentEvaluationTreeDocumentId" resultMap="getAssignmentEvaluationTreeDocumentId">
+		SELECT DOCUMENT_ID FROM PTRLEGAL_ASSIGNMENT_TREE WHERE ID=#ID#	
+	</select>
+	
+	
+	<resultMap class="hmap" id="getAssignmentEvaluationTreeBuckets" extends="global.ref">
+	<result property="STATUS" javaType="string"/>
+	</resultMap>
+	<select id="getAssignmentEvaluationTreeBuckets" resultMap="getAssignmentEvaluationTreeBuckets">
+		SELECT DISTINCT G.ID,G.CODE,G.DESCRIPTION,G.DISABLE,G.SORT_PRIORITY,SR.DESCRIPTION FROM PTRAGENCY G
+		INNER JOIN PTRAGENCY_CONTRACT_REL R ON R.AGENCY_ID=G.ID
+		INNER JOIN PTRAGENCY_CONTRACT C ON C.ID=R.CONTRACT_ID and C.IS_DEFAULT =<include refid="true"/>
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF S ON S.ID=C.SUBTYPE_ID AND S.ID=#SUBTYPE_ID#
+		INNER JOIN PTRAGENCY_STATUS_REF SR ON SR.ID=G.STATUS_ID
+		
+	</select>	
+	<insert id="insertAssignmentEvaluationTree">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRLEGAL_ASSIGNMENT_TREE_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		INSERT INTO PTRLEGAL_ASSIGNMENT_TREE(ID,CODE,DESCRIPTION,IS_BATCH,SEND_VERIFICATION,SUBTYPE_ID,REMARKS,SORT_PRIORITY,CREATED_TIME,CREATED_BY,PRODUCT_CATEGORY_ID)
+		VALUES(#ID#,#CODE#,#DESCRIPTION#,#IS_BATCH#,#SEND_VERIFICATION#,#SUBTYPE_ID#,#REMARKS#,#ID#,#CURRENT_TIME#,#LOGON_USER#,#PRODUCT_CATEGORY_ID#)	
+	</insert>
+	
+	<update id="updateAssignmentEvaluationTree">
+		UPDATE PTRLEGAL_ASSIGNMENT_TREE SET
+		CODE = #CODE#,
+		DESCRIPTION = #DESCRIPTION#,
+		SUBTYPE_ID =#SUBTYPE_ID#,
+		PRODUCT_CATEGORY_ID=#PRODUCT_CATEGORY_ID#,
+		IS_BATCH = #IS_BATCH#,
+		SEND_VERIFICATION = #SEND_VERIFICATION#,
+		REMARKS = #REMARKS#,
+		DISABLE = #DISABLE#,
+		UPDATED_BY = #LOGON_USER#,
+		UPDATED_TIME =#CURRENT_TIME#
+		WHERE ID=#ID#	
+	</update>
+	
+	<update id="setAssignmentEvaluationTreesIsBatchToFalseBySubtype">
+		update PTRLEGAL_ASSIGNMENT_TREE set is_batch = <include refid="false"/>
+		where subtype_id = #SUBTYPE_ID# <isNotNull property="PRODUCT_CATEGORY_ID">and PRODUCT_CATEGORY_ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+	</update>
+	
+	<update id="updateAssignmentEvaluationTreeContent">
+		UPDATE PTRLEGAL_ASSIGNMENT_TREE SET DOCUMENT_ID = #DOCUMENT_ID#, 
+		REMARKS = #REMARKS#, UPDATED_BY = #LOGON_USER#, UPDATED_TIME =#CURRENT_TIME#
+		WHERE ID =#ID#
+	</update>
+	<resultMap id="getAssignmentTreeForEditing" class="hmap">
+		<result property="CODE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="SUBTYPE_ID" javaType="long" />
+		<result property="IS_BATCH" javaType="boolean" />
+		<result property="SEND_VERIFICATION" javaType="boolean" />
+		<result property="DISABLE" javaType="boolean" />
+	</resultMap>
+	<select id="getAssignmentTreeForEditing" resultMap="getAssignmentTreeForEditing">
+		SELECT CODE,DESCRIPTION,SUBTYPE_ID,IS_BATCH,SEND_VERIFICATION,DISABLE
+		FROM PTRLEGAL_ASSIGNMENT_TREE
+		WHERE ID = #ID#	
+	</select>	
+</sqlMap>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Fetch all accounts in worklist" type="comment">
+  <exec argument="OPEN_ACCOUNT_LIST" query="getWorkListAccountIds" type="query"/>
+  <exec from="OPEN_ACCOUNT_LIST" key="ACCOUNT_ID" to="OPEN_ACCOUNT_ID_LIST" type="extract"/>
+ </exec>
+ <exec text="Fetch all paid accounts" type="comment">
+  <exec event="userworklist.uplpaidaccountids" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Fetch PTP Accounts" type="comment">
+  <exec event="userworklist.getptpaccountids" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Fetch Broken PTP Accounts" type="comment">
+  <exec argument="BROKEN_PROMISE_ACCOUNT_LIST" query="getBrokenPtpAccountData" type="query"/>
+  <exec from="BROKEN_PROMISE_ACCOUNT_LIST" key="ACCOUNT_ID" to="BROKEN_PROMISE_ACCOUNT_ID_LIST" type="extract"/>
+ </exec>
+ <exec text="Fetch all WIP accounts" type="comment">
+  <exec event="userworklist.wipaccountids" ignoreresult="true" type="raise"/>
+  <exec from="IN_PROGRESS_ACCOUNT_LIST" to="WIP_ACCOUNT_ID_LIST" type="copy"/>
+ </exec>
+ <exec text="Get Net Open Accounts" type="comment">
+  <exec from="PTP_ACCOUNT_ID_LIST" to="OPEN_ACCOUNT_ID_LIST" type="append"/>
+  <exec from="BROKEN_PROMISE_ACCOUNT_ID_LIST" to="OPEN_ACCOUNT_ID_LIST" type="append"/>
+  <exec from="WIP_ACCOUNT_ID_LIST" to="OPEN_ACCOUNT_ID_LIST" type="append"/>
+  <exec minuend="OPEN_ACCOUNT_ID_LIST" subtrahend="PAID_ACCOUNT_ID_LIST" to="OPEN_ACCOUNT_ID_LIST" type="remove"/>
+ </exec>
+ <exec from="OPEN_ACCOUNT_ID_LIST" to="ACCOUNT_ID_LIST" type="copy"/>
+ <exec argument="ACCOUNT_LIST" query="getAccountListAccountIds" type="query"/>
+ <exec event="userworklist.uplgetinfo" ignoreresult="true" type="raise"/>
+</event>

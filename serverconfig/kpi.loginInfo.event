@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="BEGIN_OF_MONTH" truncate="true" type="date"/>
+ <exec type="parallelquery">
+  <query value="getMtdLoginDetails"/>
+  <query value="getKpiActiveSessions"/>
+  <target value="LOGIN_INFORMATION"/>
+  <target value="SESSION_INFORMATION"/>
+ </exec>
+ <exec from="LOGIN_INFORMATION" key="LOGIN_INFORMATION" type="copyintolist"/>
+ <exec from="SESSION_INFORMATION" key="SESSION_INFORMATION" type="copyintolist"/>
+</event>

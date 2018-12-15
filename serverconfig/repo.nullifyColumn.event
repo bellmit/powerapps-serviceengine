@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="2"/>
+  </conditions>
+  <exec type="nullify">
+   <key value="REPOSSESSOR_IC"/>
+   <key value="AGENT_ID"/>
+   <key value="REPOSSESSOR_ID"/>
+   <key value="REPO_CONTACT_NO"/>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getTrue" type="select"/>
+ <exec ceiling="true" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec to="USER_ID" type="user"/>
+ <exec statement="getLogonUserType" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ENGINE_NO" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="searchCollateral" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="VEHICLE_NO" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="searchCollateral" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="USERID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="searchAccountWorkList" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="USER_NAME" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="searchAccountWorkList" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="GNAME" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="searchGuarantor" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="G_ID_NUMBER" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="searchGuarantor" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="AGENCY_NAME" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="agencySearch" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="AGENCY_NUMBER" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="agencySearch" type="copy"/>
+ </exec>
+ <exec argument="SEARCHED_ACCOUNTS" query="getSearchAccountIds" type="query"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SEARCHED_ACCOUNTS" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec size="999" source="SEARCHED_ACCOUNTS" target="DIVIDED_SEARCHED_ACCOUNTS" type="dividelist"/>
+  <exec argument="DIVIDED_SEARCHED_ACCOUNTS" type="loop">
+   <exec from="SEARCHED_ACCOUNTS" key="ACCOUNT_ID" to="ACCOUNTS" type="extract"/>
+   <exec argument="SEARCH_RESULT" query="getSearchAccountResults" type="query"/>
+  </exec>
+  <exec from="DIVIDED_SEARCHED_ACCOUNTS" key="SEARCH_RESULT" to="SEARCH_RESULT" type="extract"/>
+  <exec from="SEARCH_RESULT" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SEARCH_RESULT" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SEARCHED_ACCOUNTS" type="copy"/>
+ </exec>
+</event>

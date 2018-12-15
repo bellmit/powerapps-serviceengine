@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" from="EFFECTIVE_DATE" nextweekday="false" startmonth="false" to="CURRENT_DATE" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec allocationsize="100" group="ACCOUNT_ID" statement="getCurrentMonthTotalPayment" threadcount="10" type="stream">
+  <exec to="RESULT_LIST" type="copy"/>
+  <exec argument="RESULT_LIST" type="loop">
+   <exec recordcount="UPDATE_COUNT" statement="updateCurrentMonthTotalPayment" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="UPDATE_COUNT" operator="=" rhsvalue="0"/>
+    </conditions>
+    <exec statement="insertCurrentMonthTotalPayment" type="insert"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

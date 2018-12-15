@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec statement="insertTreatmentCcrisService" type="insert"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec recordcount="" statement="updateTreatmentCcrisService" type="update"/>
+ </exec>
+ <exec statement="deleteTreatmentCcrisPaymentActivity" type="delete"/>
+ <exec from="ID" key="TREATMENT_ID" to="CCRIS_TABLE" type="copyintolist"/>
+ <exec argument="CCRIS_TABLE" type="loop">
+  <exec statement="insertTreatmentCcrisPaymentActivity" type="insert"/>
+ </exec>
+</event>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="USER_ID" type="user"/>
+ <exec statement="getUserUserType" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="UPL"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec argument="UPL_WLT_LIST" query="getWorkListTabsReferenceUpl" type="query"/>
+  </exec>
+  <exec from="UPL_WLT_LIST" to="RESULT_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="HP"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec argument="HP_WLT_LIST" query="getWorkListTabsReferenceHp" type="query"/>
+  </exec>
+  <exec from="HP_WLT_LIST" to="RESULT_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="MG"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec argument="MG_WLT_LIST" query="getWorkListTabsReferenceMgOd" type="query"/>
+  </exec>
+  <exec from="MG_WLT_LIST" to="RESULT_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="OD"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec argument="OD_WLT_LIST" query="getWorkListTabsReferenceOd" type="query"/>
+  </exec>
+  <exec from="OD_WLT_LIST" to="RESULT_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec argument="RNR_WLT_LIST" query="getWorkListTabsReferenceRnR" type="query"/>
+  </exec>
+  <exec from="RNR_WLT_LIST" to="RESULT_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="agencyWorkListTabs"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="agencyuser"/>
+   </conditions>
+   <exec argument="AGENCY_WLT_LIST" query="getWorkListTabsReferenceAgency" type="query"/>
+  </exec>
+  <exec from="AGENCY_WLT_LIST" to="RESULT_LIST" type="copy"/>
+ </exec>
+ <exec argument="RESULT_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="IS_EXCLUSIVE" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="&lt;html&gt;&lt;strong&gt;{0}&lt;/strong&gt;&lt;/html&gt;" target="DESCRIPTION" type="formattext">
+    <key value="DESCRIPTION"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="doNothing" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="RESULT_LIST" operator="exists" rhsvalue=""/>
+   </conditions>
+   <exec key="KEEP" minuend="RESULT_LIST" subtrahend="WLT_FALSE" to="RESULT_LIST" type="remove"/>
+  </exec>
+ </exec>
+ <exec from="RESULT_LIST" type="copy"/>
+</event>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="employmentMaintenanceStatusService">
+
+<select id="getEmploymentMaintenanceEmployerCategory" resultMap="global.ref">
+<include refid="pleaseSelectRef"/>
+union
+<include refid="refselect"/> from PTREMPLOYER_CATEGORY_REF
+</select>
+
+<select id="getEmploymentMaintenanceEmployerCode" resultMap="global.ref">
+select NULL, <include refid="pleaseSelectText"/>, NULL, false , -1<include refid="fromdual"/>
+union
+<include refid="refselect"/> from PTREMPLOYER_REF
+</select>
+
+<select id="getEmploymentMaintenanceEmploymentStatus" resultMap="global.ref">
+<include refid="pleaseSelectRef"/>
+union
+<include refid="refselect"/> from PTREMPLOYMENT_STATUS_REF
+</select>
+  
+  
+  
+	<resultMap class="hmap" id="getTreatmentEmploymentMaintenance">
+		<result property="TREATMENT_ID" javaType="long"/>
+		<result property="TYPE_STATUS_ID" javaType="long"/>
+		<result property="SUBTYPE_ID" javaType="long"/>
+		<result property="EMPLOYER_CATEGORY_ID" javaType="long"/>
+		<result property="EMPLOYER_ID" javaType="long"/>
+		<result property="EMPLOYMENT_STATUS_ID" javaType="long"/>
+		<result property="EXCLUDE_FROM_LEGAL" javaType="long"/>
+	</resultMap>
+	
+	<select id="getTreatmentEmploymentMaintenance" resultMap="getTreatmentEmploymentMaintenance">
+		select
+		TREATMENT_ID,TYPE_STATUS_ID,SUBTYPE_ID,EMPLOYER_CATEGORY_ID,EMPLOYER_ID,
+		EMPLOYMENT_STATUS_ID,EXCLUDE_FROM_LEGAL
+		from PTRTREATMENT_EMPLOYMENT_MAINTENANCE
+		where TREATMENT_ID=#ID#
+	</select>
+	
+	<insert id="insertTreatmentEmploymentMaintenance" parameterClass="map"> 
+		INSERT INTO PTRTREATMENT_EMPLOYMENT_MAINTENANCE (TREATMENT_ID, ACCOUNT_ID, SUBTYPE_ID, TYPE_STATUS_ID,
+		EMPLOYER_CATEGORY_ID, EMPLOYER_ID, EMPLOYMENT_STATUS_ID, EXCLUDE_FROM_LEGAL) 
+		values (#ID#, #ACCOUNT_ID#, #SUBTYPE_ID#, #TYPE_STATUS_ID#,
+		#EMPLOYER_CATEGORY_ID#, #EMPLOYER_ID#, #EMPLOYMENT_STATUS_ID#, #EXCLUDE_FROM_LEGAL#) 
+	</insert>
+	
+	<update id="updateTreatmentEmploymentMaintenance" parameterClass="map"> 
+		UPDATE PTRTREATMENT_EMPLOYMENT_MAINTENANCE 
+		set 
+		EMPLOYER_CATEGORY_ID = #EMPLOYER_CATEGORY_ID#, 
+		EMPLOYER_ID = #EMPLOYER_ID#, 
+		EMPLOYMENT_STATUS_ID = #EMPLOYMENT_STATUS_ID#, 
+		EXCLUDE_FROM_LEGAL = #EXCLUDE_FROM_LEGAL#,
+		SUBTYPE_ID=#SUBTYPE_ID#,
+		TYPE_STATUS_ID=#TYPE_STATUS_ID#
+		where TREATMENT_ID = #ID#
+	</update>
+
+<insert id="insertCustomerEmploymentMaintenance" parameterClass="map"> 
+		INSERT INTO ptrcustomer_employment_maintenance (CUSTOMER_ID,
+		EMPLOYER_CATEGORY_ID, EMPLOYER_ID, EMPLOYMENT_STATUS_ID, EXCLUDE_FROM_LEGAL, NOTE_TEXT) 
+		values (#CUSTOMER_ID#,
+		#EMPLOYER_CATEGORY_ID#, #EMPLOYER_ID#, #EMPLOYMENT_STATUS_ID#, #EXCLUDE_FROM_LEGAL#, #NOTE_TEXT#) 
+	</insert>
+	
+	<update id="updateCustomerEmploymentMaintenance" parameterClass="map"> 
+		UPDATE ptrcustomer_employment_maintenance 
+		set 
+		EMPLOYER_CATEGORY_ID = #EMPLOYER_CATEGORY_ID#, 
+		EMPLOYER_ID = #EMPLOYER_ID#, 
+		EMPLOYMENT_STATUS_ID = #EMPLOYMENT_STATUS_ID#,
+		NOTE_TEXT = #NOTE_TEXT#
+		where CUSTOMER_ID = #CUSTOMER_ID#
+	</update>
+
+
+</sqlMap>

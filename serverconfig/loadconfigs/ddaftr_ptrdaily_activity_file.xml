@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="" fullcache="false" mode="mixed" padline="true" type="fixed" verifyfilekey="false">
+ <doc/>
+ <table>PTRDAILY_ACTIVITY_FILE</table>
+ <recordindicatortag/>
+ <xquery/>
+ <generatedkey>ID</generatedkey>
+ <generatedkeyseqname>PTRDAILY_ACTIVITY_FILE_ID</generatedkeyseqname>
+ <querywhere>
+  <select/>
+  <update/>
+ </querywhere>
+ <post>
+  <insertinsertion/>
+  <insertupdate/>
+  <updateinsertion/>
+  <updateupdate/> 
+ </post>
+ <header/>
+ <trailer/>
+
+<field isexternal="true">
+ <name>ACCOUNT_NUMBER</name>
+ <default/>
+ <location end="26" start="8"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isexternal="true">
+ <name>ACCOUNT_TYPE_ID</name>
+ <default/>
+ <location end="7" start="7"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup>
+  <query isoptional="false">
+   select id from ptraccount_type_ref where code = #ACCOUNT_TYPE_ID#</query>
+ </lookup>
+ <remarks/>
+ </field>
+<field iskey="true">
+ <name>ACCOUNT_ID</name>
+ <default/>
+ <location end="0" start="0"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup>
+  <query isoptional="false">
+   select account_id from ptraccount where account_number = #ACCOUNT_NUMBER:VARCHAR# and ACCOUNT_TYPE_ID = #ACCOUNT_TYPE_ID:VARCHAR#</query>
+ </lookup>
+ <remarks/>
+ </field>
+
+<field isoptional="true">
+ <name>DEBIT_BRANCH</name>
+ <default/>
+ <location end="6" start="2"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>SEQUENCE_NO</name>
+ <default/>
+ <location end="35" start="27"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+
+<field iskey="true">
+ <name>AFT_EXCEPTION_CODE</name>
+ <default/>
+ <location end="36" start="36"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('PTRLOAD_EXECUTION_ID')</insertkey>
+  </lookup>
+ </field>
+</load>

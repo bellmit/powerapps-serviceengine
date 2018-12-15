@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="agencyCommissionEvaluation" target="PROCESS_NAME" type="formattext"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="false" type="date"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MAXIMUM_LOAD_EXECUTION_ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec statement="getPaymentMaximumLoadExecution" type="select"/>
+ </exec>
+ <exec event="batch.beforeLoadProcessing" ignoreresult="true" type="raise"/>
+ <exec statement="selectOne" type="select"/>
+ <exec statement="selectOneHundredth" type="select"/>
+ <exec allocationsize="100" group="TRANSACTION_ID" statement="getAgencyPaymentsForCommissionEvaluation" threadcount="10" type="stream">
+  <exec to="PAYMENTS_LIST" type="copy"/>
+  <exec from="ONE_HUNDREDTH" key="ONE_HUNDREDTH" to="PAYMENTS_LIST" type="copyintolist"/>
+  <exec from="NEGATIVE_ONE" key="NEGATIVE_ONE" to="PAYMENTS_LIST" type="copyintolist"/>
+  <exec from="ZERO" key="ZERO" to="PAYMENTS_LIST" type="copyintolist"/>
+  <exec argument="PAYMENTS_LIST" condition="COMMISSION_EXIST" type="conditionalloop">
+   <exec type="transaction">
+    <exec document="DOCUMENT_ID" key="COMMISSION_RATE" type="executedecisiontree"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COMMISSION_RATE" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec from="TRUE" to="COMMISSION_EXIST" type="copy"/>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="STATUS_ID" operator="&lt;&gt;" rhsvalue="15007"/>
+      </conditions>
+      <exec type="nullify">
+       <key value="COMMISSION_RATE"/>
+      </exec>
+     </exec>
+    </exec>
+    <exec lhs="COMMISSION_RATE" rhs="100" target="COMMISSION_RATE" type="multiply"/>
+    <exec statement="getAgencyPaymentsForAssignmentAlreadyCredited" type="select"/>
+    <exec lhs="CREDITED_PAYMENT_TOTAL" rhs="AMOUNT" target="PAYMENT_AMOUNT_TO_DATE" type="add"/>
+    <exec from="AMOUNT" to="PAYMENT_AMOUNT" type="copy"/>
+    <exec from="NO_CAP" to="PAYMENT_CAP" type="copy"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="CREDITED_PAYMENT_TOTAL" operator="greater than value of" rhsvalue="PAYMENT_CAP"/>
+     </conditions>
+     <exec from="ZERO" to="PAYMENT_AMOUNT" type="copy"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="PAYMENT_AMOUNT_TO_DATE" operator="greater than value of" rhsvalue="PAYMENT_CAP"/>
+      <condition lhsfield="CREDITED_PAYMENT_TOTAL" operator="less than value of" rhsvalue="PAYMENT_CAP"/>
+     </conditions>
+     <exec lhs="CREDITED_PAYMENT_TOTAL" rhs="NEGATIVE_ONE" target="NEGATIVE_CREDITED_PAYMENT_TOTAL" type="multiply"/>
+     <exec lhs="PAYMENT_CAP" rhs="NEGATIVE_CREDITED_PAYMENT_TOTAL" target="PAYMENT_AMOUNT" type="add"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="COMMISSION_RATE" operator="is empty" rhsvalue=""/>
+     </conditions>
+     <exec from="ZERO" to="COMMISSION_RATE" type="copy"/>
+    </exec>
+    <exec lhs="COMMISSION_RATE" rhs="PAYMENT_AMOUNT" target="COMMISSION" type="multiply"/>
+    <exec lhs="COMMISSION" rhs="ONE_HUNDREDTH" target="COMMISSION_AMOUNT" type="multiply"/>
+    <exec statement="insertAgencyPaymentCommissionRecord" type="insert"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec event="batch.afterLoadProcessing" ignoreresult="true" type="raise"/>
+</event>

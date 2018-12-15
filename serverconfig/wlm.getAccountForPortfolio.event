@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" to="RESULT_LIST" type="createlist"/>
+ <exec event="query.validatePortfolioSearch" ignoreresult="true" type="raise"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TOTAL_SEARCH_ARGUMENTS" operator="equal to value of" rhsvalue="SEARCHED_FILTERS"/>
+  </conditions>
+  <exec message="false" target="IS_GREATER_THAN_ONE_ARGS" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SEARCHED_FILTERS" operator="less than value of" rhsvalue="TOTAL_SEARCH_ARGUMENTS"/>
+  </conditions>
+  <exec message="true" target="IS_GREATER_THAN_ONE_ARGS" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SEARCHED_FILTERS" operator="greater than value of" rhsvalue="TOTAL_SEARCH_ARGUMENTS"/>
+  </conditions>
+  <exec message="false" target="IS_GREATER_THAN_ONE_ARGS" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_GREATER_THAN_ONE_ARGS" operator="=" rhsvalue="false"/>
+  </conditions>
+  <exec statement="getTrue" type="select"/>
+  <exec from="TRUE" key="LESS_THAN_ONE_ARGUMENT" to="RESULT_LIST" type="copyintolist"/>
+  <exec from="DISABLE_PREV" key="DISABLE_PREV" to="RESULT_LIST" type="copyintolist"/>
+  <exec from="DISABLE_NEXT" key="DISABLE_NEXT" to="RESULT_LIST" type="copyintolist"/>
+  <exec from="RESULT_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_GREATER_THAN_ONE_ARGS" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec text="Get search arguments" type="comment">
+   <exec message="getPagingArguments" target="PAGING_CONDITION" type="formattext"/>
+  </exec>
+  <exec text="Check pagination condition" type="comment">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAGING_CONDITION" operator="=" rhsvalue="getPagingArguments"/>
+    </conditions>
+    <exec event="wlm.searchPaging" ignoreresult="true" type="raise"/>
+   </exec>
+  </exec>
+  <exec text="Get portfolio accounts" type="comment">
+   <exec argument="PORTFOLIO_ACCOUNT_LIST" query="getPortfolioAccountIds" type="query"/>
+   <exec argument="TOTAL_ACCOUNT_LIST" query="getPortfolioAccountIdCount" type="query"/>
+   <exec list="TOTAL_ACCOUNT_LIST" to="TOTAL_ACCOUNT_COUNT" type="countlist"/>
+   <exec statement="getTotalPortfolioPageNumber" type="select"/>
+   <exec from="PORTFOLIO_ACCOUNT_LIST" to="ACCOUNT_LIST" type="copy"/>
+   <exec from="PORTFOLIO_ACCOUNT_LIST" key="ACCOUNT_ID" to="ACCOUNTS" type="extract"/>
+   <exec list="ACCOUNTS" to="COUNT" type="countlist"/>
+  </exec>
+  <exec text="Get portfolio details" type="comment">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    </conditions>
+    <exec event="wlm.getAccountForPortfolioDetails" ignoreresult="true" type="raise"/>
+   </exec>
+  </exec>
+  <exec text="Get pagination process" type="comment">
+   <exec message="getPagingProcess" target="PAGING_CONDITION" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAGING_CONDITION" operator="=" rhsvalue="getPagingProcess"/>
+    </conditions>
+    <exec event="wlm.searchPaging" ignoreresult="true" type="raise"/>
+   </exec>
+   <exec from="PAGE_NUMBER" key="PAGE_NUMBER" to="RESULT_LIST" type="copyintolist"/>
+   <exec message="Page {0} of {1}" target="PAGE_NUMBER_DESC" type="formattext">
+    <key value="PAGE_NUMBER"/>
+    <key value="TOTAL_PAGE_COUNT"/>
+   </exec>
+   <exec from="DISABLE_PREV" key="DISABLE_PREV" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="PAGE_NUMBER_DESC" key="PAGE_NUMBER_DESC" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="DISABLE_NEXT" key="DISABLE_NEXT" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="COUNT" key="COUNT" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="ACCOUNT_LIST" key="ACCOUNT_LIST" to="RESULT_LIST" type="copyintolist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+    </conditions>
+    <exec statement="getTrue" type="select"/>
+    <exec from="TRUE" key="NO_RECORDS_FOUND" to="RESULT_LIST" type="copyintolist"/>
+   </exec>
+   <exec from="RESULT_LIST" type="copy"/>
+  </exec>
+ </exec>
+</event>

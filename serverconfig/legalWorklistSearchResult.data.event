@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getLegalWorklistSearchAccountResults"/>
+  <query value="getAgencyAssignmentDetails"/>
+  <query value="getLegalMonitoringCustomerPropertyData"/>
+  <query value="getPreviousAssignmentDetails"/>
+  <query value="getCustomerHostContactNumber"/>
+  <target value="RESULT_LIST"/>
+  <target value="ASSIGNMENT_DETAILS"/>
+  <target value="PROPERTY_DATA"/>
+  <target value="PREVIOUS_ASSIGNMENT_DETAILS"/>
+  <target value="HOST_CONTACT_NUMBERS"/>
+ </exec>
+ <exec type="parallelquery">
+  <query value="getCurrentAssignmentDetails"/>
+  <query value="getGuarantorInfoForECA"/>
+  <query value="getLegalWorklistPaymentMethod"/>
+  <query value="getAgencyAssignmentAcountStatusColor"/>
+  <query value="getCustomerFirstJointAccountDetails"/>
+  <target value="CURRENT_ASSIGNMENT_DETAILS"/>
+  <target value="GUARANTOR_LIST"/>
+  <target value="PAYMENT_METHOD"/>
+  <target value="COLORS"/>
+  <target value="FIRST_JOINT_DETAILS"/>
+ </exec>
+ <exec key="ACCOUNT_ID" list="HOST_CONTACT_NUMBERS" name="COLUMN" target="HOST_CONTACT_NUMBERS_PIVOT" type="pivotlist" value="VALUE"/>
+ <exec from="ASSIGNMENT_DETAILS" key="AGENCY_ASSIGNMENT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="PROPERTY_DATA" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="RESULT_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="PREVIOUS_ASSIGNMENT_DETAILS" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="HOST_CONTACT_NUMBERS_PIVOT" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="CURRENT_ASSIGNMENT_DETAILS" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="GUARANTOR_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="PAYMENT_METHOD" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="COLORS" key="AGENCY_ASSIGNMENT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="FIRST_JOINT_DETAILS" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+ <exec from="SECOND_JOINT_DETAILS" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+</event>

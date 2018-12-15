@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="MODULE_NAME" key="MODULE_NAME" type="copyintolist"/>
+ <exec from="TRUE" key="TEMPLATE_LOADED" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="eca-invoice"/>
+   </conditions>
+   <exec message="ECA_INVOICE" target="REPORT_DESIGN" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="eca-adhoc"/>
+   </conditions>
+   <exec message="ECA_ADHOC_INVOICE" target="REPORT_DESIGN" type="formattext"/>
+  </exec>
+  <exec statement="getEcaBillingReportDesign" type="select"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec content="LETTER_CONTENT" documentid="DOCUMENT_ID" documenttype="9" type="fetchdecisiontree"/>
+  </exec>
+ </exec>
+</event>

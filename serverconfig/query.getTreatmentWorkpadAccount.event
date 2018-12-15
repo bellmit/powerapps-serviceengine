@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec query="getTreatmentWorkpadAccount" type="query"/>
+ <exec type="loop">
+  <exec statement="getAccountLatestCollateral" type="select"/>
+  <exec argument="LINKED_ACCOUNT_LIST" query="getTreatmentWorkpadLinkedAccounts" type="query"/>
+  <exec message="SHOW" target="_AF" type="formattext"/>
+  <exec message="HIDE" target="_PF" type="formattext"/>
+  <exec message="HIDE" target="_PFI" type="formattext"/>
+  <exec message="HIDE" target="_CASA" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LOAN_CATEGORY_PERMISSIONS" operator="=" rhsvalue="PFI"/>
+   </conditions>
+   <exec message="SHOW" target="_PFI" type="formattext"/>
+   <exec message="HIDE" target="_AF" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LOAN_CATEGORY_PERMISSIONS" operator="=" rhsvalue="PF"/>
+   </conditions>
+   <exec message="SHOW" target="_PF" type="formattext"/>
+   <exec message="HIDE" target="_AF" type="formattext"/>
+  </exec>
+ </exec>
+</event>

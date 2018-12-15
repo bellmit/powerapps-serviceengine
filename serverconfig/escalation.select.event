@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec statement="getTreatmentEscalation" type="select"/>
+ <exec type="parallelquery">
+  <query value="getEscalationReason"/>
+  <target value="ESCALATION_REASON_LIST"/>
+ </exec>
+ <exec argument="ESCALATE_TO_LIST" query="getManualEscalationAssignTo" type="query"/>
+ <exec from="TRUE" key="LOAD_ASSIGN_TO" to="SUBTYPE_LIST" type="copyintolist"/>
+</event>

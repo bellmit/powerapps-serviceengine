@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROCESS_TYPE_ID" operator="=" rhsvalue="46"/>
+  </conditions>
+  <exec message="FOURTH_SCHEDULE_ACTION_DATE" target="COLUMN" type="formattext"/>
+  <exec recordcount="UPDATE_COUNT" statement="updateAccountInformation" type="update"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="UPDATE_COUNT" operator="=" rhsvalue="0"/>
+   </conditions>
+   <exec statement="insertAccountInformation" type="insert"/>
+  </exec>
+ </exec>
+</event>

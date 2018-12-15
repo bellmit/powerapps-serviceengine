@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_DATE" truncate="true" type="date"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TOGGLE" operator="=" rhsvalue="1"/>
+  </conditions>
+  <exec event="kpi.paidContactStatus" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TOGGLE" operator="=" rhsvalue="2"/>
+  </conditions>
+  <exec event="kpi.unpaidContactStatus" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec from="DAILY_CONTACT_STATUS_PAID" key="DAILY_CONTACT_STATUS_PAID" type="copyintolist"/>
+ <exec from="MONTH_TO_DATE_CONTACT_STATUS_PAID" key="MONTH_TO_DATE_CONTACT_STATUS_PAID" type="copyintolist"/>
+ <exec from="DAILY_CONTACT_STATUS_UNPAID" key="DAILY_CONTACT_STATUS_UNPAID" type="copyintolist"/>
+ <exec from="MONTH_TO_DATE_CONTACT_STATUS_UNPAID" key="MONTH_TO_DATE_CONTACT_STATUS_UNPAID" type="copyintolist"/>
+</event>

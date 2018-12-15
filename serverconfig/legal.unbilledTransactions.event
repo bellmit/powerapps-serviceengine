@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="TRANSACTIONS" query="getLegalUnbilledTransaction" type="query"/>
+ <exec argument="TRANSACTIONS" type="loop">
+  <exec argument="EXPENSES" query="getTransactionForExpenses" type="query"/>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="TRANSACTIONS" key="TRANSACTIONS" type="copyintolist"/>
+ <exec from="SELECTED_TRANSACTION" key="SELECTED_TRANSACTION" type="copyintolist"/>
+</event>

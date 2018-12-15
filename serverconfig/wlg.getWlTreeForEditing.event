@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TREE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TREE_ID" operator="&lt;&gt;" rhsvalue="parent.TREE_ID"/>
+   </conditions>
+   <exec count="1" type="createlist"/>
+   <exec from="TREE_ID" key="TREE_ID" type="copyintolist"/>
+   <exec type="loop">
+    <exec statement="getWlTreeForEditing" type="select"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

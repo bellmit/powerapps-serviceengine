@@ -1,0 +1,1068 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="workListTabService">
+
+
+<resultMap id="selectEmptyList" class="hmap">
+<result property="ONE" javaType="int"/>
+</resultMap>
+
+<select id="selectEmptyList" resultMap="selectEmptyList">
+select 1
+</select>
+
+<resultMap id="getAccountListAccountIds" class="java.util.HashMap">
+<result property="ACCOUNT_ID" javaType="long"/>
+</resultMap>
+<select id="getAccountListAccountIds" resultMap="getAccountListAccountIds" parameterClass="map">
+select account_id from ptraccount
+where
+<isNotNull property="ACCOUNT_ID_LIST">
+<isNotEmpty property="ACCOUNT_ID_LIST"> 
+account_id in <iterate property="ACCOUNT_ID_LIST" open="(" close=")" conjunction=",">#ACCOUNT_ID_LIST[]#</iterate>
+</isNotEmpty>
+<isEmpty property="ACCOUNT_ID_LIST">
+1 = 2
+</isEmpty>
+</isNotNull>
+<isNull property="ACCOUNT_ID_LIST">
+1 = 2
+</isNull>
+</select>
+
+<select id="getWorkListAccountIds" resultMap="getAccountListAccountIds" parameterClass="map">
+select assign.account_id 
+<isEqual property="USER_TYPE_CODE" compareValue="agencyuser" >
+from PTRAGENCY_WORK_LIST_ASSIGNMENT assign
+</isEqual>
+<isNotEqual property="USER_TYPE_CODE" compareValue="agencyuser" >
+from PTRACCOUNT_WORK_LIST_ASSIGNMENT assign
+</isNotEqual>
+left join ptrwltab_evaluation w on assign.account_id = w.account_id
+where assign.work_list_id = #WORK_LIST_ID#  
+</select>
+
+<resultMap id="getLastContactTreatmentProcessForWorkList-map" class="java.util.HashMap">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="TREATMENT_PROCESS_ID" javaType="long"/>     
+</resultMap>
+
+<select id="getLastContactTreatmentProcessForWorkList" resultMap="getLastContactTreatmentProcessForWorkList-map" parameterClass="map">
+select ACCOUNT_ID,TREATMENT_PROCESS_ID from PTRTREATMENT_CALL_SUMMARY
+where 
+account_id in (0 <iterate prepend="," property="ACCOUNTS" conjunction=",">#ACCOUNTS[]#</iterate>)
+</select>
+
+<resultMap id="getLastContactStatusForWorkList-map" class="java.util.HashMap">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CONTACT_STATUS" javaType="string"/> 
+<result property="CONTACT_STATUS_DATE" javaType="date"/>    
+<result property="STATUS_CODE"  javaType="string"/>
+<result property="STATUS_CODE_DATE"  javaType="date"/>
+</resultMap>
+
+<select id="getLastContactStatusForWorkList" resultMap="getLastContactStatusForWorkList-map" parameterClass="map">
+select plan.ACCOUNT_ID, 
+ref.treatproc_type_status_desc as CONTACT_STATUS, process.created_date as CONTACT_STATUS_DATE,
+ref.treatproc_type_status_desc, process.created_date
+from ptrtreat_proc_type_status_ref ref, 
+ptrtreatment_process process, 
+ptracc_treatment_plan plan 
+where ref.treatproc_type_status_id = process.process_type_status_id 
+and plan.treatment_plan_id =process.treatment_plan_id 
+and process.treatment_process_id in (-1
+<iterate property="CALL_ID_LIST" prepend="," conjunction=",">#CALL_ID_LIST[]#</iterate>)
+</select>
+
+
+
+<resultMap id="getLastContactStatusForPortfolio" class="java.util.HashMap">
+<result property="LAST_CALL_TYPE_STATUS_ID" javaType="long"/>
+<result property="CONTACT_STATUS" javaType="string"/> 
+</resultMap>
+
+<select id="getLastContactStatusForPortfolio" resultMap="getLastContactStatusForPortfolio" parameterClass="map">
+select 
+TREATPROC_TYPE_STATUS_ID as LAST_CALL_TYPE_STATUS_ID, 
+TREATPROC_TYPE_STATUS_DESC 
+from ptrtreat_proc_type_status_ref 
+where treatproc_type_id = 8
+</select>
+
+
+
+
+
+
+
+<resultMap class="java.util.HashMap" id="getWltWorkList" >
+<result property="WORK_LIST_ID" javaType="long"/>
+<result property="WORK_LIST_NAME" javaType="string"/>
+<result property="WORK_LIST_DESC" javaType="string"/>
+<result property="USER_ID" javaType="string"/>
+<result property="CREATED_TIME" javaType="java.sql.Timestamp"/>
+<result property="EXTRACT_TO_DIALER" javaType="java.lang.Boolean"/>
+</resultMap>
+
+<sql id="getWltWorkListFragment">
+SELECT
+wlk.WORK_LIST_ID as WORK_LIST_ID,
+wlk.WORK_LIST_NAME AS WORK_LIST_NAME,
+wlk.WORK_LIST_DESC,
+wlk.WORK_LIST_CREATOR_ID,
+wlk.WORK_LIST_CREATE_DATE
+
+<isEqual property="TYPE_CODE" compareValue="bankuser">
+,wlk.EXTRACT_TO_DIALER
+FROM PTRWORK_LIST wlk
+INNER JOIN PTRUSER_WL_ASSIGN usr on wlk.WORK_LIST_ID = usr.WORK_LIST_ID
+</isEqual>
+<isEqual property="TYPE_CODE" compareValue="agencyuser">
+,0 as EXTRACT_TO_DIALER
+FROM PTRAGENCY_WORK_LIST wlk
+INNER JOIN PTRAGENCY_USER_WORK_LIST_ASSIGN usr on wlk.WORK_LIST_ID = usr.WORK_LIST_ID
+</isEqual>
+</sql>
+
+<select id="getWorkListHp" resultMap="getWltWorkList">
+<include refid="getWltWorkListFragment" />
+where (wlk.DISABLE  is null or  wlk.DISABLE != true)
+and wlk.WORK_LIST_GROUP in (3)
+and usr.USER_ID = #USER_ID#
+order by UPPER(wlk.WORK_LIST_NAME) asc
+</select>
+
+
+<select id="getWorkListUpl" resultMap="getWltWorkList">
+<include refid="getWltWorkListFragment" />
+where (wlk.DISABLE  is null or  wlk.DISABLE != true)
+and wlk.WORK_LIST_GROUP in (2)
+and usr.USER_ID = #USER_ID#
+order by UPPER(wlk.WORK_LIST_NAME) asc
+</select>
+
+
+<select id="getWorkListMg" resultMap="getWltWorkList">
+<include refid="getWltWorkListFragment" />
+where (wlk.DISABLE  is null or  wlk.DISABLE != true)
+and wlk.WORK_LIST_GROUP IN (1)
+and usr.USER_ID = #USER_ID#
+order by UPPER(wlk.WORK_LIST_NAME) asc
+</select>
+
+<select id="getWorkListOd" resultMap="getWltWorkList">
+<include refid="getWltWorkListFragment" />
+where (wlk.DISABLE  is null or  wlk.DISABLE != true)
+and wlk.WORK_LIST_GROUP in (4,11,12,13)
+and usr.USER_ID = #USER_ID#
+order by UPPER(wlk.WORK_LIST_NAME) asc
+</select>
+
+<select id="getWorkListAgency" resultMap="getWltWorkList">
+
+SELECT
+       wlk.work_list_id as WORK_LIST_ID,
+       wlk.work_list_name AS WORK_LIST_NAME,
+       wlk.work_list_name as description,
+       wlk.work_list_creator_id as CREATED_USER_ID,
+       wlk.work_list_create_date as CREATED_TIME,
+       0 as EXTRACT_TO_DIALER
+FROM PTRAGENCY_WORK_LIST wlk
+         INNER JOIN PTRAGENCY_USER_WORK_LIST_ASSIGN usr on wlk.work_list_id = usr.WORK_LIST_ID
+where wlk.DISABLE = 'false'
+  and usr.USER_ID = #USER_ID#
+order by UPPER(wlk.work_list_name) asc;
+</select>
+
+
+
+<select id="getWorkListRnR" resultMap="getWltWorkList">
+SELECT
+wlk.ID as WORK_LIST_ID,
+wlk.NAME AS WORK_LIST_NAME,
+wlk.DESCRIPTION,
+wlk.CREATED_USER_ID,
+wlk.CREATED_TIME,
+cast(null as bigint) as EXTRACT_TO_DIALER
+FROM PTRRNR_WORK_LIST wlk
+INNER JOIN PTRRNR_USER_WL_ASSIGN usr on wlk.id = usr.WORK_LIST_ID
+where wlk.DISABLE = 0
+and usr.USER_ID = #USER_ID#
+order by UPPER(wlk.NAME) asc
+</select>
+
+<resultMap id="getWorkListTabsReference" class="java.util.HashMap">
+<result property="WORK_LIST_TAB_ID" javaType="java.lang.Long"/>
+<result property="ACCESS_RIGHTS_ID" javaType="java.lang.Long"/>
+<result property="CODE" javaType="java.lang.String"/>
+<result property="DESCRIPTION" javaType="java.lang.String"/>
+<result property="SORT_PRIORITY" javaType="java.lang.Long"/>
+<result property="IS_EXCLUSIVE" javaType="java.lang.String"/>
+<result property="IS_EXCLUSIVE_SORT" javaType="java.lang.Long"/>
+</resultMap>
+
+<select id="getWorkListTabsReferenceHp" resultMap="getWorkListTabsReference">
+SELECT ID,ACCESS_RIGHTS_ID,CODE,DESCRIPTION,SORT_PRIORITY, 
+case when SORT_PRIORITY in (1,2,3,4,5) then 'true' else 'false' end as IS_EXCLUSIVE,
+case when SORT_PRIORITY in (1,2,3,4,5) then 1 else 0 end as IS_EXCLUSIVE_SORT
+FROM PTRWORK_LIST_TAB_REF WHERE TYPE_ID = 2 
+AND DISABLE = false
+ORDER BY IS_EXCLUSIVE_SORT desc, SORT_PRIORITY desc, DESCRIPTION asc
+</select>
+
+
+<select id="getWorkListTabsReferenceUpl" resultMap="getWorkListTabsReference">
+SELECT ID,ACCESS_RIGHTS_ID,CODE,DESCRIPTION,SORT_PRIORITY,
+case when SORT_PRIORITY in (1,2,3,4,5) then 'true' else 'false' end as IS_EXCLUSIVE,
+case when SORT_PRIORITY in (1,2,3,4,5) then 1 else 0 end as IS_EXCLUSIVE_SORT
+FROM PTRWORK_LIST_TAB_REF WHERE TYPE_ID = 1 
+AND DISABLE = false
+ORDER BY IS_EXCLUSIVE_SORT desc, SORT_PRIORITY desc, DESCRIPTION asc
+</select>
+
+<select id="getWorkListTabsReferenceMgOd" resultMap="getWorkListTabsReference">
+SELECT ID,ACCESS_RIGHTS_ID,CODE,DESCRIPTION,SORT_PRIORITY,
+case when SORT_PRIORITY in (1,2,3,4,5) then 'true' else 'false' end as IS_EXCLUSIVE,
+case when SORT_PRIORITY in (1,2,3,4,5) then 1 else 0 end as IS_EXCLUSIVE_SORT
+FROM PTRWORK_LIST_TAB_REF WHERE TYPE_ID = 3 
+AND DISABLE = false
+ORDER BY IS_EXCLUSIVE_SORT desc, SORT_PRIORITY desc, DESCRIPTION asc
+</select>
+
+<select id="getWorkListTabsReferenceRnR" resultMap="getWorkListTabsReference">
+SELECT ID,ACCESS_RIGHTS_ID,CODE,DESCRIPTION,SORT_PRIORITY, 
+case when SORT_PRIORITY in (1,2,3,4,5) then 'true' else 'false' end as IS_EXCLUSIVE,
+case when SORT_PRIORITY in (1,2,3,4,5) then 1 else 0 end as IS_EXCLUSIVE_SORT
+FROM PTRWORK_LIST_TAB_REF WHERE TYPE_ID = 5 
+AND DISABLE = false
+ORDER BY IS_EXCLUSIVE_SORT desc, SORT_PRIORITY desc, DESCRIPTION asc
+</select>
+
+<select id="getWorkListTabsReferenceAgency" resultMap="getWorkListTabsReference">
+SELECT ID,ACCESS_RIGHTS_ID,CODE,DESCRIPTION,SORT_PRIORITY, 
+case when SORT_PRIORITY in (1,2,3,4,5) then 'true' else 'false' end as IS_EXCLUSIVE,
+case when SORT_PRIORITY in (1,2,3,4,5) then 1 else 0 end as IS_EXCLUSIVE_SORT
+FROM PTRWORK_LIST_TAB_REF WHERE TYPE_ID = 6 
+AND DISABLE = false
+ORDER BY IS_EXCLUSIVE_SORT desc, SORT_PRIORITY desc, DESCRIPTION asc
+</select>
+
+
+
+<update id="updateIsolationToUncommittedRead">
+SET CURRENT ISOLATION UR
+</update>
+
+
+
+<resultMap class="java.util.HashMap" id="getBrokenPtpAccountData">
+<result property="ACCOUNT_ID"  javaType="long"/>
+</resultMap>  
+
+<select id="getBrokenPtpAccountData" resultMap="getBrokenPtpAccountData">
+select
+wlt.account_id
+from
+PTRACCOUNT_WORK_LIST_ASSIGNMENT wlassign
+inner join PTRWLTAB_EVALUATION wlt on wlassign.account_id = wlt.account_id
+where
+wlassign.work_list_id = #WORK_LIST_ID#
+and wlt.PTP_PENDING_SINCE_DATE is null 
+and wlt.LAST_BROKEN_PROMISE_DATE >= cast(#FIRST_OF_CURRENT_MONTH:DATE# as date)
+and wlt.PTP_DATE >= cast(#FIRST_OF_CURRENT_MONTH:DATE# as date)
+</select>
+
+
+
+<resultMap class="java.util.HashMap" id="getWltCallPtpTypeStatuses">
+<result property="CALL_PTP_TYPE_STATUS_ID"  javaType="long"/>
+</resultMap>
+
+<select id="getWltCallPtpTypeStatuses" resultMap="getWltCallPtpTypeStatuses">
+select 
+id 
+from ptrtreatment_type_status_ref 
+where type_id = 8
+AND (code IN ('DEADLINE_TO_PAY','PROMISE_TO_PAY'))
+ORDER BY status_id ASC
+</select>
+
+
+<sql id="wltCall-ptpCondition">
+wlt.LAST_CALL_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+and wlt.PTP_PENDING_SINCE_DATE >= #FIRST_OF_CURRENT_MONTH#
+and wlt.CALL_TYPE_STATUS_ID in 
+(0 <iterate  conjunction="," property="CALL_PTP_TYPE_LIST">#CALL_PTP_TYPE_LIST[].CALL_PTP_TYPE_STATUS_ID#</iterate>)
+</sql>
+
+
+<resultMap class="java.util.HashMap" id="getPtpInProgressAccountData">
+<result property="ACCOUNT_ID"  javaType="long"/>
+</resultMap>  
+
+<select id="getPtpInProgressAccountData" resultMap="getPtpInProgressAccountData">
+select
+wlt.account_id
+from
+PTRACCOUNT_WORK_LIST_ASSIGNMENT wlassign
+inner join PTRWLTAB_EVALUATION wlt on wlassign.account_id = wlt.account_id
+where
+wlassign.work_list_id = #WORK_LIST_ID#
+
+and 
+(
+(wlt.PTP_PENDING_SINCE_DATE >= #FIRST_OF_CURRENT_MONTH#)
+or
+<include refid="wltCall-ptpCondition"/>
+) 
+</select>
+
+
+<resultMap class="java.util.HashMap" id="getWltGrossCount">
+<result property="WORK_LIST_ID" column="WORK_LIST_ID"  javaType="java.lang.Long"/>
+<result property="COUNTER" column="COUNTER"  javaType="java.lang.Long"/>
+<result property="DESC"  column="DESC"  javaType="java.lang.String"/>
+</resultMap>
+<select id="getWltGrossCount" resultMap="getWltGrossCount">
+select cast(#WORK_LIST_ID# as bigint) as WORK_LIST_ID,  cast(#COUNT_GROSS_PAID# as bigint) as COUNTER, 'GROSS PAID' AS DESC
+union
+select cast(#WORK_LIST_ID# as bigint) as WORK_LIST_ID, cast(#COUNT_GROSS_PTP# as bigint) as COUNTER, 'GROSS PTP' AS DESC
+union
+select cast(#WORK_LIST_ID# as bigint) as WORK_LIST_ID, cast(#COUNT_GROSS_BP# as bigint) as COUNTER, 'GROSS BP' AS DESC
+union
+select cast(#WORK_LIST_ID# as bigint) as WORK_LIST_ID, cast(#COUNT_GROSS_WIP# as bigint) as COUNTER, 'GROSS WIP' AS DESC
+</select>
+
+
+<select id="getWltNetCount" resultMap="getWltGrossCount">
+select cast(#WORK_LIST_ID# as bigint) as WORK_LIST_ID,  cast(#NET_OPEN# as bigint) as COUNTER, 'NET OPENED' AS DESC
+</select>
+
+
+
+<resultMap class="java.util.HashMap" id="getWltCallWipTypeStatuses">
+<result property="WIP_CALL_TYPE_STATUS_ID"  javaType="long"/>
+</resultMap>
+
+<select id="getWltCallWipTypeStatuses" resultMap="getWltCallWipTypeStatuses">
+select 
+id 
+from 
+ptrtreatment_type_status_ref 
+where type_id = 8
+AND (code IN ('PLACE_UNS_IPR','SCHEDULE_MEET','CALL_SCH') or status_id = 15001)
+ORDER BY status_id ASC
+</select>
+
+<sql id="wltCall-unpaidCondition">
+eval.LAST_CALL_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>  
+<sql id="wltCall-wipCondition">
+eval.LAST_CALL_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+and eval.CALL_TYPE_STATUS_ID in 
+(
+select
+id
+from ptrtreatment_type_status_ref
+where type_id = 8
+AND
+(
+code IN
+(
+'PLACE_UNS_IPR',
+'SCHEDULE_MEET',
+'CALL_SCH',
+'PAC_4',
+'PAC_RNA',
+'PAC_UTP',
+'PAC_NEGO',
+'PAC_RTP',
+'PAC_LMTP'
+)
+OR status_id = 15001
+))
+
+</sql>
+<sql id="wltSms-wipCondition">
+eval.LAST_CALLER_INITIATED_SMS_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltTelegram-wipCondition">
+eval.LAST_TELEGRAM_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+
+<sql id="wltInstruction-wipCondition">
+eval.last_instruction_date  &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+
+<sql id="wltEmpMaintenance-wipCondition">
+eval.LAST_EMPLOYMENT_MAINTENANCE_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+
+<sql id="wltEarmark-wipCondition">
+eval.EARMARK_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltVisitation-wipCondition">
+eval.LAST_SITE_VISIT_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltCcris-wipCondition">
+eval.LAST_CCRIS_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltTps-wipCondition">
+(eval.LAST_TPS_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)  AND eval.THIRDPARTY_STATUS in (15004,15001))
+</sql>
+<sql id="wltMeeting-wipCondition">
+eval.LAST_MEETING_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltSendLetter-wipCondition">
+eval.LAST_LETTER_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltInstructLegal-wipCondition">
+eval.LAST_INSTRUCT_LEGAL_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltManagementApproval-wipCondition">
+(eval.LAST_MANAGEMENT_APPROVAL_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE) or 
+(eval.escalation_status_id is not null and eval.WIP_INDICATOR = 1)) 
+</sql>
+<sql id="wltRnR-wipConditionLegacy">
+(eval.TP_RNR is not null and eval.WIP_INDICATOR = 1)
+</sql>
+<sql id="wltRnR-wipCondition">
+eval.LAST_RNR_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE) 
+</sql>
+<sql id="wltRewrite-wipCondition">
+((eval.LAST_REWRITE_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE) and eval.REWRITE_PROCESS_STATUS in (15007,15004,15001) ) or 
+(eval.REWRITE_PROCESS_STATUS is not null and eval.WIP_INDICATOR = 1)) 
+</sql>
+<sql id="wltAccountReview-wipCondition">
+eval.LAST_ACCOUNT_REVIEW_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltAccountOutlook-wipCondition">
+eval.LAST_ACCOUNT_OUTLOOK_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltReview-wipCondition">
+eval.LAST_REVIEW_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltCourtOrder-wipCondition">
+(eval.LAST_COURT_ORDER_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)  AND eval.LAST_COURT_ORDER_STATUS_ID in (15004))
+</sql>
+<sql id="wltAuction-wipCondition">
+eval.LAST_AUCTION_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltShortFall-wipCondition">
+eval.LAST_SHORTFALL_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+<sql id="wltRepo-wipCondition">
+eval.LAST_REPO_DATE &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+
+<sql id="wltEmail-wipCondition">
+eval.last_email_date  &gt;= CAST(#FIRST_OF_MONTH# AS DATE)
+</sql>
+
+<resultMap class="java.util.HashMap" id="getInProgressAccountData">
+<result property="ACCOUNT_ID"  javaType="long"/>
+</resultMap>  
+
+<select id="getInProgressAccountData" resultMap="getInProgressAccountData">
+select
+wlassign.account_id
+from
+PTRACCOUNT_WORK_LIST_ASSIGNMENT wlassign
+inner join PTRWLTAB_EVALUATION eval on wlassign.account_id = eval.account_id
+<isEqual property="FUNCTIONALITY" compareValue="WLT">
+where wlassign.work_list_id = #WORK_LIST_ID#
+</isEqual>
+<isEqual property="FUNCTIONALITY" compareValue="CTI_EXTRACTION">
+where wlassign.work_list_id is not null
+</isEqual>
+
+and 
+(
+(<include refid="wltAccountOutlook-wipCondition"/>)
+
+or 
+(<include refid="wltCall-wipCondition"/>)
+or
+(<include refid="wltSms-wipCondition"/>)
+or
+(<include refid="wltTelegram-wipCondition"/>)
+or
+(<include refid="wltEarmark-wipCondition"/>)
+or
+(<include refid="wltVisitation-wipCondition"/>)
+or
+(<include refid="wltCcris-wipCondition"/>)
+or
+(<include refid="wltTps-wipCondition"/>)
+or
+(<include refid="wltMeeting-wipCondition"/>)
+or
+(<include refid="wltSendLetter-wipCondition"/>)
+or
+(<include refid="wltInstructLegal-wipCondition"/>)
+or
+(<include refid="wltManagementApproval-wipCondition"/>)
+or
+(<include refid="wltRnR-wipConditionLegacy"/>)
+or
+(<include refid="wltRewrite-wipCondition"/>)
+or
+(<include refid="wltAccountReview-wipCondition"/>)
+or
+(<include refid="wltReview-wipCondition"/>)
+or
+(<include refid="wltCourtOrder-wipCondition"/>)
+or
+(<include refid="wltAuction-wipCondition"/>)
+or
+(<include refid="wltRnR-wipCondition"/>)
+or
+(<include refid="wltEmpMaintenance-wipCondition"/>)
+or
+(<include refid="wltInstruction-wipCondition"/>)
+or
+(<include refid="wltEmail-wipCondition"/>)
+
+)
+</select>
+
+
+<resultMap class="java.util.HashMap" id="getWltAccountData">
+<result javaType="long" property="ACCOUNT_ID"/>
+</resultMap>
+<select id="getSupervisoryAccountData" resultMap="getWltAccountData">
+select account_id from ptraccount where account_id = -1
+</select>
+
+<select id="getPriorityAccountData" resultMap="getWltAccountData">
+select account_id from ptraccount where account_id = -1
+</select>
+
+<select id="getPaymentPlanAccountData" resultMap="getWltAccountData">
+select account_id from ptraccount where account_id = -1
+</select>
+
+<select id="getSiteVisitationAccountData" resultMap="getWltAccountData">
+select account_id from ptraccount where account_id = -1
+</select>
+
+<select id="getAgencyAssignedAccountData" resultMap="getWltAccountData">
+    select a.id as ACCOUNT_ID
+    from ptraccount a
+            inner join ptraccount_work_list_assignment wlassign
+            on a.id = wlassign.account_id
+             inner join ptraccount_agency_assignment assg
+                 on a.id = assg.account_id
+             inner join ptragency agency
+                 on agency.id = assg.agency_id
+             inner join ptragency_type_ref agency_type
+                 on agency_type.id = agency.type_id
+    where agency_type.code ='ECA'
+    <isNotNull property="WORK_LIST_ID">
+    and wlassign.work_list_id = #WORK_LIST_ID#
+    </isNotNull>
+</select>
+
+<select id="getRandRAccountData" resultMap="getWltAccountData">
+select account_id from ptraccount where account_id = -1
+</select>
+
+
+<resultMap class="java.util.HashMap" id="getInProgressAccountDataForRepo">
+<result property="ACCOUNT_ID"  javaType="long"/>
+</resultMap>
+<select id="getInProgressAccountDataForRepo" resultMap="getInProgressAccountDataForRepo">
+select -1
+</select>
+
+<resultMap class="java.util.HashMap" id="getInProgressAccountDataForShortfall">
+<result property="ACCOUNT_ID"  javaType="long"/>
+</resultMap>
+<select id="getInProgressAccountDataForShortfall" resultMap="getInProgressAccountDataForShortfall">
+select -1
+</select>
+
+<resultMap class="java.util.HashMap" id="getWltTreatmentStatusCode">
+<result property="PROCESS_STATUS_CODE"  javaType="java.lang.String"/>
+</resultMap>
+<select id="getWltTreatmentStatusCode" resultMap="getWltTreatmentStatusCode">
+select 
+code as PROCESS_STATUS_CODE 
+from ptrtreatment_type_status_ref 
+where type_id = #PROCESS_TYPE_ID# 
+and status_id = #PROCESS_STATUS_ID#
+and id = #PROCESS_TYPE_STATUS_ID#
+</select>
+
+
+
+
+<resultMap id="getAccountForWorklist" class="java.util.HashMap">
+<result property="CUSTOMER_ID"  javaType="string"/>
+<result property="ACCOUNT_ID"  javaType="long"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+<result property="CUSTOMER_NAME"  javaType="string"/>
+<result property="WORK_LIST_ID"  javaType="long"/>
+<result property="PRODUCT_TYPE_CODE"  javaType="string"/>
+<result property="MIA"  javaType="java.lang.Long"/>
+<result property="OPENING_MIA"  javaType="java.lang.Long"/>
+<result property="OPENING_NLB"  javaType="java.math.BigDecimal"/>
+<result property="OPENING_OS_LEDGER_BAL"  javaType="java.math.BigDecimal"/>
+<result property="RNR_INSTALLMENT_AMOUNT"  javaType="java.math.BigDecimal"/>
+<result property="PTP_DATE" javaType="date" />
+<result property="PTP_AMOUNT" javaType="double" />
+<result property="BP_DATE" javaType="ts"/>
+<result property="LAST_ACCOUNT_REVIEW_DATE" javaType="date" />
+<result property="CALL_STATUS_DATE" javaType="date" />
+<result property="LAST_PTP_DATE" javaType="date" />
+<result property="CALL_TYPE_STATUS_ID"  javaType="java.lang.Long"/>
+<result property="CALL_STATUS_ID"  javaType="java.lang.Long"/>
+<result property="RESULT_SOURCE"   javaType="string"/>
+
+<result property="FUNDING_DATE" javaType="date"/>
+<result property="NEXT_PAYMENT_DUE_DATE" javaType="date"/>
+<result property="LAST_PAYMENT_DATE" javaType="date"/>
+<result property="LAST_PAYMENT_AMOUNT"  javaType="$"/>
+<result property="MONTHLY_INSTALLMENT"  javaType="$"/>
+<result property="NEXT_INTEREST_DUE_DATE"  javaType="date"/>
+<result property="NLB"  javaType="$"/>
+<result property="MOVEMENT_TYPE"   javaType="string"/>
+
+
+</resultMap>
+
+
+<select id="getAccountForWorklist" resultMap="getAccountForWorklist" parameterClass="map">
+
+
+
+select
+customer.id as customer_id,
+a.id as ACCOUNT_ID,
+a.account_no as ACCOUNT_NUMBER,
+customer.customer_name as CUSTOMER_NAME,
+wlassign.work_list_id as WORK_LIST_ID,
+pr.code AS PRODUCT_TYPE_CODE,
+a.MONTHS_IN_ARREARS as MIA,
+wlassign.MONTHS_IN_ARREARS as OPENING_MIA,
+wlassign.NLB AS OPENING_NLB,
+wlassign.outstanding_balance as OPENING_OS_LEDGER_BAL,
+wl.installment_amount as RNR_INSTALLMENT_AMOUNT,
+
+wl.ptp_date,
+wl.PTP_AMOUNT,
+wl.LAST_BROKEN_PROMISE_DATE as BP_DATE,
+wl.LAST_ACCOUNT_REVIEW_DATE,
+wl.LAST_CALL_DATE as CALL_STATUS_DATE,
+wl.LAST_PTP_DATE as LAST_PTP_DATE,
+wl.CALL_TYPE_STATUS_ID,
+wl.CALL_STATUS_ID,
+'wlt' AS RESULT_SOURCE,
+
+a.first_release_date as FUNDING_DATE,
+a.NEXT_PAYMENT_DUE_DATE as NEXT_PAYMENT_DUE_DATE,
+a.last_payment_date as LAST_PAYMENT_DATE,
+a.last_payment_amount as LAST_PAYMENT_AMOUNT,
+a.payment_amount as MONTHLY_INSTALLMENT,
+a.next_interest_payment_due_date as NEXT_INTEREST_DUE_DATE,
+a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount) as GROSS_BALANCE,
+
+    case
+        when pref.code is null then 'No Payment'
+        when (pref.code ='shortpaid' and cpay.current_month_total_payment >= 0) then 'Shortfall'
+        when (pref.code='fullpayment' or pref.code='advancepayment') then
+            case
+              when wlt_ref.code='NPF' then
+
+                case
+                    when (wlassign.months_in_arrears = 4 and a.months_in_arrears = 3) then 'Maintain'
+                    when (wlassign.months_in_arrears = 4 and a.months_in_arrears = 2) then 'Declassified'
+                    when (wlassign.months_in_arrears = a.months_in_arrears + 1) then 'Maintain'
+                    when ( <![CDATA[ wlassign.months_in_arrears >=5 and a.months_in_arrears <= 2 ]]> ) then 'Declassified'
+                    when ( <![CDATA[ wlassign.months_in_arrears >=5 ]]> ) then 'Improve'
+                end
+
+            when wlt_ref.code='PNPF' then
+                case
+                    when (wlassign.months_in_arrears = 1 and a.months_in_arrears = 0) then 'Maintain'
+                    when (wlassign.months_in_arrears = 2 and a.months_in_arrears = 1) then 'Maintain'
+                    when (wlassign.months_in_arrears = 3 and a.months_in_arrears = 2) then 'Maintain'
+                    when (wlassign.months_in_arrears = 2 and a.months_in_arrears = 0) then 'Improve'
+                    when (wlassign.months_in_arrears = 3 and a.months_in_arrears = 1) then 'Improve'
+                    when (wlassign.months_in_arrears = 3 and a.months_in_arrears = 0) then 'Improve'
+                end
+            end
+        else null
+    end as MOVEMENT_TYPE
+
+
+
+from
+ptrcustomer customer
+inner join ptraccount a on a.customer_id = customer.id
+    left join ptrvw_current_month_total_payment cpay
+    on cpay.account_id = a.id
+    left join ptrpayment_status_ref pref
+    on cpay.payment_status_id = pref.id
+
+
+ 
+ <isEqual property="MODULE_NAME" compareValue="AgencyAssigned">
+  <isEqual property="USER_TYPE_CODE" compareValue="agencyuser">
+  left join ptragency_work_list_assignment wlassign on a.id = wlassign.account_id
+  left join ptragency_work_list wlt
+      on wlt.work_list_id = wlassign.work_list_id
+      left join ptrwork_list_category_ref wlt_ref
+      on wlt.work_list_category = wlt_ref.id
+  inner join ptraccount_agency_assignment agassign on a.id = agassign.account_id
+  and agassign.agency_id = cast(#AGENCY_ID# as BIGINT)
+  and agassign.status_id=15007 
+  </isEqual>
+</isEqual>
+ 
+<isNotEqual property="MODULE_NAME" compareValue="AgencyAssigned">
+  <isEqual property="USER_TYPE_CODE" compareValue="agencyuser">
+  inner join ptragency_work_list_assignment wlassign on a.id = wlassign.account_id
+      inner join ptrwork_list wlt
+      on wlt.work_list_id = wlassign.work_list_id
+      left join ptrwork_list_category_ref wlt_ref
+      on wlt.work_list_category = wlt_ref.id
+
+  </isEqual>
+  <isNotEqual property="USER_TYPE_CODE" compareValue="agencyuser">
+  inner join ptraccount_work_list_assignment wlassign on a.id = wlassign.account_id
+      inner join ptrwork_list wlt
+      on wlt.work_list_id = wlassign.work_list_id
+      left join ptrwork_list_category_ref wlt_ref
+      on wlt.work_list_category = wlt_ref.id
+  </isNotEqual>
+</isNotEqual>
+
+
+left join ptrwltab_evaluation wl on wl.account_id = a.id
+inner join ptrproduct_type_ref pr on a.product_type_id = pr.id
+inner join ptrproduct_type_category_ref ptc on pr.category_id = ptc.id
+
+<isNotEqual property="MODULE_NAME" compareValue="AgencyAssigned">
+where wlassign.work_list_id = #WORK_LIST_ID:NUMERIC#
+</isNotEqual>
+
+
+</select>
+
+
+
+<resultMap class="java.util.HashMap" id="getWorklistGroup">
+<result property="WL_GROUP_CODE"  javaType="java.lang.String"/>
+</resultMap>  
+
+<select id="getWorklistGroup" resultMap="getWorklistGroup">
+select ref.code from ptrwork_list wl
+inner join ptrwork_list_group_ref ref on wl.work_list_group = ref.id
+where wl.work_list_id =  #WORK_LIST_ID#
+</select>
+
+
+<resultMap class="java.util.HashMap" id="getWltInprogressAction">
+<result property="SORT"  javaType="long"/>
+<result property="PROCESS_TYPE_ID"  javaType="long"/>
+<result property="PROCESS_CODE"  javaType="java.lang.String"/>
+<result property="PROCESS_DESC"  javaType="java.lang.String"/>
+</resultMap>  
+
+<select id="getWltInprogressAction" resultMap="getWltInprogressAction">
+select -1 as sort, cast(null as bigint) as process_type_id, 'all' as process_code, 'All' as process_desc
+union
+select 1 as sort, cast(null as bigint) as process_type_id, 'pdc' as process_code, 'PDC' as process_desc
+union
+select 1 as sort, cast(null as bigint) as process_type_id, 'si' as process_code, 'SI' as process_desc
+union
+select 1 as sort, n.process_type_id,n.process_code,n.process_desc from
+(
+select 8 as process_type_id, 'place_a_call' as process_code,  'Place a Call (PAC)'  as process_desc 
+union
+select 9 as process_type_id,  'oca' as process_code,  'OCA'  as process_desc 
+union
+select 11 as process_type_id, 'telegram' as process_code,  'Telegram'  as process_desc 
+union
+select 13 as process_type_id, 'send_sms' as process_code,  'Send SMS'  as process_desc 
+union
+select 14 as process_type_id, 'letter' as process_code,  'Send Letter'  as process_desc 
+union
+select 15 as process_type_id, 'visitation' as process_code,  'Visitation'  as process_desc 
+union
+select 23 as process_type_id,'repo' as process_code,'Repossession' as process_desc 
+union
+select 25 as process_type_id, 'tps' as process_code,  'Third Party Search'  as process_desc 
+union
+select 27 as process_type_id, 'meeting' as process_code,  'Meeting'  as process_desc 
+union
+select 28 as process_type_id, 'ccris' as process_code,  'CCRIS'  as process_desc 
+union
+select 32 as process_type_id,'rewrite' as process_code,'Rewrite' as process_desc 
+union
+select 34 as process_type_id, 'earmark_setoff' as process_code,  'Earmark &amp; Set off'  as process_desc 
+union
+select 35 as process_type_id,  'management_approval'  as process_code,  'Management Approval'  as process_desc 
+union
+select 36 as process_type_id,  'instruct_legal' as process_code,  'Instruct Legal'  as process_desc
+union 
+select 39 as process_type_id,'r_n_r_upl_existing' as process_code,'R &amp; R (Existing UPL Module)' as process_desc 
+union
+select 42 as process_type_id,'outlook' as process_code,'Outlook' as process_desc 
+union
+select 44 as process_type_id,'auction' as process_code,'Auction' as process_desc 
+union
+select 46 as process_type_id,'r_n_r_il' as process_code,'R &amp; R (IL)' as process_desc 
+union
+select 47 as process_type_id,'shortfall' as process_code,'shortfall' as process_desc 
+union
+select 48 as process_type_id,'account_review' as process_code,'Account Review' as process_desc 
+union
+select 49 as process_type_id,'court_order' as process_code,'Court Order' as process_desc 
+union
+select 58 as process_type_id,'review' as process_code,'Review' as process_desc 
+
+)n order by sort asc,process_desc asc     
+</select>
+
+
+<resultMap id="getScheduleCallForWorkList" class="java.util.HashMap">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_ID"  javaType="string"/>
+<result property="SCHEDULE_DATE"  javaType="ts"/>
+<result property="SCHEDULE_TIME"  javaType="ts"/>
+<result property="CONTACT_NUMBER"  javaType="string"/>
+<result property="PERSON_NAME"  javaType="string"/>
+<result property="CREATED_DATE" javaType="ts"/>
+<result property="AGREEMENT_NUMBER" javaType="string"/>
+<result property="LOCATION" javaType="string"/>
+</resultMap>
+
+<select id="getScheduleCallForWorkList" resultMap="getScheduleCallForWorkList" parameterClass="map">
+select  
+a.ID,
+c.id as customer_id,
+pac.appointment_time as SCHEDULE_DATE,
+pac.appointment_time as SCHEDULE_TIME,
+pac.CONTACT_NO as CONTACT_NUMBER,
+pac.spoke_to as PERSON_NAME,
+proc.created_time as CREATED_DATE,
+a.ACCOUNT_NO as AGREEMENT_NUMBER,
+cast(null as varchar(25)) as LOCATION
+from
+ptraccount a
+inner join ptrtreatment_place_a_call pac on a.id = pac.account_id
+inner join ptrtreatment proc on pac.treatment_id = proc.id
+inner join PTRACCOUNT_WORK_LIST_ASSIGNMENT asgmt on a.id = asgmt.account_id
+inner join ptrcustomer c on a.customer_id = c.id
+inner join ptrtreatment_type_status_ref ty on ty.id=pac.type_status_id
+where proc.type_id = 8 
+and proc.status_id = 15007 and ty.code='PAC_SC'
+and COALESCE(proc.created_user_id, proc.updated_user_id) = #USER_ID#
+
+union
+
+select  
+a.ID,
+c.id as customer_id,
+meet.meeting_time as SCHEDULE_DATE,
+meet.meeting_time as SCHEDULE_TIME,
+cast(null as text) as CONTACT_NUMBER,  
+meet.person_to_meet as PERSON_NAME,
+proc.created_time as CREATED_DATE,
+a.ACCOUNT_NO as AGREEMENT_NUMBER,
+meet.location as LOCATION
+from
+ptraccount a
+inner join ptrtreatment_meeting meet on a.id = meet.account_id
+inner join ptrtreatment proc on meet.treatment_id = proc.id
+inner join PTRACCOUNT_WORK_LIST_ASSIGNMENT asgmt on a.id = asgmt.account_id
+inner join ptrcustomer c on a.customer_id = c.id
+
+where proc.type_id = 27
+and proc.status_id = 15007
+and COALESCE(proc.created_user_id, proc.updated_user_id) = #USER_ID#
+</select>
+
+
+
+
+<resultMap class="hmap" id="getOutBoxAccounts">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="ACCOUNT_NUMBER" javaType="java.lang.String"/>
+<result property="CUSTOMER_ID" javaType="java.lang.String"/>
+<result property="CUSTOMER_NAME" javaType="java.lang.String"/>
+<result property="ESCALATION_TYPE_DESC" javaType="java.lang.String"/>
+<result property="TURNAROUND_DATE" javaType="date"/>
+<result property="CREATED_DATE" javaType="ts"/>
+<result property="ESCALATION_REASON" javaType="java.lang.String"/>
+<result property="ESCALATION_STATUS" javaType="java.lang.String"/>
+<result property="ESCALATION_FROM" javaType="java.lang.String"/>
+<result property="ESCALATE_TO" javaType="java.lang.String"/>
+<result property="REMARKS" javaType="java.lang.String"/>
+</resultMap>
+
+<select id="getOutBoxAccounts" resultMap="getOutBoxAccounts">
+select
+a.ID, 
+a.account_no,
+c.id as customer_id,
+c.CUSTOMER_NAME,
+subtype.description as ESCALATION_TYPE_DESC,
+wlt.TURNAROUND_DATE as TURNAROUND_DATE,
+wlt.LAST_ESCALATION_DATE as CREATED_DATE, 
+reason.DESCRIPTION as ESCALATION_REASON,
+status.description as ESCALATION_STATUS,
+tp.created_user_id,
+esc.ESCALATE_TO,
+note.note_text
+
+
+FROM  
+ptraccount a
+inner join ptrcustomer c on a.customer_id = c.id
+inner join PTRWLTAB_EVALUATION wlt on a.ID = wlt.account_id
+inner join ptrtreatment_escalation esc on esc.treatment_id = wlt.LAST_ESCALATION_TREATMENT_ID
+inner join ptrtreatment tp on esc.treatment_id = tp.id
+inner join  ptrtreatment_note note on tp.id = note.treatment_id
+inner join ptruser u on tp.created_user_id = u.user_id
+left join ptrescalation_reason_ref reason on esc.escalation_reason_id = reason.ID
+inner join ptrtreatment_type_status_ref status on status.id = wlt.LAST_ESCALATION_TYPE_STATUS_ID
+inner join ptrtreatment_subtype_ref subtype on wlt.LAST_ESCALATION_TYPE_ID = subtype.id
+WHERE wlt.LAST_ESCALATION_TREATMENT_ID IS NOT NULL
+
+<isEqual property="TYPE_CODE" compareValue="bankuser">
+AND tp.created_user_id = #USER_ID#
+</isEqual>
+<isEqual property="TYPE_CODE" compareValue="agencyuser">
+AND tp.created_user_id = #USER_ID# and u.AGENCY_ID = cast(#AGENCY_ID# as BIGINT)
+</isEqual>
+<isNotEmpty property="ESCALATION_FROM">AND wlt.LAST_ESCALATION_DATE::date >= #ESCALATION_FROM:DATE#</isNotEmpty>
+<isNotEmpty property="ESCALATION_TO">AND #ESCALATION_TO:DATE# >= wlt.LAST_ESCALATION_DATE::date</isNotEmpty>
+<isNotEmpty property="IN_PROGRESS_ONLY">
+<isEqual property="IN_PROGRESS_ONLY" compareValue="true">and status.STATUS_ID = 15007</isEqual>
+</isNotEmpty>
+ORDER BY wlt.LAST_ESCALATION_DATE DESC, c.CUSTOMER_NAME asc
+</select>
+
+
+<select id="getMyAlertAccounts" resultMap="getOutBoxAccounts">
+select
+a.ID, 
+a.account_no,
+c.id as customer_id,
+c.CUSTOMER_NAME,
+subtype.description as ESCALATION_TYPE_DESC,
+wlt.TURNAROUND_DATE as TURNAROUND_DATE,
+wlt.LAST_ESCALATION_DATE as CREATED_DATE, 
+reason.DESCRIPTION as ESCALATION_REASON,
+status.description as ESCALATION_STATUS,
+tp.created_user_id,
+esc.ESCALATE_TO,
+note.note_text
+
+FROM  
+ptraccount a
+inner join ptrcustomer c on a.customer_id = c.id
+inner join PTRWLTAB_EVALUATION wlt on a.ID = wlt.account_id
+inner join ptrtreatment_escalation esc on esc.treatment_id = wlt.LAST_ESCALATION_TREATMENT_ID
+inner join ptrtreatment tp on esc.treatment_id = tp.id
+inner join  ptrtreatment_note note on tp.id = note.treatment_id
+inner join ptruser u on tp.created_user_id = u.user_id
+left join ptrescalation_reason_ref reason on esc.escalation_reason_id = reason.ID
+inner join ptrtreatment_type_status_ref status on status.id = wlt.LAST_ESCALATION_TYPE_STATUS_ID
+inner join ptrtreatment_subtype_ref subtype on wlt.LAST_ESCALATION_TYPE_ID = subtype.id
+where wlt.LAST_ESCALATION_TREATMENT_ID IS NOT NULL
+and esc.escalate_to = #USER_ID#
+<isNotEmpty property="ESCALATION_FROM">AND wlt.LAST_ESCALATION_DATE::date >= #ESCALATION_FROM:DATE#</isNotEmpty>
+<isNotEmpty property="ESCALATION_TO">AND #ESCALATION_TO:DATE# >= wlt.LAST_ESCALATION_DATE::date</isNotEmpty>
+<isNotEmpty property="IN_PROGRESS_ONLY">
+<isEqual property="IN_PROGRESS_ONLY" compareValue="true">and status.STATUS_ID = 15007</isEqual>
+</isNotEmpty>
+ORDER BY wlt.LAST_ESCALATION_DATE DESC, c.CUSTOMER_NAME asc
+</select>
+
+
+<resultMap class="hmap" id="getLegalApprovalAccounts">
+<result javaType="long" property="ACCOUNT_ID"/>
+<result javaType="java.lang.String" property="ACCOUNT_NUMBER"/>
+<result javaType="java.lang.String" property="CUSTOMER_ID"/>
+<result javaType="java.lang.String" property="CUSTOMER_NAME"/>
+<result javaType="java.lang.String" property="CREATED_USER"/>
+<result javaType="java.sql.Timestamp" property="CREATED_DATE"/>
+<result javaType="java.lang.String" property="TREATPROC_TYPE_STATUS_DESC"/>
+<result javaType="java.lang.String" property="TREATPROC_TYPE_DESC"/>
+<result javaType="java.lang.String" property="PROCESS_REMARKS"/>
+</resultMap>
+<select id="getLegalApprovalAccounts" resultMap="getLegalApprovalAccounts">
+select
+a.ID, 
+a.account_no,
+c.id as customer_id,
+c.customer_name,
+tp.created_user_id,
+tp.created_time,
+subtype.description,
+status.description,
+note.note_text
+
+FROM  
+ptraccount a
+inner join ptrcustomer c on a.customer_id = c.id
+inner join ptrtreatment_management_approval app on a.id = app.account_id
+inner join ptrtreatment tp on app.treatment_id = tp.id
+inner join  ptrtreatment_note note on tp.id = note.treatment_id
+inner join ptruser u on tp.created_user_id = u.user_id
+inner join ptrtreatment_type_status_ref status on app.type_status_id = status.id
+inner join ptrtreatment_subtype_ref subtype on app.subtype_id = subtype.id
+
+where tp.created_user_id = #USER_ID#
+<isNotEmpty property="CREATED_DATE_FROM">AND tp.created_time::date >= #CREATED_DATE_FROM:DATE#</isNotEmpty>
+<isNotEmpty property="CREATED_DATE_TO">AND #CREATED_DATE_TO:DATE# >= tp.created_time::date</isNotEmpty>
+<isNotEmpty property="IN_PROGRESS_ONLY">
+<isEqual property="IN_PROGRESS_ONLY" compareValue="true">and status.status_id = 15007</isEqual>
+</isNotEmpty>
+<isNotEmpty property="TREATPROC_TYPE_STATUS_ID">
+and status.id = CAST(#TREATPROC_TYPE_STATUS_ID:BIGINT# AS BIGINT) 
+</isNotEmpty>
+order by tp.created_time desc
+</select>
+
+  <resultMap class="hmap" id="getLegalApprovalStatuses">
+    <result property="TREATPROC_TYPE_STATUS_ID" javaType="long"/>
+    <result property="TREATPROC_TYPE_STATUS_DESC" javaType="java.lang.String"/>
+    <result property="SORT" javaType="long"/>
+  </resultMap>
+  
+  <select id="getLegalApprovalStatuses" parameterClass="map" resultMap="getLegalApprovalStatuses">
+  select cast(null as int8) as id, 'Please Select' as description, -1 as sort
+  union
+  select id, description, 1 as sort from ptrtreatment_type_status_ref where type_id = 40 order by sort asc
+  </select>  
+  
+<resultMap class="java.util.HashMap" id="getPaidAccountData">
+<result property="ACCOUNT_ID" javaType="long" />
+</resultMap>
+<select id="getPaidAccountData" resultMap="getPaidAccountData">
+select
+currmth.account_id
+from ptrvw_current_month_total_payment currmth
+inner join ptraccount a on currmth.account_id = a.id
+inner join ptrpayment_status_ref status on currmth.payment_status_id = status.id
+<isEqual property="USER_TYPE_CODE" compareValue="agencyuser">
+inner join ptragency_work_list_assignment assign on currmth.account_id = assign.account_id
+</isEqual>
+<isNotEqual property="USER_TYPE_CODE" compareValue="agencyuser">
+inner join ptraccount_work_list_assignment assign on currmth.account_id = assign.account_id
+</isNotEqual>
+where assign.work_list_id = #WORK_LIST_ID#
+and status.code in ('fullpayment','advancepayment')
+</select>
+
+
+
+
+
+
+</sqlMap>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="REMOVE_USER_LIST" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec argument="REMOVE_USER_LIST" type="loop">
+   <exec statement="deleteWlgUserTemplate" type="delete"/>
+  </exec>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="RELOAD_USER_LIST" type="copyintolist"/>
+</event>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" to="NEW_ROW" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getEmployeePositionRef"/>
+  <query value="getEscalationTypeRef"/>
+  <target value="POSITIONS"/>
+  <target value="ESCALATION_TYPES"/>
+ </exec>
+ <exec argument="POSITIONS" type="loop">
+  <exec from="ID" to="POSITION_ID" type="copy"/>
+ </exec>
+ <exec argument="ESCALATION_TYPES" type="loop">
+  <exec from="ID" to="ESCALATION_TYPE_ID" type="copy"/>
+ </exec>
+ <exec from="ESCALATION_TYPES" key="ESCALATION_TYPES" to="NEW_ROW" type="copyintolist"/>
+ <exec from="POSITIONS" key="POSITIONS" to="NEW_ROW" type="copyintolist"/>
+ <exec from="TRUE" key="ALLOW_DELETE" to="NEW_ROW" type="copyintolist"/>
+ <exec from="NEW_ROW" to="REFERENCE" type="append"/>
+ <exec from="REFERENCE" type="copy"/>
+</event>

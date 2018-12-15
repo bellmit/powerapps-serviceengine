@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec event="wlm.getUserType" ignoreresult="true" type="raise"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ASSIGN_USER_LIST_SELECTED" operator="exists" rhsvalue=""/>
+  </conditions>
+  <exec list="ASSIGN_USER_LIST_SELECTED" to="ASSIGN_COUNT" type="countlist"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ASSIGN_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+   </conditions>
+   <exec to="ASSIGNER_ID" type="user"/>
+   <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="ASSIGNMENT_DATE" truncate="true" type="date"/>
+   <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="true" type="date"/>
+   <exec from="WORK_LIST_ID_COPY" to="WORK_LIST_ID" type="copy"/>
+   <exec from="WORK_LIST_ID" to="SELECTED_WORK_LIST_ID" type="copy"/>
+   <exec from="ASSIGN_USER_LIST_SELECTED" to="ASSIGN_USER_LIST" type="copy"/>
+   <exec from="WORK_LIST_ID_COPY" key="WORK_LIST_ID" to="ASSIGN_USER_LIST" type="copyintolist"/>
+   <exec from="ASSIGNER_ID" key="ASSIGNER_ID" to="ASSIGN_USER_LIST" type="copyintolist"/>
+   <exec from="ASSIGNMENT_DATE" key="ASSIGNMENT_DATE" to="ASSIGN_USER_LIST" type="copyintolist"/>
+   <exec from="EFFECTIVE_DATE" key="EFFECTIVE_DATE" to="ASSIGN_USER_LIST" type="copyintolist"/>
+   <exec from="EFFECTIVE_DATE" key="DATE" to="ASSIGN_USER_LIST" type="copyintolist"/>
+   <exec from="MODULE_NAME" key="MODULE_NAME" to="ASSIGN_USER_LIST" type="copyintolist"/>
+   <exec from="TYPE_CODE" key="TYPE_CODE" to="ASSIGN_USER_LIST" type="copyintolist"/>
+   <exec argument="ASSIGN_USER_LIST" type="loop">
+    <exec type="transaction">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="MODULE_NAME" operator="&lt;&gt;" rhsvalue="RNR"/>
+      </conditions>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+       </conditions>
+       <exec recordcount="UPDATE_USER_ASSIGN_COUNT" statement="updateUserWorkListAssignment" type="update"/>
+      </exec>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="agencyuser"/>
+       </conditions>
+       <exec recordcount="UPDATE_USER_ASSIGN_COUNT" statement="updateAgencyUserAssignmentLite" type="update"/>
+      </exec>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+      </conditions>
+      <exec recordcount="UPDATE_USER_ASSIGN_COUNT" statement="updateRnRUserWorkListAssignment" type="update"/>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="UPDATE_USER_ASSIGN_COUNT" operator="=" rhsvalue="0"/>
+      </conditions>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="MODULE_NAME" operator="&lt;&gt;" rhsvalue="RNR"/>
+       </conditions>
+       <exec type="guard">
+        <conditions>
+         <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+        </conditions>
+        <exec statement="insertUserWorkListAssignment" type="insert"/>
+        <exec statement="insertUserWorkListAssignmentHistory" type="insert"/>
+       </exec>
+       <exec type="guard">
+        <conditions>
+         <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="agencyuser"/>
+        </conditions>
+        <exec statement="insertAgencyUserWorkListAssignment" type="insert"/>
+       </exec>
+      </exec>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+       </conditions>
+       <exec statement="insertRnRUserWorkListAssignment" type="insert"/>
+      </exec>
+     </exec>
+    </exec>
+   </exec>
+   <exec event="wlm.getUsers" ignoreresult="true" type="raise"/>
+   <exec from="WORK_LIST_USERS" type="copy"/>
+  </exec>
+ </exec>
+</event>

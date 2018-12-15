@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec from="FALSE" key="FALSE" type="copyintolist"/>
+ <exec from="CONFIRM_UPDATE" key="CONFIRM_UPDATE" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="false"/>
+   </conditions>
+   <exec from="TRUE" to="LOAD_NOTICE_DATE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec from="FALSE" to="VALIDATION" type="copy"/>
+  </exec>
+ </exec>
+</event>

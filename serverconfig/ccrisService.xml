@@ -1,0 +1,123 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ccrisService">
+
+<resultMap class="hmap" id="getCcrisAccountStatusTreatment-map">
+		<result property="ID" javaType="long"/>
+		<result property="CODE"  javaType="string"/>
+   		<result property="DESCRIPTION"  javaType="string"/>
+	    <result property="SORT_PRIORITY" javaType="long"/>
+	</resultMap>
+	
+	  <select id="getCcrisAccountStatusTreatment" resultMap="getCcrisAccountStatusTreatment-map" parameterClass="map">
+		  SELECT ID, 
+		  CODE,
+		  DESCRIPTION,
+		  coalesce (SORT_PRIORITY,0) as SORT_PRIORITY   
+		  FROM ptraccount_status_ref 
+		  WHERE DISABLE = false 
+		  </select>
+		  
+		
+	<insert id="insertTreatmentCcrisService">
+		insert into PTRTREATMENT_CCRIS
+		(TREATMENT_ID,ACCOUNT_ID,TYPE_STATUS_ID,ACCOUNT_STATUS_ID,CCRIS_SUMM,CCRIS_SUPP,CCRIS_DETAIL,CCRIS_DATE,TEMPLATE_VERSION_ID,CCRIS_OTHER)
+		values
+		(#ID#, #ACCOUNT_ID#,#TYPE_STATUS_ID#,#ACCOUNT_STATUS_ID#,#CCRIS_SUMM#,#CCRIS_SUPP#,#CCRIS_DETAIL#,#CCRIS_DATE#,#TEMPLATE_VERSION_ID#,#CCRIS_OTHER#)
+	</insert>
+	<update id="updateTreatmentCcrisService">
+	update PTRTREATMENT_CCRIS set TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+	ACCOUNT_STATUS_ID = #ACCOUNT_STATUS_ID#,CCRIS_SUMM=#CCRIS_SUMM#,CCRIS_SUPP=#CCRIS_SUPP#,
+	CCRIS_DETAIL=#CCRIS_DETAIL#,CCRIS_DATE=#CCRIS_DATE#, TEMPLATE_VERSION_ID=#TEMPLATE_VERSION_ID#, CCRIS_OTHER=#CCRIS_OTHER# where TREATMENT_ID=#ID#
+	</update>
+	<resultMap id="getTreatmentCcrisService" class="hmap">
+		<result property="TYPE_STATUS_ID" javaType="long" />
+		<result property="ACCOUNT_STATUS_ID" javaType="long" />
+		<result property="CCRIS_SUMM" javaType="boolean" />
+		<result property="CCRIS_SUPP" javaType="boolean" />
+		<result property="CCRIS_DETAIL" javaType="boolean" />
+		<result property="CCRIS_DATE" javaType="ts" />
+		<result property="TEMPLATE_VERSION_ID" javaType="long" />
+		<result property="CCRIS_OTHER" javaType="string" />
+	</resultMap>	
+	
+	<select id="getTreatmentCcrisService" resultMap="getTreatmentCcrisService">		
+		SELECT TYPE_STATUS_ID,ACCOUNT_STATUS_ID,CCRIS_SUMM,CCRIS_SUPP,CCRIS_DETAIL,CCRIS_DATE,TEMPLATE_VERSION_ID,CCRIS_OTHER 
+		FROM PTRTREATMENT_CCRIS
+		WHERE TREATMENT_ID=#ID#
+	</select>	
+	
+	<delete id="deleteTreatmentCcrisPaymentActivity" parameterClass="map">
+	delete from PTRCCRIS_PAYMENT_ACTIVITY where TREATMENT_ID=#ID#
+	</delete>
+	
+	<insert id="insertTreatmentCcrisPaymentActivity">
+	<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRCCRIS_PAYMENT_ACTIVITY_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>
+		insert into PTRCCRIS_PAYMENT_ACTIVITY
+		(ID,TREATMENT_ID,ACCOUNT_ID,FACILITY_ID,COUNTER,LIMITER,OS,MIA,MIAMAX,CUSTOMER_ID)
+		values
+		(#ID#,#TREATMENT_ID#, #ACCOUNT_ID#,#FACILITY_ID#,#COUNT#,#LIMIT#,#OS#,#MIA#,#MIAMAX#,#CUSTOMER_ID#)
+	</insert>
+	
+	<resultMap id="getTreatmentCcrisPaymentActivity" class="hmap">
+	    <result property="RELATIONSHIP" javaType="string" />
+		<result property="FACILITY" javaType="string" />
+		<result property="COUNT" javaType="long" />
+		<result property="LIMIT" javaType="$" />
+		<result property="OS" javaType="$" />
+		<result property="MIA" javaType="long" />
+		<result property="MIAMAX" javaType="long" />
+		<result property="CUSTOMER_ID" javaType="string" />
+		<result property="CUSTOMER_NAME" javaType="string" />
+	</resultMap>	
+	
+	<select id="getTreatmentCcrisPaymentActivity" resultMap="getTreatmentCcrisPaymentActivity">		
+	
+	SELECT relref.description,fac.description,COUNTER,LIMITER,OS,MIA,MIAMAX,c.CUSTOMER_NO,c.customer_name
+		FROM PTRCCRIS_PAYMENT_ACTIVITY ccris
+		left join ptrcustomer c on ccris.customer_id=c.id
+		left join ptrcustomer_account_rel rel on ccris.account_id=rel.account_id
+		left join ptrcustomer_account_relation_type_ref relref on rel.type_id=relref.id
+		left join ptrfacility_type_group_ref fac on ccris.facility_id=fac.id
+		WHERE TREATMENT_ID=#ID#
+order by ccris.id
+	</select>	
+	
+	<resultMap class="hmap" id="getccrisTableData">
+	<result property="CUSTOMER_NAME" javaType="string" />
+	<result property="RELATIONSHIP" javaType="string"  />
+	<result property="ACCOUNT_ID" javaType="long"  />
+	<result property="CUSTOMER_ID" javaType="string"  />
+	<result property="SORT_PRIORITY" javaType="string"  />
+	</resultMap>
+
+	<select id="getccrisTableData" resultMap="getccrisTableData"> 
+		Select '--Please Select--', null,null,null,0 as sort_priority  
+		union
+	SELECT c.CUSTOMER_NAME, rel.DESCRIPTION ,  a.ACCOUNT_ID,c.CUSTOMER_NO,rel.sort_priority
+FROM PTRCUSTOMER_ACCOUNT_REL a 
+inner join PTRCUSTOMER c on a.CUSTOMER_ID=c.ID 
+inner join PTRCUSTOMER_ACCOUNT_RELATION_TYPE_REF rel on a.TYPE_ID=rel.ID
+where a.account_id  = #ACCOUNT_ID#
+order by sort_priority
+</select>
+
+<resultMap class="hmap" id="getccrisFacilityType">
+	<result property="FACILITY_ID" javaType="long" />
+	<result property="CODE" javaType="string"  />
+	<result property="DESCRIPTION" javaType="string"  />
+	<result property="SORT_PRIORITY" javaType="string"  />
+	</resultMap>
+
+	<select id="getccrisFacilityType" resultMap="getccrisFacilityType"> 
+		Select null, null,'--Please Select--',0 as sort_priority  
+		union
+	SELECT id, code, description, sort_priority
+FROM PTRFACILITY_TYPE_GROUP_REF
+order by sort_priority
+
+</select>
+</sqlMap>

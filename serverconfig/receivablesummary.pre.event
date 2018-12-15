@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="ZERO" key="BEGIN_NOA" to="BASE" type="copyintolist"/>
+ <exec from="ZERO" key="BEGIN_GROSS_OS" to="BASE" type="copyintolist"/>
+ <exec from="ZERO" key="ASSIGNED_NOA" to="BASE" type="copyintolist"/>
+ <exec from="ZERO" key="ASSIGNED_GROSS_OS" to="BASE" type="copyintolist"/>
+ <exec from="ZERO" key="ABORT_NOA" to="BASE" type="copyintolist"/>
+ <exec from="ZERO" key="ABORT_GROSS_OS" to="BASE" type="copyintolist"/>
+ <exec from="ZERO" key="END_NOA" to="BASE" type="copyintolist"/>
+ <exec from="ZERO" key="END_GROSS_OS" to="BASE" type="copyintolist"/>
+</event>

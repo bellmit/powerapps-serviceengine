@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="false" type="date"/>
+ </exec>
+ <exec argument="SMS_PATH" property="SMS_PATH" type="serverproperty"/>
+ <exec statement="getMaxRunSmsAssignmentForExtraction" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="RUN_ID" operator="exists" rhsvalue=""/>
+  </conditions>
+  <exec argument="TREATMENT_LIST" query="getSmsAssignmentForExtraction" type="query"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TREATMENT_LIST" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec to="LOGON_USER" type="user"/>
+   <exec message="                                                                                                   " target="100_SPACES" type="formattext">
+    <key value="100_SPACES"/>
+   </exec>
+   <exec message="visualSms{0,date,yyyy-MM-dd-HHmmssS}" target="FILE_NAME" type="formattext">
+    <key value="EFFECTIVE_DATE"/>
+   </exec>
+   <exec from="LOGON_USER" key="UPDATED_USER_ID" to="TREATMENT_LIST" type="copyintolist"/>
+   <exec from="EFFECTIVE_DATE" key="UPDATED_TIME" to="TREATMENT_LIST" type="copyintolist"/>
+   <exec from="EFFECTIVE_DATE" key="EFFECTIVE_DATE" to="TREATMENT_LIST" type="copyintolist"/>
+   <exec from="100_SPACES" key="100_SPACES" to="TREATMENT_LIST" type="copyintolist"/>
+   <exec argument="TREATMENT_LIST" type="loop">
+    <exec event="treatment.save" ignoreresult="true" type="raisewith"/>
+   </exec>
+   <exec argument="TREATMENT_LIST" type="loop">
+    <exec text="Date" type="comment">
+     <exec message="{0,date,dd/MM/yyyyHH:mm:ss}" target="SMS_DATE" type="formattext">
+      <key value="EFFECTIVE_DATE"/>
+     </exec>
+    </exec>
+    <exec text="Contact No" type="comment">
+     <exec from="CONTACT_NO" regex="\D" replacement="" to="CONTACT_NO" type="regexreplace"/>
+     <exec from="CONTACT_NO" regex="(.{11}).*" replacement="$1" to="CONTACT_NO" type="regexreplace"/>
+     <exec message="{0}{1}" target="CONTACT_NO" type="formattext">
+      <key value="CONTACT_NO"/>
+      <key value="100_SPACES"/>
+     </exec>
+     <exec from="CONTACT_NO" regex="(.{31}).*" replacement="$1" to="CONTACT_NO" type="regexreplace"/>
+    </exec>
+    <exec text="Message Text" type="comment">
+     <exec from="MESSAGE_TEXT" regex="(.{152}).*" replacement="$1" to="MESSAGE_TEXT" type="regexreplace"/>
+    </exec>
+    <exec text="Treatment ID" type="comment">
+     <exec message="00000000000000000000{0}" target="TREATMENT_ID" type="formattext">
+      <key value="ID"/>
+     </exec>
+     <exec from="TREATMENT_ID" regex=".*(.{15})" replacement="$1" to="TREATMENT_ID" type="regexreplace"/>
+    </exec>
+    <exec text="Process Type Code" type="comment">
+     <exec message="{0}{1}" target="PROCESS_TYPE_CODE" type="formattext">
+      <key value="PROCESS_TYPE_CODE"/>
+      <key value="100_SPACES"/>
+     </exec>
+     <exec from="PROCESS_TYPE_CODE" regex="(.{10}).*" replacement="$1" to="PROCESS_TYPE_CODE" type="regexreplace"/>
+    </exec>
+    <exec message="{0}{1}{2}{3}{4}" target="CONTENT" type="formattext">
+     <key value="SMS_DATE"/>
+     <key value="CONTACT_NO"/>
+     <key value="MESSAGE_TEXT"/>
+     <key value="TREATMENT_ID"/>
+     <key value="PROCESS_TYPE_CODE"/>
+    </exec>
+   </exec>
+   <exec from="TREATMENT_LIST" key="CONTENT" to="CONTENT" type="extract"/>
+   <exec fileextension=".txt" filenameprefix="FILE_NAME" from="CONTENT" path="SMS_PATH" type="textfilewriter"/>
+  </exec>
+  <exec type="transaction">
+   <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="END_TIME" truncate="false" type="date"/>
+   <exec from="END_TIME" to="UPDATED_TIME" type="copy"/>
+   <exec from="LOGON_USER" to="UPDATED_USER_ID" type="copy"/>
+   <exec recordcount="" statement="updateSmsRunHistory" type="update"/>
+  </exec>
+ </exec>
+</event>

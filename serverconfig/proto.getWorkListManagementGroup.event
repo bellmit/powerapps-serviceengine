@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec query="getWorkListManagementGroup" type="query"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec type="loop">
+  <exec from="WORK_LIST_GROUP_CODE" to="CATEGORY_CODE" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WORK_LIST_GROUP_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="TRUE" to="LOAD_DATA" type="copy"/>
+  </exec>
+ </exec>
+</event>

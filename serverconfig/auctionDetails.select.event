@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getDefaultTreatmentStatusType"/>
+  <target value="TYPE_STATUS_LIST"/>
+ </exec>
+ <exec statement="getAuctionDetailsTreatmentProcessInformation" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="1" operator="=" rhsvalue="2"/>
+  </conditions>
+  <exec text="For Technical Reason Description List" type="comment">
+   <exec argument="ALL_TECH_REASON_DESCRIPTION_LIST" query="getTechnicalReasonDescriptionForAuctionDetails" type="query"/>
+   <exec count="1" to="TECH_REASON_DESCRIPTION_LIST" type="createlist"/>
+   <exec message="Please Select" target="PLEASE_SELECT" type="formattext"/>
+   <exec from="PLEASE_SELECT" key="DESCRIPTION" to="TECH_REASON_DESCRIPTION_LIST" type="copyintolist"/>
+   <exec from="ALL_TECH_REASON_DESCRIPTION_LIST" to="TECH_REASON_DESCRIPTION_LIST" type="append"/>
+   <exec from="TECH_REASON_DESCRIPTION_LIST" key="TECH_REASON_DESCRIPTION_LIST" to="DEFAULT_LIST" type="copyintolist"/>
+  </exec>
+ </exec>
+</event>

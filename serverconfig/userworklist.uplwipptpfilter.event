@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Filter for PTP" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_TYPE_DESCRIPTION" operator="=" rhsvalue="PTP"/>
+   </conditions>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="PTP"/>
+    </conditions>
+    <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec argument="ACCOUNT_LIST" type="loop">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="PTP_FILTER" operator="=" rhsvalue="1"/>
+      </conditions>
+      <exec from="TRUE" to="KEEP" type="copy"/>
+     </exec>
+    </exec>
+    <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="DTP"/>
+    </conditions>
+    <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec argument="ACCOUNT_LIST" type="loop">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="PTP_FILTER" operator="=" rhsvalue="2"/>
+      </conditions>
+      <exec from="TRUE" to="KEEP" type="copy"/>
+     </exec>
+    </exec>
+    <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="Broken Promise"/>
+    </conditions>
+    <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec argument="ACCOUNT_LIST" type="loop">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="PTP_FILTER" operator="=" rhsvalue="3"/>
+      </conditions>
+      <exec from="TRUE" to="KEEP" type="copy"/>
+     </exec>
+    </exec>
+    <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

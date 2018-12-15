@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Gets the snapshot for HP accounts on the first of the month" type="comment"/>
+ <exec text="This should be executed before work list assignment on the first of the month" type="comment">
+  <exec statement="getDataDate" type="select"/>
+  <exec ceiling="false" endmonth="false" from="DATA_DATE" nextweekday="false" startmonth="true" to="FIRST_OF_PREVIOUS_MONTH" truncate="true" type="date"/>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+  <exec from="EFFECTIVE_DATE" to="ASSIGNMENT_DATE" type="copy"/>
+  <exec allocationsize="100" group="ACCOUNT_ID" statement="getWlgAccountSnapshotAf" threadcount="10" type="stream">
+   <exec to="CUSTOMER_DATA" type="copy"/>
+   <exec from="TYPE_ID" key="TYPE_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="EFFECTIVE_DATE" key="ASSIGNMENT_DATE" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec event="prewlg.updateAccountSnapshot" ignoreresult="true" type="raise"/>
+  </exec>
+ </exec>
+</event>

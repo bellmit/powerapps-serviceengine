@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec recordcount="" statement="resetProtoAssignment" type="update"/>
+  <exec message="Completed" target="MESSAGE" type="formattext"/>
+  <exec count="1" type="createlist"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="LOAD_DATA" type="copyintolist"/>
+ </exec>
+</event>

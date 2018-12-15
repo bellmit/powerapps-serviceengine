@@ -1,0 +1,1547 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="billingService">
+	<resultMap id="getAdhocAgencyTypes" class="hmap">
+		<result property="CODE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+		<result property="SORT_PRIORITY" javaType="long" />
+	</resultMap>
+	<select id="getAdhocAgencyTypes" resultMap="getAdhocAgencyTypes">
+			select code,description,disable,sort_priority 
+			from ptragency_type_ref
+			where code in('ECA')
+			union
+			select 'ADHOC','Adhoc',false,0
+			order by sort_priority
+	</select>
+	<select id="getEcaAgencyTypes" resultMap="getAdhocAgencyTypes">
+			select code,description,disable,sort_priority 
+			from ptragency_type_ref
+			where code in('ECA')
+	</select>
+
+	<select id="getAgencyByCode" resultMap="global.ref">
+		<include refid="selectAllRef"/> <include refid="fromdual"/>
+		union
+		select g.id,g.code,g.description,g.disable,g.sort_priority
+		from ptragency g
+		inner join ptragency_type_ref t on t.id=g.type_id
+		inner join ptreca_billing eca on eca.agency_id=g.id
+		and t.code=#CODE#
+		<isNotNull property="PRODUCT_CATEGORY_ID">
+		and eca.PRODUCT_TYPE_CATEGORY_ID=#PRODUCT_CATEGORY_ID#
+		</isNotNull>
+	</select>
+	<select id="getEcaInvoiceStage" resultMap="global.ref">
+		<include refid="selectAllRef"/> <include refid="fromdual"/>
+		union
+		select id,code,task_phase as description,disable,sort_priority
+		from ptrbilling_tat_ref
+		where module='ECA'
+	</select>
+	<select id="getEcaGenericInvoiceStage" resultMap="global.ref">
+		<isEqual  property="MODULE" compareValue="IN_PROGRESS">
+		<include refid="pleaseSelectRef"/> <include refid="fromdual"/>
+		union
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="SUPERVISOR_RECOMMENDATION">
+		<include refid="pleaseSelectRef"/> <include refid="fromdual"/>
+		union
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="BANK_MANAGER_CONSOLE">
+		<include refid="pleaseSelectRef"/> <include refid="fromdual"/>
+		union
+		</isEqual>
+		select id,code,task_phase as description,disable,sort_priority
+		from ptrbilling_tat_ref
+		where module='ECA'
+		<isEqual  property="MODULE" compareValue="IN_PROGRESS">
+			and code in('IP','REJ','RC')
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="SUPERVISOR_RECOMMENDATION">
+			and code in('SR','REJ-BM')
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="ESCALATED_TO_BANK_MANAGER">
+			and code ='EBM'
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="VERIFIED_BY_BANK_MANAGER">
+			and code ='VBM'
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="FORWARDED_TO_AGENCY">
+			and code ='FTA'
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="BANK_MANAGER_ESCALATION">
+			and code ='APA'
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="PENDING_FINAL_APPROVAL">
+			and code ='ESHOD'
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="BANK_MANAGER_CONSOLE">
+			and code in('AP-HOD','APC-HOD')
+		</isEqual>	
+		<isEqual  property="MODULE" compareValue="PAYMENT_RELEASED">
+			and code ='ES-FIN'
+		</isEqual>	
+		<isEqual  property="MODULE" compareValue="PAYMENT_ACKNOWLEDGED">
+			and code ='PR'
+		</isEqual>	
+		<isEqual  property="MODULE" compareValue="BILLING_HISTORY">
+			and code ='PAA'
+		</isEqual>		
+	</select>
+	
+	<select id="getEcaGenericInvoiceStageForEditing" resultMap="global.ref">
+		<isEqual  property="MODULE" compareValue="IN_PROGRESS">
+		<include refid="pleaseSelectRef"/> <include refid="fromdual"/>
+		union
+		</isEqual>
+		select id,code,task_phase as description,disable,sort_priority
+		from ptrbilling_tat_ref
+		where module='ECA'
+		<isEmpty property="EMPLOYEE_POSITION_CODE">
+		and 1=2
+		</isEmpty>
+		<isEqual  property="MODULE" compareValue="IN_PROGRESS">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+				and code in('IP','SR','IN')
+			</isEqual>	
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+				and 1=2
+			</isNotEqual>		
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="SUPERVISOR_RECOMMENDATION">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+				and code in('RC')
+			</isEqual>	
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="BS">
+				and code in('REJ','EBM')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="BS">
+				and 1=2
+			</isNotEqual>
+			</isNotEqual>
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="ESCALATED_TO_BANK_MANAGER">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+				and code in('RC')
+			</isEqual>	
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and code in('REJ','VBM')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and 1=2
+			</isNotEqual>
+			</isNotEqual>
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="VERIFIED_BY_BANK_MANAGER">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+				and code in('RC')
+			</isEqual>	
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and code in('RC','FTA')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="AC">
+				and 1=2
+			</isNotEqual>
+			</isNotEqual>
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="FORWARDED_TO_AGENCY">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="ECA">
+				and code in('REJ','APA')
+				<isEqual property="IS_APPEAL_FROM_AGENCY" compareValue="true">
+				and not code = 'APA'
+				</isEqual>
+			</isEqual>	
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and code in('RC')
+			</isEqual>
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="BS">
+				and code in('RC')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="BS">
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="ECA">
+				and 1=2
+			</isNotEqual>
+			</isNotEqual>
+			</isNotEqual>
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="BANK_MANAGER_ESCALATION">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and code in('REJ-BM','ESHOD')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and 1=2
+			</isNotEqual>
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="PENDING_FINAL_APPROVAL">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="HOD">
+				and code in ('AP-HOD','APC-HOD','REJ')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="HOD">
+				and 1=2
+			</isNotEqual>
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="BANK_MANAGER_CONSOLE">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and code in ('ES-FIN')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="BM">
+				and 1=2
+			</isNotEqual>
+		</isEqual>	
+		<isEqual  property="MODULE" compareValue="PAYMENT_RELEASED">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="FIN">
+				and code in ('PR')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="FIN">
+				and 1=2
+			</isNotEqual>
+		</isEqual>	
+		<isEqual  property="MODULE" compareValue="PAYMENT_ACKNOWLEDGED">
+			<isEqual  property="EMPLOYEE_POSITION_CODE" compareValue="ECA">
+				and code in ('PAA')
+			</isEqual>
+			<isNotEqual property="EMPLOYEE_POSITION_CODE" compareValue="ECA">
+				and 1=2
+			</isNotEqual>
+		</isEqual>		
+	</select>
+	<select id="getEcaInvoiceStageForAdhoc" resultMap="global.ref">
+		<include refid="pleaseSelectRef"/> <include refid="fromdual"/>
+		union
+		select id,code,task_phase as description,disable,sort_priority
+		from ptrbilling_tat_ref
+		where module='ECA'
+	</select>	
+	<select id="getAdhocAgencies" resultMap="global.ref">
+		<include refid="selectAllRef"/> <include refid="fromdual"/>
+		union
+		select distinct b.agency_id,b.agency_name,b.agency_name,coalesce(g.disable,false),coalesce(g.sort_priority,0)
+		from ptreca_adhoc_billing b
+		left join ptragency g on g.id=b.agency_id
+		left join ptragency_type_ref t on g.type_id=t.id
+		where t.code is null
+	</select>
+	<sql id="expenseTotal-fragment">
+		select process_id, sum(amount) as expense_amount from PTRLEGAL_ACTION_EXPENSES
+		group by process_id
+	</sql>
+
+
+
+	<resultMap id="getLegalUnbilledSummary" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="STAGE_ID" javaType="long" />
+		<result property="LAWYER_NAME" javaType="string" />
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="ACCOUNT_NUMBER" javaType="string" />
+		<result property="CASE_NUMBER" javaType="string" />
+		<result property="ASSIGNMENT_TYPE" javaType="string" />
+		<result property="STAGE" javaType="string" />
+		<result property="MISC_CHARGE" javaType="$" />
+		<result property="TOTAL_AMOUNT" javaType="$" />
+		<result property="COMMISSION_AMOUNT" javaType="$" />
+		<result property="LEGAL_FEE_AMOUNT" javaType="$" />
+		<result property="DISBURSEMENT" javaType="$" />
+		<result property="GST_AMOUNT" javaType="$" />
+		<result property="EXPENSE_AMOUNT" javaType="$" />
+		<result property="CONTRACT_NAME" javaType="string"/>
+		<result property="CONTRACT_TERM" javaType="string"/>
+	</resultMap>
+	<select id="getLegalUnbilledSummary" resultMap="getLegalUnbilledSummary">
+		select ag.id as agency_assignment_id,
+		r.stage_id,g.description as lawyer_name,
+		c.customer_name,a.account_no,
+		ag.case_no,
+		sub.description,
+		ls.description as stage,
+		a.miscellaneous_charge,
+		SUM(COALESCE(com.commision_amount,0.00)) + SUM(COALESCE(exp.expense_amount,0.00)) + SUM(COALESCE(p.disbursement_amount,0.00)) AS total_amount,
+		SUM(COALESCE(com.commision_amount,0.00))                           AS commision_amount,
+		SUM(COALESCE(p.legal_fee_amount,0.00))                             AS legal_fee_amount,
+		SUM(COALESCE(p.disbursement_amount,0.00))                          AS disbursement_amount,
+		SUM(COALESCE(p.gst_amount,0.00))                                   AS gst_amount,
+		SUM(COALESCE(exp.expense_amount,0.00)),
+		ac.description as CONTRACT_NAME,
+		vt.description as CONTRACT_TERM
+		from PTRLEGAL_ACTION_COMMISION com
+		inner join ptrlegal_action_ref r on r.id=com.action_id
+		inner join ptrlegal_action_process p on p.id=com.process_id
+		left join(
+		<include refid="expenseTotal-fragment"/>
+		) exp on exp.process_id=p.id
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptrtreatment_subtype_ref sub on sub.id=ag.subtype_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on a.customer_id=c.id
+		inner join ptrproduct_type_ref pt on pt.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pt.category_id
+		inner join ptragency_contract_version_term vt on vt.id=com.term_id
+		inner join ptragency_contract_version v on v.id=vt.version_id
+		inner join ptragency_contract ac on ac.id=v.contract_id
+		left join ptrlegal_stage_ref ls on ls.id=r.stage_id
+		where com.invalid = false and com.proceed = <include refid="false"/>
+		<isNotEmpty property="AGENCY_ID">and ag.agency_id=#AGENCY_ID#</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME">and c.customer_name=#CUSTOMER_NAME#</isNotEmpty>
+		<isNotEmpty property="ACCOUNT_NUMBER">and a.account_no=#ACCOUNT_NUMBER#</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY_ID">and ptc.id=#PRODUCT_CATEGORY_ID#</isNotEmpty>
+		<isNotEmpty property="SUBTYPE_ID">and sub.id=#SUBTYPE_ID#</isNotEmpty>
+		and not exists(select 1 from ptrlegal_invoice_transaction_rel rel where rel.process_id=com.process_id)
+		group by
+		ag.id,r.stage_id,g.description, sub.description,lawyer_name,c.customer_name,a.account_no,ag.case_no,ls.description,
+		a.miscellaneous_charge,ac.description,vt.description
+	</select>
+
+
+
+
+	<select id="getLegalPendingBillingSummary" resultMap="getLegalUnbilledSummary">
+		select ag.id as agency_assignment_id,r.stage_id,g.description as lawyer_name,c.customer_name,a.account_no,
+		ag.case_no,sub.description,ls.description as stage,a.miscellaneous_charge,
+		sum(com.commision_amount) + sum(exp.expense_amount)  as total_amount,sum(com.commision_amount) as commision_amount,sum(p.legal_fee_amount) as legal_fee_amount,
+		sum(p.disbursement_amount) as disbursement_amount,sum(p.gst_amount) as gst_amount,sum(exp.expense_amount),
+		ac.description as CONTRACT_NAME,
+		vt.description as CONTRACT_TERM
+		from PTRLEGAL_ACTION_COMMISION com
+		inner join ptrlegal_action_ref r on r.id=com.action_id
+		inner join ptrlegal_action_process p on p.id=com.process_id
+		left join(
+		<include refid="expenseTotal-fragment"/>
+		) exp on exp.process_id=p.id
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptrtreatment_subtype_ref sub on sub.id=ag.subtype_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on a.customer_id=c.id
+		inner join ptrproduct_type_ref pt on pt.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pt.category_id
+		inner join ptragency_contract_version_term vt on vt.id=com.term_id
+		inner join ptragency_contract_version v on v.id=vt.version_id
+		inner join ptragency_contract ac on ac.id=v.contract_id
+		left join ptrlegal_stage_ref ls on ls.id=r.stage_id
+		where com.invalid = false and com.proceed = <include refid="true"/>
+		<isNotNull property="AGENCY_ID">and ag.agency_id=#AGENCY_ID#</isNotNull>
+		and not exists(select 1 from ptrlegal_invoice_transaction_rel rel where rel.process_id=com.process_id)
+		group by
+		ag.id,r.stage_id,g.description, sub.description,lawyer_name,c.customer_name,a.account_no,ag.case_no,ls.description,
+		a.miscellaneous_charge,ac.description,vt.description
+	</select>
+	<select id="getLegalBillingSummary" resultMap="getLegalUnbilledSummary">
+		select ag.id as agency_assignment_id,r.stage_id,g.description as lawyer_name,c.customer_name,a.account_no,
+		ag.case_no,sub.description,ls.description as stage,a.miscellaneous_charge,
+		sum(com.commision_amount) + sum(exp.expense_amount)  as total_amount,sum(com.commision_amount) as commision_amount,sum(p.legal_fee_amount) as legal_fee_amount,
+		sum(p.disbursement_amount) as disbursement_amount,sum(p.gst_amount) as gst_amount,sum(exp.expense_amount),
+		ac.description as CONTRACT_NAME,
+		vt.description as CONTRACT_TERM
+		from ptrlegal_invoice i
+		inner join ptrlegal_invoice_transaction_rel rel on rel.invoice_id=i.id
+		inner join ptrlegal_action_commision com on com.process_id=rel.process_id and com.invalid = <include refid="true"/>
+		inner join ptrlegal_action_ref r on r.id=com.action_id
+		inner join ptrlegal_action_process p on p.id=com.process_id
+		left join(
+		<include refid="expenseTotal-fragment"/>
+		) exp on exp.process_id=p.id
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptrtreatment_subtype_ref sub on sub.id=ag.subtype_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on a.customer_id=c.id
+		inner join ptrproduct_type_ref pt on pt.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pt.category_id
+		inner join ptragency_contract_version_term vt on vt.id=com.term_id
+		inner join ptragency_contract_version v on v.id=vt.version_id
+		inner join ptragency_contract ac on ac.id=v.contract_id
+		left join ptrlegal_stage_ref ls on ls.id=r.stage_id
+		where i.id=#INVOICE_ID#
+		group by
+		ag.id,r.stage_id,g.description, sub.description,lawyer_name,c.customer_name,a.account_no,ag.case_no,ls.description,
+		a.miscellaneous_charge,ac.description,vt.description
+	</select>
+	<resultMap id="getLegalUnbilledTransaction" class="hmap">
+		<result property="PROCESS_ID" javaType="long" />
+		<result property="LAWYER_NAME" javaType="string" />
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="ACCOUNT_NUMBER" javaType="string" />
+		<result property="CASE_NUMBER" javaType="string" />
+		<result property="ASSIGNMENT_TYPE" javaType="string" />
+		<result property="STAGE" javaType="string" />
+		<result property="MISC_CHARGE" javaType="$" />
+		<result property="TOTAL_AMOUNT" javaType="$" />
+		<result property="COMMISSION_AMOUNT" javaType="$" />
+		<result property="LEGAL_FEE_AMOUNT" javaType="$" />
+		<result property="DISBURSEMENT" javaType="$" />
+		<result property="GST_AMOUNT" javaType="$" />
+		<result property="ACTION_NAME" javaType="string" />
+		<result property="ACTION_DATE" javaType="date" />
+		<result property="CONTRACT_TERM" javaType="string" />
+		<result property="EXPENSE_AMOUNT" javaType="$" />
+	</resultMap>
+	<select id="getLegalUnbilledTransaction" resultMap="getLegalUnbilledTransaction">
+		select
+        p.id,
+        g.description as lawyer_name,
+        c.customer_name,
+        a.account_no,
+        ag.case_no,
+        sub.description,
+        ls.description as stage,
+        a.miscellaneous_charge,
+		com.commision_amount + exp.expense_amount as total_amount,
+        com.commision_amount,
+        p.legal_fee_amount,
+		p.disbursement_amount,
+        p.gst_amount as gst_amount,
+        r.description,
+        p.created_time,
+        vt.description,
+		exp.expense_amount
+		from PTRLEGAL_ACTION_COMMISION com
+		inner join ptrlegal_action_ref r on r.id=com.action_id
+		inner join ptrlegal_action_process p on p.id=com.process_id
+		left join(
+		<include refid="expenseTotal-fragment"/>
+		) exp on exp.process_id=p.id
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptrtreatment_subtype_ref sub on sub.id=ag.subtype_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on a.customer_id=c.id
+		inner join ptrproduct_type_ref pt on pt.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pt.category_id
+		inner join ptragency_contract_version_term vt on vt.id=com.term_id
+		inner join ptragency_contract_version v on v.id=vt.version_id
+		left join ptrlegal_stage_ref ls on ls.id=r.stage_id
+		where com.invalid = false and com.proceed = false and ag.id=#AGENCY_ASSIGNMENT_ID# and r.stage_id=#STAGE_ID#
+		and not exists(select 1 from ptrlegal_invoice_transaction_rel rel where rel.process_id=com.process_id)
+	</select>
+	<select id="getLegalPendingBillingTransaction" resultMap="getLegalUnbilledTransaction">
+		select p.id,g.description as lawyer_name,c.customer_name,a.account_no,ag.case_no,sub.description,ls.description as stage,a.miscellaneous_charge,
+		com.commision_amount + exp.expense_amount as total_amount,com.commision_amount,p.legal_fee_amount,
+		p.disbursement_amount,p.gst_amount as gst_amount,r.description,p.created_time,vt.description,
+		exp.expense_amount
+		from PTRLEGAL_ACTION_COMMISION com
+		inner join ptrlegal_action_ref r on r.id=com.action_id
+		inner join ptrlegal_action_process p on p.id=com.process_id
+		left join(
+		<include refid="expenseTotal-fragment"/>
+		) exp on exp.process_id=p.id
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptrtreatment_subtype_ref sub on sub.id=ag.subtype_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on a.customer_id=c.id
+		inner join ptrproduct_type_ref pt on pt.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pt.category_id
+		inner join ptragency_contract_version_term vt on vt.id=com.term_id
+		inner join ptragency_contract_version v on v.id=vt.version_id
+		left join ptrlegal_stage_ref ls on ls.id=r.stage_id
+		where com.invalid = false and com.proceed = <include refid="true"/> and ag.id=#AGENCY_ASSIGNMENT_ID#
+		and not exists(select 1 from ptrlegal_invoice_transaction_rel rel where rel.process_id=com.process_id)
+	</select>	
+	<select id="getLegalBillingTransaction" resultMap="getLegalUnbilledTransaction">
+		select p.id,g.description as lawyer_name,c.customer_name,a.account_no,ag.case_no,sub.description,ls.description as stage,a.miscellaneous_charge,
+		com.commision_amount + exp.expense_amount as total_amount,com.commision_amount,p.legal_fee_amount,
+		p.disbursement_amount,p.gst_amount as gst_amount,r.description,p.created_time,vt.description,
+		exp.expense_amount
+		from ptrlegal_invoice i
+		inner join ptrlegal_invoice_transaction_rel rel on rel.invoice_id=i.id
+		inner join ptrlegal_action_commision com on com.process_id=rel.process_id and com.invalid = <include refid="false"/>
+		inner join ptrlegal_action_ref r on r.id=com.action_id
+		inner join ptrlegal_action_process p on p.id=com.process_id
+		left join(
+		<include refid="expenseTotal-fragment"/>
+		) exp on exp.process_id=p.id
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptrtreatment_subtype_ref sub on sub.id=ag.subtype_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on a.customer_id=c.id
+		inner join ptrproduct_type_ref pt on pt.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pt.category_id
+		inner join ptragency_contract_version_term vt on vt.id=com.term_id
+		inner join ptragency_contract_version v on v.id=vt.version_id
+		left join ptrlegal_stage_ref ls on ls.id=r.stage_id
+		where i.id=#INVOICE_ID# and ag.id=#AGENCY_ASSIGNMENT_ID# and r.stage_id=#STAGE_ID#
+	</select>
+
+	
+
+	<resultMap id="getTransactionForExpenses" class="hmap">
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="FEE_AMOUNT" javaType="$" />
+		<result property="DISBURSEMENT_AMOUNT" javaType="$" />
+		<result property="GST_AMOUNT" javaType="$" />
+		<result property="AMOUNT" javaType="$" />
+	</resultMap>
+	<select id="getTransactionForExpenses" resultMap="getTransactionForExpenses">
+		select description,fee_amount,disbursement_amount,gst_amount,amount
+		from ptrlegal_action_expenses 
+		where process_id=#PROCESS_ID#
+	</select>
+
+	<resultMap id="getUrgentBillingDetails" class="hmap">
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="LEGAL_FIRM" javaType="string" />
+		<result property="PRODUCT_CATEGORY" javaType="string" />
+		<result property="PRODUCT_CATEGORY_ID" javaType="long" />
+		<result property="ASSIGNMENT_TYPE" javaType="string" />
+		<result property="SUBTYPE_ID" javaType="long" />
+	</resultMap>
+	<select id="getUrgentBillingDetails" resultMap="getUrgentBillingDetails">
+		select ag.agency_id,g.description as legal_firm,ptc.description as product_category,
+		ptc.id as product_category_id ,s.description as assignment_type,ag.subtype_id
+		from ptraccount_agency_assignment ag
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=t.category_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptrtreatment_subtype_ref s on s.id=ag.subtype_id
+		where ag.id=#AGENCY_ASSIGNMENT_ID#
+	</select>
+	
+	<select id="getLegalCreateBillingTransaction" resultMap="getLegalUnbilledTransaction">
+		select p.id,g.description as lawyer_name,c.customer_name,a.account_no,ag.case_no,sub.description,ls.description as stage,a.miscellaneous_charge,
+		com.commision_amount + exp.expense_amount as total_amount,com.commision_amount,p.legal_fee_amount,
+		p.disbursement_amount,p.gst_amount as gst_amount,r.description,p.created_time,vt.description,
+		exp.expense_amount
+		from PTRLEGAL_ACTION_COMMISION com
+		inner join ptrlegal_action_ref r on r.id=com.action_id
+		inner join ptrlegal_action_process p on p.id=com.process_id
+		left join(
+		<include refid="expenseTotal-fragment"/>
+		) exp on exp.process_id=p.id
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptrtreatment_subtype_ref sub on sub.id=ag.subtype_id
+		inner join ptragency g on g.id=ag.agency_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on a.customer_id=c.id
+		inner join ptrproduct_type_ref pt on pt.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pt.category_id
+		inner join ptragency_contract_version_term vt on vt.id=com.term_id
+		inner join ptragency_contract_version v on v.id=vt.version_id
+		left join ptrlegal_stage_ref ls on ls.id=r.stage_id
+		where com.invalid = false and com.proceed = <include refid="false"/> and ptc.code=#PRODUCT_CATEGORY_CODE# and ag.agency_id=#AGENCY_ID#
+		and not exists(select 1 from ptrlegal_invoice_transaction_rel rel where rel.process_id=com.process_id)
+	</select>
+		
+	<insert id="createLegalInvoice">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRLEGAL_INVOICE_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		insert into ptrlegal_invoice(id,invoice_no,description,product_category_id,agency_id,invoice_date,prepared_by,prepared_time,status_id,remarks,subtype_id,stage_code)
+		values(#ID#,#INVOICE_NUMBER#,#DESCRIPTION#,#PRODUCT_CATEGORY_ID#,#AGENCY_ID#,#CURRENT_TIME#,#LOGON_USER#,#CURRENT_TIME#,1,#REMARKS#,#SUBTYPE_ID#,#STAGE_CODE#)	
+	</insert>
+	
+	<update id="submitBillingForRecommendation">
+	update ptrlegal_invoice set stage_code = #STAGE_CODE# ,updated_by =#LOGON_USER#, updated_time=#CURRENT_TIME#,
+	remarks =#REMARKS#
+	where id=#INVOICE_ID#
+	</update>
+	<update id="updatePaymentMemo">
+	update ptrlegal_invoice set updated_by =#LOGON_USER#, updated_time=#CURRENT_TIME#,
+	IBG_CODE =#IBG_NO#,MEMO_DESCRIPTION=#MEMO_DESCRIPTION#,
+	CHEQUE_NO =#CHEQUE_NO#,GL_CODE=#GL_CODE#,
+	remarks =#REMARKS#
+	where id=#INVOICE_ID#
+	</update>
+	
+	<insert id="insertBillingHistory">
+		insert into PTRBILLING_HISTORY(user_id,invoice_id,remarks,stage_code,update_time)
+		values(#LOGON_USER#,#INVOICE_ID#,#REMARKS#,#STAGE_CODE#,#CURRENT_TIME#)	
+	</insert>
+
+	
+	<resultMap id="checkActionMilestone" class="hmap">
+		<result property="BILLING_MILESTONE" javaType="boolean" />
+		<result property="BILLING_STAGE_ID" javaType="long" />
+	</resultMap>
+	<select id="checkActionMilestone" resultMap="checkActionMilestone">
+		select billing_milestone,billing_stage_id from ptrlegal_action_ref
+		where id =#ACTION_ID#
+	</select>
+	<update id="updateProceedOnMilestoneAcheived">
+		update PTRLEGAL_ACTION_COMMISION  set proceed = <include refid="true"/> where process_id in(
+		select process_id from PTRLEGAL_ACTION_COMMISION c
+		inner join ptrlegal_action_process p on p.id=c.process_id and p.agency_assignment_id=#AGENCY_ASSIGNMENT_ID#
+		inner join ptrlegal_action_ref r on r.id=p.action_id and r.billing_stage_id=#BILLING_STAGE_ID#
+		where c.proceed = <include refid="false"/> 
+		)	
+	</update>
+	
+	<sql id="legalInvoice-fragment">
+		select i.id as invoice_id, invoice_no, i.description, 
+		i.invoice_date,g.description as agency_name,
+		i.gl_code,i.ibg_code,i.memo_description,i.cheque_no
+		from ptrlegal_invoice i
+		inner join ptragency g on g.id=i.agency_id
+		left join ptrtreatment_subtype_ref s on s.id=i.subtype_id		
+	</sql>
+	
+	<resultMap id="getPendingSubmissionInvoice" class="hmap">
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="INVOICE_NUMBER" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="INVOICE_DATE" javaType="date" />
+		<result property="AGENCY_NAME" javaType="string" />
+		<result property="GL_CODE" javaType="string" />
+		<result property="IBG_CODE" javaType="string" />
+		<result property="MEMO_DESCRIPTION" javaType="string" />
+		<result property="CHEQUE_NO" javaType="string" />
+	</resultMap>
+	<select id="getPendingSubmissionInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'PS'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>
+	<select id="getPendingSupervisorRecommendationInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE in('SUR','DIS')
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>
+	<select id="getPendingApprovalInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'PA'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>
+	<select id="getPendingPendingBankManagerVerificationInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'BMV'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>	
+	<select id="getPendingPendingHodApprovaInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'HA'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>
+	<select id="getPendingPaymentReleaseInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'PP'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>	
+	<select id="getPendingPaymentAcknowledgementInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'PRS'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>	
+	<select id="getRejectedInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'RB'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>	
+	<select id="getPendingAdjusmentInvoice" resultMap="getPendingSubmissionInvoice">
+		<include refid="legalInvoice-fragment"/>
+		WHERE I.STAGE_CODE = 'LCA'
+		<isNotEmpty property="BILLING_NO">
+		and i.invoice_no like '%'||#BILLING_NO#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID"> and i.agency_id=#AGENCY_ID#</isNotNull>
+	</select>			
+	<resultMap id="getInvoiceAmount" class="hmap">
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="INVOICE_AMOUNT" javaType="$" />
+	</resultMap>
+	<select id="getInvoiceAmount" resultMap="getInvoiceAmount">
+		select i.id as invoice_id,
+		sum(com.commision_amount) + sum(exp.expense_amount) as invoice_amount
+		from ptrlegal_invoice i
+		inner join ptragency g on g.id=i.agency_id
+		inner join ptrlegal_invoice_transaction_rel r on r.invoice_id=i.id
+		inner join ptrlegal_action_commision com on com.process_id=r.process_id and com.invalid = false
+		left join(<include refid="expenseTotal-fragment"/>) exp on com.process_id=exp.process_id
+		<iterate prepend="where i.id in " property="INVOICES" open="(" close=")" conjunction=",">#INVOICES[]#</iterate>	
+		group by i.id
+	</select>
+	
+	<resultMap id="getInvoiceRemarksHistory" class="hmap">
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="USER" javaType="string" />
+		<result property="REMARKS" javaType="string" />
+		<result property="STAGE" javaType="string" />
+		<result property="UPDATED_ON" javaType="ts" />
+	</resultMap>
+	<select id="getInvoiceRemarksHistory" resultMap="getInvoiceRemarksHistory">
+		select h.invoice_id,h.user_id,h.remarks,r.task_phase, h.update_time
+		FROM PTRBILLING_HISTORY h
+		inner join ptrbilling_tat_ref r on r.code=h.stage_code
+		<iterate prepend="where h.invoice_id in " property="INVOICES" open="(" close=")" conjunction=",">#INVOICES[]#</iterate>	
+		order by h.update_time desc
+	</select>
+	<resultMap id="getAgencyIdForAdhocBilling" class="hmap">
+		<result property="AGENCY_ID" javaType="long" />
+	</resultMap>
+	<select id="getAgencyIdForAdhocBilling" resultMap="getAgencyIdForAdhocBilling">
+			<include refid="sequencePrefix" />
+			PTRAGENCY_ID
+			<include refid="sequenceSuffix" />
+	</select>	
+	<insert id="createAdhocInvoice">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRECA_ADHOC_BILLING_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		insert into PTRECA_ADHOC_BILLING(id,AGENCY_ID,AGENCY_NAME,COMPANY_NO,ADDRESS_1,ADDRESS_2,ADDRESS_3,
+		CITY,STATE,POSTCODE,COUNTRY,INVOICE_DATE,TAX_INVOICE_NO,GST_REGISTER_NO,
+		CONTACT_NO,FAX_NO,INVOICE_AMOUNT,INVOICE_STAGE_ID)
+		values(#ID#,#AGENCY_ID#,#AGENCY_NAME#,#COMPANY_NO#,#ADDRESS_1#,#ADDRESS_2#,#ADDRESS_3#,
+		#CITY#,#STATE#,#POSTCODE#,#COUNTRY#,#INVOICE_DATE#,#TAX_INVOICE_NO#,#GST_REGISTER_NO#,
+		#CONTACT_NO#,#FAX_NO#,#TOTAL_AMOUNT#,#INVOICE_STAGE_ID#)	
+	</insert>
+	<update id="updateAdhocBilling">
+		UPDATE PTRECA_ADHOC_BILLING SET
+		AGENCY_ID=#AGENCY_ID#,
+		AGENCY_NAME =#AGENCY_NAME#,
+		COMPANY_NO =#COMPANY_NO#,
+		ADDRESS_1 =#ADDRESS_1#,
+		ADDRESS_2 =#ADDRESS_2#,
+		ADDRESS_3 =#ADDRESS_3#,
+		CITY =#CITY#,
+		POSTCODE =#POSTCODE#,
+		STATE =#STATE#,
+		COUNTRY =#COUNTRY#,
+		INVOICE_DATE =#INVOICE_DATE#,
+		TAX_INVOICE_NO =#TAX_INVOICE_NO#,
+		GST_REGISTER_NO =#GST_REGISTRATION_NO#,
+		CONTACT_NO =#CONTACT_NO#,
+		FAX_NO =#FAX_NO#,
+		INVOICE_AMOUNT = #TOTAL_AMOUNT#,
+		INVOICE_STAGE_ID = #INVOICE_STAGE_ID#
+		WHERE ID =#INVOICE_ID#
+	</update>
+	<insert id="insertAdhocBillingHistory">
+		insert into PTRECA_ADHOC_BILLING_HISTORY(user_id,invoice_id,remarks,stage_code,update_time)
+		values(#LOGON_USER#,#INVOICE_ID#,#REMARKS#,#STAGE_CODE#,#CURRENT_TIME#)	
+	</insert>
+	<insert id="insertEcaBillingHistory">
+		insert into PTRECA_BILLING_HISTORY(user_id,invoice_id,remarks,stage_code,update_time)
+		values(#LOGON_USER#,#INVOICE_ID#,#REMARKS#,#STAGE_CODE#,#CURRENT_TIME#)	
+	</insert>
+	<insert id="createAdhocInvoiceTransaction">
+		insert into ptreca_adhoc_billing_transaction(INVOICE_ID,DESCRIPTION,PROFESIONAL_FEE,DISBURSEMENT,TAX_CODE,GST,GST_AMOUNT)
+		values(#INVOICE_ID#,#DESCRIPTION#,#PROFESSIONAL_FEES#,#DISBURSEMENT#,#TAX_CODE#,#GST#,#GST_AMOUNT#)	
+	</insert>
+	<delete id="clearAdhocTransaction">
+		delete from PTRECA_ADHOC_BILLING_TRANSACTION WHERE invoice_id=#INVOICE_ID#
+	</delete>
+	<resultMap id="getAdhocInvoices" class="hmap">
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="AGENCY_NAME" javaType="string" />
+		<result property="COMPANY_NO" javaType="string" />
+		<result property="ADDRESS_1" javaType="string" />
+		<result property="ADDRESS_2" javaType="string" />
+		<result property="ADDRESS_3" javaType="string" />
+		<result property="CITY" javaType="string" />
+		<result property="POSTCODE" javaType="string" />
+		<result property="STATE" javaType="string" />
+		<result property="COUNTRY" javaType="string" />
+		<result property="INVOICE_DATE" javaType="date" />
+		<result property="TAX_INVOICE_NO" javaType="string" />
+		<result property="GST_REGISTRATION_NO" javaType="string" />
+		<result property="CONTACT_NO" javaType="string" />
+		<result property="FAX_NO" javaType="string" />
+		<result property="INVOICE_AMOUNT" javaType="$" />
+		<result property="STATUS" javaType="string" />
+		<result property="START_DATE" javaType="date"/>
+		<result property="END_DATE" javaType="date"/>
+		<result property="COMMISION_AMOUNT" javaType="$"/>
+
+	</resultMap>
+	<select id="getAdhocInvoices" resultMap="getAdhocInvoices">
+		SELECT B.ID AS INVOICE_ID,COALESCE(G.ID,B.AGENCY_ID) AS AGENCY_ID, 
+		COALESCE(G.DESCRIPTION,B.AGENCY_NAME) AS AGENCY_NAME,
+		COALESCE(G.REGISTRATION_NUMBER,B.COMPANY_NO) AS COMPANY_NO,
+		COALESCE(G.ADDRESS_1,B.ADDRESS_1) AS ADDRESS_1,
+		COALESCE(G.ADDRESS_2,B.ADDRESS_2) AS ADDRESS_2,
+		COALESCE(G.ADDRESS_3,B.ADDRESS_3) AS ADDRESS_3,
+		COALESCE(G.CITY,B.CITY) AS CITY,
+		COALESCE(G.POSTAL_CODE,B.POSTCODE) AS POSTCODE,
+		COALESCE(S.DESCRIPTION,B.STATE) AS STATE,
+		B.COUNTRY,B.INVOICE_DATE,B.TAX_INVOICE_NO,B.GST_REGISTER_NO,B.CONTACT_NO,B.FAX_NO,
+		B.INVOICE_AMOUNT,
+		tat.task_phase as STATUS,
+		NULL as START_DATE,
+		NULL as END_DATE,
+		NULL as COMMISION_AMOUNT
+		FROM PTRECA_ADHOC_BILLING B
+		LEFT JOIN PTRAGENCY G ON G.ID=B.AGENCY_ID
+		LEFT JOIN PTRAGENCY_TYPE_REF T ON T.ID=G.TYPE_ID
+		LEFT JOIN PTRSTATE_REF S ON S.ID=G.STATE_ID
+		INNER JOIN ptrbilling_tat_ref TAT on TAT.ID=B.INVOICE_STAGE_ID
+		WHERE 1=1
+		<isNotEmpty property="INVOICE_NUMBER">
+		and b.TAX_INVOICE_NO like '%'||#INVOICE_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID">
+		and b.agency_id=#AGENCY_ID#
+		</isNotNull>
+		<isNotEmpty property="AGENCY_TYPE">
+			<isNotEqual property="AGENCY_TYPE" compareValue="ADHOC">
+				and t.code =#AGENCY_TYPE#
+			</isNotEqual>
+			<isEqual property="AGENCY_TYPE" compareValue="ADHOC">
+				and t.code is null
+			</isEqual>
+		</isNotEmpty>
+		<isNotNull property="INVOICE_STAGE_ID">and B.INVOICE_STAGE_ID=#INVOICE_STAGE_ID#</isNotNull>
+	</select>
+	<select id="getEcaInvoices" resultMap="getAdhocInvoices">
+		SELECT B.ID AS INVOICE_ID,B.AGENCY_ID, 
+		G.DESCRIPTION AS AGENCY_NAME,
+		G.REGISTRATION_NUMBER AS COMPANY_NO,
+		G.ADDRESS_1,G.ADDRESS_2,G.ADDRESS_3,
+		G.CITY,G.POSTAL_CODE AS POSTCODE,
+		S.DESCRIPTION AS STATE,
+		c.description as COUNTRY,
+		B.INVOICE_DATE,B.TAX_INVOICE_NO,
+		G.gst_registration_no,g.phone_no,g.FAX_NO,
+		b.invoice_amount+coalesce(adjust.amount,0) as INVOICE_AMOUNT,
+		tat.task_phase,
+		b.start_date as START_DATE,
+		b.end_date as END_DATE,
+		b.invoice_amount as COMMISION_AMOUNT
+		FROM PTRECA_BILLING B
+		LEFT JOIN PTRAGENCY G ON G.ID=B.AGENCY_ID
+		LEFT JOIN PTRAGENCY_TYPE_REF T ON T.ID=G.TYPE_ID
+		LEFT JOIN PTRSTATE_REF S ON S.ID=G.STATE_ID
+		LEFT JOIN ptrcountry_ref c on c.id=g.country_id
+		left join (
+		select j.invoice_id, sum(j.amount) as amount from ptreca_billing_adjustment j
+        group by j.invoice_id
+		) adjust on adjust.invoice_id=b.id 
+		INNER JOIN ptrbilling_tat_ref TAT on TAT.ID=B.INVOICE_STAGE_ID
+		WHERE 1=1
+		<isNotEmpty property="INVOICE_NUMBER">
+		and b.TAX_INVOICE_NO like '%'||#INVOICE_NUMBER#||'%'
+		</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY_ID">
+			and b.product_type_category_id = #PRODUCT_CATEGORY_ID#
+		</isNotEmpty>
+		<isNotNull property="AGENCY_ID">
+		and b.agency_id=#AGENCY_ID#
+		</isNotNull>
+		<isNotEmpty property="AGENCY_TYPE">
+			<isNotEqual property="AGENCY_TYPE" compareValue="ADHOC">
+				and t.code =#AGENCY_TYPE#
+			</isNotEqual>
+			<isEqual property="AGENCY_TYPE" compareValue="ADHOC">
+				and t.code is null
+			</isEqual>
+		</isNotEmpty>
+		<isNotNull property="INVOICE_STAGE_ID">and B.INVOICE_STAGE_ID=#INVOICE_STAGE_ID#</isNotNull>
+		<isEqual  property="MODULE" compareValue="IN_PROGRESS">
+			and tat.code in('IP','REJ','RC')
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="SUPERVISOR_RECOMMENDATION">
+			and tat.code in('SR','REJ-BM')
+		</isEqual>
+		<isEqual  property="MODULE" compareValue="BANK_MANAGER_CONSOLE">
+			and tat.code in('AP-HOD','APC-HOD')
+		</isEqual>
+	
+	</select>	
+	<resultMap id="getAdhocInvoicesForEditing" class="hmap">
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="AGENCY_NAME" javaType="string" />
+		<result property="COMPANY_NO" javaType="string" />
+		<result property="ADDRESS_1" javaType="string" />
+		<result property="ADDRESS_2" javaType="string" />
+		<result property="ADDRESS_3" javaType="string" />
+		<result property="CITY" javaType="string" />
+		<result property="POSTCODE" javaType="string" />
+		<result property="STATE" javaType="string" />
+		<result property="COUNTRY" javaType="string" />
+		<result property="INVOICE_DATE" javaType="date" />
+		<result property="TAX_INVOICE_NO" javaType="string" />
+		<result property="GST_REGISTRATION_NO" javaType="string" />
+		<result property="CONTACT_NO" javaType="string" />
+		<result property="FAX_NO" javaType="string" />
+		<result property="INVOICE_STAGE_ID" javaType="long" />
+		<result property="TOTAL_AMOUNT" javaType="$"/>
+		<result property="RECEIPT_NUMBER" javaType="string"/>
+	</resultMap>
+	<select id="getAdhocInvoicesForEditing" resultMap="getAdhocInvoicesForEditing">
+		SELECT B.ID AS INVOICE_ID,COALESCE(G.ID,B.AGENCY_ID) AS AGENCY_ID, 
+		COALESCE(G.DESCRIPTION,B.AGENCY_NAME) AS AGENCY_NAME,
+		COALESCE(G.REGISTRATION_NUMBER,B.COMPANY_NO) AS COMPANY_NO,
+		COALESCE(G.ADDRESS_1,B.ADDRESS_1) AS ADDRESS_1,
+		COALESCE(G.ADDRESS_2,B.ADDRESS_2) AS ADDRESS_2,
+		COALESCE(G.ADDRESS_3,B.ADDRESS_3) AS ADDRESS_3,
+		COALESCE(G.CITY,B.CITY) AS CITY,
+		COALESCE(G.POSTAL_CODE,B.POSTCODE) AS POSTCODE,
+		COALESCE(S.DESCRIPTION,B.STATE) AS STATE,
+		B.COUNTRY,B.INVOICE_DATE,B.TAX_INVOICE_NO,B.GST_REGISTER_NO,B.CONTACT_NO,B.FAX_NO,
+		B.INVOICE_STAGE_ID,
+		NULL as TOTAL_AMOUNT,b.receipt_number
+		FROM PTRECA_ADHOC_BILLING B
+		LEFT JOIN PTRAGENCY G ON G.ID=B.AGENCY_ID
+		LEFT JOIN PTRSTATE_REF S ON S.ID=G.STATE_ID
+		WHERE B.ID=#INVOICE_ID#
+	</select>
+	<select id="getEcaInvoicesForEditing" resultMap="getAdhocInvoicesForEditing">
+		SELECT B.ID AS INVOICE_ID,B.AGENCY_ID, 
+		G.DESCRIPTION AS AGENCY_NAME,
+		G.REGISTRATION_NUMBER AS COMPANY_NO,
+		G.ADDRESS_1,G.ADDRESS_2,G.ADDRESS_3,
+		G.CITY,G.POSTAL_CODE AS POSTCODE,
+		S.DESCRIPTION AS STATE,
+		c.description as COUNTRY,
+		B.INVOICE_DATE,B.TAX_INVOICE_NO,
+		G.gst_registration_no,g.phone_no,g.FAX_NO,
+		B.INVOICE_STAGE_ID,
+		b.invoice_amount as TOTAL_AMOUNT,b.receipt_number
+		FROM PTRECA_BILLING B
+		LEFT JOIN PTRAGENCY G ON G.ID=B.AGENCY_ID
+		LEFT JOIN PTRSTATE_REF S ON S.ID=G.STATE_ID
+		LEFT JOIN ptrcountry_ref c on c.id=g.country_id
+		WHERE B.ID=#INVOICE_ID#
+	</select>
+	<resultMap id="getAdhocInvoicesTransaction" class="hmap">
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="PROFESSIONAL_FEES" javaType="$" />
+		<result property="DISBURSEMENT" javaType="$" />
+		<result property="TAX_CODE" javaType="string" />
+		<result property="GST" javaType="boolean" />
+		<result property="GST_AMOUNT" javaType="$" />
+		<result property="TOTAL_AMOUNT" javaType="$" />
+	</resultMap>
+	<select id="getAdhocInvoicesTransaction" resultMap="getAdhocInvoicesTransaction">
+		select description,profesional_fee,disbursement,tax_code,gst,gst_amount,(profesional_fee -disbursement + gst_amount) as total_amount from PTRECA_ADHOC_BILLING_TRANSACTION
+		where invoice_id=#INVOICE_ID#
+	</select>	
+	<resultMap id="getAdhocInvoiceRemarksHistory" class="hmap">
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="USER" javaType="string" />
+		<result property="REMARKS" javaType="string" />
+		<result property="STAGE" javaType="string" />
+		<result property="UPDATED_ON" javaType="ts" />
+	</resultMap>
+	<select id="getAdhocInvoiceRemarksHistory" resultMap="getAdhocInvoiceRemarksHistory">
+		select h.invoice_id,h.user_id,h.remarks,coalesce(r.task_phase,'NA'), h.update_time
+		FROM PTRECA_ADHOC_BILLING_HISTORY h
+		left join ptrbilling_tat_ref r on r.code=h.stage_code
+		<iterate prepend="where h.invoice_id in " property="INVOICES" open="(" close=")" conjunction=",">#INVOICES[]#</iterate>	
+		order by h.update_time desc
+	</select>
+	<select id="getEcaInvoiceRemarksHistory" resultMap="getAdhocInvoiceRemarksHistory">
+		select h.invoice_id,h.user_id,h.remarks,coalesce(r.task_phase,'NA'), h.update_time
+		FROM PTRECA_BILLING_HISTORY h
+		left join ptrbilling_tat_ref r on r.code=h.stage_code
+		<iterate prepend="where h.invoice_id in " property="INVOICES" open="(" close=")" conjunction=",">#INVOICES[]#</iterate>	
+		order by h.update_time desc
+	</select>
+	<resultMap id="getAdhocAgencySearch" class="hmap">
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="AGENCY_NAME" javaType="string" />
+		<result property="COMPANY_NO" javaType="string" />
+		<result property="ADDRESS_1" javaType="string" />
+		<result property="ADDRESS_2" javaType="string" />
+		<result property="ADDRESS_3" javaType="string" />
+		<result property="CITY" javaType="string" />
+		<result property="POSTCODE" javaType="string" />
+		<result property="STATE" javaType="string" />
+		<result property="COUNTRY" javaType="string" />
+		<result property="CONTACT_NO" javaType="string" />
+		<result property="FAX_NO" javaType="string" />
+		<result property="GST_REGISTRATION_NO" javaType="string" />
+	</resultMap>
+	
+	<select id="getAdhocAgencySearch" resultMap="getAdhocAgencySearch">
+		select DISTINCT b.agency_id,b.agency_name,b.company_no,b.address_1,b.address_2,
+		b.address_3,b.city,b.state,b.country,b.postcode,b.contact_no,b.fax_no,b.GST_REGISTER_NO
+		from PTRECA_ADHOC_BILLING b
+		where not exists(select 1 from  ptragency g where g.id=b.agency_id)
+		<isNotEmpty property="SEARCH_AGENCY_NAME">
+		and upper(b.agency_name) like '%'||upper(#SEARCH_AGENCY_NAME#)||'%' 
+		</isNotEmpty>	
+		<isNotEmpty property="SEARCH_COMPANY_NO">
+		and upper(b.company_no) like '%'||upper(#SEARCH_COMPANY_NO#)||'%'
+		</isNotEmpty>
+		union		
+		select g.id ,g.description,g.company_no,g.address_1,g.address_2,
+		g.address_3,g.city,s.description,c.description,g.postal_code,g.phone_no,g.fax_no,g.gst_registration_no
+		from ptragency g
+		inner join ptragency_type_ref t on t.id=g.type_id and t.code in('ECA')
+		LEFT JOIN PTRSTATE_REF S ON S.ID=G.STATE_ID
+		left join ptrcountry_ref c on c.id=g.country_id
+		where 1=1
+		<isNotEmpty property="SEARCH_AGENCY_NAME">
+		and upper(g.description) like '%'||upper(#SEARCH_AGENCY_NAME#)||'%'
+		</isNotEmpty>	
+		<isNotEmpty property="SEARCH_COMPANY_NO">
+		and upper(g.registration_number) like '%'||upper(#SEARCH_COMPANY_NO#)||'%'
+		</isNotEmpty>	 
+	</select>
+	
+	<insert id="createEcaInvoice">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRECA_BILLING_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		insert into PTRECA_BILLING(id,AGENCY_ID,INVOICE_DATE,TAX_INVOICE_NO,INVOICE_AMOUNT,INVOICE_STAGE_ID)
+		values(#ID#,#AGENCY_ID#,#INVOICE_DATE#,#TAX_INVOICE_NO#,#TOTAL_AMOUNT#,#INVOICE_STAGE_ID#)	
+	</insert>
+	
+	<update id="updateEcaBilling">
+		UPDATE PTRECA_BILLING SET
+		INVOICE_DATE =#INVOICE_DATE#,
+		TAX_INVOICE_NO =#TAX_INVOICE_NO#,
+		INVOICE_AMOUNT = #TOTAL_AMOUNT#,
+		RECEIPT_NUMBER = #RECEIPT_NUMBER#
+		<isNotNull property="INVOICE_STAGE_ID">
+		,INVOICE_STAGE_ID = #INVOICE_STAGE_ID#
+		</isNotNull>
+		WHERE ID =#INVOICE_ID#
+	</update>
+
+	<resultMap class="hmap" id="getEcaBillingTransactions">
+		<result property="ID" javaType="long"/>
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="ACCOUNT_ID" javaType="long"/>
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="CUSTOMER_NO" javaType="string" />
+		<result property="ACCOUNT_NUMBER" javaType="string" />
+		<result property="TRANSACTION_DATE" javaType="date" />
+		<result property="TRANSACTION_AMOUNT" javaType="$" />
+		<result property="COMMISSION_AMOUNT" javaType="$" />
+		<result property="RATE" javaType="double" />
+		<result property="CONTRACT" javaType="string" />
+		<result property="TERM" javaType="string" />
+		<result property="PRODUCT_CATEGORY" javaType="string"/>
+		<result property="REMARKS" javaType="string"/>
+		<result property="DATE_ASSIGNED" javaType="date"/>
+		<result property="ACCOUNT_STATUS" javaType="string"/>
+		<result property="MONTHLY_INSTALLMENT" javaType="$"/>
+		<result property="GROSS_BALANCE" javaType="$"/>
+		<result property="TOTAL_DUE" javaType="$"/>
+		<result property="OPENING_MIA" javaType="long"/>
+		<result property="CLOSING_MIA" javaType="long"/>
+		<result property="FINAL_COMMISSION" javaType="$"/>
+		<result property="APPEAL_FROM_AGENCY" javaType="string"/>
+		<result property="PAYMENT_METHOD" javaType="string"/>
+		<result property="SPECIAL_STATUS" javaType="string"/>
+		<result property="OTHER_REJECTION" javaType="string"/>
+		<result property="ABORT_REASON" javaType="string"/>
+	</resultMap>
+
+
+	<insert id="insertInvoiceTransactionRel">
+		insert into ptrlegal_invoice_transaction_rel(process_id,invoice_id)
+		values(#PROCESS_ID#,#INVOICE_ID#)
+	</insert>
+
+	<select id="getEcaBillingTransactions" resultMap="getEcaBillingTransactions">
+		select
+		eca.ID,
+		eca.ECA_BILLING_ID as INVOICE_ID,
+		eca.ACCOUNT_ID,
+		c.customer_name as CUSTOMER_NAME,
+		c.customer_no as CUSTOMER_NO,
+		a.account_no as ACCOUNT_NUMBER,
+		pay.posting_date as TRANSACTION_DATE,
+		pay.amount as TRANSACTION_AMOUNT,
+		com.commission_amount as COMMISSION_AMOUNT,
+		com.commission_rate/100 as RATE,
+		con.description as CONTRACT,
+		term.description as TERM,
+		catref.description as PRODUCT_CATEGORY,
+		eca.remarks,
+		ass.approved_date as DATE_ASSIGNED,
+		status.description as ACCOUNT_STATUS,
+		coalesce(a.PAYMENT_AMOUNT,0) as MONTHLY_INSTALLMENT,
+		coalesce(eca.outstanding_balance,0) - (coalesce(eca.interest_rebate_amount,0) + coalesce(eca.write_off_amount,0)) as GROSS_BALANCE,
+		coalesce(eca.total_amount_due,0) as TOTAL_DUE,
+		coalesce(wla.months_in_arrears,0) as OPENING_MIA,
+		coalesce(a.months_in_arrears,0) as CLOSING_MIA,
+		0 as FINAL_COMMISSION,
+		eca.APPEAL_FROM_AGENCY,
+		met.description as PAYMENT_METHOD,
+		special.description as SPECIAL_STATUS,
+		eca.OTHER_REJECTION,
+		abort.description as ABORT_REASON
+		from ptreca_billing ecabil
+		inner join ptreca_billing_transaction eca on eca.eca_billing_id=ecabil.id 
+		inner join ptragency_payment_commission com on com.id=eca.payment_commission_id
+		inner join ptragency_payment_transaction pay on pay.transaction_id=com.transaction_id
+		inner join ptraccount_agency_assignment ass on ass.id=pay.agency_assignment_id
+		inner join ptraccount a on a.id=ass.account_id
+		left join ptraccount_status_ref status on status.id=a.status_id
+		left join ptraccount_work_list_assignment wla on wla.account_id=a.id
+		inner join ptrproduct_type_ref ptf on ptf.id = a.product_type_id
+		inner join ptrproduct_type_category_ref catref on catref.id = ptf.category_id
+		inner join ptrcustomer c on c.id=a.customer_id
+		inner join ptragency_contract_version cv on cv.id=com.contract_version_id
+		inner join ptragency_contract con on con.id=cv.contract_id
+		inner join ptragency_contract_version_term term on
+		term.id=com.contract_version_term_id
+		left join ptrpayment_method_ref met on met.id=pay.payment_method_id
+		left join (
+		<include refid="specialStatus-fragment" />
+		) sstatus on a.id = sstatus.account_id
+		left join ptrspecial_status_ref special on special.id=sstatus.special_status_id
+		left join ptrlegal_abort_reason_ref abort on abort.id=ass.abort_reason_id
+		where ecabil.ID=#INVOICE_ID#
+	</select>
+
+	<resultMap class="hmap" id="getAdjustmentInvoicesTransaction">
+		<result property="INVOICE_ID" javaType="long" />
+		<result property="ID" javaType="long" />
+		<result property="ACCOUNT_ID" javaType="long"/>
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="CUSTOMER_NO" javaType="string" />
+		<result property="ACCOUNT_NUMBER" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="COMMISSION_RATE" javaType="double" />
+		<result property="AMOUNT" javaType="$" />
+	</resultMap>
+
+	<select id="getAdjustmentInvoicesTransaction" resultMap="getAdjustmentInvoicesTransaction">
+select distinct
+t.eca_billing_id, j.ID, t.account_id, c.customer_name,
+c.customer_no, a.account_no, j.DESCRIPTION, com.commission_rate/100, coalesce(j.AMOUNT,0)
+from ptreca_billing_transaction t
+inner join ptragency_payment_commission com on com.id=t.payment_commission_id
+inner join ptraccount a on a.id=t.account_id
+inner join ptrcustomer c on c.id=a.customer_id
+left join ptreca_billing_adjustment j on j.invoice_id=t.eca_billing_id and j.account_id=t.account_id
+where t.eca_billing_id=#INVOICE_ID#
+<isNotNull property="ACCOUNT_ID">
+and t.ACCOUNT_ID=#ACCOUNT_ID#
+</isNotNull>
+order by j.ID asc
+	</select>
+	
+	<resultMap class="hmap" id="getCustomerDetailsForAdjustment">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="CUSTOMER_NAME" javaType="string"/>
+	<result property="CUSTOMER_NO" javaType="string"/>
+	<result property="ACCOUNT_NUMBER" javaType="string"/>
+	</resultMap>
+	
+	<select id="getCustomerDetailsForAdjustment" resultMap="getCustomerDetailsForAdjustment">
+	select a.id, c.customer_name, c.customer_no, a.account_no
+		from ptraccount a 
+		inner join ptrcustomer c on c.id=a.customer_id
+		where a.ID=#ACCOUNT_ID#
+	</select>
+
+	<delete id="updateEcaAdjustmentsBilling" parameterClass="map">
+		update ptreca_billing_adjustment
+		set
+		description=#DESCRIPTION#,
+		amount=#AMOUNT#
+		where invoice_id=#INVOICE_ID# and ID=#ID#
+	</delete>
+
+	<insert id="insertEcaAdjustmentsBilling" parameterClass="map">
+		insert into ptreca_billing_adjustment
+		(INVOICE_ID,ACCOUNT_ID,DESCRIPTION,AMOUNT,COMMISSION_RATE)
+		values(#INVOICE_ID#,#ACCOUNT_ID#,#DESCRIPTION#,#AMOUNT#,#COMMISSION_RATE#)
+	</insert>
+	
+	<resultMap class="hmap" id="getStageCodeForAdjustment">
+		<result property="STAGE_CODE" javaType="string" />
+	</resultMap>
+	<select id="getStageCodeForAdjustment" resultMap="getStageCodeForAdjustment">
+		select code from ptrbilling_tat_ref where ID=#INVOICE_STAGE_ID#
+	</select>
+
+	<update id="deleteEcaAdjustmentsBilling" parameterClass="map">
+		delete from ptreca_billing_adjustment where invoice_id=#INVOICE_ID# and ACCOUNT_ID=#ACCOUNT_ID# 
+		and COMMISSION_RATE=#COMMISSION_RATE#
+	</update>
+
+
+	<resultMap class="hmap" id="getEcaBillingReportDesign">
+	<result property="DOCUMENT_ID" javaType="long"/>
+	</resultMap>
+
+	<select id="getEcaBillingReportDesign" resultMap="getEcaBillingReportDesign">
+	select max(i.document_id) from ptrreport_design d
+	inner join ptrreport_instance i on i.report_design_id=d.id
+	where d.NAME=#REPORT_DESIGN# and d.disable=false
+	</select>
+	
+	<update id="updateEcaBillingTransactionRemarks" parameterClass="map">
+		update ptreca_billing_transaction
+		set
+		remarks=#REMARKS#,
+		updated_user_id=#LOGON_USER#,
+		updated_time=#CURRENT_TIME#
+		where id=#TRANSACTION_ID#	
+		</update>
+		<update id="updateEcaBillingTransactionOtherRejection" parameterClass="map">
+		update ptreca_billing_transaction
+		set
+		other_rejection=#OTHER_REJECTION#,
+		updated_user_id=#LOGON_USER#,
+		updated_time=#CURRENT_TIME#
+		where id=#TRANSACTION_ID#	
+		</update>
+		
+		<update id="updateEcaBillingTransactionAppealFromAgency" parameterClass="map">
+		update ptreca_billing_transaction
+		set
+		APPEAL_FROM_AGENCY=#REMARKS#,
+		updated_user_id=#LOGON_USER#,
+		updated_time=#CURRENT_TIME#
+		where id=#TRANSACTION_ID#	
+		</update>
+	
+	<resultMap class="hmap" id="getRemarksInvoicesTransaction">
+		<result javaType="long" property="TRANSACTION_ID"/>
+		<result javaType="string" property="REMARKS"/>
+	</resultMap>
+<select id="getRemarksInvoicesTransaction" resultMap="getRemarksInvoicesTransaction">
+		select ID, REMARKS from ptreca_billing_transaction where ID=#TRANSACTION_ID#
+	</select>
+	<select id="getAppealFromAgencyInvoicesTransaction" resultMap="getRemarksInvoicesTransaction">
+		select ID, appeal_from_agency from ptreca_billing_transaction where ID=#TRANSACTION_ID#
+	</select>
+		<resultMap class="hmap" id="getOtherRejectionInvoicesTransaction">
+		<result javaType="long" property="TRANSACTION_ID"/>
+		<result javaType="string" property="OTHER_REJECTION"/>
+	</resultMap>
+<select id="getOtherRejectionInvoicesTransaction" resultMap="getOtherRejectionInvoicesTransaction">
+		select ID, OTHER_REJECTION from ptreca_billing_transaction where ID=#TRANSACTION_ID#
+	</select>
+	
+	<resultMap class="hmap" id="getEcaInvoiceSummary">
+	<result property="PRODUCT_CATEGORY" javaType="string"/>
+	<result property="TERM" javaType="string"/>
+	<result property="COMMISSION_RATE" javaType="double"/>
+	<result property="TOTAL_RECOVERIES" javaType="$"/>
+	<result property="COMMISSION_PAID" javaType="$"/>
+	<result property="GROSS_AMOUNT" javaType="$"/>
+	<result property="TOTAL_DUE" javaType="$"/>
+	</resultMap>
+	
+	<select id="getEcaInvoiceSummary" resultMap="getEcaInvoiceSummary">
+	select 
+c.description as PRODUCT_CATEGORY, 
+vt.description as TERM,
+com.commission_rate/100 as COMMISSION_RATE,
+0 as TOTAL_RECOVERIES,
+0 as COMMISSION_PAID,
+0 as GROSS_AMOUNT,
+0 as TOTAL_DUE
+from ptreca_billing eca
+inner join ptreca_billing_transaction t on t.eca_billing_id=eca.id
+inner join ptragency_payment_commission com on com.id=t.payment_commission_id
+inner join ptragency_payment_transaction pay on pay.transaction_id=com.transaction_id
+inner join ptraccount a on a.id=t.account_id
+inner join ptrproduct_type_ref p on p.id=a.product_type_id
+inner join ptrproduct_type_category_ref c on c.id=p.category_id
+inner join ptragency_contract_version_term vt on vt.id=com.contract_version_term_id
+where eca.id=#INVOICE_ID#
+group by c.description, vt.description, com.commission_rate/100 
+	</select>
+	
+	<resultMap class="hmap" id="getEcaInvoiceSummaryTotalGross">
+	<result property="COMMISSION_RATE" javaType="double"/>
+	<result property="GROSS_AMOUNT" javaType="$"/>
+	<result property="TOTAL_DUE" javaType="$"/>
+	</resultMap>
+	
+		<select id="getEcaInvoiceSummaryTotalGross" resultMap="getEcaInvoiceSummaryTotalGross">
+select a.COMMISSION_RATE, sum(a.AMOUNT), sum(a.TOTAL_DUE) from(
+select 
+distinct
+com.commission_rate/100 as COMMISSION_RATE,
+coalesce(t.outstanding_balance,0) - (coalesce(t.interest_rebate_amount,0) + coalesce(t.write_off_amount,0))  as AMOUNT,
+coalesce(t.total_amount_due,0) as TOTAL_DUE
+from ptreca_billing eca
+inner join ptreca_billing_transaction t on t.eca_billing_id=eca.id
+inner join ptragency_payment_commission com on com.id=t.payment_commission_id
+inner join ptragency_payment_transaction pay on pay.transaction_id=com.transaction_id
+inner join ptraccount a on a.id=t.account_id
+inner join ptrproduct_type_ref p on p.id=a.product_type_id
+inner join ptrproduct_type_category_ref c on c.id=p.category_id
+inner join ptragency_contract_version_term vt on vt.id=com.contract_version_term_id
+where eca.id=#INVOICE_ID# )a group by a.COMMISSION_RATE
+	</select>
+	
+	<resultMap class="hmap" id="getEcaInvoiceSummaryTotalNOA">
+	<result property="COMMISSION_RATE" javaType="double"/>
+	<result property="NO_OF_ACCOUNT" javaType="long"/>
+	</resultMap>
+	
+		<select id="getEcaInvoiceSummaryTotalNOA" resultMap="getEcaInvoiceSummaryTotalNOA">
+select a.COMMISSION_RATE, count(a.ID) from(
+select 
+distinct
+com.commission_rate/100 as COMMISSION_RATE,
+a.id
+from ptreca_billing eca
+inner join ptreca_billing_transaction t on t.eca_billing_id=eca.id
+inner join ptragency_payment_commission com on com.id=t.payment_commission_id
+inner join ptragency_payment_transaction pay on pay.transaction_id=com.transaction_id
+inner join ptraccount a on a.id=t.account_id
+inner join ptrproduct_type_ref p on p.id=a.product_type_id
+inner join ptrproduct_type_category_ref c on c.id=p.category_id
+inner join ptragency_contract_version_term vt on vt.id=com.contract_version_term_id
+where eca.id=#INVOICE_ID# )a group by a.COMMISSION_RATE
+	</select>
+	
+		<resultMap class="hmap" id="getEcaInvoiceSummaryTotalRecoveries">
+	<result property="COMMISSION_RATE" javaType="double"/>
+	<result property="TOTAL_RECOVERIES" javaType="$"/>
+	</resultMap>
+	
+		<select id="getEcaInvoiceSummaryTotalRecoveries" resultMap="getEcaInvoiceSummaryTotalRecoveries">
+select a.COMMISSION_RATE, sum(a.AMOUNT) from(
+select 
+distinct
+com.commission_rate/100 as COMMISSION_RATE,
+pay.amount as AMOUNT
+from ptreca_billing eca
+inner join ptreca_billing_transaction t on t.eca_billing_id=eca.id
+inner join ptragency_payment_commission com on com.id=t.payment_commission_id
+inner join ptragency_payment_transaction pay on pay.transaction_id=com.transaction_id
+inner join ptraccount a on a.id=t.account_id
+inner join ptrproduct_type_ref p on p.id=a.product_type_id
+inner join ptrproduct_type_category_ref c on c.id=p.category_id
+inner join ptragency_contract_version_term vt on vt.id=com.contract_version_term_id
+where eca.id=#INVOICE_ID# )a group by a.COMMISSION_RATE
+	</select>
+	
+	<resultMap class="hmap" id="getEcaInvoiceSummaryTotalCommissionPaid">
+	<result property="COMMISSION_RATE" javaType="double"/>
+	<result property="COMMISSION_PAID" javaType="$"/>
+	</resultMap>
+	
+		<select id="getEcaInvoiceSummaryTotalCommissionPaid" resultMap="getEcaInvoiceSummaryTotalCommissionPaid">
+select a.COMMISSION_RATE, sum(a.AMOUNT) from(
+select 
+distinct
+com.commission_rate/100 as COMMISSION_RATE,
+coalesce(adj.amount,com.commission_amount) as AMOUNT
+from ptreca_billing eca
+inner join ptreca_billing_transaction t on t.eca_billing_id=eca.id
+inner join ptragency_payment_commission com on com.id=t.payment_commission_id
+left join ptreca_billing_adjustment adj on adj.invoice_id=eca.id and t.account_id=adj.account_id and adj.commission_rate=com.commission_rate
+inner join ptragency_payment_transaction pay on pay.transaction_id=com.transaction_id
+inner join ptraccount a on a.id=t.account_id
+inner join ptrproduct_type_ref p on p.id=a.product_type_id
+inner join ptrproduct_type_category_ref c on c.id=p.category_id
+inner join ptragency_contract_version_term vt on vt.id=com.contract_version_term_id
+where eca.id=#INVOICE_ID# )a group by a.COMMISSION_RATE
+	</select>
+	
+	<resultMap class="hmap" id="getEcaBillingTransactionAccountTagging">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="ACCOUNT_TAGGING" javaType="string"/>
+	</resultMap>
+	
+	<select id="getEcaBillingTransactionAccountTagging" resultMap="getEcaBillingTransactionAccountTagging">
+	select rel.account_id, ref.description from ptraccount_tagging_rel rel
+inner join ptraccount_tagging_ref ref on ref.id=rel.account_tagging_id
+<iterate open="(" close=")" property="ACCOUNTS" prepend="where rel.account_id in" conjunction=",">#ACCOUNTS[]#</iterate>
+order by rel.account_id, ref.id
+	</select>
+	
+	
+		<resultMap class="hmap" id="getEcaBillingAppealFromAgency">
+	<result property="IS_APPEAL_FROM_AGENCY" javaType="boolean"/>
+	</resultMap>
+	
+	<select id="getEcaBillingAppealFromAgency" resultMap="getEcaBillingAppealFromAgency">
+select distinct true from ptreca_billing_transaction where eca_billing_id=#INVOICE_ID# and appeal_from_agency is not null
+	</select>
+	
+	<update id="updateEcaBillingAppealFromAgencyToNull" parameterClass="map">
+	update ptreca_billing_transaction set 
+	appeal_from_agency=NULL,
+		updated_user_id=#LOGON_USER#,
+		updated_time=#CURRENT_TIME#
+	where eca_billing_id = #INVOICE_ID#
+	</update>
+	
+	<delete id="deleteEcaBillingTransactionAdhoc" parameterClass="map">
+	delete from ptreca_billing_transaction_adhoc where invoice_id=#INVOICE_ID#
+	</delete>
+	
+	<insert id="insertEcaBillingTransactionAdhoc" parameterClass="map">
+	insert into ptreca_billing_transaction_adhoc 
+	(invoice_id,customer_name,account_no,assignment_date,transaction_date,
+	monthly_installment_amount,gross_balance_amount,total_due_amount,opening_mia,closing_mia,
+	transaction_amount,rate,commission_amount,final_commission_amount,remarks,
+	appeal_from_agency,product_category,customer_no,contract,term,
+	account_tagging,payment_method,special_status,other_rejection,abort_reason,
+	created_user_id,created_time,agency_assignment_id)
+	values
+	(#INVOICE_ID#,#CUSTOMER_NAME#,#ACCOUNT_NO#,#ASSIGNMENT_DATE#,#TRANSACTION_DATE#,
+	#MONTHLY_INSTALLMENT#,#GROSS_BALANCE#,#TOTAL_DUE#,#OPENING_MIA#,#CLOSING_MIA#,
+	#TRANSACTION_AMOUNT#,#RATE#,#COMMISSION_AMOUNT#,#FINAL_COMMISSIONdescription#,#REMARKS#,
+	#APPEAL_FROM_AGENCY#,#PRODUCT_CATEGORY#,#CUSTOMER_NO#,#CONTRACT#,#TERM#,
+	#ACCOUNT_TAGGING#,#PAYMENT_METHOD#,#SPECIAL_STATUS#,#OTHER_REJECTION#,#ABORT_REASON#,
+	#LOGON_USER#,#CURRENT_TIME#,#AGENCY_ASSIGNMENT_ID#)
+	</insert>
+	
+	<resultMap class="hmap" id="getEcaBillingTransactionAdhoc">
+	<result property="ID" javaType="long"/>
+<result property="INVOICE_ID" javaType="long"/>
+<result property="CUSTOMER_NAME" javaType="string"/>
+<result property="ACCOUNT_NO" javaType="string"/>
+<result property="ASSIGNMENT_DATE" javaType="date"/>
+<result property="TRANSACTION_DATE" javaType="date"/>
+<result property="MONTHLY_INSTALLMENT" javaType="$"/>
+<result property="GROSS_BALANCE" javaType="$"/>
+<result property="TOTAL_DUE" javaType="$"/>
+<result property="OPENING_MIA" javaType="long"/>
+<result property="CLOSING_MIA" javaType="long"/>
+<result property="TRANSACTION_AMOUNT" javaType="$"/>
+<result property="RATE" javaType="double"/>
+<result property="COMMISSION_AMOUNT" javaType="$"/>
+<result property="FINAL_COMMISSION_AMOUNT" javaType="$"/>
+<result property="REMARKS" javaType="string"/>
+<result property="APPEAL_FROM_AGENCY" javaType="string"/>
+<result property="PRODUCT_CATEGORY" javaType="string"/>
+<result property="CUSTOMER_NO" javaType="string"/>
+<result property="CONTRACT" javaType="string"/>
+<result property="TERM" javaType="string"/>
+<result property="ACCOUNT_TAGGING" javaType="string"/>
+<result property="PAYMENT_METHOD" javaType="string"/>
+<result property="SPECIAL_STATUS" javaType="string"/>
+<result property="OTHER_REJECTION" javaType="string"/>
+<result property="ABORT_REASON" javaType="string"/>
+	</resultMap>
+	
+	<select id="getEcaBillingTransactionAdhoc" resultMap="getEcaBillingTransactionAdhoc">
+	select id,
+	invoice_id,customer_name,account_no,assignment_date,transaction_date,
+	monthly_installment_amount,gross_balance_amount,total_due_amount,opening_mia,closing_mia,
+	transaction_amount,rate,commission_amount,final_commission_amount,remarks,
+	appeal_from_agency,product_category,customer_no,contract,term,
+	account_tagging,payment_method,special_status,other_rejection,abort_reason
+	from ptreca_billing_transaction_adhoc
+	where invoice_id=#INVOICE_ID#
+	</select>
+	
+	<resultMap class="hmap" id="getValidCustomers">
+	<result property="CUSTOMER_ID" javaType="long" />
+	<result property="CUSTOMER_PRIMARY_ID" javaType="string" />
+	<result property="CUSTOMER_NAME" javaType="string" />
+	<result property="CUSTOMER_NO" javaType="string"/>
+	<result property="VALID" javaType="boolean" />
+	<result property="COLOR" javaType="string" />
+	<result property="CUSTOMER_CIF" javaType="string"/>
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="PRODUCT_CATEGORY" javaType="string"/>
+	<result property="MONTHLY_INSTALLMENT" javaType="$"/>
+	<result property="GROSS_BALANCE" javaType="$"/>
+	<result property="TOTAL_DUE" javaType="$"/>
+	<result property="OPENING_MIA" javaType="long"/>
+	<result property="CLOSING_MIA" javaType="long"/>
+	<result property="PAYMENT_METHOD" javaType="string"/>
+	<result property="SPECIAL_STATUS" javaType="string"/>
+
+</resultMap>
+
+	<select id="getValidCustomers" resultMap="getValidCustomers">
+	select 
+	c.ID, 
+	c.CUSTOMER_ID_NO, 
+	c.CUSTOMER_NAME,  
+	c.CUSTOMER_NO, 
+	true as VALID, '33ff33' as COLOR, 
+	
+	c.CUSTOMER_NO, 
+	acc.ID, 
+	ptc.description as PRODUCT_CATEGORY, 
+	acc.payment_amount as MONTHLY_INSTALLMENT,
+	coalesce(acc.outstanding_balance,0) - (coalesce(acc.interest_rebate_amount,0) + coalesce(acc.write_off_amount,0)) as GROSS_BALANCE,
+
+	acc.total_amount_due as TOTAL_DUE, 
+	coalesce(wl.months_in_arrears,0) as OPENING_MIA, 
+	coalesce(acc.months_in_arrears,0) as CLOSING_MIA, 
+	met.description as PAYMENT_METHOD,
+	special.description as SPECIAL_STATUS
+	from PTRCUSTOMER c
+	inner join ptraccount acc on acc.CUSTOMER_ID=c.ID
+	left join ptraccount_work_list_assignment wl on wl.account_id=acc.id
+	inner join ptrproduct_type_ref pro on pro.id=acc.product_type_id
+	inner join ptrproduct_type_category_ref ptc on ptc.id=pro.category_id
+	left join ptrvw_account_last_payment_method pay on pay.account_id=acc.id
+	left join ptrpayment_method_ref met on met.id=pay.last_payment_method_id
+	left join (
+	select account_id, special_status_id
+	from ptraccount_special_status where 
+	status_id = 15004 
+	and is_priority = true 
+	and expiry_date >= now()::date
+			) sstatus on acc.id = sstatus.account_id
+	left join ptrspecial_status_ref special on special.id=sstatus.special_status_id
+		<iterate prepend="where c.CUSTOMER_ID_NO in " conjunction=","
+			property="CUSTOMERS" open="(" close=")">#CUSTOMERS[]#</iterate>
+			<iterate prepend="and acc.ACCOUNT_NO in " conjunction=","
+			property="ACCOUNTS" open="(" close=")">#ACCOUNTS[]#</iterate>
+		
+	</select>
+	
+	<resultMap class="hmap" id="getValidEcaAgencyAssignment">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="AGENCY_ASSIGNMENT_ID" javaType="long"/>
+	<result property="ABORT_REASON" javaType="string"/>
+	<result property="ASSIGNMENT_DATE" javaType="date"/>
+	<result property="CONTRACT" javaType="string"/>
+	</resultMap>
+	
+	
+	<select id="getValidEcaAgencyAssignment" resultMap="getValidEcaAgencyAssignment">
+	select acc.ID, ass.ID, abort.DESCRIPTION, ass.APPROVED_DATE, con.DESCRIPTION
+	from PTRCUSTOMER c
+	inner join ptraccount acc on acc.CUSTOMER_ID=c.ID
+	inner join ptraccount_agency_assignment ass on ass.account_id=acc.id
+	inner join ptrtreatment_subtype_ref sb on sb.id=ass.subtype_id and sb.type_id=19
+	inner join ptragency_contract con on con.id=ass.contract_id
+	left join ptrlegal_abort_reason_ref abort on abort.id=ass.abort_reason_id
+	<iterate prepend="where c.CUSTOMER_ID_NO in " conjunction=","
+			property="CUSTOMERS" open="(" close=")">#CUSTOMERS[]#</iterate>
+			<iterate prepend="and acc.ACCOUNT_NO in " conjunction=","
+			property="ACCOUNTS" open="(" close=")">#ACCOUNTS[]#</iterate>
+	</select>
+	
+	<resultMap class="hmap" id="getEcaAdhocBillingUpload">
+	<result property="TRANSACTION_DATE" javaType="date"/>
+	</resultMap>
+	
+	<select id="getEcaAdhocBillingUpload" resultMap="getEcaAdhocBillingUpload">
+	select date(#TRANSACTION_DATE#) <include refid="fromdual"/>
+	</select>
+	
+</sqlMap>

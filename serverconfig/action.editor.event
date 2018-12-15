@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getParentInstructions"/>
+  <query value="getActionStages"/>
+  <query value="getActionBillingStages"/>
+  <query value="getActionCategory"/>
+  <query value="getHostCCRISStatus"/>
+  <target value="PARENT_INSTRUCTIONS"/>
+  <target value="STAGES"/>
+  <target value="BILLING_STAGES"/>
+  <target value="CATEGORIES"/>
+  <target value="HOST_CCRIS_STATUS"/>
+ </exec>
+ <exec from="PARENT_INSTRUCTIONS" key="PARENT_INSTRUCTIONS" type="copyintolist"/>
+ <exec from="CATEGORIES" key="CATEGORIES" type="copyintolist"/>
+ <exec from="BILLING_STAGES" key="BILLING_STAGES" type="copyintolist"/>
+ <exec from="STAGES" key="STAGES" type="copyintolist"/>
+ <exec from="HOST_CCRIS_STATUS" key="HOST_CCRIS_STATUS" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ACTION_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="ACTION_ID" operator="&lt;&gt;" rhsvalue="parent.ACTION_ID"/>
+  </conditions>
+  <exec statement="getActionForEditing" type="select"/>
+  <exec type="parallelquery">
+   <query value="getAssignedAdditionalDetails"/>
+   <query value="getExpensesForSetup"/>
+   <target value="ADDITIONAL_DETAILS"/>
+   <target value="EXPENSES"/>
+  </exec>
+  <exec from="CODE" key="CODE" type="copyintolist"/>
+  <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+  <exec from="TAT" key="TAT" type="copyintolist"/>
+  <exec from="VISUAL_ACTION" key="VISUAL_ACTION" type="copyintolist"/>
+  <exec from="ADDITIONAL_DETAILS" key="ADDITIONAL_DETAILS" type="copyintolist"/>
+  <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+  <exec from="INSTRUCTION_ID" key="INSTRUCTION_ID" type="copyintolist"/>
+  <exec from="STAGE_ID" key="STAGE_ID" type="copyintolist"/>
+  <exec from="BILLING_STAGE_ID" key="BILLING_STAGE_ID" type="copyintolist"/>
+  <exec from="CATEGORY_ID" key="CATEGORY_ID" type="copyintolist"/>
+  <exec from="INTERNAL_ACTION" key="INTERNAL_ACTION" type="copyintolist"/>
+  <exec from="CONTRACT" key="CONTRACT" type="copyintolist"/>
+  <exec from="DISBURSEMENT" key="DISBURSEMENT" type="copyintolist"/>
+  <exec from="EXPENSE" key="EXPENSE" type="copyintolist"/>
+  <exec from="BILLING_MILESTONE" key="BILLING_MILESTONE" type="copyintolist"/>
+  <exec from="EXPENSES" key="EXPENSES" type="copyintolist"/>
+  <exec count="20" to="EMPTY_LIST" type="createlist"/>
+  <exec from="EMPTY_LIST" key="EMPTY_LIST" type="copyintolist"/>
+  <exec from="HOST_CCRIS_STATUS_ID" key="HOST_CCRIS_STATUS_ID" type="copyintolist"/>
+  <exec from="SST" key="SST" type="copyintolist"/>
+ </exec>
+</event>

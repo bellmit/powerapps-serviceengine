@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="escalationService">
+
+<select id="getEscalationReason" resultMap="global.ref">
+<include refid="pleaseSelectRef"/>
+union
+<include refid="refselect"/> from PTRESCALATION_REASON_REF
+</select>
+
+<resultMap class="hmap" id="getManualEscalationEmployeePosition">
+<result property="EMPLOYEE_ITION_ID" javaType="string"/>
+</resultMap>
+
+<select id="getManualEscalationEmployeePosition" resultMap="getManualEscalationEmployeePosition">
+select p.CODE from PTREMPLOYEE e
+inner join PTRUSER us on us.EMPLOYEE_ID=e.ID
+inner join PTREMPLOYEE_POSITION_REF p on p.ID=e.POSITION_ID
+where us.USER_ID=#LOGON_USER#
+</select>
+
+ <resultMap id="getManualEscalationAssignTo" class="hmap">
+  <result property="ID" javaType="string" />
+  <result property="CODE" javaType="string" />
+  <result property="DESCRIPTION" javaType="string" />
+  <result property="DISABLE" javaType="boolean" />
+  <result property="SORT_PRIORITY" javaType="long" />
+ </resultMap>
+ 
+ <sql id="allEscalateToUser">
+select 
+distinct us.USER_ID, us.USER_ID, us.USER_ID||' - '||e.FIRST_NAME||' '||e.MIDDLE_NAME||' '||e.LAST_NAME, e.disable, 1 as sort_priority
+from ptremployee e
+inner join PTRUSER us on us.EMPLOYEE_ID=e.ID
+inner join ptrescalation_type_ref ref on ref.employee_position_id=e.position_id
+and (e.on_leave=false or e.on_leave is null)
+and ref.escalation_type_id=#ESCALATION_TYPE_ID#
+ </sql>
+ <sql id="assignedEscalateToUser">
+ select us.USER_ID, us.USER_ID, e.FIRST_NAME||' '||e.MIDDLE_NAME||' '||e.LAST_NAME, us.disable, 1 as sort_priority 
+from ptremployee e
+inner join PTRUSER us on us.EMPLOYEE_ID=e.ID
+where us.USER_ID=#ESCALATE_TO#
+ </sql>
+
+<select id="getManualEscalationAssignTo" resultMap="getManualEscalationAssignTo">
+<include refid="pleaseSelectRef"/>
+union
+<include refid="allEscalateToUser"/>
+union
+<include refid="assignedEscalateToUser"/>
+</select>
+  
+  
+  
+	<resultMap class="hmap" id="getTreatmentEscalation">
+		<result property="TREATMENT_ID" javaType="long"/>
+		<result property="ESCALATION_REASON_ID" javaType="long"/>
+		<result property="ESCALATE_TO" javaType="string"/>
+		<result property="TURNAROUND_DATE" javaType="date"/>
+		<result property="TYPE_STATUS_ID" javaType="long"/>
+		<result property="SUBTYPE_ID" javaType="long"/>
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ENABLE_ACTION" javaType="long"/>
+	</resultMap>
+	
+	<select id="getTreatmentEscalation" resultMap="getTreatmentEscalation">
+		select
+		e.TREATMENT_ID,e.ESCALATION_REASON_ID,e.ESCALATE_TO,e.TURNAROUND_DATE,
+		e.TYPE_STATUS_ID,e.SUBTYPE_ID,t.AGENCY_ID,
+		case when t.agency_id is null and t.CREATED_USER_ID = #LOGON_USER# then 1
+		when t.agency_id is not null 
+		and t.agency_id = #AGENCY_ID# 
+		and t.CREATED_USER_ID = #USER_ID# then 1 else 0
+        end as ENABLE_ACTION
+		from PTRTREATMENT_ESCALATION e
+		inner join PTRTREATMENT t on t.ID=e.TREATMENT_ID
+		where t.ID=#ID#
+	</select>
+	
+	<insert id="insertTreatmentEscalation" parameterClass="map"> 
+		INSERT INTO PTRTREATMENT_ESCALATION (TREATMENT_ID, ESCALATION_REASON_ID, ESCALATE_TO,TURNAROUND_DATE,
+		ACCOUNT_ID, SUBTYPE_ID, TYPE_STATUS_ID) 
+		values (#ID#, #ESCALATION_REASON_ID#, #ESCALATE_TO#, #TURNAROUND_DATE#,
+		#ACCOUNT_ID#, #SUBTYPE_ID#, #TYPE_STATUS_ID#) 
+	</insert>
+	
+	<update id="updateTreatmentEscalation" parameterClass="map"> 
+		UPDATE PTRTREATMENT_ESCALATION 
+		set 
+		ESCALATION_REASON_ID = #ESCALATION_REASON_ID#, 
+		ESCALATE_TO = #ESCALATE_TO#,
+		TURNAROUND_DATE = #TURNAROUND_DATE#,
+		SUBTYPE_ID=#SUBTYPE_ID#,
+		TYPE_STATUS_ID=#TYPE_STATUS_ID#
+		where TREATMENT_ID = #ID#
+	</update>
+
+<resultMap class="hmap" id="getEscalationUserAgency">
+ <result property="AGENCY_ID" javaType="long" />
+ </resultMap>
+ 
+<select id="getEscalationUserAgency" resultMap="getEscalationUserAgency">
+ select AGENCY_ID from PTRUSER where USER_ID = #ESCALATE_TO#
+ </select>
+
+
+
+</sqlMap>

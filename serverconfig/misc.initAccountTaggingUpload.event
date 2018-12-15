@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getDefaultTreatmentSubType"/>
+  <query value="getMiscAccountTaggingTypeStatus"/>
+  <target value="SUBTYPE_LIST"/>
+  <target value="TYPE_STATUS_LIST"/>
+ </exec>
+ <exec message="FALSE" target="FALSE" type="formattext"/>
+ <exec message="FALSE" target="ALLOW_APPROVE" type="formattext"/>
+ <exec from="ALLOW_APPROVE" key="ALLOW_APPROVE" to="SUBTYPE_LIST" type="copyintolist"/>
+ <exec argument="SUBTYPE_LIST" type="loop">
+  <exec event="accounttagging.approvalAccess" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec key="ALLOW_APPROVE" minuend="SUBTYPE_LIST" subtrahend="FALSE" to="SUBTYPE_LIST" type="remove"/>
+ <exec from="SUBTYPE_LIST" key="SUBTYPE_LIST" type="copyintolist"/>
+ <exec from="TYPE_STATUS_LIST" key="TYPE_STATUS_LIST" type="copyintolist"/>
+</event>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="dialerService.xml">
+
+<resultMap id="getAccountForCall" class="hmap">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+<result property="CUSTOMER_ID" javaType="string"/>
+<result property="phoneNo" javaType="string"/>
+<result property="agentId" javaType="string"/>
+</resultMap>
+<select id="getAccountForCall" resultMap="getAccountForCall" parameterClass="map">
+select 
+a.id, 
+a.account_no, 
+c.id as customer_id,
+#phoneNo#, 
+#agentId#
+from ptraccount a
+inner join ptrcustomer c on a.customer_id = c.id
+where a.account_no = #accountNo#
+</select>
+
+
+
+<resultMap id="castCustomerIdToInt" class="hmap">
+<result property="CUSTOMER_ID" javaType="long"/>
+</resultMap>
+<select id="castCustomerIdToInt" resultMap="castCustomerIdToInt" parameterClass="map">
+select cast(#CUSTOMER_ID# as int8)
+</select>
+
+
+
+
+
+
+
+
+
+
+
+ 
+</sqlMap>

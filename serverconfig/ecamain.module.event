@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec from="HIDE" to="_SETUP" type="copy"/>
+ <exec from="HIDE" to="_DYNAMIC_ASSIGNMENT" type="copy"/>
+ <exec from="HIDE" to="_VISUAL_ASSIGNMENT" type="copy"/>
+ <exec from="HIDE" to="_BILLING" type="copy"/>
+ <exec from="88002" type="authorized">
+  <exec from="SHOW" to="_SETUP" type="copy"/>
+ </exec>
+ <exec from="88003" type="authorized">
+  <exec from="SHOW" to="_DYNAMIC_ASSIGNMENT" type="copy"/>
+ </exec>
+ <exec from="88006" type="authorized">
+  <exec from="SHOW" to="_VISUAL_ASSIGNMENT" type="copy"/>
+ </exec>
+ <exec from="88004" type="authorized">
+  <exec from="SHOW" to="_BILLING" type="copy"/>
+ </exec>
+ <exec from="_SETUP" key="_SETUP" type="copyintolist"/>
+ <exec from="_DYNAMIC_ASSIGNMENT" key="_DYNAMIC_ASSIGNMENT" type="copyintolist"/>
+ <exec from="_VISUAL_ASSIGNMENT" key="_VISUAL_ASSIGNMENT" type="copyintolist"/>
+ <exec from="_BILLING" key="_BILLING" type="copyintolist"/>
+</event>

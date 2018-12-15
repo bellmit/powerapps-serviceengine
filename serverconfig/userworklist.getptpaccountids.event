@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="CALL_PTP_TYPE_LIST" query="getWltCallPtpTypeStatuses" type="query"/>
+ <exec argument="PTP_ACCOUNT_LIST" query="getPtpInProgressAccountData" type="query"/>
+ <exec from="PTP_ACCOUNT_LIST" key="ACCOUNT_ID" to="PTP_ACCOUNT_ID_LIST" type="extract"/>
+</event>

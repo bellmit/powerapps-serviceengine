@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec statement="insertAuctionDetailsTreatmentProcess" type="insert"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AUCTION_DATE" operator="exists" rhsvalue=""/>
+    <condition lhsfield="AUCTION_DATE" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec recordcount="" statement="updateWorkListTabEvaluationForAuction" type="update"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec recordcount="" statement="updateAuctionDetailsTreatmentProcess" type="update"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AUCTION_DATE" operator="exists" rhsvalue=""/>
+    <condition lhsfield="AUCTION_DATE" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec recordcount="" statement="updateWorkListTabEvaluationForAuction" type="update"/>
+  </exec>
+ </exec>
+</event>

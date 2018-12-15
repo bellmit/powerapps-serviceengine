@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="SETTLEMENT_TYPE_ID" key="SETTLEMENT_TYPE_ID" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" to="HP_VARIABLE_SETTLEMENT_LIST" type="copyintolist"/>
+ <exec from="HP_VARIABLE_SETTLEMENT_LIST" key="HP_VARIABLE_SETTLEMENT_LIST" type="copyintolist"/>
+ <exec from="INSTALLMENT_DUE_DAY" key="INSTALLMENT_DUE_DAY" to="HP_VARIABLE_SETTLEMENT_LIST" type="copyintolist"/>
+ <exec from="IMPLEMENTED_DATE" key="IMPLEMENTED_DATE" type="copyintolist"/>
+ <exec from="SETTLEMENT_AMOUNT" key="SETTLEMENT_AMOUNT" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SETTLEMENT_TYPE_ID" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec from="TRUE" to="GENERATE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SETTLEMENT_TYPE_ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec from="TRUE" to="GENERATE_VARIABLE" type="copy"/>
+  </exec>
+ </exec>
+</event>

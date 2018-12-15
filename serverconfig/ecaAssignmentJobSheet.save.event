@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec key="VALID" minuend="SPREADSHEET_LIST" subtrahend="FALSE" to="TREATMENT_LIST" type="remove"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="UPDATED_TIME" truncate="false" type="date"/>
+ <exec to="UPDATED_USER_ID" type="user"/>
+ <exec from="UPDATED_TIME" key="UPDATED_TIME" to="TREATMENT_LIST" type="copyintolist"/>
+ <exec from="UPDATED_USER_ID" key="UPDATED_USER_ID" to="TREATMENT_LIST" type="copyintolist"/>
+ <exec argument="TREATMENT_LIST" type="loop">
+  <exec event="treatment.save" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec message="Save Successful" target="MESSAGE" type="formattext"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="TreatmentWorkpadRefresh" type="copyintolist"/>
+</event>

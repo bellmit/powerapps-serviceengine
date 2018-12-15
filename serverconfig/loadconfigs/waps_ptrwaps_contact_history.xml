@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="|" fullcache="true" mode="mixed" padline="true" type="del" verifyfilekey="false">
+ <table>PTRWAPS_CONTACT_HISTORY</table>
+ <generatedkey/>
+ 
+ <post>
+  <insertinsertion></insertinsertion>
+  <insertupdate></insertupdate>
+  <updateinsertion/>
+  <updateupdate/>
+ </post>
+ 
+ <header>
+  <value>HDR</value>
+ </header>
+ <trailer>
+  <value>TRL</value>
+ </trailer>
+ 
+ <field cache="false" isexternal="false" iskey="true" isoptional="false">
+  <name>ACCOUNT_ID</name>
+  <default/>
+  <location end="1" start="1"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="true">
+   <query>select id from ptraccount where account_no = #ACCOUNT_ID#</query>
+   <fullcache/>
+   <insert/>
+   <insertkey/>
+  </lookup>
+ </field>
+
+<field cache="true">
+  <name>CONTACT_TYPE_ID</name>
+  <default>Z</default>
+  <location end="2" start="2"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <lookup>
+   <query>select ID from PTRHOST_ADDRESS_TYPE_REF where CODE= #CONTACT_TYPE_ID:VARCHAR#</query>
+  </lookup>
+ </field> 
+ <field>
+  <name>SPOUSE_ID_NUMBER</name>
+  <location end="3" start="3"/>
+  <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ </field>
+ <field>
+  <name>SPOUSE_NAME</name>
+  <location end="4" start="4"/>
+  <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ </field>
+ <field>
+  <name>ADDRESS_1</name>
+  <location end="5" start="56"/>
+  <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ </field>
+ <field>
+  <name>ADDRESS_2</name>
+  <location end="6" start="6"/>
+  <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ </field>
+ <field>
+  <name>ADDRESS_3</name>
+  <location end="7" start="7"/>
+  <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ </field>
+ <field>
+  <name>CITY</name>
+  <location end="8" start="8"/>
+  <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ </field>
+ <field>
+  <name>ZIP_CODE</name>
+  <location end="9" start="9"/>
+  <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ </field>
+ <field cache="true" isoptional="true">
+  <name>STATE_ID</name>
+  <default>Z</default>
+  <location end="10" start="10"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <lookup>
+   <query>select ID from PTRSTATE_REF where CODE = #STATE_ID:VARCHAR#</query>
+  </lookup>
+ </field>
+
+  <refreshdata key="false" timeout="-1"/>
+  <field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('PTRLOAD_EXECUTION_ID')</insertkey>
+  </lookup>
+ </field>
+ </load>

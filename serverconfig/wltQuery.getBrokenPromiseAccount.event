@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Fetch Broken PTP Accounts" type="comment">
+  <exec argument="BROKEN_PROMISE_ACCOUNT_LIST" query="getBrokenPtpAccountData" type="query"/>
+ </exec>
+</event>

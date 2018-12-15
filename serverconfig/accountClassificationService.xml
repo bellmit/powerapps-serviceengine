@@ -1,0 +1,79 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="accountClassificationService">
+
+<resultMap class="hmap" id="getAccountClassificationTreatment-map">
+		<result property="ID" javaType="long"/>
+   		<result property="DESCRIPTION"  javaType="string"/>
+	    <result property="SORT_PRIORITY" javaType="long"/>
+	    <result property="SORT"  javaType="string"/>
+	</resultMap>
+	
+	  <select id="getAccountClassificationTreatment" resultMap="getAccountClassificationTreatment-map" parameterClass="map">
+		  SELECT ID, 
+		  DESCRIPTION,
+		  coalesce (SORT_PRIORITY,0) as SORT_PRIORITY,
+		  DESCRIPTION as SORT    
+		  FROM PTRTREATMENT_ACCOUNT_CLASSIFICATION_TYPE_REF 
+		  WHERE DISABLE = false and SUBTYPE_ID = #SUBTYPE_ID#
+		  </select>
+		  
+		  <resultMap class="hmap" id="getAccountClassificationSourceOfContact-map">
+		<result property="ID" javaType="long"/>
+		<result property="CODE"  javaType="string"/>
+   		<result property="DESCRIPTION"  javaType="string"/>
+	    <result property="SORT_PRIORITY" javaType="long"/>
+	    
+	</resultMap>
+	
+	  <select id="getAccountClassificationSourceOfContact" resultMap="getAccountClassificationSourceOfContact-map" parameterClass="map">
+		  SELECT ID, 
+		  CODE,
+		  DESCRIPTION,
+		  coalesce (SORT_PRIORITY,0) as SORT_PRIORITY    
+		  FROM ptrtreatment_source_of_contact_ref 
+		  WHERE DISABLE = false 
+      </select>
+      
+      <resultMap class="hmap" id="getAccountClassificationReasonForPayment">
+		<result property="ID" javaType="long"/>
+		<result property="CODE"  javaType="string"/>
+   		<result property="DESCRIPTION"  javaType="string"/>
+	    <result property="SORT_PRIORITY" javaType="long"/>
+	    
+	</resultMap>
+	
+	  <select id="getAccountClassificationReasonForPayment" resultMap="getAccountClassificationReasonForPayment" parameterClass="map">
+		  SELECT ID, 
+		  CODE,
+		  DESCRIPTION,
+		  coalesce (SORT_PRIORITY,0) as SORT_PRIORITY    
+		  FROM ptrtreatment_account_classification_payment_reason_ref 
+		  WHERE DISABLE = false 
+      </select>
+
+	<insert id="insertTreatmentAccountClassification">
+		insert into PTRTREATMENT_ACCOUNT_CLASSIFICATION
+		(TREATMENT_ID,ACCOUNT_ID,TYPE_STATUS_ID,SUBTYPE_ID,ACCOUNT_CLASSIFICATION_ID,SOURCE_CONTACT_ID,REASON_PAYMENT_ID,AMOUNT)
+		values
+		(#ID#, #ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#ACCOUNT_CLASSIFICATION_ID#,#SOURCE_CONTACT_ID#,#REASON_PAYMENT_ID#,#AMOUNT#)
+	</insert>
+	<update id="updateTreatmentAccountClassification">
+	update PTRTREATMENT_ACCOUNT_CLASSIFICATION set TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+	SUBTYPE_ID = #SUBTYPE_ID#,ACCOUNT_CLASSIFICATION_ID=#ACCOUNT_CLASSIFICATION_ID#,SOURCE_CONTACT_ID=#SOURCE_CONTACT_ID#,
+	REASON_PAYMENT_ID=#REASON_PAYMENT_ID#,AMOUNT=#AMOUNT# where TREATMENT_ID=#ID#
+	</update>
+	<resultMap id="getTreatmentAccountClassification" class="hmap">
+		<result property="TYPE_STATUS_ID" javaType="long" />
+		<result property="SUBTYPE_ID" javaType="long" />
+		<result property="ACCOUNT_CLASSIFICATION_ID" javaType="long" />
+		<result property="SOURCE_CONTACT_ID" javaType="long" />
+		<result property="REASON_PAYMENT_ID" javaType="long" />
+		<result property="AMOUNT" javaType="$" />
+	</resultMap>	
+	
+	<select id="getTreatmentAccountClassification" resultMap="getTreatmentAccountClassification">		
+		SELECT TYPE_STATUS_ID,SUBTYPE_ID,ACCOUNT_CLASSIFICATION_ID,SOURCE_CONTACT_ID,REASON_PAYMENT_ID,AMOUNT 
+		FROM PTRTREATMENT_ACCOUNT_CLASSIFICATION
+		WHERE TREATMENT_ID=#ID#
+	</select>	
+</sqlMap>

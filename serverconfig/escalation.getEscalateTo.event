@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec from="CODE" key="CODE" type="copyintolist"/>
+ <exec from="LOGON_USER" key="LOGON_USER" type="copyintolist"/>
+ <exec from="SUBTYPE_ID" key="ESCALATION_TYPE_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec statement="getManualEscalationEmployeePosition" type="select"/>
+  <exec argument="ESCALATE_TO_LIST" query="getManualEscalationAssignTo" type="query"/>
+ </exec>
+</event>

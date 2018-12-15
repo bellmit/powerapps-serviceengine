@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="TYPES" query="getAdditionalDetailTypes" type="query"/>
+ <exec statement="getAdditionalDetailForEditing" type="select"/>
+ <exec from="TYPES" key="TYPES" type="copyintolist"/>
+ <exec from="TYPE_ID" key="TYPE_ID" type="copyintolist"/>
+ <exec from="CODE" key="CODE" type="copyintolist"/>
+ <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+ <exec from="TAT" key="TAT" type="copyintolist"/>
+ <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+</event>

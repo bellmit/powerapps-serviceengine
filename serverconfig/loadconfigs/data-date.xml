@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="" fullcache="false" mode="insert" padline="true" type="fixed" verifyfilekey="false">
+ <doc/>
+ <table>PTRDATA_DATE</table>
+ <recordindicatortag/>
+ <xquery/>
+ <querywhere>
+  <select/>
+  <update/>
+ </querywhere>
+ <post>
+  <insertinsertion/>
+  <insertupdate/>
+  <updateinsertion/>
+  <updateupdate/>
+ </post>
+ <header/>
+ <trailer/>
+ <refreshdata key="true" timeout="-1"/>
+ <field isexternal="false" iskey="false" isoptional="false">
+  <name>ID</name>
+  <default>1</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.IntegerHandler"/>
+  <nulldefinition/>
+  <filteron/>
+ </field>
+ <field isexternal="false" iskey="false" isoptional="false">
+  <name>DATA_DATE</name>
+  <default/>
+  <location end="8" start="1"/>
+  <handler config="yyyyMMdd" name="com.profitera.dc.handler.DateHandler"/>
+  <nulldefinition/>
+  <filteron/>
+ </field>
+</load>

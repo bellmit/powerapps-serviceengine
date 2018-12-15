@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CUSTOMER_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="PRODUCT_CATEGORY_CODE" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="booleanvalues" type="select"/>
+  <exec count="1" type="createlist"/>
+  <exec from="TRUE" key="loadData" type="copyintolist"/>
+  <exec from="ACCOUNT_ID" key="SELECTED_ACCOUNT_ID" type="copyintolist"/>
+  <exec from="CUSTOMER_ID" key="SELECTED_CUSTOMER_ID" type="copyintolist"/>
+  <exec from="PRODUCT_CATEGORY_CODE" key="SELECTED_PRODUCT_CATEGORY_CODE" type="copyintolist"/>
+  <exec from="TRUE" key="_LOAD_DATA" type="copyintolist"/>
+ </exec>
+</event>

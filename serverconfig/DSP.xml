@@ -1,0 +1,857 @@
+<?xml version="1.0"?>  
+<DSP>
+	<register>
+	  	<handler>     
+	    	<abbreviation>binary</abbreviation>
+	    	<implementation>
+	     	 com.profitera.services.system.dsp.handler.BinaryHandler
+	   	 </implementation>
+	  	</handler>
+	  	<handler>     
+	    	<abbreviation>packed</abbreviation>
+	    	<implementation>
+	    	  com.profitera.services.system.dsp.handler.PackedDecimalHandler
+	    	</implementation>
+	  	</handler>
+	  	<handler>     
+	    	<abbreviation>zoned</abbreviation>
+	    	<implementation>
+	      		com.profitera.services.system.dsp.handler.ZonedDecimalHandler
+	    	</implementation>
+	  	</handler>
+	  	<handler>     
+	    	<abbreviation>ip</abbreviation>
+	    	<implementation>
+	      		com.profitera.services.system.dsp.handler.IPHandler
+	    	</implementation>
+	  	</handler>
+	  	<handler>     
+	    	<abbreviation>datetime</abbreviation>
+	    	<implementation>
+	      		com.profitera.services.system.dsp.handler.DatetimeHandler
+	    	</implementation>
+	  	</handler>
+	  	<handler>     
+	    	<abbreviation>char</abbreviation>
+	    	<implementation>
+	      		com.profitera.services.system.dsp.handler.CharHandler
+	    	</implementation>
+	  	</handler>
+	 </register>
+	<send>
+		<location start="5" end="663"/>
+  		<field>
+	    	<name>HEADER_TYPE</name>
+    		<location start="5" end="9"/>
+    		<handler>char</handler>
+    		<value>*HOST</value>
+  		</field>
+  		<field>
+	    	<name>DEVICE_NAME</name>
+    		<location start="10" end="24"/>
+    		<handler>ip</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>SOCKET_NUMBER</name>
+    		<location start="25" end="29"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>PORT_NUMBER</name>
+    		<location start="30" end="32"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>FILLER</name>
+    		<location start="33" end="33"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+		<field>
+	    	<name>HEADER_LENGTH</name>
+    		<location start="34" end="37"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>MESSAGE_LENGTH</name>
+    		<location start="38" end="43"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>VERSION_NUMBER</name>
+    		<location start="44" end="47"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>HEADER_FORMAT_ID</name>
+    		<location start="48" end="51"/>
+    		<handler>char</handler>
+    		<value>*DSP</value>
+  		</field>
+  		<field>
+	    	<name>DATA_FORMAT_ID</name>
+    		<location start="52" end="61"/>
+    		<handler>char</handler>
+    		<value>MBASE</value>
+  		</field>
+  		<field>
+	    	<name>SOURCE_ID</name>
+    		<location start="62" end="71"/>
+    		<handler>char</handler>
+    		<value>*AXIS</value>
+  		</field>
+  		<field>
+	    	<name>DESTINATION_ID</name>
+    		<location start="72" end="81"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ROUTING_NUMBER</name>
+    		<location start="82" end="87"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>MESSAGE_STATUS</name>
+    		<location start="88" end="95"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ORGANISATION_ID_NUMBER</name>
+    		<location start="96" end="106"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>NODE</name>
+    		<location start="107" end="108"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>EXCHANGE_ID</name>
+    		<location start="109" end="128"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>SCENARIO_NUMBER</name>
+    		<location start="129" end="144"/>
+    		<handler>char</handler>
+    		<value>AXIS.MBS.CIF.INQ</value>
+  		</field>
+  		<field>
+	    	<name>TRANSACTION_CODE</name>
+    		<location start="145" end="148"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RETRIEVAL_REFERENCE_NUMBER</name>
+    		<location start="149" end="170"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACQUIRER_REFERENCE_NUMBER</name>
+    		<location start="171" end="182"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TRANSMISSION_NUMBER</name>
+    		<location start="183" end="186"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>NUMBER_OF_RECORDS_TO_BE_LOADED</name>
+    		<location start="187" end="190"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>NUMBER_OF_ERRORS_TO_BE_LOADED</name>
+    		<location start="191" end="194"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>USER_ID</name>
+    		<location start="195" end="204"/>
+    		<handler>char</handler>
+    		<value>SFOTHMAN</value>
+  		</field>
+  		<field>
+	    	<name>TERMINAL_ID</name>
+    		<location start="205" end="214"/>
+    		<handler>char</handler>
+    		<value>d0875</value>
+  		</field>
+  		<field>
+	    	<name>SUPERVISOR_ID</name>
+    		<location start="215" end="224"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>MORE_RECORD_INDICATOR</name>
+    		<location start="225" end="225"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>CUTOFF_INDICATOR</name>
+    		<location start="226" end="226"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>USER_DATA</name>
+    		<location start="227" end="246"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+		<field>
+	    	<name>RESPONSE_RESULT_CODE</name>
+    		<location start="247" end="248"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+		<field>
+	    	<name>USER_ID</name>
+    		<location start="249" end="258"/>
+    		<handler>char</handler>
+    		<value>SFOTHMAN</value>
+  		</field>
+		<field>
+	    	<name>REFERENCE_NUMBER</name>
+    		<location start="259" end="262"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>REBID_NUMBER</name>
+    		<location start="263" end="265"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>END_OF_GROUP_INDICATOR</name>
+    		<location start="266" end="269"/>
+    		<handler>char</handler>
+    		<value>*END</value>
+  		</field>
+  		<field>
+	    	<name>BLOCK_MESSAGE_NUMBER</name>
+    		<location start="270" end="271"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>SOURCE_ID</name>
+    		<location start="272" end="274"/>
+    		<handler>char</handler>
+    		<value>SAO</value>
+  		</field>
+  		<field>
+	    	<name>DESTINATION_ID</name>
+    		<location start="275" end="277"/>
+    		<handler>char</handler>
+    		<value>RBK</value>
+  		</field>
+  		<field>
+	    	<name>RETURN_DATA_QUEUE_NAME</name>
+    		<location start="278" end="287"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TERMINAL_ID</name>
+    		<location start="288" end="297"/>
+    		<handler>char</handler>
+    		<value>d0875</value>
+  		</field>
+  		<field>
+	    	<name>ORGANISATION_NUMBER</name>
+    		<location start="298" end="299"/>
+    		<handler>packed</handler>
+    		<value>44</value>
+  		</field>
+  		<field>
+	    	<name>BRANCH_NUMBER</name>
+    		<location start="300" end="302"/>
+    		<handler>packed</handler>
+    		<value>1</value>
+  		</field>
+  		<field>
+	    	<name>REVIEW_SUPERVISOR_ID</name>
+    		<location start="303" end="312"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TRANSMIT_SUPERVISOR_ID</name>
+    		<location start="313" end="322"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>HOST_SUPERVISOR_ID</name>
+    		<location start="323" end="332"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TRANSACTION_CODE</name>
+    		<location start="333" end="335"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACTION_CODE</name>
+    		<location start="336" end="336"/>
+    		<handler>char</handler>
+    		<value>I</value>
+  		</field>
+  		<field>
+	    	<name>TRANSACTION_MODE</name>
+    		<location start="337" end="337"/>
+    		<handler>char</handler>
+    		<value>R</value>
+  		</field>
+  		<field>
+	    	<name>RECORDS_TO_RETRIEVE</name>
+    		<location start="338" end="339"/>
+    		<handler>packed</handler>
+    		<value>99</value>
+  		</field>
+  		<field>
+	    	<name>MORE_RECORDS_INDICATOR</name>
+    		<location start="340" end="340"/>
+    		<handler>char</handler>
+    		<value>N</value>
+  		</field>
+  		<field>
+	    	<name>SEARCH_METHOD</name>
+    		<location start="341" end="341"/>
+    		<handler>char</handler>
+    		<value>F</value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_1</name>
+    		<location start="342" end="348"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_1</name>
+    		<location start="349" end="398"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_2</name>
+    		<location start="399" end="405"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_2</name>
+    		<location start="406" end="455"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_3</name>
+    		<location start="456" end="462"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_3</name>
+    		<location start="463" end="512"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_4</name>
+    		<location start="513" end="519"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_4</name>
+    		<location start="520" end="569"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_5</name>
+    		<location start="570" end="576"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_5</name>
+    		<location start="577" end="626"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>DATE_IN</name>
+    		<location start="627" end="631"/>
+    		<handler datetimeFormat="ddMMyyyy" method="getDate" handler="packed">datetime</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TIME_IN</name>
+    		<location start="632" end="635"/>
+    		<handler datetimeFormat="HHmmss" method="getTime" handler="packed">datetime</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACCOUNT_NO</name>
+    		<location start="636" end="645"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACCOUNT_TYPE</name>
+    		<location start="646" end="646"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>CIF_NO</name>
+    		<location start="647" end="656"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>FILLER</name>
+    		<location start="657" end="663"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+	</send>
+	<receive>
+		<location start="1" end="663" repeated="false"/>
+  		<field>
+	    	<name>SOCKET_MESSAGE_LENGTH</name>
+    		<location start="1" end="4"/>
+    		<handler>binary</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>HEADER_TYPE</name>
+    		<location start="5" end="9"/>
+    		<handler>char</handler>
+    		<value>*HOST</value>
+  		</field>
+  		<field>
+	    	<name>DEVICE_NAME</name>
+    		<location start="10" end="24"/>
+    		<handler>ip</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>SOCKET_NUMBER</name>
+    		<location start="25" end="29"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>PORT_NUMBER</name>
+    		<location start="30" end="32"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>FILLER</name>
+    		<location start="33" end="33"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+		<field>
+	    	<name>HEADER_LENGTH</name>
+    		<location start="34" end="37"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>MESSAGE_LENGTH</name>
+    		<location start="38" end="43"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>VERSION_NUMBER</name>
+    		<location start="44" end="47"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>HEADER_FORMAT_ID</name>
+    		<location start="48" end="51"/>
+    		<handler>char</handler>
+    		<value>*DSP</value>
+  		</field>
+  		<field>
+	    	<name>DATA_FORMAT_ID</name>
+    		<location start="52" end="61"/>
+    		<handler>char</handler>
+    		<value>MBASE</value>
+  		</field>
+  		<field>
+	    	<name>SOURCE_ID</name>
+    		<location start="62" end="71"/>
+    		<handler>char</handler>
+    		<value>*AXIS</value>
+  		</field>
+  		<field>
+	    	<name>DESTINATION_ID</name>
+    		<location start="72" end="81"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ROUTING_NUMBER</name>
+    		<location start="82" end="87"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>MESSAGE_STATUS</name>
+    		<location start="88" end="95"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ORGANISATION_ID_NUMBER</name>
+    		<location start="96" end="106"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>NODE</name>
+    		<location start="107" end="108"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>EXCHANGE_ID</name>
+    		<location start="109" end="128"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>SCENARIO_NUMBER</name>
+    		<location start="129" end="144"/>
+    		<handler>char</handler>
+    		<value>AXIS.MBS.CIF.INQ</value>
+  		</field>
+  		<field>
+	    	<name>TRANSACTION_CODE</name>
+    		<location start="145" end="148"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RETRIEVAL_REFERENCE_NUMBER</name>
+    		<location start="149" end="170"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACQUIRER_REFERENCE_NUMBER</name>
+    		<location start="171" end="182"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TRANSMISSION_NUMBER</name>
+    		<location start="183" end="186"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>NUMBER_OF_RECORDS_TO_BE_LOADED</name>
+    		<location start="187" end="190"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>NUMBER_OF_ERRORS_TO_BE_LOADED</name>
+    		<location start="191" end="194"/>
+    		<handler>zoned</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>USER_ID</name>
+    		<location start="195" end="204"/>
+    		<handler>char</handler>
+    		<value>SFOTHMAN</value>
+  		</field>
+  		<field>
+	    	<name>TERMINAL_ID</name>
+    		<location start="205" end="214"/>
+    		<handler>char</handler>
+    		<value>d0875</value>
+  		</field>
+  		<field>
+	    	<name>SUPERVISOR_ID</name>
+    		<location start="215" end="224"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>MORE_RECORD_INDICATOR</name>
+    		<location start="225" end="225"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>CUTOFF_INDICATOR</name>
+    		<location start="226" end="226"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>USER_DATA</name>
+    		<location start="227" end="246"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+		<field>
+	    	<name>RESPONSE_RESULT_CODE</name>
+    		<location start="247" end="248"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+		<field>
+	    	<name>USER_ID</name>
+    		<location start="249" end="258"/>
+    		<handler>char</handler>
+    		<value>SFOTHMAN</value>
+  		</field>
+		<field>
+	    	<name>REFERENCE_NUMBER</name>
+    		<location start="259" end="262"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>REBID_NUMBER</name>
+    		<location start="263" end="265"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>END_OF_GROUP_INDICATOR</name>
+    		<location start="266" end="269"/>
+    		<handler>char</handler>
+    		<value>*END</value>
+  		</field>
+  		<field>
+	    	<name>BLOCK_MESSAGE_NUMBER</name>
+    		<location start="270" end="271"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>SOURCE_ID</name>
+    		<location start="272" end="274"/>
+    		<handler>char</handler>
+    		<value>SAO</value>
+  		</field>
+  		<field>
+	    	<name>DESTINATION_ID</name>
+    		<location start="275" end="277"/>
+    		<handler>char</handler>
+    		<value>RBK</value>
+  		</field>
+  		<field>
+	    	<name>RETURN_DATA_QUEUE_NAME</name>
+    		<location start="278" end="287"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TERMINAL_ID</name>
+    		<location start="288" end="297"/>
+    		<handler>char</handler>
+    		<value>d0875</value>
+  		</field>
+  		<field>
+	    	<name>ORGANISATION_NUMBER</name>
+    		<location start="298" end="299"/>
+    		<handler>packed</handler>
+    		<value>44</value>
+  		</field>
+  		<field>
+	    	<name>BRANCH_NUMBER</name>
+    		<location start="300" end="302"/>
+    		<handler>packed</handler>
+    		<value>1</value>
+  		</field>
+  		<field>
+	    	<name>REVIEW_SUPERVISOR_ID</name>
+    		<location start="303" end="312"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TRANSMIT_SUPERVISOR_ID</name>
+    		<location start="313" end="322"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>HOST_SUPERVISOR_ID</name>
+    		<location start="323" end="332"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TRANSACTION_CODE</name>
+    		<location start="333" end="335"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACTION_CODE</name>
+    		<location start="336" end="336"/>
+    		<handler>char</handler>
+    		<value>I</value>
+  		</field>
+  		<field>
+	    	<name>TRANSACTION_MODE</name>
+    		<location start="337" end="337"/>
+    		<handler>char</handler>
+    		<value>R</value>
+  		</field>
+  		<field>
+	    	<name>RECORDS_TO_RETRIEVE</name>
+    		<location start="338" end="339"/>
+    		<handler>packed</handler>
+    		<value>99</value>
+  		</field>
+  		<field>
+	    	<name>MORE_RECORDS_INDICATOR</name>
+    		<location start="340" end="340"/>
+    		<handler>char</handler>
+    		<value>N</value>
+  		</field>
+  		<field>
+	    	<name>SEARCH_METHOD</name>
+    		<location start="341" end="341"/>
+    		<handler>char</handler>
+    		<value>F</value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_1</name>
+    		<location start="342" end="348"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_1</name>
+    		<location start="349" end="398"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_2</name>
+    		<location start="399" end="405"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_2</name>
+    		<location start="406" end="455"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_3</name>
+    		<location start="456" end="462"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_3</name>
+    		<location start="463" end="512"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_4</name>
+    		<location start="513" end="519"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_4</name>
+    		<location start="520" end="569"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_ERROR_CODE_5</name>
+    		<location start="570" end="576"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>RESPONSE_REASON_FOR_CODE_5</name>
+    		<location start="577" end="626"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>DATE_IN</name>
+    		<location start="627" end="631"/>
+    		<handler datetimeFormat="ddMMyyyy" method="getDate" handler="packed">datetime</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>TIME_IN</name>
+    		<location start="632" end="635"/>
+    		<handler datetimeFormat="HHmmss" method="getTime" handler="packed">datetime</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACCOUNT_NO</name>
+    		<location start="636" end="645"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>ACCOUNT_TYPE</name>
+    		<location start="646" end="646"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>CIF_NO</name>
+    		<location start="647" end="656"/>
+    		<handler>packed</handler>
+    		<value></value>
+  		</field>
+  		<field>
+	    	<name>FILLER</name>
+    		<location start="657" end="663"/>
+    		<handler>char</handler>
+    		<value></value>
+  		</field>
+	</receive>
+</DSP>  

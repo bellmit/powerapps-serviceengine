@@ -1,0 +1,93 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="smsService">
+
+<insert id="insertTreatmentSms">
+insert into PTRTREATMENT_SMS
+(TREATMENT_ID,ACCOUNT_ID,TYPE_STATUS_ID,SUBTYPE_ID,RELATIONSHIP_TYPE,CONTACT_NO,CONTACT_PERSON_NAME,SMS_CONTENT,CONTACT_ID,TEMPLATE_VERSION_ID,RELATIONSHIP_TYPE_ID)
+values
+(#ID#, #ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#RELATIONSHIP_TYPE#,#CONTACT_NO#,#CONTACT_PERSON#,#MESSAGE_TEXT#,#CONTACT_ID#,#TEMPLATE_VERSION_ID#,#RELATIONSHIP_TYPE_ID#)
+</insert>
+
+<update id="updateTreatmentSms">
+update PTRTREATMENT_SMS 
+set 
+TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+SUBTYPE_ID = #SUBTYPE_ID#,
+RELATIONSHIP_TYPE=#RELATIONSHIP_TYPE#,
+CONTACT_NO=#CONTACT_NO#,
+CONTACT_PERSON_NAME=#CONTACT_PERSON#,
+SMS_CONTENT=#MESSAGE_TEXT#,
+CONTACT_ID=#CONTACT_ID#,
+TEMPLATE_VERSION_ID=#TEMPLATE_VERSION_ID#,
+RELATIONSHIP_TYPE_ID = #RELATIONSHIP_TYPE_ID#
+where TREATMENT_ID=#ID#
+</update>
+
+<resultMap id="getTreatmentSms" class="hmap">
+<result property="TYPE_STATUS_ID" javaType="long" />
+<result property="SUBTYPE_ID" javaType="long" />
+<result property="RELATIONSHIP_TYPE" javaType="string" />
+<result property="TEMPLATE_VIEW" javaType="string" />
+<result property="CONTACT_PERSON" javaType="string" />
+<result property="CONTACT_ID" javaType="long"/>
+<result property="CONTACT_NO" javaType="string" />
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+<result property="MESSAGE_TEXT" javaType="string"/>
+<result property="RELATIONSHIP_TYPE_ID" javaType="long"/>
+</resultMap>  
+
+<select id="getTreatmentSms" resultMap="getTreatmentSms">   
+SELECT TYPE_STATUS_ID,SUBTYPE_ID,RELATIONSHIP_TYPE,SMS_CONTENT,CONTACT_PERSON_NAME,CONTACT_ID,
+CONTACT_NO,TEMPLATE_VERSION_ID,SMS_CONTENT,RELATIONSHIP_TYPE_ID
+FROM PTRTREATMENT_SMS 
+WHERE TREATMENT_ID=#ID#
+</select>
+	
+	<resultMap class="hmap" id="getDefaultSmsInProgress">
+<result property="ID" javaType="long"/>
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="RELATIONSHIP_TYPE" javaType="string"/>
+<result property="CONTACT_NO" javaType="string"/>
+
+<result property="CONTACT_PERSON" javaType="string"/>
+<result property="MESSAGE_TEXT" javaType="string"/>
+<result property="CONTACT_ID" javaType="long"/>
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+<result property="PROCESS_TYPE_ID" javaType="long"/>
+
+<result property="TRUE" javaType="boolean"/>
+<result property="FALSE" javaType="boolean"/>
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="STATUS_ID" javaType="long"/>
+<result property="TREATMENT_SOURCE_ID" javaType="long"/>
+
+<result property="CREATED_USER_ID" javaType="string"/>
+<result property="CREATED_TIME" javaType="ts"/>
+<result property="TEMPLATE_ID" javaType="long"/>
+<result property="NOTE_TEXT" javaType="string"/>
+	</resultMap>
+	
+	<select id="getDefaultSmsInProgress" resultMap="getDefaultSmsInProgress">
+		select 
+sms.treatment_id, sms.account_id, sms.subtype_id, sms.relationship_type, sms.contact_no,
+sms.contact_person_name, sms.sms_content, sms.contact_id, sms.template_version_id, ts.type_id,
+<include refid="true"/>, <include refid="false"/>, tsr.id, tsr.status_id, t.treatment_source_id,
+t.created_user_id, t.created_time, v.template_id, tn.note_text
+from ptrtreatment_sms sms
+inner join ptrtreatment t on t.id=sms.treatment_id
+inner join ptrtreatment_type_status_ref ts on ts.id=sms.type_status_id
+inner join ptrtreatment_type_status_ref tsr on tsr.type_id=ts.type_id and tsr.status_id=15004
+inner join ptrtemplate_version v on v.id=sms.template_version_id
+left join ptrtreatment_note tn on tn.treatment_id=t.id
+where ts.status_id=15007
+order by sms.account_id
+	</select>
+	
+	
+	
+	
+	
+
+	
+</sqlMap>

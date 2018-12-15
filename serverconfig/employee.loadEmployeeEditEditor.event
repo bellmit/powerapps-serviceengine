@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getEmployeeTypesForEditing"/>
+  <query value="getEmployeeCitizenships"/>
+  <query value="getEmployeeAgencies"/>
+  <query value="getEmployeeUsers"/>
+  <query value="getEmployeeReportTo"/>
+  <target value="EMPLOYEE_TYPES"/>
+  <target value="COUNTRIES"/>
+  <target value="AGENCIES"/>
+  <target value="ASSIGNED_USERS"/>
+  <target value="REPORTS"/>
+ </exec>
+ <exec argument="EMPLOYEE_POSITIONS" query="getEmployeePosition" type="query"/>
+ <exec argument="USER_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="FIRST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="FIRST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MIDDLE_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="EMPLOYEE_NAME"/>
+    <key value="MIDDLE_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LAST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="EMPLOYEE_NAME"/>
+    <key value="LAST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EMPLOYEE_NAME" operator="is empty" rhsvalue=""/>
+   </conditions>
+   <exec from="EMPLOYEE_ID" to="EMPLOYEE_NAME" type="copy"/>
+  </exec>
+ </exec>
+ <exec argument="REPORTS" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="FIRST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="FIRST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MIDDLE_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="EMPLOYEE_NAME"/>
+    <key value="MIDDLE_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LAST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="EMPLOYEE_NAME" type="formattext">
+    <key value="EMPLOYEE_NAME"/>
+    <key value="LAST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EMPLOYEE_NAME" operator="is empty" rhsvalue=""/>
+   </conditions>
+   <exec from="EMPLOYEE_ID" to="EMPLOYEE_NAME" type="copy"/>
+  </exec>
+  <exec from="EMPLOYEE_NAME" to="DESCRIPTION" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EMPLOYEE_ID" operator="=" rhsvalue=""/>
+   </conditions>
+   <exec message=" Please Select" target="DESCRIPTION" type="formattext"/>
+  </exec>
+ </exec>
+ <exec statement="getEmployeeForEditing" type="select"/>
+ <exec count="1" type="createlist"/>
+ <exec from="EMPLOYEE_TYPES" key="EMPLOYEE_TYPES" type="copyintolist"/>
+ <exec from="COUNTRIES" key="COUNTRIES" type="copyintolist"/>
+ <exec from="AGENCIES" key="AGENCIES" type="copyintolist"/>
+ <exec from="EMPLOYEE_TYPE_ID" key="EMPLOYEE_TYPE_ID" type="copyintolist"/>
+ <exec from="FIRST_NAME" key="FIRST_NAME" type="copyintolist"/>
+ <exec from="MIDDLE_NAME" key="MIDDLE_NAME" type="copyintolist"/>
+ <exec from="LAST_NAME" key="LAST_NAME" type="copyintolist"/>
+ <exec from="DATE_OF_BIRTH" key="DATE_OF_BIRTH" type="copyintolist"/>
+ <exec from="IC_NUMBER" key="IC_NUMBER" type="copyintolist"/>
+ <exec from="OLD_IC_NUMBER" key="OLD_IC_NUMBER" type="copyintolist"/>
+ <exec from="CITIZENSHIP_ID" key="CITIZENSHIP_ID" type="copyintolist"/>
+ <exec from="HIRED_DATE" key="HIRED_DATE" type="copyintolist"/>
+ <exec from="DEPARTMENT" key="DEPARTMENT" type="copyintolist"/>
+ <exec from="DESIGNATION" key="DESIGNATION" type="copyintolist"/>
+ <exec from="EMAIL_ADDRESS" key="EMAIL_ADDRESS" type="copyintolist"/>
+ <exec from="AGENCY_ID" key="AGENCY_ID" type="copyintolist"/>
+ <exec from="REMARKS" key="REMARKS" type="copyintolist"/>
+ <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+ <exec from="ON_LEAVE" key="ON_LEAVE" type="copyintolist"/>
+ <exec from="ASSIGNED_USERS" key="ASSIGNED_USERS" type="copyintolist"/>
+ <exec from="REPORTS" key="REPORTS" type="copyintolist"/>
+ <exec from="REPORT_TO" key="REPORT_TO" type="copyintolist"/>
+ <exec from="EMPLOYEE_POSITIONS" key="EMPLOYEE_POSITIONS" type="copyintolist"/>
+ <exec from="POSITION_ID" key="POSITION_ID" type="copyintolist"/>
+</event>

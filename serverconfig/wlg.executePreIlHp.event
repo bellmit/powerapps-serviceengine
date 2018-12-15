@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PRODUCT_CATEGORY_ID" operator="=" rhsvalue="4"/>
+   <condition lhsfield="TYPE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="AF" target="WORK_LIST_GROUP_CODE" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="&lt;&gt;" rhsvalue="10"/>
+   </conditions>
+   <exec text="For UI execution only" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="UI_EXECUTION" operator="=" rhsvalue="true"/>
+      <condition lhsfield="TYPE_ID" operator="&lt;&gt;" rhsvalue="2"/>
+     </conditions>
+     <exec text="Unassign accounts" type="comment">
+      <exec allocationsize="100" group="ACCOUNT_ID" statement="getAccountForUnassignment" threadcount="10" type="stream">
+       <exec to="UNASSIGN_LIST" type="copy"/>
+       <exec argument="UNASSIGN_LIST" type="loop">
+        <exec recordcount="" statement="unAssignAccountAssignmentWorklist" type="update"/>
+       </exec>
+      </exec>
+     </exec>
+    </exec>
+   </exec>
+   <exec event="wlg.executeHp" ignoreresult="true" type="raise"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="10"/>
+   </conditions>
+   <exec event="wlg.executeHpAdhocAssignment" ignoreresult="true" type="raise"/>
+  </exec>
+ </exec>
+</event>

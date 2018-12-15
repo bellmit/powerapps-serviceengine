@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="checkInstructionTermination" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CLOSE_INSTRUCTION" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec recordcount="" statement="terminateInstruction" type="update"/>
+  <exec statement="updateInstructionOnTerminate" type="insert"/>
+  <exec argument="TERMS" query="getContractTermForEvaluationOnInstructionTermination" type="query"/>
+  <exec argument="TERMS" type="loop">
+   <exec event="action.commission" ignoreresult="true" type="raise"/>
+  </exec>
+  <exec recordcount="" statement="setTransactionToProceed" type="update"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="INITIATE_NEW_INSTRUCTION" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec type="nullify">
+   <key value="PROCESS_ID"/>
+  </exec>
+  <exec from="NEW_INSTRUCTION_STATUS_ID" to="STATUS_ID" type="copy"/>
+  <exec from="NEW_INSTRUCTION_ACTION_ID" to="ACTION_ID" type="copy"/>
+  <exec event="action.createNewInstruction" ignoreresult="true" type="raise"/>
+ </exec>
+</event>

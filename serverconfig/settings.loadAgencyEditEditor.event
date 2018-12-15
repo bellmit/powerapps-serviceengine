@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getAgencyTypesForEditing"/>
+  <query value="getAgencyStatusForEditing"/>
+  <query value="getGenerationDays"/>
+  <query value="getAgencyStatesForEditing"/>
+  <target value="AGENCY_TYPES"/>
+  <target value="STATUS_LIST"/>
+  <target value="GENERATION_DAYS"/>
+  <target value="STATES"/>
+ </exec>
+ <exec statement="getAgencyForEditing" type="select"/>
+ <exec count="31" to="GENERATION_DAY" type="createlist"/>
+ <exec argument="GENERATION_DAY" index="ID" type="loop">
+  <exec message="{0}th" target="DESCRIPTION" type="formattext">
+   <key value="ID"/>
+  </exec>
+  <exec from="ID" to="SORT_PRIORITY" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec message="{0}st" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec message="{0}nd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="3"/>
+   </conditions>
+   <exec message="{0}rd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="21"/>
+   </conditions>
+   <exec message="{0}st" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="22"/>
+   </conditions>
+   <exec message="{0}nd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="23"/>
+   </conditions>
+   <exec message="{0}rd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="31"/>
+   </conditions>
+   <exec message="{0}st" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec from="GENERATION_DAY" to="GENERATION_DAYS" type="append"/>
+ <exec count="1" type="createlist"/>
+ <exec from="AGENCY_TYPES" key="AGENCY_TYPES" type="copyintolist"/>
+ <exec from="STATES" key="STATES" type="copyintolist"/>
+ <exec from="GENERATION_DAYS" key="GENERATION_DAYS" type="copyintolist"/>
+ <exec from="STATUS_LIST" key="STATUS_LIST" type="copyintolist"/>
+ <exec from="CODE" key="CODE" type="copyintolist"/>
+ <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+ <exec from="TYPE_ID" key="TYPE_ID" type="copyintolist"/>
+ <exec from="STATUS_ID" key="STATUS_ID" type="copyintolist"/>
+ <exec from="INVOICE_GENERATION_DAY" key="INVOICE_GENERATION_DAY" type="copyintolist"/>
+ <exec from="STATE_ID" key="STATE_ID" type="copyintolist"/>
+ <exec from="REGISTRATION_NUMBER" key="REGISTRATION_NUMBER" type="copyintolist"/>
+ <exec from="EMAIL" key="EMAIL" type="copyintolist"/>
+ <exec from="PHONE_NO" key="PHONE_NO" type="copyintolist"/>
+ <exec from="FAX_NO" key="FAX_NO" type="copyintolist"/>
+ <exec from="REMARKS" key="REMARKS" type="copyintolist"/>
+ <exec from="ADDRESS_1" key="ADDRESS_1" type="copyintolist"/>
+ <exec from="ADDRESS_2" key="ADDRESS_2" type="copyintolist"/>
+ <exec from="ADDRESS_3" key="ADDRESS_3" type="copyintolist"/>
+ <exec from="ADDRESS_4" key="ADDRESS_4" type="copyintolist"/>
+ <exec from="ADDRESS_5" key="ADDRESS_5" type="copyintolist"/>
+ <exec from="CITY" key="CITY" type="copyintolist"/>
+ <exec from="POSTAL_CODE" key="POSTAL_CODE" type="copyintolist"/>
+</event>

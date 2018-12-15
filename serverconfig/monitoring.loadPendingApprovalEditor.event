@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getLegalFirmForAssignment"/>
+  <query value="getAbortReasonForMonitoring"/>
+  <target value="AGENCIES"/>
+  <target value="ABORT_REASONS"/>
+ </exec>
+ <exec from="ABORT_REASONS" key="ABORT_REASONS" type="copyintolist"/>
+ <exec from="SELECTED_ACCOUNTS" key="ACCOUNT_LIST" type="copyintolist"/>
+</event>

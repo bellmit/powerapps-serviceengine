@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBTYPE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec argument="ACCOUNT_CLASSIFICATION_LIST" query="getAccountClassificationTreatment" type="query"/>
+  <exec from="ACCOUNT_CLASSIFICATION_LIST" key="ACCOUNT_CLASSIFICATION_LIST" type="copyintolist"/>
+ </exec>
+</event>

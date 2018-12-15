@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CUSTOMER_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="ACCOUNT_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="CUSTOMER_ID" operator="&lt;&gt;" rhsvalue="parent.CUSTOMER_ID"/>
+   <condition lhsfield="ACCOUNT_ID" operator="&lt;&gt;" rhsvalue="parent.ACCOUNT_ID"/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec from="ACCOUNT_ID" key="ACCOUNT_ID" type="copyintolist"/>
+  <exec from="CUSTOMER_ID" key="CUSTOMER_ID" type="copyintolist"/>
+  <exec type="loop">
+   <exec statement="getAccountMaxTreatmentId" type="select"/>
+   <exec statement="getAccountAuctionDetailsTwa" type="select"/>
+   <exec statement="getAccountAuctionDetails" type="select"/>
+   <exec statement="getAccountAuctionDetailsAcutionFee" type="select"/>
+  </exec>
+ </exec>
+</event>

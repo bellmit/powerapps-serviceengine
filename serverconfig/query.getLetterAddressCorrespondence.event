@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec query="getLetterAddressCorrespondence" type="query"/>
+ <exec type="loop">
+  <exec message="{0}, {1}" target="DESCRIPTION" type="formattext">
+   <key value="ADDRESS_1"/>
+   <key value="ADDRESS_2"/>
+  </exec>
+  <exec from="ADDRESS_1" to="FULL_ADDRESS" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_2" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="&lt;html&gt;{0},&lt;br&gt;{1}&lt;/html&gt;" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="ADDRESS_2"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

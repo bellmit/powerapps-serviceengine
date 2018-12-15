@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec count="1" type="createlist"/>
+ <exec from="HIDE" to="_ROUTER_1" type="copy"/>
+ <exec from="HIDE" to="_ROUTER_2" type="copy"/>
+ <exec from="HIDE" to="_ROUTER_3" type="copy"/>
+ <exec from="80593" type="authorized">
+  <exec from="SHOW" to="_ROUTER_1" type="copy"/>
+ </exec>
+ <exec from="0" type="authorized">
+  <exec from="SHOW" to="_ROUTER_2" type="copy"/>
+ </exec>
+ <exec from="0" type="authorized">
+  <exec from="SHOW" to="_ROUTER_3" type="copy"/>
+ </exec>
+ <exec from="_ROUTER_1" key="_ROUTER_1" type="copyintolist"/>
+ <exec from="_ROUTER_2" key="_ROUTER_2" type="copyintolist"/>
+ <exec from="_ROUTER_3" key="_ROUTER_3" type="copyintolist"/>
+</event>

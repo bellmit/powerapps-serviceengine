@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="SUBTYPE_ID" key="SUBTYPE_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec statement="getManagementApprovalSubtypeCode" type="select"/>
+  <exec argument="ACTION_TYPE_LIST" query="getManagementApprovalActionType" type="query"/>
+  <exec message="SHOW" target="SHOW" type="formattext"/>
+  <exec message="HIDE" target="HIDE" type="formattext"/>
+  <exec from="HIDE" to="appendixB" type="copy"/>
+  <exec from="HIDE" to="appendixD" type="copy"/>
+  <exec from="HIDE" to="blanketWaiver" type="copy"/>
+  <exec from="HIDE" to="blanketLegal" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SUBTYPE_CODE" operator="=" rhsvalue="MA_APPXB"/>
+   </conditions>
+   <exec from="SHOW" to="appendixB" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SUBTYPE_CODE" operator="=" rhsvalue="MA_APPXD"/>
+   </conditions>
+   <exec from="SHOW" to="appendixD" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SUBTYPE_CODE" operator="=" rhsvalue="MA_BWL"/>
+   </conditions>
+   <exec from="SHOW" to="blanketWaiver" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SUBTYPE_CODE" operator="=" rhsvalue="MA_BLA"/>
+   </conditions>
+   <exec from="SHOW" to="blanketLegal" type="copy"/>
+  </exec>
+ </exec>
+</event>

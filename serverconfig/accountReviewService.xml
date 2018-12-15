@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="accountReviewService">
+
+<resultMap class="hmap" id="getLongSelected">
+<result property="SELECTED" javaType="long"/>
+</resultMap>
+
+<select id="getLongSelected" resultMap="getLongSelected">
+select cast(#SELECTED# as numeric) <include refid="fromdual"/>
+</select>
+
+	<select id="getAccountReviewStatus" resultMap="global.ref">
+	<include refid="pleaseSelectRef" />
+	union
+	<include refid="refselect" />
+	from PTRACCOUNT_REVIEW_STATUS_REF
+</select>
+	<select id="getAccountReviewRecoverableStatus" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		union
+		<include refid="refselect" />
+		from PTRACCOUNT_REVIEW_RECOVERABLE_STATUS_REF
+	</select>
+	<select id="getAccountReviewDefaultReason" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		union
+		<include refid="refselect" />
+		from PTRACCOUNT_REVIEW_DEFAULT_REASON_REF
+	</select>
+	
+	<resultMap class="hmap" id="getTreatmentAccountReview">
+	
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="RELATIONSHIP" javaType="string" />
+		<result property="JUDGEMENT_BAL" javaType="double" />
+		<result property="FILE_REVIEW_DATE" javaType="date" />
+		<result property="APPROVAL_DATE" javaType="date" />
+		
+		<result property="NEXT_REVIEW_DUE_DATE" javaType="date" />
+		<result property="APPROVAL_EXPIRY_DATE" javaType="date" />
+		<result property="NOTIFY_LEGAL_OPS_DATE" javaType="date" />
+		<result property="REVIEW_STATUS_ID" javaType="long" />
+		<result property="RECOVERABLE_STATUS_ID" javaType="long" />
+		
+		<result property="REPO_ORDER_ISSUED_ID" javaType="long" />
+		<result property="RO_DATE" javaType="date" />
+		<result property="REPOSSESSOR_REVIEW_ID" javaType="long" />
+		<result property="CUSTOMER_ID" javaType="string"/>
+		<result property="CONCLUSION_ID" javaType="long"/>
+		
+		<result property="TREATMENT_ID" javaType="long"/>
+		<result property="REASON_OF_DEFAULT_ID" javaType="long"/>
+	</resultMap>
+
+	<select id="getTreatmentAccountReview" resultMap="getTreatmentAccountReview">
+		select
+		CUSTOMER_NAME,RELATIONSHIP,JUDGEMENT_BAL,FILE_REVIEW_DATE,APPROVAL_DATE,
+		NEXT_REVIEW_DUE_DATE,APPROVAL_EXPIRY_DATE,NOTIFY_LEGAL_OPS_DATE,REVIEW_STATUS_ID,RECOVERABLE_STATUS_ID,
+		REPO_ORDER_ISSUED_ID,REPO_ORDER_ISSUED_DATE,REPOSSESSOR_REVIEW_ID,CUSTOMER_ID,CONCLUSION_ID, 
+		TREATMENT_ID, DEFAULT_REASON_ID
+		from PTRTREATMENT_ACCOUNT_REVIEW where TREATMENT_ID = #ID#
+	</select>
+	
+	<insert id="insertTreatmentAccountReview" parameterClass="map">
+		INSERT INTO PTRTREATMENT_ACCOUNT_REVIEW
+		(
+		CUSTOMER_NAME,RELATIONSHIP,JUDGEMENT_BAL,FILE_REVIEW_DATE,APPROVAL_DATE,
+		NEXT_REVIEW_DUE_DATE,APPROVAL_EXPIRY_DATE,NOTIFY_LEGAL_OPS_DATE,REVIEW_STATUS_ID,
+		RECOVERABLE_STATUS_ID,REPO_ORDER_ISSUED_ID,REPO_ORDER_ISSUED_DATE,REPOSSESSOR_REVIEW_ID,CUSTOMER_ID,
+		TREATMENT_ID, ACCOUNT_ID, TYPE_STATUS_ID, SUBTYPE_ID, CONCLUSION_ID, DEFAULT_REASON_ID
+		) values 
+		(
+		#CUSTOMER_NAME#, #RELATIONSHIP#, #JUDGEMENT_BAL#, #FILE_REVIEW_DATE#, #APPROVAL_DATE#, 
+		#NEXT_REVIEW_DUE_DATE#, #APPROVAL_EXPIRY_DATE#, #NOTIFY_LEGAL_OPS_DATE#, #REVIEW_STATUS_ID#, 
+		#RECOVERABLE_STATUS_ID#, #REPO_ORDER_ISSUED_ID#, #REPO_ORDER_ISSUED_DATE#, #REPOSSESSOR_REVIEW_ID#, #SELECTED_CUSTOMER_ID#, 
+		#ID#, #ACCOUNT_ID#, #TYPE_STATUS_ID#, #SUBTYPE_ID#, #CONCLUSION_ID#, #REASON_OF_DEFAULT_ID#
+		)
+	</insert>
+	
+	<update id="updateTreatmentAccountReview" parameterClass="map"> 
+		UPDATE PTRTREATMENT_ACCOUNT_REVIEW
+		set
+		CUSTOMER_NAME = #CUSTOMER_NAME#,
+		RELATIONSHIP = #RELATIONSHIP#,
+		JUDGEMENT_BAL = #JUDGEMENT_BAL#,
+		FILE_REVIEW_DATE = #FILE_REVIEW_DATE#,
+		APPROVAL_DATE = #APPROVAL_DATE#,
+		
+		NEXT_REVIEW_DUE_DATE = #NEXT_REVIEW_DUE_DATE#,
+		APPROVAL_EXPIRY_DATE = #APPROVAL_EXPIRY_DATE#,
+		NOTIFY_LEGAL_OPS_DATE = #NOTIFY_LEGAL_OPS_DATE#,
+		REVIEW_STATUS_ID = #REVIEW_STATUS_ID#,
+		RECOVERABLE_STATUS_ID = #RECOVERABLE_STATUS_ID#,
+		
+		REPO_ORDER_ISSUED_ID = #REPO_ORDER_ISSUED_ID#,
+		REPO_ORDER_ISSUED_DATE = #REPO_ORDER_ISSUED_DATE#,
+		REPOSSESSOR_REVIEW_ID = #REPOSSESSOR_REVIEW_ID#,
+		CUSTOMER_ID=#SELECTED_CUSTOMER_ID#,
+		ACCOUNT_ID=#ACCOUNT_ID#,
+		
+		TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+		SUBTYPE_ID=#SUBTYPE_ID#,
+		CONCLUSION_ID=#CONCLUSION_ID#,
+		DEFAULT_REASON_ID=#REASON_OF_DEFAULT_ID#
+		where TREATMENT_ID = #ID#
+	</update>
+	
+   <resultMap id="getAccountReviewProductCategory" class="hmap">
+     <result property="LCP" javaType="string"/>
+  </resultMap>
+  <select id="getAccountReviewProductCategory" resultMap="getAccountReviewProductCategory" parameterClass="map">
+	  select cast (#LOAN_CATEGORY_PERMISSIONS# as varchar(5)) as LCP <include refid="fromdual"/>
+  </select> 
+  
+  
+  
+   <resultMap id="getAccountReviewLoanCategoryPermissions" class="hmap">
+     <result property="LOAN_CATEGORY_PERMISSIONS" javaType="java.lang.String"/>
+  </resultMap>
+  
+    <select id="getAccountReviewLoanCategoryPermissions" resultMap="getAccountReviewLoanCategoryPermissions" parameterClass="map">
+select 
+		ctg.product_type_category_code AS LOAN_CATEGORY_PERMISSIONS
+	
+      from ptraccount a
+        left outer join ptrproduct_type_ref ptr on (ptr.product_type_id = a.product_type_id)
+        left join  ptrproduct_type_category_ref ctg on (ctg.product_type_category_id = ptr.product_type_category_id), ptrdata_date dd
+     where a.id = #ACCOUNT_ID:NUMERIC# 
+  </select>
+
+
+
+	<resultMap id="getAccountReviewCustomers" class="hmap">
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="ACCOUNT_NUMBER" javaType="string" />
+		<result property="CUSTOMER_ID" javaType="long" />
+		<result property="CUSTOMER_NO" javaType="string"/>
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="RELATIONSHIP" javaType="string" />
+		<result property="SELECT" javaType="boolean" />
+	</resultMap>
+
+
+	<select id="getAccountReviewCustomers" resultMap="getAccountReviewCustomers">
+		select
+		a.id, a.account_no, c.id, c.customer_no, c.customer_name,
+		relt.description,
+		case when relt.code='99' and ar.treatment_id is null then true else
+		case when ar.customer_id=rel.customer_id and ar.treatment_id is not null
+		then true else false end end as SELECT
+		from ptrcustomer_account_rel rel
+		inner join ptrcustomer_account_relation_type_ref relt on relt.id=rel.type_id
+		inner join ptrcustomer c on c.id=rel.customer_id
+		inner join ptraccount a on a.id=rel.account_id
+		inner join ptrproduct_type_ref pro on pro.id=a.product_type_id
+		inner join ptrproduct_type_category_ref ptc on ptc.id=pro.category_id
+		left join ptrtreatment_account_review ar on ar.treatment_id=#ID# and ar.customer_id=rel.customer_id 
+		where rel.ACCOUNT_ID=#ACCOUNT_ID#
+	</select>
+
+	<resultMap id="getAccountReviewSelectedCustomer" class="hmap">
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="RELATIONSHIP" javaType="string" />
+	</resultMap>
+
+
+	<select id="getAccountReviewSelectedCustomer" resultMap="getAccountReviewSelectedCustomer">
+		select
+		c.customer_name, relt.description
+		from ptrcustomer_account_rel rel
+		inner join ptrcustomer_account_relation_type_ref relt on relt.id=rel.type_id
+		inner join ptrcustomer c on c.id=rel.customer_id
+		where
+		rel.ACCOUNT_ID=#ACCOUNT_ID# and rel.CUSTOMER_ID=#SELECTED_CUSTOMER_ID#
+	</select>
+  
+</sqlMap>

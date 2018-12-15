@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec argument="USER_SETTING" query="getCamUserSettings" type="query"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="USER_SETTING" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec list="USER_SETTING" name="CODE" target="SETTING" type="pivotlist" value="VALUE"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="USER_SETTING" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" to="SETTING" type="createlist"/>
+ </exec>
+ <exec from="TRUE" key="TRUE" to="SETTING" type="copyintolist"/>
+ <exec statement="getAccountProductCategories" type="select"/>
+ <exec from="PRODUCT_CATEGORY" key="PRODUCT_CATEGORY" to="SETTING" type="copyintolist"/>
+ <exec argument="SETTING" type="loop">
+  <exec message="HIDE" target="_LOADING" type="formattext"/>
+  <exec message="HIDE" target="_CONVENTIONAL" type="formattext"/>
+  <exec message="HIDE" target="_HP" type="formattext"/>
+  <exec message="HIDE" target="_PL" type="formattext"/>
+  <exec message="HIDE" target="_MG" type="formattext"/>
+  <exec message="HIDE" target="_CASA" type="formattext"/>
+  <exec message="SHOW" target="_TAB" type="formattext"/>
+  <exec message="SHOW" target="_COLLATERAL" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="MG"/>
+   </conditions>
+   <exec message="SHOW" target="_MG" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="PF"/>
+   </conditions>
+   <exec message="SHOW" target="_MG" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="PFI"/>
+   </conditions>
+   <exec message="SHOW" target="_PL" type="formattext"/>
+   <exec message="HIDE" target="_COLLATERAL" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="HP"/>
+   </conditions>
+   <exec message="SHOW" target="_HP" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="AF"/>
+   </conditions>
+   <exec message="SHOW" target="_HP" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="CASA"/>
+   </conditions>
+   <exec message="SHOW" target="_CASA" type="formattext"/>
+   <exec message="HIDE" target="_TAB" type="formattext"/>
+   <exec from="TRUE" to="LOAD_CASA" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="_HP" operator="=" rhsvalue="HIDE"/>
+    <condition lhsfield="_MG" operator="=" rhsvalue="HIDE"/>
+    <condition lhsfield="_CASA" operator="=" rhsvalue="HIDE"/>
+    <condition lhsfield="_PL" operator="=" rhsvalue="HIDE"/>
+   </conditions>
+   <exec message="SHOW" target="_HP" type="formattext"/>
+  </exec>
+  <exec message="SHOW" target="_ISLAMIC" type="formattext"/>
+  <exec message="HIDE" target="_PAGE" type="formattext"/>
+  <exec message="SHOW" target="_OLD" type="formattext"/>
+  <exec message="HIDE" target="_NEW" type="formattext"/>
+  <exec message="No Color" target="CONTENT_COLOR" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NAVIGATION_DISPLAY" operator="&lt;&gt;" rhsvalue="true"/>
+   </conditions>
+   <exec message="HIDE" target="_NAVIGATION" type="formattext"/>
+   <exec message="SHOW" target="_OPEN_NAVIGATION" type="formattext"/>
+  </exec>
+  <exec from="TRUE" to="LOAD_CUSTOMER" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CAM_TAB" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="ACCOUNT"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_ACCOUNT" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="HISTORY"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_HISTORY" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="PARTIES"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_PARTIES" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="PDC"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_PDC" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="COLLATERAL"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_COLLATERAL" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="OUTLOOK"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_OUTLOOK" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="LEDGER"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_LEDGER" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="FINANCE_INQUIRY"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_FINANCE_INQUIRY" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="DMS"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_DMS" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CAM_TAB" operator="=" rhsvalue="RNR"/>
+    </conditions>
+    <exec from="TRUE" to="LOAD_RNR" type="copy"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

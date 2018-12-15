@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_1" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_1" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+  <exec message="images/1001.png" target="ICON" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_2" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_2" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Monitoring&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_2_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Monitoring" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+  <exec message="images/1004.png" target="ICON" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_3" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_3" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Billings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_3_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Billings" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_4" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_4" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_4" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;General Setup&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_4_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; General Setup" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_5" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_5" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Additional Details&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_5_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Additional Details" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_6" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_6" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Stages&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_6_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Stages" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_7" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_7" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Instructions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_7_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Instructions" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_8" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_8" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_8_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Actions" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_9" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_9" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Special Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_9_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Special Actions" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_10" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_10" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Remedial Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_10_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Remedial Actions" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_11" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_11" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Follow Up Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_11_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Follow Up Actions" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_12" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_12" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Turnaround Setup&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_12_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Turnaround Setup" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_13" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_13" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Approval Matrix&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_13_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Approval Matrix" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_14" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_14" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Exclusion Evaluation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_14_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Exclusion Evaluation" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_15" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_15" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Assignment Evaluation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_15_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Assignment Evaluation" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_16" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_16" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Abort Evaluation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_16_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Abort Evaluation" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_17" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_17" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Contracts&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_17_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Legal Management &gt; Settings &gt; Contracts" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_1" type="copy"/>
+ </exec>
+</event>

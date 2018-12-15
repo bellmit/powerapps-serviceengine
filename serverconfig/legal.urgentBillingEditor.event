@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getUrgentBillingDetails" type="select"/>
+ <exec from="AGENCY_ID" key="AGENCY_ID" type="copyintolist"/>
+ <exec from="LEGAL_FIRM" key="LEGAL_FIRM" type="copyintolist"/>
+ <exec from="PRODUCT_CATEGORY" key="PRODUCT_CATEGORY" type="copyintolist"/>
+ <exec from="PRODUCT_CATEGORY_ID" key="PRODUCT_CATEGORY_ID" type="copyintolist"/>
+ <exec from="ASSIGNMENT_TYPE" key="ASSIGNMENT_TYPE" type="copyintolist"/>
+ <exec from="SUBTYPE_ID" key="SUBTYPE_ID" type="copyintolist"/>
+</event>

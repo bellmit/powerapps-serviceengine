@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="CONDITIONS" query="getLegalContractCondition" type="query"/>
+ <exec from="CONDITIONS" key="CONDITIONS" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTRACT_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="CONTRACT_ID" operator="&lt;&gt;" rhsvalue="parent.CONTRACT_ID"/>
+  </conditions>
+  <exec argument="VERSIONS" query="getContractVersion" type="query"/>
+  <exec from="TRUE" key="TRUE" to="VERSIONS" type="copyintolist"/>
+  <exec argument="VERSIONS" index="SORT_PRIORITY" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TYPE" operator="=" rhsvalue="19"/>
+    </conditions>
+    <exec from="88104" type="notauthorized">
+     <exec from="TRUE" to="READ_ONLY" type="copy"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TYPE_ID" operator="&lt;&gt;" rhsvalue="19"/>
+    </conditions>
+    <exec from="910013" type="notauthorized">
+     <exec from="TRUE" to="READ_ONLY" type="copy"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec from="VERSIONS" key="VERSIONS" type="copyintolist"/>
+ </exec>
+</event>

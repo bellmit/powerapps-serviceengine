@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec statement="insertTreatmentInstructEca" type="insert"/>
+  <exec recordcount="" statement="updateAgencyInstructEca" type="update"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec recordcount="" statement="updateTreatmentInstructEca" type="update"/>
+ </exec>
+</event>

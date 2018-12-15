@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TO_BE_REMOVED" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec key="ACCESS_RIGHTS_ID" minuend="ASSIGNED_ACCESS_RIGHTS" subtrahend="TO_BE_REMOVED" to="ASSIGNED_ACCESS_RIGHTS" type="remove"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ASSIGNED_ACCESS_RIGHTS" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="REMOVE_PARENT_ACCESS_RIGHTS_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec key="PARENT_ACCESS_RIGHTS_ID" list="ASSIGNED_ACCESS_RIGHTS" to="CHECK_PARENT" type="unique"/>
+   <exec list="CHECK_PARENT" to="TOTAL" type="countlist"/>
+   <exec key="PARENT_ACCESS_RIGHTS_ID" minuend="CHECK_PARENT" subtrahend="REMOVE_PARENT_ACCESS_RIGHTS_ID" to="VALIDATE" type="remove"/>
+   <exec list="VALIDATE" to="TOTAL_VALIDATED" type="countlist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TOTAL_VALIDATED" operator="equal to value of" rhsvalue="TOTAL"/>
+    </conditions>
+    <exec count="1" to="ENABLE_PARENT_REMOVE" type="createlist"/>
+    <exec from="TRUE" key="ENABLE_REMOVE" to="ENABLE_PARENT_REMOVE" type="copyintolist"/>
+    <exec from="REMOVE_PARENT_ACCESS_RIGHTS_ID" key="ACCESS_RIGHTS_ID" to="ENABLE_PARENT_REMOVE" type="copyintolist"/>
+    <exec from="ENABLE_PARENT_REMOVE" key="ACCESS_RIGHTS_ID" to="ASSIGNED_ACCESS_RIGHTS" type="merge"/>
+   </exec>
+  </exec>
+  <exec from="TRUE" key="ENABLE_ADD" to="TO_BE_REMOVED" type="copyintolist"/>
+  <exec from="TO_BE_REMOVED" key="ACCESS_RIGHTS_ID" to="AVAILABLE_ACCESS_RIGHTS" type="merge"/>
+  <exec count="1" to="DISABLE_CHILD" type="createlist"/>
+  <exec from="REMOVE_ACCESS_RIGHTS_ID" key="PARENT_ACCESS_RIGHTS_ID" to="DISABLE_CHILD" type="copyintolist"/>
+  <exec from="FALSE" key="ENABLE_ADD" to="DISABLE_CHILD" type="copyintolist"/>
+  <exec from="DISABLE_CHILD" key="PARENT_ACCESS_RIGHTS_ID" to="AVAILABLE_ACCESS_RIGHTS" type="merge"/>
+ </exec>
+ <exec from="ASSIGNED_ACCESS_RIGHTS" key="ASSIGNED_ACCESS_RIGHTS" type="copyintolist"/>
+ <exec from="AVAILABLE_ACCESS_RIGHTS" key="AVAILABLE_ACCESS_RIGHTS" type="copyintolist"/>
+</event>

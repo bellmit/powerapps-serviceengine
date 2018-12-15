@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="ACCOUNT_LIST" query="getVisitationUPLAccountsForWorkList" type="query"/>
+ <exec from="ACCOUNT_LIST" key="ACCOUNT_ID" to="ACCOUNT_ID_LIST" type="extract"/>
+ <exec event="userworklist.uplgetinfo" ignoreresult="true" type="raise"/>
+</event>

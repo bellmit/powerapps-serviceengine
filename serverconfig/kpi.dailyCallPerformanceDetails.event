@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="BEGIN_OF_DAY" truncate="true" type="date"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FILTER_ID" operator="=" rhsvalue="1"/>
+  </conditions>
+  <exec query="getDailyPtpPerformanceDetails" type="query"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FILTER_ID" operator="=" rhsvalue="2"/>
+  </conditions>
+  <exec query="getDailyCallPerformanceDetails" type="query"/>
+ </exec>
+</event>

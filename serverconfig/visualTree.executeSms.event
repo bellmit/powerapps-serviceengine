@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec from="EFFECTIVE_DATE" to="START_TIME" type="copy"/>
+ <exec from="EFFECTIVE_DATE" to="CREATED_TIME" type="copy"/>
+ <exec from="LOGON_USER" to="CREATED_USER_ID" type="copy"/>
+ <exec statement="getSmsAssignmentRunHistoryId" type="select"/>
+ <exec type="transaction">
+  <exec statement="deleteSmsAssignment" type="delete"/>
+  <exec statement="insertSmsAssignmentRunHistory" type="insert"/>
+ </exec>
+ <exec argument="TREE_TEMPLATE_REL" query="getDecisionTreeTemplateRel" type="query"/>
+ <exec allocationsize="100" group="ACCOUNT_ID" statement="getSmsTreeCustomerAccountsForAssignment" threadcount="10" type="stream">
+  <exec to="CUSTOMER_DATA" type="copy"/>
+  <exec data="CUSTOMER_DATA" document="DOCUMENT_ID" identifier="ACCOUNT_ID" key="TEMPLATE_ID" type="executedecisiontree"/>
+  <exec from="TREE_TEMPLATE_REL" key="TEMPLATE_ID" to="CUSTOMER_DATA" type="merge"/>
+  <exec from="RUN_ID" key="RUN_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+  <exec argument="CUSTOMER_DATA" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TEMPLATE_ID" operator="exists" rhsvalue=""/>
+     <condition lhsfield="SUBTYPE_ID" operator="exists" rhsvalue=""/>
+    </conditions>
+    <exec directToDatabase="false" directorydatepattern="yyyy-MM-dd" exportformat="Text" filenamedatepattern="HH-mm-ss-" filenameprefix="" from="DOCUMENT_ID" to="MESSAGE_TEXT" type="generatetemplate"/>
+    <exec statement="insertSmsAssignment" type="insert"/>
+    <exec statement="insertSmsAssignmentHistory" type="insert"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

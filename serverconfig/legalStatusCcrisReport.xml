@@ -1,0 +1,127 @@
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="legalStatusCcrisReport.xml">
+
+
+<resultMap class="java.util.HashMap" id="getExtractionEmptyContent">
+  <result javaType="java.lang.String" property="EMPTY_CONTENT"/>
+</resultMap>
+<select id="getExtractionEmptyContent" resultMap="getExtractionEmptyContent">
+SELECT cast(NULL AS VARCHAR(25))
+</select>
+
+
+<resultMap id="getCcrisReportOld" class="hmap">
+<result property="ID" javaType="long" />
+<result property="CATEGORY" javaType="string" />
+<result property="CODE" javaType="string" />
+<result property="HOST_CCRIS_STATUS" javaType="string" />
+<result property="REMARKS_TAGGING_CCRIS" javaType="string" />
+<result property="DESCRIPTION" javaType="string" />
+<result property="PARENT_INSTRUCTION" javaType="string" />
+<result property="VISUAL_ACTION" javaType="string" />
+<result property="DISBURSEMENT" javaType="string" />
+<result property="REMARKS" javaType="string" />
+<result property="CREATED_BY" javaType="string" />
+<result property="CREATED_TIME" javaType="ts" />
+<result property="UPDATED_BY" javaType="string" />
+<result property="UPDATED_TIME" javaType="ts" />
+<result property="DISABLED" javaType="string" />
+
+<result property="CONTRACT" javaType="boolean" />
+<result property="EXPENSE" javaType="boolean" />
+<result property="SST" javaType="boolean" />
+</resultMap>
+
+
+<sql id="getCcrisReport-fragmentOld">
+SELECT
+R.ID,
+C.DESCRIPTION AS CATEGORY,
+R.CODE,
+CCRIS.CODE||' - '||CCRIS.DESCRIPTION AS HOST_CCRIS_STATUS,
+NULL AS REMARKS_TAGGING_CCRIS,
+R.DESCRIPTION,
+I.DESCRIPTION AS PARENT_INSTRUCTION,
+
+case when R.VISUAL_ACTION = true then 1 else 0 end as VISUAL_ACTION,
+case when R.DISBURSEMENT = true then 1 else 0 end as DISBURSEMENT,
+R.REMARKS,
+R.CREATED_BY,
+R.CREATED_TIME,
+R.UPDATED_BY,
+R.UPDATED_TIME,
+case when R.DISABLE = true then 1 else 0 end as DISABLE,
+
+R.CONTRACT,
+R.EXPENSE,
+R.SST
+FROM PTRLEGAL_ACTION_REF R
+LEFT JOIN PTRLEGAL_ACTION_REF I ON I.ID=R.INSTRUCTION_ID
+LEFT JOIN PTRACTION_CATEGORY_REF C ON C.ID=R.CATEGORY_ID
+LEFT JOIN PTRHOST_CCRIS_STATUS_REF CCRIS ON CCRIS.ID=R.HOST_CCRIS_STATUS_ID
+
+</sql>
+
+
+<resultMap id="getCcrisReport" class="hmap">
+<result property="ACCOUNT_NO" javaType="string" />
+<result property="CUSTOMER_NO" javaType="string" />
+<result property="INSTRUCTION" javaType="string" />
+<result property="INSTRUCTION_DATE" javaType="string" />
+<result property="INSTRUCTION_BY" javaType="string" />
+</resultMap>
+
+<sql id="getCcrisReport-fragment">
+select distinct
+a.account_no,
+c.customer_no,
+lar.description as instruction,
+lap.created_time as instruction_date,
+lap.created_by as instruction_by
+
+from ptraccount a
+inner join ptrcustomer c on cast(a.customer_id as bigint) = c.id
+inner join ptraccount_agency_assignment ag on ag.account_id=a.id
+inner join ptrlegal_action_instruction instruction on instruction.agency_assignment_id = ag.id
+inner join ptrlegal_action_process lap on lap.id = instruction.process_id
+inner join ptrlegal_action_ref lar on lar.id = lap.action_id
+inner join ptrtreatment_subtype_ref sr on ag.subtype_id = sr.id
+</sql>
+
+
+<select id="getCcrisReportCivil" resultMap="getCcrisReport">
+<include refid="getCcrisReport-fragment"/>
+where sr.id = (select id from ptrtreatment_subtype_ref where code = 'CV')
+</select>
+
+
+<select id="getCcrisReportLaca" resultMap="getCcrisReport">
+<include refid="getCcrisReport-fragment"/>
+where sr.id = (select id from ptrtreatment_subtype_ref where code = 'LACA')
+</select>
+
+<select id="getCcrisReportLandOffice" resultMap="getCcrisReport">
+<include refid="getCcrisReport-fragment"/>
+where sr.id = (select id from ptrtreatment_subtype_ref where code = 'LO')
+</select>
+
+<select id="getCcrisReportHighCourt" resultMap="getCcrisReport">
+<include refid="getCcrisReport-fragment"/>
+where sr.id = (select id from ptrtreatment_subtype_ref where code = 'HC')
+</select>
+
+<!-- 
+select id from ptrtreatment_subtype_ref where code = 'LACA';
+select id from ptrtreatment_subtype_ref where code = 'LO';
+select id from ptrtreatment_subtype_ref where code = 'CV'
+select id from ptrtreatment_subtype_ref where code = 'HC'
+ -->
+
+
+
+
+
+</sqlMap>

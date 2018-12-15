@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getRnrProcessTypeId" type="select"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec from="LOGON_USER" key="UPDATED_USER_ID" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="LOGON_USER" key="CREATED_USER_ID" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="UPDATED_TIME" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="CREATED_TIME" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="ACTION_ID" key="ACTION_ID" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="PROCESS_TYPE_ID" key="PROCESS_TYPE_ID" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="TYPE_STATUS_ID" key="TYPE_STATUS_ID" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="STATUS_ID" key="STATUS_ID" to="SELECTED_ACCOUNT_LIST" type="copyintolist"/>
+ <exec text="&lt;html&gt;&#10;&lt;u&gt;ACTION_ID&lt;/u&gt;&#10;&lt;br&gt;&#10;1 = Escalate to HOD&#10;&lt;br&gt;&#10;2 = Dispute&#10;&lt;/html&gt;" type="comment">
+  <exec argument="SELECTED_ACCOUNT_LIST" type="loop">
+   <exec recordcount="" statement="updateAkpkBlanketApprovalAccount" type="update"/>
+  </exec>
+ </exec>
+ <exec message="Save Successful" target="MESSAGE" type="formattext"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="REFRESH" type="copyintolist"/>
+ <exec from="TRUE" key="REFRESH_DISPUTE" type="copyintolist"/>
+</event>

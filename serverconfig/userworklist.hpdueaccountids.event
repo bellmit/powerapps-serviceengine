@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec ceiling="true" endmonth="false" nextweekday="false" startmonth="false" to="END_OF_DAY" truncate="false" type="date"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec statement="selectOne" type="select"/>
+ <exec adddays="ONE" ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="TOMORROW" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" from="TOMORROW" nextweekday="true" startmonth="false" to="NEXT_BUSINESS_DAY" truncate="true" type="date"/>
+ <exec argument="PTP_BROKEN_ACCOUNT_LIST" query="getPTPBknAccountIdsForWorkList" type="query"/>
+ <exec from="PTP_BROKEN_ACCOUNT_LIST" key="ACCOUNT_ID" to="PTP_BROKEN_ACCOUNT_ID_LIST" type="extract"/>
+ <exec from="PTP_BROKEN_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="append"/>
+ <exec argument="PTP_DUE_ACCOUNT_LIST" query="getPTPDueAccountIdsForWorkList" type="query"/>
+ <exec from="PTP_DUE_ACCOUNT_LIST" key="ACCOUNT_ID" to="PTP_DUE_ACCOUNT_ID_LIST" type="extract"/>
+ <exec from="PTP_DUE_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="append"/>
+ <exec argument="VISITATION_DUE_ACCOUNT_LIST" query="getDueVisitationAccountIdsForWorkList" type="query"/>
+ <exec from="VISITATION_DUE_ACCOUNT_LIST" key="ACCOUNT_ID" to="VISITATION_DUE_ACCOUNT_ID_LIST" type="extract"/>
+ <exec from="VISITATION_DUE_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="append"/>
+ <exec argument="THIRD_PARTY_SEARCH_DUE_ACCOUNT_LIST" query="getDueThirdPartySearchAccountIdsForWorkList" type="query"/>
+ <exec from="THIRD_PARTY_SEARCH_DUE_ACCOUNT_LIST" key="ACCOUNT_ID" to="THIRD_PARTY_SEARCH_DUE_ACCOUNT_ID_LIST" type="extract"/>
+ <exec from="THIRD_PARTY_SEARCH_DUE_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="append"/>
+ <exec argument="MRO_DUE_ACCOUNT_LIST" query="getMROAccountIdsForWorkList" type="query"/>
+ <exec from="MRO_DUE_ACCOUNT_LIST" key="ACCOUNT_ID" to="MRO_DUE_ACCOUNT_ID_LIST" type="extract"/>
+ <exec from="MRO_DUE_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="append"/>
+ <exec argument="PDC_DUE_ACCOUNT_LIST" query="getDuePDCAccountIdsForWorkList" type="query"/>
+ <exec from="PDC_DUE_ACCOUNT_LIST" key="ACCOUNT_ID" to="PDC_DUE_ACCOUNT_ID_LIST" type="extract"/>
+ <exec from="PDC_DUE_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="append"/>
+ <exec argument="SI_DUE_ACCOUNT_LIST" query="getSIDatedCurrentForDueWorkList" type="query"/>
+ <exec from="SI_DUE_ACCOUNT_LIST" key="ACCOUNT_ID" to="SI_DUE_ACCOUNT_ID_LIST" type="extract"/>
+ <exec from="SI_DUE_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="append"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PAID_ACCOUNT_ID_LIST" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec minuend="DUE_ACCOUNTS" subtrahend="PAID_ACCOUNT_ID_LIST" to="DUE_ACCOUNTS" type="remove"/>
+ </exec>
+ <exec from="DUE_ACCOUNTS" to="ACCOUNT_ID_LIST" type="copy"/>
+ <exec size="1500" source="ACCOUNT_ID_LIST" target="DIVIDED_ACCOUNT_ID_LIST" type="dividelist"/>
+ <exec argument="DIVIDED_ACCOUNT_ID_LIST" type="loop">
+  <exec argument="DUE_ACCOUNT_LIST" query="getAccountListAccountIds" type="query"/>
+ </exec>
+ <exec from="DIVIDED_ACCOUNT_ID_LIST" key="DUE_ACCOUNT_LIST" to="DUE_ACCOUNT_LIST" type="extract"/>
+ <exec from="DUE_ACCOUNT_LIST" key="ACCOUNT_ID" to="DUE_ACCOUNT_ID_LIST" type="extract"/>
+</event>

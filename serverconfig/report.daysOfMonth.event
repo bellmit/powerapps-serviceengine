@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="31" to="DAYS_OF_MONTH" type="createlist"/>
+ <exec argument="DAYS_OF_MONTH" index="ID" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="&lt;&gt;" rhsvalue="32"/>
+   </conditions>
+   <exec message="{0}th" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+    </conditions>
+    <exec message="{0}st" target="DESCRIPTION" type="formattext">
+     <key value="ID"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="21"/>
+    </conditions>
+    <exec message="{0}st" target="DESCRIPTION" type="formattext">
+     <key value="ID"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="31"/>
+    </conditions>
+    <exec message="{0}st" target="DESCRIPTION" type="formattext">
+     <key value="ID"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+    </conditions>
+    <exec message="{0}nd" target="DESCRIPTION" type="formattext">
+     <key value="ID"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="22"/>
+    </conditions>
+    <exec message="{0}nd" target="DESCRIPTION" type="formattext">
+     <key value="ID"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="3"/>
+    </conditions>
+    <exec message="{0}rd" target="DESCRIPTION" type="formattext">
+     <key value="ID"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="23"/>
+    </conditions>
+    <exec message="{0}rd" target="DESCRIPTION" type="formattext">
+     <key value="ID"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="32"/>
+   </conditions>
+   <exec type="nullify">
+    <key value="ID"/>
+   </exec>
+   <exec message="Every Day" target="DESCRIPTION" type="formattext"/>
+  </exec>
+ </exec>
+</event>

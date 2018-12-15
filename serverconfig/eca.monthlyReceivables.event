@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="BASE" to="ACCOUNT_LIST_MONTH" type="copy"/>
+ <exec type="parallelquery">
+  <query value="getAgencyMtdBeginReceivables"/>
+  <query value="getAgencyMtdCurrentMonthReceivables"/>
+  <query value="getAgencyMtdAbortedReceivables"/>
+  <query value="getAgencyDailyEndReceivables"/>
+  <target value="MTD_BEGIN_RECEIVABLES"/>
+  <target value="MTD_CURRENT_RECEIVABLES"/>
+  <target value="MTD_ABORTED_RECEIVABLES"/>
+  <target value="MTD_ENDING_RECEIVABLES"/>
+ </exec>
+ <exec from="MTD_BEGIN_RECEIVABLES" key="AGENCY_ID" to="ACCOUNT_LIST_MONTH" type="merge"/>
+ <exec from="MTD_CURRENT_RECEIVABLES" key="AGENCY_ID" to="ACCOUNT_LIST_MONTH" type="merge"/>
+ <exec from="MTD_ABORTED_RECEIVABLES" key="AGENCY_ID" to="ACCOUNT_LIST_MONTH" type="merge"/>
+ <exec from="MTD_ENDING_RECEIVABLES" key="AGENCY_ID" to="ACCOUNT_LIST_MONTH" type="merge"/>
+</event>

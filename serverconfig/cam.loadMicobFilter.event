@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="REFRESH" to="TYPES" type="copyintolist"/>
+ <exec argument="TYPES" query="getHistoryMicobTypes" type="query"/>
+ <exec from="TYPES" key="TYPES" type="copyintolist"/>
+</event>

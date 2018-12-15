@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="branchSetupService">
+	<resultMap id="getBranches" class="hmap" extends="global.ref">
+		<result property="IS_COLLECTION" javaType="boolean" />
+		<result property="BRANCH_TYPE" javaType="string" />
+		<result property="HEAD_OF_UNIT" javaType="string" />
+		<result property="STATE" javaType="string" />
+		<result property="CREATED_TIME" javaType="ts" />
+		<result property="CREATED_BY" javaType="string" />
+		<result property="UPDATED_TIME" javaType="ts" />
+		<result property="UPDATED_BY" javaType="string" />
+	</resultMap>
+	<select id="getBranches" resultMap="getBranches" >
+		SELECT B.ID, B.CODE, B.DESCRIPTION, B.DISABLE, B.SORT_PRIORITY,
+		B.IS_COLLECTION,B.BRANCH_TYPE,B.HEAD_OF_UNIT,S.DESCRIPTION as STATE,
+		B.CREATED_TIME,B.CREATED_BY,B.UPDATED_TIME,B.UPDATED_BY
+		FROM PTRBUSINESS_UNIT B
+		LEFT JOIN PTRSTATE_REF S ON B.STATE_ID=S.ID
+		<isNotEqual property="INCLUDE_ALL" compareValue="true">
+		WHERE B.DISABLE = <include refid="false"/>
+		</isNotEqual>
+		<isNotEmpty property="BRANCH_NAME">
+		and upper(B.DESCRIPTION) like '%'||upper(#BRANCH_NAME#)||'%'
+		</isNotEmpty>
+		ORDER BY B.SORT_PRIORITY DESC
+	</select>
+	<resultMap id="getBranch" class="hmap" extends="global.ref">
+		<result property="IS_COLLECTION" javaType="boolean" />
+		<result property="BRANCH_TYPE" javaType="string" />
+		<result property="HEAD_OF_UNIT" javaType="string" />
+		<result property="STATE_ID" javaType="long" />
+	</resultMap>
+	<select id="getBranch" resultMap="getBranch" >
+		SELECT B.ID, B.CODE, B.DESCRIPTION, B.DISABLE, B.SORT_PRIORITY,
+		B.IS_COLLECTION,B.BRANCH_TYPE,B.HEAD_OF_UNIT,B.STATE_ID
+		FROM PTRBUSINESS_UNIT B
+		WHERE B.ID = #BRANCH_ID#
+	</select>	
+	<resultMap id="getTeams" class="hmap" extends="global.ref">
+		<result property="TEAM_LEADER" javaType="string" />
+		<result property="CREATED_TIME" javaType="ts" />
+		<result property="CREATED_BY" javaType="string" />
+		<result property="UPDATED_TIME" javaType="ts" />
+		<result property="UPDATED_BY" javaType="string" />
+	</resultMap>
+	<select id="getTeams" resultMap="getTeams" >
+		SELECT B.ID, B.CODE, B.DESCRIPTION, B.DISABLE, B.SORT_PRIORITY,
+		B.TEAM_LEADER_USER_ID,B.CREATED_TIME,B.CREATED_BY,B.UPDATED_TIME,B.UPDATED_BY
+		FROM PTRUSER_TEAM B
+		WHERE B.BRANCH_ID = #BRANCH_ID#
+		ORDER BY B.SORT_PRIORITY DESC
+	</select>
+	<resultMap id="getTeam" class="hmap" extends="global.ref">
+		<result property="TEAM_LEADER" javaType="string" />
+	</resultMap>
+	<select id="getTeam" resultMap="getTeam" >
+		SELECT B.ID, B.CODE, B.DESCRIPTION, B.DISABLE, B.SORT_PRIORITY,
+		B.TEAM_LEADER_USER_ID
+		FROM PTRUSER_TEAM B
+		WHERE B.ID = #TEAM_ID#
+	</select>
+	<resultMap id="getAllUsersForTeam" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="EMPLOYEE_ID" javaType="string" />
+		<result property="DESIGNATION" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+	</resultMap>
+	<select id="getAllUsersForTeam" resultMap="getAllUsersForTeam" >
+		SELECT U.USER_ID,E.EMPLOYEE_NO,E.DESIGNATION,E.FIRST_NAME,E.MIDDLE_NAME,E.LAST_NAME 
+		FROM PTRUSER U
+		INNER JOIN PTREMPLOYEE E ON E.ID=U.EMPLOYEE_ID AND E.DISABLE =FALSE
+		WHERE U.USER_TYPE_ID !=2
+	</select>
+	<select id="getTeamUsers" resultMap="getAllUsersForTeam" >
+		SELECT U.USER_ID,E.EMPLOYEE_NO,E.DESIGNATION,E.FIRST_NAME,E.MIDDLE_NAME,E.LAST_NAME 
+		FROM PTRUSER U
+		INNER JOIN PTREMPLOYEE E ON E.ID=U.EMPLOYEE_ID AND E.DISABLE =<include refid="false"/>
+		INNER JOIN PTRUSER_TEAM_REL R on R.USER_ID=U.USER_ID and R.TEAM_ID = #TEAM_ID#
+		WHERE U.USER_TYPE_ID !=2
+	</select>
+	<insert id="insertBranch">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix"/>
+			PTRBUSINESS_UNIT_ID
+			<include refid="sequenceSuffix"/>
+		</selectKey>
+		insert into PTRBUSINESS_UNIT (CODE, DESCRIPTION, DISABLE,
+		SORT_PRIORITY, ID,BRANCH_TYPE,HEAD_OF_UNIT,STATE_ID, IS_COLLECTION,REMARKS, CREATED_TIME, CREATED_BY)
+		values (#CODE#, #DESCRIPTION#, 
+		case when #DISABLE# = <include refid="true"/> then <include refid="true"/> else <include refid="false"/> end, 
+		#ID#, #ID#, #BRANCH_TYPE#,#HEAD_OF_UNIT#,#STATE_ID#, 
+		case when #IS_COLLECTION# = <include refid="true"/> then <include refid="true"/> else <include refid="false"/> end
+		,#REMARKS#, #CURRENT_TIME#, #LOGON_USER#)
+	</insert>
+	<update id="updateBranch">
+	UPDATE PTRBUSINESS_UNIT SET
+	CODE = #CODE#,
+	DESCRIPTION = #DESCRIPTION#,
+	DISABLE = case when #DISABLE# = <include refid="true"/> then <include refid="true"/> else <include refid="false"/> end,
+	BRANCH_TYPE = #BRANCH_TYPE#,HEAD_OF_UNIT = #HEAD_OF_UNIT#,
+	STATE_ID = #STATE_ID#,REMARKS = #REMARKS#,
+	IS_COLLECTION = case when #IS_COLLECTION# = <include refid="true"/> then <include refid="true"/> else <include refid="false"/> end,
+	UPDATED_TIME = #CURRENT_TIME#,
+	UPDATED_BY =#LOGON_USER#
+	WHERE ID = #BRANCH_ID#	
+	</update>
+	<insert id="insertTeam">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix"/>
+			PTRUSER_TEAM_ID
+			<include refid="sequenceSuffix"/>
+		</selectKey>
+		insert into PTRUSER_TEAM (CODE, DESCRIPTION, DISABLE,
+		SORT_PRIORITY, ID,TEAM_LEADER_USER_ID,BRANCH_ID, REMARKS, CREATED_TIME, CREATED_BY)
+		values (#CODE#, #DESCRIPTION#, 
+		case when #DISABLE# = <include refid="true"/> then <include refid="true"/> else <include refid="false"/> end, 
+		#ID#, #ID#, #TEAM_LEADER#,#BRANCH_ID#
+		,#REMARKS#, #CURRENT_TIME#, #LOGON_USER#)
+	</insert>
+	<update id="updateTeam">
+	UPDATE PTRUSER_TEAM SET
+	CODE = #CODE#,
+	DESCRIPTION = #DESCRIPTION#,
+	DISABLE = case when #DISABLE# = <include refid="true"/> then <include refid="true"/> else <include refid="false"/> end,
+	TEAM_LEADER_USER_ID = #TEAM_LEADER#,
+	REMARKS = #REMARKS#,
+	UPDATED_TIME = #CURRENT_TIME#,
+	UPDATED_BY =#LOGON_USER#
+	WHERE ID = #TEAM_ID#	
+	</update>
+	<delete id="deleteUserTeamRel">
+	delete from PTRUSER_TEAM_REL where team_id=#TEAM_ID#
+	</delete>
+	<insert id="insertUserTeamRel">
+		insert into PTRUSER_TEAM_REL(USER_ID,TEAM_ID) VALUES(#USER_ID#, #TEAM_ID#)
+	</insert>
+</sqlMap>

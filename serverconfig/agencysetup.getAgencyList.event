@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="AGENCY_LIST" query="getAgencyList" type="query"/>
+ <exec argument="AGENCY_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_1" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}" target="FULL_ADDRESS" type="formattext">
+    <key value="ADDRESS_1"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_2" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}, {1}" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="ADDRESS_2"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_3" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}, {1}" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="ADDRESS_3"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_4" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}, {1}" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="ADDRESS_4"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_5" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}, {1}" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="ADDRESS_5"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CITY" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}, {1}" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="CITY"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="POSTAL_CODE" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}, {1}" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="POSTAL_CODE"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="STATE" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}, {1}" target="FULL_ADDRESS" type="formattext">
+    <key value="FULL_ADDRESS"/>
+    <key value="STATE"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="AGENCY_LIST" key="AGENCY_LIST" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+ </exec>
+</event>

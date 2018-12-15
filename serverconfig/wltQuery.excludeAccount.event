@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLT_CODE" operator="=" rhsvalue="open"/>
+  </conditions>
+  <exec text="Net open" type="comment">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PAID_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PTP_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PTP_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PTP_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="BROKEN_PROMISE_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="BROKEN_PROMISE_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="BROKEN_PROMISE_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="WIP_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="WIP_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="WIP_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLT_CODE" operator="=" rhsvalue="wip"/>
+  </conditions>
+  <exec text="Net open" type="comment">
+   <exec from="WIP_ACCOUNT_LIST" to="ACCOUNT_LIST" type="copy"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PAID_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PTP_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PTP_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PTP_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="BROKEN_PROMISE_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="BROKEN_PROMISE_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="BROKEN_PROMISE_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLT_CODE" operator="=" rhsvalue="brokenpromise"/>
+  </conditions>
+  <exec text="Net open" type="comment">
+   <exec from="BROKEN_PROMISE_ACCOUNT_LIST" to="ACCOUNT_LIST" type="copy"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PAID_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PTP_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PTP_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PTP_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLT_CODE" operator="=" rhsvalue="ptp"/>
+  </conditions>
+  <exec text="Net open" type="comment">
+   <exec from="PTP_ACCOUNT_LIST" to="ACCOUNT_LIST" type="copy"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PAID_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLT_CODE" operator="=" rhsvalue="paid"/>
+  </conditions>
+  <exec text="Net Paid" type="comment"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLT_CODE" operator="=" rhsvalue="unpaid"/>
+  </conditions>
+  <exec text="Net open" type="comment">
+   <exec from="UNPAID_ACCOUNT_LIST" to="ACCOUNT_LIST" type="copy"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="exists" rhsvalue=""/>
+     <condition lhsfield="PAID_ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PAID_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

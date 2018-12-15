@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getDailyPerformance"/>
+  <query value="getDailyCallPerformance"/>
+  <query value="getDailyPtpPerformance"/>
+  <target value="DAILY_CALL_PERFORMANCE"/>
+  <target value="DAILY_CALLS"/>
+  <target value="DAILY_PTPS"/>
+ </exec>
+ <exec from="DAILY_CALLS" key="ID" to="DAILY_CALL_PERFORMANCE" type="merge"/>
+ <exec from="DAILY_PTPS" key="ID" to="DAILY_CALL_PERFORMANCE" type="merge"/>
+ <exec key="CALL" list="DAILY_CALL_PERFORMANCE" to="TOTAL_CALLS" type="sumlist"/>
+ <exec key="PTP" list="DAILY_CALL_PERFORMANCE" to="TOTAL_PTPS" type="sumlist"/>
+ <exec message="Total" target="TOTAL" type="formattext"/>
+ <exec message="EAEAEA" target="COLOR" type="formattext"/>
+ <exec count="1" to="DAILY_TOTAL" type="createlist"/>
+ <exec from="TOTAL_CALLS" key="CALL" to="DAILY_TOTAL" type="copyintolist"/>
+ <exec from="TOTAL_PTPS" key="PTP" to="DAILY_TOTAL" type="copyintolist"/>
+ <exec from="TOTAL" key="HOUR" to="DAILY_TOTAL" type="copyintolist"/>
+ <exec from="COLOR" key="COLOR" to="DAILY_TOTAL" type="copyintolist"/>
+ <exec from="TRUE" key="VIEW_DAILY_DETAILS" to="DAILY_CALL_PERFORMANCE" type="copyintolist"/>
+ <exec from="DAILY_TOTAL" to="DAILY_CALL_PERFORMANCE" type="append"/>
+</event>

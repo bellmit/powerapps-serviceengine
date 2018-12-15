@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="true" type="date"/>
+ </exec>
+ <exec ceiling="false" endmonth="false" from="EFFECTIVE_DATE" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec statement="selectOne" type="select"/>
+ <exec statement="get24MonthsProfileMonthsBacklog" type="select"/>
+ <exec argument="DATE_BACK_LOG_LIST" query="get24MonthsProfileDateBacklog" type="query"/>
+ <exec from="NEGATIVE_ONE" key="NEGATIVE_ONE" to="DATE_BACK_LOG_LIST" type="copyintolist"/>
+ <exec argument="DATE_BACK_LOG_LIST" type="loop">
+  <exec addmonths="MONTHS" ceiling="false" endmonth="false" from="EFFECTIVE_DATE" nextweekday="false" startmonth="false" to="DATE_BACKLOG" truncate="true" type="date"/>
+  <exec addmonths="NEGATIVE_ONE" ceiling="false" endmonth="false" from="DATE_BACKLOG" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+  <exec ceiling="false" endmonth="false" from="DATE_BACKLOG" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+  <exec ceiling="false" endmonth="true" from="FIRST_OF_MONTH" nextweekday="false" startmonth="false" to="END_OF_MONTH" truncate="true" type="date"/>
+  <exec allocationsize="100" group="ACCOUNT_ID" statement="getCurrentMonthProfile" threadcount="10" type="stream">
+   <exec to="CURRENT_24MTH_PROFILE" type="copy"/>
+   <exec argument="CURRENT_24MTH_PROFILE" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_UPDATE" operator="=" rhsvalue="true"/>
+     </conditions>
+     <exec recordcount="" statement="updateCurrent24MthProfile" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_UPDATE" operator="=" rhsvalue="false"/>
+     </conditions>
+     <exec recordcount="" statement="insertCurrent24MthProfile" type="update"/>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+</event>

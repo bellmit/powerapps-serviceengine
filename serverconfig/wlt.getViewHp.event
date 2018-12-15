@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" to="RESULT_LIST" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="HP"/>
+  </conditions>
+  <exec message="HIDE" target="HIDE_HP" type="formattext"/>
+  <exec message="HIDE" target="HIDE_WIP" type="formattext"/>
+  <exec message="SHOW" target="SHOW_HP" type="formattext"/>
+  <exec text="Show common panel" type="comment">
+   <exec from="SHOW_HP" to="COMMON_PANEL" type="copy"/>
+   <exec from="COMMON_PANEL" key="COMMON_PANEL" to="RESULT_LIST" type="copyintolist"/>
+   <exec message="commonTab" target="WLT_VIEW" type="formattext"/>
+  </exec>
+  <exec text="Hide wip by default" type="comment">
+   <exec from="HIDE_WIP" to="WIP_FILTER_PANEL" type="copy"/>
+   <exec from="WIP_FILTER_PANEL" key="WIP_FILTER_PANEL" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="open"/>
+   </conditions>
+   <exec message="Open Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="paid"/>
+   </conditions>
+   <exec message="Paid Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="wip"/>
+   </conditions>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="x" operator="=" rhsvalue="1"/>
+    </conditions>
+    <exec from="SHOW_HP" to="WIP_FILTER_PANEL" type="copy"/>
+    <exec from="WIP_FILTER_PANEL" key="WIP_FILTER_PANEL" to="RESULT_LIST" type="copyintolist"/>
+   </exec>
+   <exec message="Work In Progress Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="supervisory"/>
+   </conditions>
+   <exec message="Supervisor Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="unpaid"/>
+   </conditions>
+   <exec message="Unpaid Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="ptp"/>
+   </conditions>
+   <exec message="PTP Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="brokenpromise"/>
+   </conditions>
+   <exec message="Broken Promise Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="paymentplan"/>
+   </conditions>
+   <exec message="Payment Plan Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="operationsupport"/>
+   </conditions>
+   <exec message="Operation Support Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="randr"/>
+   </conditions>
+   <exec message="R and R Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="agencyassigned"/>
+   </conditions>
+   <exec message="Agency Assigned Accounts (AF)" target="WLT_TABLE_TITLE" type="formattext"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+  </exec>
+  <exec from="WLT_VIEW" key="WLT_VIEW" to="RESULT_LIST" type="copyintolist"/>
+ </exec>
+</event>

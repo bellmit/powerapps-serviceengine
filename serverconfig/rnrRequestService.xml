@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="rnrRequestnService">
+
+
+<resultMap class="hmap" id="getRnrRequestDefaultStatus">
+<result property="TYPE_STATUS_ID" javaType="long"/>
+</resultMap>
+
+<select id="getRnrRequestDefaultStatus" resultMap="getRnrRequestDefaultStatus">
+select ID from PTRTREATMENT_TYPE_STATUS_REF where TYPE_ID=54 and CODE='RNRR_INP'
+</select>
+
+
+<select id="getRnrRequestRejectedReason" resultMap="global.ref">
+<include refid="pleaseSelectRef"/> <include refid="fromdual"/> 
+union
+<include refid="refselect"/> from ptrrnr_rejected_request_reason_ref
+</select>
+
+<resultMap class="hmap" id="getTreatmentRnrRequest">
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="REJECTED_REQUEST_REASON_ID" javaType="long"/>
+<result property="CUSTOMER_REQUEST_DATE" javaType="date"/>
+</resultMap>
+
+<select id="getTreatmentRnrRequest" resultMap="getTreatmentRnrRequest">
+select
+type_status_id,
+subtype_id,
+rejected_request_reason_id,
+customer_request_date
+from ptrtreatment_rnr_request
+where treatment_id=#ID#
+</select>
+
+<insert id="insertTreatmentRnrRequest" parameterClass="map">
+insert into ptrtreatment_rnr_request
+(treatment_id,account_id,type_status_id,subtype_id,rejected_request_reason_id,customer_request_date)
+values(#ID#,#ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#REJECTED_REQUEST_REASON_ID#,#CUSTOMER_REQUEST_DATE#)
+</insert>
+
+<update id="updateTreatmentRnrRequest" parameterClass="map">
+update ptrtreatment_rnr_request set 
+subtype_id=#SUBTYPE_ID#,
+type_status_id=#TYPE_STATUS_ID#,
+rejected_request_reason_id=#REJECTED_REQUEST_REASON_ID#,
+customer_request_date=#CUSTOMER_REQUEST_DATE#
+where treatment_id=#ID#
+</update>
+
+
+
+
+
+
+</sqlMap>
+	

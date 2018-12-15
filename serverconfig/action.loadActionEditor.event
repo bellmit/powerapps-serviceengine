@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getActionDetails" type="select"/>
+ <exec from="FALSE" to="ENABLE_DISBURSEMENT" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DISBURSEMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="ENABLE_DISBURSEMENT" type="copy"/>
+ </exec>
+ <exec statement="getProcessDetails" type="select"/>
+ <exec type="parallelquery">
+  <query value="getStatusForActionEditor"/>
+  <query value="getActionRemarkHistory"/>
+  <query value="geActionAdditionalDetails"/>
+  <query value="geActionProcessAdditionalDetails"/>
+  <query value="getActionExpenseReference"/>
+  <target value="STATUSES"/>
+  <target value="REMARKS_HISTORY"/>
+  <target value="ADDITIONAL_DETAILS"/>
+  <target value="SAVED_ADDITIONAL_DETAILS"/>
+  <target value="EXPENSES"/>
+ </exec>
+ <exec type="parallelquery">
+  <query value="getActionSavedExpenses"/>
+  <query value="getAuctionStatus"/>
+  <query value="getContestedStatus"/>
+  <query value="getLegalInstitutionLevel"/>
+  <target value="SAVED_EXPENSES"/>
+  <target value="AUCTION_STATUS"/>
+  <target value="CONTESTED_STATUS"/>
+  <target value="INSTITUTION_LEVEL"/>
+ </exec>
+ <exec from="SAVED_ADDITIONAL_DETAILS" key="DETAIL_ID" to="ADDITIONAL_DETAILS" type="merge"/>
+ <exec from="SAVED_EXPENSES" key="EXPENSE_ID" to="EXPENSES" type="merge"/>
+ <exec from="100" key="100" to="ADDITIONAL_DETAILS" type="copyintolist"/>
+ <exec argument="ADDITIONAL_DETAILS" type="loop">
+  <exec message="HIDE" target="_TEXT" type="formattext"/>
+  <exec message="HIDE" target="_AMOUNT" type="formattext"/>
+  <exec message="HIDE" target="_PERCENTAGE" type="formattext"/>
+  <exec message="HIDE" target="_CALENDAR" type="formattext"/>
+  <exec message="HIDE" target="_CHECKBOX" type="formattext"/>
+  <exec message="HIDE" target="_NUMBER" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="TEXT"/>
+   </conditions>
+   <exec message="SHOW" target="_TEXT" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TEXT" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec from="TEXT" to="VALUE" type="copy"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="AMOUNT"/>
+   </conditions>
+   <exec message="SHOW" target="_AMOUNT" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="AMOUNT" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec from="AMOUNT" to="VALUE" type="copy"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="PERCENTAGE"/>
+   </conditions>
+   <exec message="SHOW" target="_PERCENTAGE" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PERCENTAGE" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec from="PERCENTAGE" to="VALUE" type="copy"/>
+    <exec lhs="VALUE" rhs="100" target="VALUE" type="multiply"/>
+    <exec message="{0} %" target="VALUE" type="formattext">
+     <key value="VALUE"/>
+    </exec>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="CALENDAR"/>
+   </conditions>
+   <exec message="SHOW" target="_CALENDAR" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CALENDAR" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec from="CALENDAR" to="VALUE" type="copy"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="NUMBER"/>
+   </conditions>
+   <exec message="SHOW" target="_NUMBER" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="NUMBER" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec from="NUMBER" to="VALUE" type="copy"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="CHECKBOX"/>
+   </conditions>
+   <exec message="SHOW" target="_CHECKBOX" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CHECKBOX" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec from="CHECKBOX" to="VALUE" type="copy"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec from="STATUSES" key="STATUSES" type="copyintolist"/>
+ <exec from="HEADER_TITLE" key="HEADER_TITLE" type="copyintolist"/>
+ <exec from="REMARKS_HISTORY" key="REMARKS_HISTORY" type="copyintolist"/>
+ <exec from="STATUS_ID" key="STATUS_ID" type="copyintolist"/>
+ <exec from="AUCTION_STATUS_ID" key="AUCTION_STATUS_ID" type="copyintolist"/>
+ <exec from="ADDITIONAL_DETAILS" key="ADDITIONAL_DETAILS" type="copyintolist"/>
+ <exec from="EXPENSES" key="EXPENSES" type="copyintolist"/>
+ <exec from="LAWYER_REFERENCE_NO" key="LAWYER_REFERENCE_NO" type="copyintolist"/>
+ <exec from="CASE_NUMBER" key="CASE_NUMBER" type="copyintolist"/>
+ <exec from="AUCTION_STATUS" key="AUCTION_STATUS" type="copyintolist"/>
+ <exec from="CONTESTED_STATUS" key="CONTESTED_STATUS" type="copyintolist"/>
+ <exec from="CONTESTED_STATUS_ID" key="CONTESTED_STATUS_ID" type="copyintolist"/>
+ <exec from="INSTITUTION_LEVEL" key="INSTITUTION_LEVEL" type="copyintolist"/>
+ <exec from="INSTITUTION_LEVEL_ID" key="INSTITUTION_LEVEL_ID" type="copyintolist"/>
+ <exec from="ENABLE_DISBURSEMENT" key="ENABLE_DISBURSEMENT" type="copyintolist"/>
+ <exec from="DISBURSEMENT_AMOUNT" key="DISBURSEMENT_AMOUNT" type="copyintolist"/>
+</event>

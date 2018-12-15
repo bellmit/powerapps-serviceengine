@@ -1,0 +1,630 @@
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="workListManagementService.xml">
+
+
+    <update id="updateUserWorkListAssignment" parameterClass="map">
+        UPDATE PTRUSER_WL_ASSIGN
+        set ASSIGNER_ID = #ASSIGNER_ID#
+        WHERE WORK_LIST_ID = #WORK_LIST_ID#
+          and USER_ID = #USER_ID#
+    </update>
+
+    <parameterMap id="insertUserWorkListAssignment-map" class="map">
+        <parameter property="ASSIGNER_ID" jdbcType="VARCHAR"/>
+        <parameter property="USER_ID" jdbcType="VARCHAR"/>
+        <parameter property="WORK_LIST_ID" jdbcType="NUMERIC"/>
+        <parameter property="EFFECTIVE_DATE" jdbcType="DATE"/>
+    </parameterMap>
+
+    <insert id="insertUserWorkListAssignment" parameterMap="insertUserWorkListAssignment-map">
+        insert into PTRUSER_WL_ASSIGN (ASSIGNER_ID, USER_ID, WORK_LIST_ID, EFFECTIVE_DATE)
+        values (?, ?, ?, ?)
+    </insert>
+
+    <insert id="insertRnRUserWorkListAssignment" parameterMap="insertUserWorkListAssignment-map">
+        insert into PTRRNR_USER_WL_ASSIGN (ASSIGNER_ID, USER_ID, WORK_LIST_ID, EFFECTIVE_DATE)
+        values (?, ?, ?, ?)
+    </insert>
+
+    <insert id="insertAgencyUserWorkListAssignment" parameterMap="insertUserWorkListAssignment-map">
+        insert into PTRAGENCY_USER_WORK_LIST_ASSIGN (ASSIGNER_ID, USER_ID, WORK_LIST_ID, EFFECTIVE_DATE)
+        values (?,?,?,?)
+
+    </insert>
+
+    <parameterMap class="map" id="insertUserWorkListAssignmentHistory-map">
+        <parameter jdbcType="VARCHAR" property="USER_ID"/>
+        <parameter jdbcType="NUMERIC" property="WORK_LIST_ID"/>
+        <parameter jdbcType="DATE" property="EFFECTIVE_DATE"/>
+    </parameterMap>
+    <insert id="insertUserWorkListAssignmentHistory"
+            parameterMap="insertUserWorkListAssignmentHistory-map">
+        insert into PTRUSER_WL_ASSIGN_HISTORY (USER_ID, WORK_LIST_ID, ASSIGNMENT_DATE)
+        values (?, ?, ?)
+    </insert>
+
+
+    <resultMap class="hmap" id="getWorkListManagerSearchArgs">
+        <result javaType="boolean" property="TRUE"/>
+        <result javaType="boolean" property="FALSE"/>
+        <result javaType="long" property="ONE"/>
+        <result javaType="long" property="NEGATIVE_ONE"/>
+    </resultMap>
+    <select id="getWorkListManagerSearchArgs" resultMap="getWorkListManagerSearchArgs">
+        select 1, 0,1,-1
+        <include refid="fromdual"/>
+    </select>
+
+
+    <resultMap class="java.util.HashMap" id="getWlmUserGroup">
+        <result property="USER_GROUP_ID" javaType="java.lang.Long"/>
+    </resultMap>
+
+    <select id="getWlmUserGroup" resultMap="getWlmUserGroup">
+        select id
+        from
+        PTRUSER_GROUP_REF
+        where disable = false
+        and
+        <isEqual property="WORK_LIST_GROUP_CODE" compareValue="AF">code IN ('ALL','AF')</isEqual>
+        <isEqual property="WORK_LIST_GROUP_CODE" compareValue="PF">code IN ('ALL','PF')</isEqual>
+        <isEqual property="WORK_LIST_GROUP_CODE" compareValue="PFI">code IN ('ALL','PFI')</isEqual>
+    </select>
+
+
+    <resultMap id="getWlmCollectorUsers-map" class="hmap">
+        <result property="USER_ID" javaType="string"/>
+        <result property="NAME" javaType="string"/>
+        <result property="ACTIVE" javaType="string"/>
+    </resultMap>
+
+    <select id="getWlmCollectorUsers" resultMap="getWlmCollectorUsers-map">
+        SELECT
+        U.USER_ID as USER_ID,
+        coalesce(EMP.FIRST_NAME, 'N/A') as NAME,
+        ACTIVE_STATUS
+        FROM PTRUSER U
+        INNER JOIN PTRUSER_GROUP_REF grp on U.USER_GROUP_ID = grp.id
+        LEFT OUTER JOIN PTREMPLOYEE EMP ON (U.EMPLOYEE_ID=EMP.ID)
+        WHERE U.USER_GROUP_ID in
+        (-0
+        <isNotEmpty property="USER_GROUPS">,
+            <iterate property="USER_GROUPS" conjunction=",">#USER_GROUPS[]#</iterate>
+        </isNotEmpty>
+        )
+
+        and (U.ACTIVE_STATUS NOT IN ('D', 'N'))
+        and (U.disable is null or U.disable = false)
+        and (emp.on_leave is null or emp.on_leave = false)
+        order by upper(EMP.FIRST_NAME) asc
+    </select>
+
+
+    <resultMap id="getWorkListUsers-map" class="hmap">
+        <result property="USER_ID" javaType="string"/>
+        <result property="FIRST_NAME" javaType="string"/>
+        <result property="ACTIVE" javaType="string"/>
+        <result property="ACTIVE_STATUS" javaType="string"/>
+        <result property="REPORTS_TO" javaType="string"/>
+        <result property="EMAIL" javaType="string"/>
+        <result property="IS_DEFAULT_USER" javaType="java.lang.Boolean"/>
+    </resultMap>
+
+    <select id="getWorkListUsers" resultMap="getWorkListUsers-map" parameterClass="map">
+        select usr.user_id,
+               emp.first_name as first_name,
+               usr.active_status,
+               usr.active_status,
+               emp.report_to  as reports_to,
+               usr.user_email_address,
+               uwl.is_default_user
+        from ptrwork_list wl
+                 inner join ptruser_wl_assign uwl on wl.work_list_id = uwl.work_list_id
+                 inner join ptruser usr on uwl.user_id = usr.user_id
+                 left join ptremployee emp on usr.employee_id = emp.id
+        where wl.work_list_id = #WORK_LIST_ID:BIGINT#
+          and usr.active_status = 'Y'
+    </select>
+
+
+    <resultMap id="getWlmUserTeams-map" class="hmap">
+        <result property="USER_ID" javaType="string"/>
+        <result property="BRANCH_ID" javaType="string"/>
+        <result property="TEAM_ID" javaType="string"/>
+        <result property="TEAM_DESC" javaType="string"/>
+        <result property="SORT_PRIORITY" javaType="long"/>
+        <result property="DISABLE" javaType="boolean"/>
+    </resultMap>
+    <select id="getWlmUserTeams" resultMap="getWlmUserTeams-map" parameterClass="map">
+        <!--select
+          utl.USER_ID,
+          ut.BRANCH_ID,
+          ut.TEAM_ID,
+          ut.TEAM_DESC,
+          ut.SORT_PRIORITY,
+          ut.DISABLE
+          from PTRUSER_TEAM_LINK utl, PTRUSER_TEAMS ut
+          where utl.TEAM_ID = ut.TEAM_ID
+          and utl.USER_ID = #USER_ID:VARCHAR# -->
+        select 'N/A','N/A','N/A','N/A',0,false
+    </select>
+    <resultMap id="getWlmUserRoles-map" class="hmap">
+        <result property="USER_ID" javaType="string"/>
+        <result property="ROLE_ID" javaType="long"/>
+        <result property="ROLE_NAME" javaType="string"/>
+        <result property="ROLE_DESC" javaType="string"/>
+        <result property="DISABLE" javaType="long"/>
+        <result property="SORT_PRIORITY" javaType="long"/>
+    </resultMap>
+    <select id="getWlmUserRoles" resultMap="getWlmUserRoles-map" parameterClass="map">
+        select urole.USER_ID,
+               urole.ROLE_ID,
+               uroleref.ROLE_NAME,
+               uroleref.ROLE_DESC,
+               uroleref.DISABLE,
+               uroleref.SORT_PRIORITY
+        from PTRUSER_ROLE urole,
+             PTRUSER_ROLE_REF uroleref
+        where urole.ROLE_ID = uroleref.ROLE_ID
+          and urole.USER_ID = #USER_ID:VARCHAR#
+    </select>
+
+    <resultMap id="getTrueAndFalseBooleanValues" class="hmap">
+        <result property="FALSE" javaType="java.lang.Boolean"/>
+        <result property="TRUE" javaType="java.lang.Boolean"/>
+    </resultMap>
+    <select id="getTrueAndFalseBooleanValues" resultMap="getTrueAndFalseBooleanValues"
+            parameterClass="map">
+        select false, true
+    </select>
+
+    <update id="updateWorklistAsDisabled" parameterClass="map">
+        UPDATE PTRWORK_LIST
+        SET DISABLE = true
+        WHERE WORK_LIST_ID = #WORK_LIST_ID#
+    </update>
+
+
+    <update id="updateAccountAssignmentWorkListId" parameterClass="java.util.Map">
+        update PTRACCOUNT_WORK_LIST_ASSIGNMENT
+        set WORK_LIST_ID    = #WORK_LIST_ID#,
+            ASSIGNMENT_DATE = cast(#ASSIGNMENT_DATE# AS DATE),
+            USER_ID         = CAST(#USER_ID# AS VARCHAR(50))
+        where ACCOUNT_ID = #ACCOUNT_ID#
+    </update>
+
+
+    <delete id="deleteWlmUsers" parameterClass="map">
+        delete from PTRUSER_WL_ASSIGN where USER_ID in
+        (<iterate conjunction="," property="USERS">#USERS[]#</iterate>)
+        and WORK_LIST_ID = #WORK_LIST_ID:BIGINT#
+    </delete>
+
+
+    <resultMap class="java.util.HashMap" id="getBooleanNull">
+        <result property="IS_DEFAULT_USER" javaType="java.lang.Boolean"/>
+    </resultMap>
+
+    <select id="getBooleanNull" resultMap="getBooleanNull">
+        SELECT null
+    </select>
+
+    <resultMap class="java.util.HashMap" id="getWorkListDefaultUser">
+        <result property="USER_ID" javaType="java.lang.String"/>
+        <result property="IS_DEFAULT_USER" javaType="java.lang.Boolean"/>
+    </resultMap>
+
+    <select id="getWorkListDefaultUser" resultMap="getWorkListDefaultUser">
+        select USER_ID, IS_DEFAULT_USER
+        from PTRUSER_WL_ASSIGN
+        WHERE work_list_id = #WORK_LIST_ID#
+          AND IS_DEFAULT_USER = true
+    </select>
+
+
+    <update id="updateNullifyWorkListDefaultUser" parameterClass="java.util.Map">
+        UPDATE PTRUSER_WL_ASSIGN
+        set IS_DEFAULT_USER = null
+        where WORK_LIST_ID = #WORK_LIST_ID#
+    </update>
+
+    <update id="updateWorkListDefaultUser" parameterClass="java.util.Map">
+        UPDATE PTRUSER_WL_ASSIGN set IS_DEFAULT_USER = true where WORK_LIST_ID = #WORK_LIST_ID#
+        AND USER_ID IN (<iterate property="SELECTED_USER" conjunction=",">
+        #SELECTED_USER[]#</iterate>)
+    </update>
+
+
+    <resultMap class="java.util.HashMap" id="getWlmAccounts">
+        <result javaType="long" property="CUSTOMER_ID"/>
+        <result javaType="string" property="CUSTOMER_NUMBER"/>
+        <result javaType="long" property="ACCOUNT_ID"/>
+        <result javaType="string" property="ACCOUNT_NUMBER"/>
+        <result javaType="string" property="CUSTOMER_NAME"/>
+        <result javaType="string" property="WORK_LIST_NAME"/>
+        <result javaType="long" property="WORK_LIST_ID"/>
+        <result javaType="string" property="PRODUCT_TYPE_DESC"/>
+        <result javaType="date" property="ASSIGNMENT_DATE"/>
+        <result javaType="string" property="ACCOUNT_STATUS"/>
+        <result javaType="long" property="MIA_POWER_COLLECT"/>
+        <result javaType="long" property="MIA_HOST"/>
+        <result property="NLB" javaType="$"/>
+        <result javaType="date" property="LAST_PAYMENT_DATE"/>
+        <result javaType="string" property="LAST_PAYMENT_METHOD"/>
+        <result javaType="string" property="PRIORITY_PAYMENT"/>
+        <result javaType="string" property="PAYMENT_STATUS"/>
+        <result javaType="date" property="PDC_DATE_HOST"/>
+        <result javaType="date" property="PDC_DATE_POWER_COLLECT"/>
+        <result javaType="date" property="PTP_DATE"/>
+        <result javaType="date" property="PTP_BROKEN_DATE"/>
+
+        <result property="USER_ASSIGNMENT_ID" javaType="string"/>
+        <result javaType="string" property="DEFAULT_USER"/>
+        <result javaType="date" property="FS_DATE"/>
+        <result javaType="date" property="NI_DATE"/>
+        <result javaType="date" property="MRO_DUE_DATE"/>
+        <result property="RO_DATE" javaType="date"/>
+        <result property="LAST_PAYMENT_AMOUNT" javaType="$"/>
+        <result property="NEXT_PAYMENT_DUE_DATE" javaType="date"/>
+        <result property="NEXT_INTEREST_DUE_DATE" javaType="date"/>
+        <result property="CALL_STATUS" javaType="string"/>
+        <result property="CALL_STATUS_DATE" javaType="date"/>
+        <result property="PTP_AMOUNT" javaType="$"/>
+        <result property="TOTAL_PAYMENT" javaType="$"/>
+        <result property="OPENING_MIA" javaType="java.lang.Long"/>
+        <result property="OPENING_NLB" javaType="$"/>
+        <result property="OPENING_OS" javaType="$"/>
+        <result property="OS_BALANCE" javaType="$"/>
+        <result property="TOTAL_GROSS_BALANCE" javaType="$"/>
+        <result property="ADVANCE_PAYMENT" javaType="$"/>
+        <result property="SOURCE_OF_CONTACT_ACC_CLASS" javaType="string"/>
+        <result property="REASON_FOR_PAYMENT_ACC_CLASS" javaType="string"/>
+
+        <result property="JUDGEMENT_DATE" javaType="date"/>
+        <result property="TOTAL_DUE_AMOUNT" javaType="$"/>
+        <result property="INSTALLMENT_AMOUNT" javaType="$"/>
+        <result property="DIA" javaType="java.lang.Long"/>
+        <result property="LAST_SUPERVISOR_REVIEW_DATE" javaType="date"/>
+        <result property="LAST_DISBURSE_DATE" javaType="date"/>
+        <result property="FIRST_PAYMENT_DATE" javaType="date"/>
+        <result property="RESCHEDULE_DATE" javaType="date"/>
+        <result property="RESTRUCTURING_DATE" javaType="date"/>
+        <result property="AKPK_FLAG" javaType="string"/>
+        <result property="NPF_FLAG" javaType="string"/>
+        <result property="NPF_STATUS_DESCRIPTION" javaType="string"/>
+        <result property="NPF_DATE" javaType="date"/>
+        <result property="WRITE_OFF_DATE" javaType="date"/>
+        <result property="LAST_CALL_STATUS" javaType="string"/>
+        <result property="CUSTOMER_REASON_OF_DEFAULT" javaType="string"/>
+        <result property="LAST_VISITATION_STATUS_INTERNAL" javaType="string"/>
+        <result property="LAST_VISITATION_STATUS_ECA" javaType="string"/>
+        <result property="LAST_CALL_SCHEDULE_DATE" javaType="date"/>
+        <result property="LAST_CALL_MEETING_DATE" javaType="date"/>
+        <result property="GENDER" javaType="string"/>
+        <result property="USER_ASSIGNMENT_ID" javaType="string"/>
+		<result property="CUSTOMER_ID_NO" javaType="string"/>
+    </resultMap>
+
+    <sql id="getWlmAccounts-fragment">
+        select distinct
+        customer.id as CUSTOMER_ID,
+        customer.customer_no as CUSTOMER_NUMBER,
+        a.id as ACCOUNT_ID,
+        a.account_no as ACCOUNT_NUMBER,
+        customer.customer_name as CUSTOMER_NAME,
+        wlist.WORK_LIST_NAME,
+        wlassign.work_list_id as WORK_LIST_ID,
+        pro.description as PRODUCT_TYPE_DESC,
+        wlassign.ASSIGNMENT_DATE,
+        accstatus.description as ACCOUNT_STATUS,
+        a.months_in_arrears as MIA_POWER_COLLECT,
+        a.months_in_arrears as MIA_HOST,
+        a.outstanding_balance as NLB,
+        a.LAST_PAYMENT_DATE as LAST_PAYMENT_DATE,
+        cast(null as text) as LAST_PAYMENT_METHOD,
+        cast(null as text) as PRIORITY_PAYMENT,
+        cast(null as text) as PAYMENT_STATUS,
+        cast(null as date) as PDC_DATE_HOST,
+        eval.LAST_PDC_DATE as PDC_DATE_POWER_COLLECT,
+        eval.PTP_DATE as PTP_DATE,
+        eval.LAST_BROKEN_PROMISE_DATE as PTP_BROKEN_DATE,
+
+        cast(null as text) as USER_ASSIGNMENT_ID,
+        cast(null as text) as DEFAULT_USER,
+        cast(null as date) as FS_DATE,
+        cast(null as date) as NI_DATE,
+        cast(null as date) as MRO_DUE_DATE,
+        cast(null as date) as RO_DATE,
+        a.LAST_PAYMENT_AMOUNT as LAST_PAYMENT_AMOUNT,
+        a.NEXT_PAYMENT_DUE_DATE as NEXT_PAYMENT_DUE_DATE,
+        a.next_interest_payment_due_date as NEXT_INTEREST_DUE_DATE,
+        cast(null as text) as CALL_STATUS,
+        eval.LAST_CALL_DATE as CALL_STATUS_DATE,
+        eval.PTP_AMOUNT as PTP_AMOUNT,
+        0.0 as TOTAL_PAYMENT,
+        wlassign.MONTHS_IN_ARREARS as OPENING_MIA,
+        wlassign.NLB as OPENING_NLB,
+        wlassign.outstanding_balance as OPENING_OS,
+        a.outstanding_balance as OS_BALANCE,
+        case
+        when
+        a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount) &lt;=0 then 0.0
+        else a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount) end as
+        TOTAL_GROSS_BALANCE,
+        0.0 as ADVANCE_PAYMENT,
+        cast(null as text) as SOURCE_OF_CONTACT_ACC_CLASS,
+        cast(null as text) as REASON_FOR_PAYMENT_ACC_CLASS,
+
+        A.JUDGEMENT_DATE as JUDGEMENT_DATE,
+        A.TOTAL_AMOUNT_DUE as TOTAL_DUE_AMOUNT,
+        a.installment_amount_in_arrears as INSTALLMENT_AMOUNT,
+        a.MONTHS_IN_ARREARS * 30 as DIA,
+        cast(null as date) as LAST_SUPERVISOR_REVIEW_DATE,
+        a.FULL_RELEASE_DATE as LAST_DISBURSE_DATE,
+        a.FIRST_PAYMENT_DATE as FIRST_PAYMENT_DATE,
+        a.RESCHEDULE_DATE as RESCHEDULE_DATE,
+        cast(null as date) as RESTRUCTURING_DATE,
+        cast(null as text) as AKPK_FLAG,
+        a.NPL_FLAG as NPF_FLAG,
+        npl.description as NPF_STATUS_DESCRIPTION,
+        a.NPL_DATE as NPF_DATE,
+        a.charge_off_date as WRITE_OFF_DATE,
+        cast(null as text) as LAST_CALL_STATUS,
+        cast(null as text) as CUSTOMER_REASON_OF_DEFAULT,
+        cast(null as text) as LAST_VISITATION_STATUS_INTERNAL,
+        cast(null as text) as LAST_VISITATION_STATUS_ECA,
+        eval.LAST_FOLLOW_UP_DATE as LAST_CALL_SCHEDULE_DATE,
+        eval.LAST_MEETING_DATE as LAST_CALL_MEETING_DATE,
+        gender.description as GENDER,
+        wlassign.USER_ID as USER_ASSIGNMENT_ID,
+customer.CUSTOMER_ID_NO
+
+        from
+        ptrcustomer customer
+        left join ptrgender_ref gender on customer.gender_id = gender.id
+        inner join ptraccount a on (a.customer_id = customer.id)
+        left join ptraccount_status_ref accstatus on a.status_id = accstatus.id
+        left join ptrnpl_status_ref npl on a.npl_status_id = npl.id
+        <isEqual property="TYPE_CODE" compareValue="agencyuser">
+            inner join PTRAGENCY_WORK_LIST_ASSIGNMENT wlassign on a.id = wlassign.account_id
+        </isEqual>
+        <isNotEqual property="TYPE_CODE" compareValue="agencyuser">
+            inner join PTRACCOUNT_WORK_LIST_ASSIGNMENT wlassign on a.id = wlassign.account_id
+        </isNotEqual>
+
+        left join PTRWLTAB_EVALUATION eval on (eval.ACCOUNT_ID = wlassign.ACCOUNT_ID )
+        left outer join ptrwork_list wlist on (wlist.work_list_id=wlassign.work_list_id)
+        left outer join ptruser_wl_assign uwl on (uwl.work_list_id=wlist.work_list_id)
+        left outer join ptruser uu on (uu.user_id=uwl.user_id)
+        inner join PTRPRODUCT_TYPE_REF pro on (pro.id = a.PRODUCT_TYPE_ID)
+        inner join PTRPRODUCT_TYPE_CATEGORY_REF category on category.id = pro.CATEGORY_ID
+        where 0=0
+    </sql>
+
+    <!--
+    SI_DATE
+    CATEGORY
+    AGENCY_NAME
+    AGENCY_ASSIGNMENT_DATE
+    LEGAL_STATUS
+    LEGAL_ACTION_DATE
+    SPECIAL_STATUS
+
+     -->
+
+
+    <select id="getWlmAccounts" parameterClass="map" resultMap="getWlmAccounts">
+        <include refid="getWlmAccounts-fragment"/>
+        <isNotNull property="WORK_LIST_ID">and wlassign.work_list_id = #WORK_LIST_ID#</isNotNull>
+    </select>
+
+    <select id="getWlmAgencyAccounts" parameterClass="map" resultMap="getWlmAccounts">
+        <include refid="getWlmAccounts-fragment"/>
+        <isNotNull property="WORK_LIST_ID">and wlassign.work_list_id = #WORK_LIST_ID#</isNotNull>
+    </select>
+    
+<sql id="lastPacReason">
+select 
+n.reason_call_id,
+n.account_id 
+from
+(select 
+row_number() over (partition by account_id order by treatment_id desc) as rownumber, 
+reason_call_id,
+account_id
+from 
+ptrtreatment_place_a_call ) n where n.rownumber = 1
+</sql>
+
+
+    <select id="getWlmPortfolioAccounts" parameterClass="map" resultMap="getWlmAccounts">
+        <include refid="getWlmAccounts-fragment"/>
+        and a.id in (0 <iterate conjunction="," prepend="," property="ACCOUNTS">
+        #ACCOUNTS[]#</iterate>)
+    </select>
+
+    <resultMap class="java.util.HashMap" id="getWlmPortfolioSearhAccounts">
+        <result javaType="long" property="ACCOUNT_ID"/>
+    </resultMap>
+
+    <select id="getWlmPortfolioSearhAccounts" parameterClass="map"
+            resultMap="getWlmPortfolioSearhAccounts">
+        select
+        distinct
+        a.id as ACCOUNT_ID
+        from
+        ptrcustomer customer
+        inner join ptraccount a on (a.customer_id = customer.id)
+        inner join PTRACCOUNT_WORK_LIST_ASSIGNMENT wlassign on a.id = wlassign.account_id
+        left join PTRWLTAB_EVALUATION wl on (wl.ACCOUNT_ID = wlassign.ACCOUNT_ID )
+        left join (<include refid="lastPacReason"/>) pacreason on a.id = pacreason.account_id
+        left outer join ptrwork_list wlist on (wlist.work_list_id=wlassign.work_list_id)
+        left outer join ptruser_wl_assign uwl on (uwl.work_list_id=wlist.work_list_id)
+        inner join PTRPRODUCT_TYPE_REF pro on (pro.id = a.PRODUCT_TYPE_ID)
+        inner join PTRPRODUCT_TYPE_CATEGORY_REF category on category.id = pro.CATEGORY_ID
+        where 0=0
+        and wlassign.work_list_id = #WORK_LIST_ID#
+
+        <isNotEmpty property="MODULE_NAME">
+            <isEqual property="MODULE_NAME" compareValue="portfolio">
+                <isNotNull property="PAC_REASON_ID">
+                    and pacreason.reason_call_id = #PAC_REASON_ID#
+                </isNotNull>
+                <isNotNull property="PRODUCT_GROUP_ID">
+                    and category.id = #PRODUCT_GROUP_ID#
+                </isNotNull>
+
+                <isNotNull property="PRODUCT_TYPE_ID">
+                    and pro.id = #PRODUCT_TYPE_ID#
+                </isNotNull>
+
+                <isNotNull property="PORTFOLIO_MIA">
+                    and a.months_in_arrears = #PORTFOLIO_MIA#
+                </isNotNull>
+
+                <isNotNull property="PORTFOLIO_USER_ID">
+                    and uwl.user_id = #PORTFOLIO_USER_ID#
+                </isNotNull>
+
+                <isNotNull property="PORTFOLIO_BANK_BRANCH_ID">
+                    and a.bank_branch_id = #PORTFOLIO_BANK_BRANCH_ID#
+                </isNotNull>
+
+                <isNotNull property="CHARGE_OFF_DATE_FROM">
+                    <isNotNull property="CHARGE_OFF_DATE_TO">
+                        and a.charge_off_date between #CHARGE_OFF_DATE_FROM# and
+                        #CHARGE_OFF_DATE_TO#
+                    </isNotNull>
+                </isNotNull>
+
+                <!--   PORTFOLIO_TEAM_ID -->
+                <!--   PORTFOLIO_CALL_STATUS_ID -->
+                <!--   NOTICE_TYPE_ID -->
+
+            </isEqual>
+        </isNotEmpty>
+    </select>
+
+
+    <resultMap class="hmap" id="getWlmCallStatus">
+        <result javaType="long" property="ACCOUNT_ID"/>
+        <result property="CALL_STATUS" javaType="java.lang.String"/>
+        <result property="LAST_CALL_STATUS" javaType="java.lang.String"/>
+        <result property="CUSTOMER_REASON_OF_DEFAULT" javaType="java.lang.String"/>
+        <result property="UNCONTACTABLE_ACCOUNT" javaType="java.lang.Boolean"/>
+    </resultMap>
+    <select id="getWlmCallStatus" resultMap="getWlmCallStatus">
+        select
+        eval.account_id,
+        status.description as CALL_STATUS,
+        status.description as LAST_CALL_STATUS,
+        rea.description as CUSTOMER_REASON_OF_DEFAULT,
+        case when eval.pac_uncontactable_count >= 3 then true else false end as
+        UNCONTACTABLE_ACCOUNT
+        from ptrwltab_evaluation eval
+        <isEqual property="USER_TYPE_CODE" compareValue="bankuser">
+            inner join ptraccount_work_list_assignment asgmt on eval.account_id = asgmt.account_id
+        </isEqual>
+        <isNotEqual property="USER_TYPE_CODE" compareValue="bankuser">
+            inner join ptragency_work_list_assignment asgmt on eval.account_id = asgmt.account_id
+        </isNotEqual>
+        inner join ptrtreatment_type_status_ref status on eval.CALL_TYPE_STATUS_ID = status.id
+        left join ptrreason_of_default_ref rea on eval.reason_default_id = rea.id
+        where asgmt.work_list_id = #WORK_LIST_ID#
+    </select>
+
+
+    <resultMap class="hmap" id="getWlmAccountClassification">
+        <result javaType="long" property="ACCOUNT_ID"/>
+        <result property="SOURCE_OF_CONTACT_ACC_CLASS" javaType="java.lang.String"/>
+        <result property="REASON_FOR_PAYMENT_ACC_CLASS" javaType="java.lang.String"/>
+        <result property="ACC_CLASSIFICATION" javaType="java.lang.String"/>
+    </resultMap>
+    <select id="getWlmAccountClassification" resultMap="getWlmAccountClassification">
+        select eval.account_id,
+               source.description as SOURCE_OF_CONTACT_ACC_CLASS,
+               reason.description as REASON_FOR_PAYMENT_ACC_CLASS,
+               status.description as ACC_CLASSIFICATION
+        from ptrwltab_evaluation eval
+                 inner join ptraccount_work_list_assignment asgmt
+                     on eval.account_id = asgmt.account_id
+                 left join ptrtreatment_source_of_contact_ref source
+                     on eval.classification_last_contact_source = source.id
+                 left join ptrtreatment_account_classification_payment_reason_ref reason
+                     on eval.classification_last_payment_reason = reason.id
+                 left join ptrtreatment_type_status_ref status
+                     on status.status_id = eval.acc_class_status and status.type_id = 35
+        where asgmt.work_list_id = #WORK_LIST_ID#
+    </select>
+
+
+    <resultMap class="hmap" id="getWlmMobilePhone">
+        <result javaType="long" property="CUSTOMER_ID"/>
+        <result property="MOBILE_PHONE" javaType="java.lang.String"/>
+    </resultMap>
+    <select id="getWlmMobilePhone" resultMap="getWlmMobilePhone">
+        select a.customer_id as customer_id, ph.no
+        from ptraccount a
+                 inner join ptraccount_work_list_assignment assign on a.id = assign.account_id
+                 inner join ptrhost_phone_no ph on a.customer_id = ph.customer_id
+                 inner join ptrhost_phone_no_type_ref ref on ph.host_phone_no_type_id = ref.id
+        where ref.code = 'HP'
+          and assign.work_list_id = #WORK_LIST_ID#
+    </select>
+
+    <resultMap class="hmap" id="getWlmOffice">
+        <result javaType="long" property="CUSTOMER_ID"/>
+        <result property="OFFICE_PHONE" javaType="java.lang.String"/>
+    </resultMap>
+
+    <select id="getWlmOffice" resultMap="getWlmOffice">
+        select a.customer_id as customer_id, ph.no
+        from ptraccount a
+                 inner join ptraccount_work_list_assignment assign on a.id = assign.account_id
+                 inner join ptrhost_phone_no ph on a.customer_id = ph.customer_id
+                 inner join ptrhost_phone_no_type_ref ref on ph.host_phone_no_type_id = ref.id
+        where ref.code = 'OF'
+          and assign.work_list_id = #WORK_LIST_ID#
+    </select>
+
+    <resultMap class="hmap" id="getWlmHome">
+        <result javaType="long" property="CUSTOMER_ID"/>
+        <result property="HOME_PHONE" javaType="java.lang.String"/>
+    </resultMap>
+
+    <select id="getWlmHome" resultMap="getWlmHome">
+        select a.customer_id as customer_id, ph.no
+        from ptraccount a
+                 inner join ptraccount_work_list_assignment assign on a.id = assign.account_id
+                 inner join ptrhost_phone_no ph on a.customer_id = ph.customer_id
+                 inner join ptrhost_phone_no_type_ref ref on ph.host_phone_no_type_id = ref.id
+        where ref.code = 'EM'
+          and assign.work_list_id = #WORK_LIST_ID#
+    </select>
+
+
+    <select id="getWorkListCategory" resultMap="global.ref">
+        <include refid="pleaseSelectRef"/>
+        union
+        <include refid="refselect"/>
+        FROM ptrwork_list_category_ref
+    </select>
+    
+    
+    <select id="getPacReason" resultMap="global.ref">
+select null, ' ', ' Please Select ' as description, false , -1 as sort_priority         
+union         
+select id, code, description, disable, 1 as sort_priority         
+from ptrreason_of_call_ref order by sort_priority asc, description asc
+    </select>
+    
+    
+    
+
+
+</sqlMap>
+
+

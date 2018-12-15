@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="exists" rhsvalue=""/>
+  </conditions>
+  <exec statement="selectNegativeOne" type="select"/>
+  <exec ceiling="false" endmonth="false" from="EFFECTIVE_DATE" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+  <exec addmonths="NEGATIVE_ONE" ceiling="false" endmonth="false" from="FIRST_OF_MONTH" nextweekday="false" startmonth="false" to="FIRST_OF_PREV_MONTH" truncate="true" type="date"/>
+  <exec from="FIRST_OF_PREV_MONTH" to="EVALUATION_DATE" type="copy"/>
+  <exec ceiling="false" endmonth="false" from="FIRST_OF_PREV_MONTH" nextweekday="false" startmonth="true" to="START_DATE" truncate="true" type="date"/>
+  <exec ceiling="false" endmonth="true" from="FIRST_OF_PREV_MONTH" nextweekday="false" startmonth="false" to="END_DATE" truncate="true" type="date"/>
+  <exec allocationsize="100" group="ACCOUNT_ID" statement="getMontlyPaymentTrend" threadcount="10" type="stream">
+   <exec to="MONTHLY_PAYMENT_TREND_LIST" type="copy"/>
+   <exec from="EVALUATION_DATE" key="EVALUATION_DATE" to="MONTHLY_PAYMENT_TREND_LIST" type="copyintolist"/>
+   <exec argument="MONTHLY_PAYMENT_TREND_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_EXISTING" operator="=" rhsvalue="false"/>
+     </conditions>
+     <exec statement="insertMontlyPaymentTrend" type="insert"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_EXISTING" operator="=" rhsvalue="true"/>
+     </conditions>
+     <exec recordcount="" statement="updateMontlyPaymentTrend" type="update"/>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+</event>

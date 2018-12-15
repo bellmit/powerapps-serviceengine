@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="ACCOUNT_ID" key="ACCOUNT_ID" type="copyintolist"/>
+ <exec from="SELECTED_CUSTOMER_ID" key="SELECTED_CUSTOMER_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec statement="getAccountReviewSelectedCustomer" type="select"/>
+ </exec>
+</event>

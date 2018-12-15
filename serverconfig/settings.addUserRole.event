@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec count="1" to="NEW_ROW" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ASSIGNED_ROLES" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="ASSIGNED_ROLES" key="ROLE_ID" to="ROLES" type="extract"/>
+ </exec>
+ <exec argument="ROLES" query="availableUserRoles" type="query"/>
+ <exec from="ROLES" key="ROLES" to="NEW_ROW" type="copyintolist"/>
+ <exec from="NEW_ROW" to="ASSIGNED_ROLES" type="append"/>
+ <exec from="ASSIGNED_ROLES" key="ASSIGNED_ROLES" type="copyintolist"/>
+</event>

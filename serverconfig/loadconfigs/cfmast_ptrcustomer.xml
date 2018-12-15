@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><load>
+    <table>PTRCUSTOMER</table>
+    <header>
+        <value>HDR</value></header>
+    <trailer>
+        <value>TRL</value></trailer>
+
+    <generatedkey>ID</generatedkey>
+    <generatedkeyseqname>PTRCUSTOMER_ID</generatedkeyseqname>
+		
+    <field iskey="true">
+        <name>CUSTOMER_NO</name>
+        <location end="21" start="3"/>
+	</field>
+    
+	<field>
+        <name>DATE_OF_BIRTH</name>
+        <location end="27" start="22"/>
+        <handler>com.profitera.dc.handler.DefaultDateHandler<config>ddMMyy</config></handler>
+	</field>
+			
+    <field isoptional="true">
+        <name>GENDER_ID</name>
+        <location end="28" start="28"/>
+        <lookup>
+            <query>select id from ptrgender_ref where code = #GENDER_ID:VARCHAR#</query></lookup>
+    </field>
+		
+    <field>
+        <name>ETHNICITY_ID</name>
+        <location end="161" start="159"/>
+        <lookup><query>select id from ptrethnicity_ref where code = #ETHNICITY_ID#</query>
+		<insert>insert into ptrethnicity_ref (id, code, description, disable, sort_priority) values (#ID#,#ETHNICITY_ID#,concat(#ETHNICITY_ID#, ' - Unknown'),false,0)</insert>
+        <insertkey>select nextval('ptrethnicity_ref_id')</insertkey>
+        </lookup>
+        <default>OTH</default>
+	</field>
+		
+    <field isoptional="true">
+        <name>MARITAL_STATUS_ID</name>
+        <lookup>
+            <query>select ID from PTRMARITAL_STATUS_REF where CODE= #MARITAL_STATUS_ID:VARCHAR#</query>
+		</lookup>
+        <location end="162" start="162"/>
+    </field>
+		
+    <field>
+        <name>BANK_NO</name>
+        <location end="164" start="163"/>
+        <lookup/>
+        <default/>
+        <nulldefinition/>
+    </field>
+		
+    <field isoptional="true">
+        <name>CITIZENSHIP_ID</name>
+        <lookup>
+            <query>select ID from PTRCITIZENSHIP_REF where CODE = #CITIZENSHIP_ID#</query>
+            <insert>insert into PTRCITIZENSHIP_REF (CITIZENSHIP_ID,CITIZENSHIP_CODE,CITIZENSHIP_DESC,DISABLE,SORT_PRIORITY) values (#ID#,#CITIZENSHIP_ID#,concat(#CITIZENSHIP_ID#, ' - Unknown'),false,0)</insert>
+            <insertkey>select nextval('ptrcitizenship_ref_id')</insertkey>
+		</lookup>
+        <location end="167" start="165"/>
+        <default>MY</default>
+	</field>
+		
+    <field>
+        <name>MARITAL_STATUS_DATE</name>
+        <location end="173" start="168"/>
+        <handler>com.profitera.dc.handler.DefaultDateHandler<config>ddMMyy</config>
+		</handler>
+	</field>
+
+<field isoptional="true">
+        <name>RESIDENCE_OR_BUSINESS_COUNTRY_ID</name>
+        <location end="177" start="175"/>
+        <lookup>
+            <query>select ID from PTRCITIZENSHIP_REF where CODE = #RESIDENCE_OR_BUSINESS_COUNTRY_ID#</query>
+            <insert>insert into PTRCITIZENSHIP_REF (ID,CODE,DESCRIPTION,SORT_PRIORITY) values (#ID#,#RESIDENCE_OR_BUSINESS_COUNTRY_ID#,'Unknown',0)</insert>
+            <insertkey>select nextval('ptrcitizenship_ref_id')</insertkey>
+                </lookup>
+        </field>
+	
+	<field>
+		<name>CUSTOMER_NAME</name>
+		<location end="108" start="69"/>
+	</field>
+	
+	<field>
+		<name>SALUTATION_ID</name>
+		<location end="158" start="149"/>
+		<lookup>
+            <query>select ID from PTRSALUTATION_REF where CODE = #SALUTATION_ID#</query>
+            <insert>insert into ptrsalutation_ref (id,code,description,disable,sort_priority) values (#ID#,#SALUTATION_ID#,concat(#SALUTATION_ID#, ' - Unknown'),,0)</insert>
+            <insertkey>select nextval('ptrsalutation_ref_id')</insertkey>
+		</lookup>
+	</field>
+	
+	<field>
+        <name>SHORT_NAME</name>
+        <location end="197" start="178"/>
+	</field>
+	<field>
+        <name>USER_DEFINED_FIELD_3</name>
+        <location end="198" start="198"/>
+	<default></default><handler config="Y" name="com.profitera.dc.handler.StringHandler"/>
+	</field>
+	<field isoptional="true">
+        <name>BUSINESS_TYPE_ID</name>
+        <lookup>
+            <query>select ID from PTRBUSINESS_TYPE_REF where CODE = #BUSINESS_TYPE_ID#</query>
+            <insert>insert into PTRBUSINESS_TYPE_REF (id,code,description,disable,sort_priority) values (#ID#,#BUSINESS_TYPE_ID#,'Unknown',false,0)</insert>
+            <insertkey>select nextval('ptrbusiness_type_ref_id')</insertkey>
+	    <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+	</lookup>
+        <location end="202" start="199"/>
+        <default></default>
+	</field>
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('PTRLOAD_EXECUTION_ID')</insertkey>
+  </lookup>
+ </field>
+</load>

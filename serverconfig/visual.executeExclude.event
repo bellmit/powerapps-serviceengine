@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="getExcludeTreeForProcessing" type="select"/>
+  <exec type="transaction">
+   <exec statement="deleteAgencyExcludeAssignment" type="delete"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PROCESS_TYPE_ID" operator="=" rhsvalue="19"/>
+   </conditions>
+   <exec allocationsize="100" group="ACCOUNT_ID" statement="getEcaExcludeData" threadcount="10" type="stream">
+    <exec to="ACCOUNT_LIST" type="copy"/>
+    <exec data="ACCOUNT_LIST" document="DOCUMENT_ID" identifier="AGENCY_ASSIGNMENT_ID" key="EXCLUSION_REASON_ID" type="executedecisiontree"/>
+    <exec from="CURRENT_TIME" key="CURRENT_TIME" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="LOGON_USER" key="LOGON_USER" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="SUBTYPE_ID" key="SUBTYPE_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="ID" key="TREE_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec argument="ACCOUNT_LIST" condition="IS_MET_CONDITION" type="conditionalloop">
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="EXCLUSION_REASON_ID" operator="exists" rhsvalue=""/>
+      </conditions>
+      <exec from="TRUE" to="IS_MET_CONDITION" type="copy"/>
+      <exec statement="insertAgencyExcludeAssignment" type="insert"/>
+     </exec>
+    </exec>
+   </exec>
+  </exec>
+  <exec message="Executed" target="MESSAGE" type="formattext"/>
+ </exec>
+</event>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec recordcount="" statement="updateLegalWorklist" type="update"/>
+  <exec message="Worklist updated" target="MESSAGE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="insertLegalWorklist" type="insert"/>
+  <exec message="Worklist added" target="MESSAGE" type="formattext"/>
+ </exec>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+</event>

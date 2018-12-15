@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec recordcount="" statement="updateTransactionAdjustment" type="update"/>
+ <exec statement="deleteExpensesForNewEntries" type="delete"/>
+ <exec from="PROCESS_ID" key="PROCESS_ID" to="EXPENSES" type="copyintolist"/>
+ <exec argument="EXPENSES" type="loop">
+  <exec statement="insertActionExpenses" type="insert"/>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec message="Adjustment done" target="MESSAGE" type="formattext"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+</event>

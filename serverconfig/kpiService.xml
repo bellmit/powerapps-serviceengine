@@ -1,0 +1,1383 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="kpiService">
+
+	<sql id="kpiBaseFragment">
+		select uw.work_list_id
+		from ptruser_wl_assign uw
+		inner join ptruser_wl_assign uw1 on uw1.work_list_id=uw.work_list_id and
+		uw1.is_default_user = true
+		where uw.user_id=#LOGON_USER#
+		<isNotEmpty property="USER_ID">
+			and uw1.user_id=#USER_ID#
+		</isNotEmpty>
+	</sql>
+	<resultMap id="getKpiAllUserTree" class="hmap">
+		<result property="LEVEL_1" javaType="string" />
+		<result property="LEVEL_1_DESCRIPTION" javaType="string" />
+	</resultMap>
+
+	<select id="getKpiAllUserTree" resultMap="getKpiAllUserTree">
+		select 'ALL','All'
+	</select>
+
+	<resultMap id="getKpiUserTree" class="hmap">
+		<result property="LEVEL_1" javaType="string" />
+		<result property="USER_ID" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+	</resultMap>
+
+	<select id="getKpiUserTree" resultMap="getKpiUserTree">
+		select 'ALL',uw1.user_id,e.first_name,e.middle_name,e.last_name
+		from ptruser_wl_assign uw
+		inner join ptruser_wl_assign uw1 on uw1.work_list_id=uw.work_list_id and
+		uw1.is_default_user = true
+		inner join ptruser u on u.user_id=uw1.user_id
+		inner join ptremployee e on e.id=u.employee_id
+		where uw.user_id=#LOGON_USER#
+	</select>
+
+	<resultMap id="getMyPortfolioBaseData" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="WORKLIST_NAME" javaType="string" />
+		<result property="OPENING_TOTAL_ACCOUNT" javaType="long" />
+		<result property="OPENING_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="TARGET" javaType="$" />
+		<result property="ACHIEVEMENT" javaType="$" />
+		<result property="ACHIEVEMENT_PERCENTAGE" javaType="$" />
+		<result property="VARIANCE" javaType="$" />
+		<result property="OPEN_TOTAL_ACCOUNT" javaType="long" />
+		<result property="OPEN_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="WIP_TOTAL_ACCOUNT" javaType="long" />
+		<result property="WIP_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="PTP_TOTAL_ACCOUNT" javaType="long" />
+		<result property="PTP_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="BROKEN_PROMISE_TOTAL_ACCOUNT" javaType="long" />
+		<result property="BROKEN_PROMISE_TOTAL_GROSS_BALANCE"
+			javaType="$" />
+		<result property="PAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="PAID_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="UNPAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="UNPAID_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="SELF_CURED_TOTAL_ACCOUNT" javaType="long" />
+		<result property="SELF_CURED_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="TOTAL_ACCOUNT" javaType="long" />
+		<result property="TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getMyPortfolioBaseData"
+		resultMap="getMyPortfolioBaseData">
+		select w.work_list_id,w.work_list_name,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 from ptrwork_list w
+		where
+		w.work_list_id in(
+		<include refid="kpiBaseFragment" />
+		)
+	</select>
+
+	<resultMap id="getProductivityPerformanceBaseData"
+		class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="WORKLIST_NAME" javaType="string" />
+		<result property="OPENING_TOTAL_ACCOUNT" javaType="long" />
+		<result property="OPENING_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="TOTAL_CALL_MADE" javaType="long" />
+		<result property="TOTAL_ACCOUNT_ATTENDED" javaType="long" />
+		<result property="TOTAL_PTP" javaType="long" />
+		<result property="PTP_PERCENTAGE" javaType="$" />
+		<result property="TOTAL_PTP_KEPT" javaType="long" />
+		<result property="KEPT_PERCENTAGE" javaType="$" />
+		<result property="TOTAL_CONTACT" javaType="long" />
+		<result property="TOTAL_CONTACT_PERCENTAGE" javaType="$" />
+		<result property="TOTAL_ACCOUNT_COLLECTED" javaType="long" />
+		<result property="TOTAL_AMOUNT_COLLECTED" javaType="$" />
+		<result property="TOTAL_ACCOUNT" javaType="long" />
+		<result property="TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getProductivityPerformanceBaseData"
+		resultMap="getProductivityPerformanceBaseData">
+		select w.work_list_id,w.work_list_name,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0 from ptrwork_list w
+		where
+		w.work_list_id in(
+		<include refid="kpiBaseFragment" />
+		)
+	</select>
+
+	<resultMap id="getOverallPerformanceBaseData" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="OPENING_TOTAL_ACCOUNT" javaType="long" />
+		<result property="OPENING_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="STAY_OVER_TOTAL_ACCOUNT" javaType="long" />
+		<result property="STAY_OVER_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="STAY_OVER_PERCENTAGE" javaType="$" />
+		<result property="PUSH_BACK_TOTAL_ACCOUNT" javaType="long" />
+		<result property="PUSH_BACK_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="PUSH_BACK_PERCENTAGE" javaType="$" />
+		<result property="REGULARIZED_TOTAL_ACCOUNT" javaType="long" />
+		<result property="REGULARIZED_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="REGULARIZED_PERCENTAGE" javaType="$" />
+		<result property="DECLASSIFIED_TOTAL_ACCOUNT" javaType="long" />
+		<result property="DECLASSIFIED_TOTAL_GROSS_BALANCE"
+			javaType="$" />
+		<result property="DECLASSIFIED_PERCENTAGE" javaType="$" />
+		<result property="SHORT_PAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="SHORT_PAID_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="SHORT_PAID_PERCENTAGE" javaType="$" />
+		<result property="UNPAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="UNPAID_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="UNPAID_PERCENTAGE" javaType="$" />
+		<result property="TOTAL_ACCOUNT" javaType="long" />
+		<result property="TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getOverallPerformanceBaseData"
+		resultMap="getOverallPerformanceBaseData">
+		select uw.user_id,e.first_name,e.middle_name,e.last_name,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+		from ptruser_wl_assign uw
+		inner join ptruser u on u.user_id=uw.user_id
+		inner join ptremployee e on e.id=u.employee_id
+		where uw.is_default_user= true
+		and uw.work_list_id in(
+		<include refid="kpiBaseFragment" />
+		)
+	</select>
+
+	<resultMap id="getRankingPerformanceBaseData" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="OPENING_TOTAL_ACCOUNT" javaType="long" />
+		<result property="OPENING_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="PAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="PAID_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="UNPAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="UNPAID_TOTAL_GROSS_BALANCE" javaType="$" />
+		<result property="UNPAID_PERCENTAGE" javaType="$" />
+		<result property="DECLASSIFIED_AMOUNT" javaType="$" />
+		<result property="DESCLASSIFIED_PERCENTAGE" javaType="$" />
+		<result property="RANKING" javaType="long" />
+	</resultMap>
+
+	<select id="getRankingPerformanceBaseData" resultMap="getRankingPerformanceBaseData">
+		select uw.user_id,e.first_name,e.middle_name,e.last_name,
+		0,0,0,0,0,0,0,0,0,0
+		from ptruser_wl_assign uw
+		inner join ptruser u on u.user_id=uw.user_id
+		inner join ptremployee e on e.id=u.employee_id
+		where uw.is_default_user= true
+		and uw.work_list_id in(
+		<include refid="kpiBaseFragment" />
+		)
+	</select>
+
+	<resultMap id="getOpeningByWorklist" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="OPENING_TOTAL_ACCOUNT" javaType="long" />
+		<result property="OPENING_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getOpeningByWorklist"
+		resultMap="getOpeningByWorklist">
+		select w.work_list_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptraccount a on a.id=w.account_id
+		where w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by w.work_list_id
+	</select>
+	<resultMap id="getPaidInfoByWorklist" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="PAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="PAID_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getPaidInfoByWorklist"
+		resultMap="getPaidInfoByWorklist">
+		select w.work_list_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptrvw_current_month_total_payment pay on
+		pay.account_id=w.account_id
+		inner join ptrpayment_status_ref status on pay.payment_status_id =
+		status.id
+		inner join ptraccount a on a.id=w.account_id
+		where status.code in ('fullpayment','advancepayment')
+		and w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by w.work_list_id
+	</select>
+	<resultMap id="getPaidInfoByUsers" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="PAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="PAID_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getPaidInfoByUsers"	resultMap="getPaidInfoByUsers">
+		select uw.user_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptruser_wl_assign uw on uw.work_list_id=w.work_list_id and uw.is_default_user = true
+		inner join ptrvw_current_month_total_payment pay on	pay.account_id=w.account_id
+		inner join ptrpayment_status_ref status on pay.payment_status_id = status.id
+		inner join ptraccount a on a.id=w.account_id
+		where status.code in ('fullpayment','advancepayment')
+		and w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by uw.user_id
+	</select>
+	<resultMap id="getBrokenPromiseInfoByWorklist" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="BROKEN_PROMISE_TOTAL_ACCOUNT" javaType="long" />
+		<result property="BROKEN_PROMISE_TOTAL_GROSS_BALANCE"
+			javaType="$" />
+	</resultMap>
+
+	<select id="getBrokenPromiseInfoByWorklist"
+		resultMap="getBrokenPromiseInfoByWorklist">
+		select w.work_list_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join PTRWLTAB_EVALUATION wlt on wlt.account_id=w.account_id
+		inner join ptraccount a on a.id=w.account_id
+		where w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		and wlt.PTP_PENDING_SINCE_DATE is null
+		and wlt.LAST_BROKEN_PROMISE_DATE >= cast(#START_OF_MONTH:DATE# as date)
+		and wlt.PTP_DATE >= cast(#START_OF_MONTH:DATE# as date)
+		group by w.work_list_id
+	</select>
+
+	<resultMap id="getPromiseInfoByWorklist" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="PTP_TOTAL_ACCOUNT" javaType="long" />
+		<result property="PTP_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getPromiseInfoByWorklist"
+		resultMap="getBrokenPromiseInfoByWorklist">
+		select w.work_list_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join PTRWLTAB_EVALUATION wlt on wlt.account_id=w.account_id
+		inner join ptraccount a on a.id=w.account_id
+		where w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		and wlt.PTP_PENDING_SINCE_DATE >= cast(#START_OF_MONTH:DATE# as date)
+		group by w.work_list_id
+	</select>
+
+	<resultMap id="getSelfCureInfoByWorklist" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="SELF_CURED_TOTAL_ACCOUNT" javaType="long" />
+		<result property="SELF_CURED_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getSelfCureInfoByWorklist"
+		resultMap="getSelfCureInfoByWorklist">
+		select w.work_list_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptrvw_current_month_total_payment pay on
+		pay.account_id=w.account_id
+		inner join ptrpayment_status_ref status on pay.payment_status_id =
+		status.id
+		inner join ptraccount a on a.id=w.account_id
+		where status.code in ('fullpayment','advancepayment')
+		and w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		and not exists(select 1 from PTRACCOUNT_TREATMENT_CURRENT tc
+		where tc.account_id=a.id and date(tc.created_time) >=
+		cast(#START_OF_MONTH:DATE# as date))
+		group by w.work_list_id
+	</select>
+
+	<resultMap id="getTotalByWorklist" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="TOTAL_ACCOUNT" javaType="long" />
+		<result property="TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getTotalByWorklist" resultMap="getTotalByWorklist">
+		select w.work_list_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptraccount a on a.id=w.account_id
+		where w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by w.work_list_id
+	</select>
+
+	<resultMap id="getUnpaidInfoByWorklist" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="UNPAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="UNPAID_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getUnpaidInfoByWorklist"
+		resultMap="getUnpaidInfoByWorklist">
+		select w.work_list_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		left join ptrvw_current_month_total_payment pay on
+		pay.account_id=w.account_id
+		left join ptrpayment_status_ref status on pay.payment_status_id =
+		status.id
+		inner join ptraccount a on a.id=w.account_id
+		where status.code not in ('fullpayment','advancepayment')
+		and w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by w.work_list_id
+	</select>
+	
+	<resultMap id="getUnpaidInfoByUsers" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="UNPAID_TOTAL_ACCOUNT" javaType="long" />
+		<result property="UNPAID_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getUnpaidInfoByUsers" resultMap="getUnpaidInfoByUsers">
+		select uw.user_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptruser_wl_assign uw on uw.work_list_id=w.work_list_id and uw.is_default_user = true
+		left join ptrvw_current_month_total_payment pay on
+		pay.account_id=w.account_id
+		left join ptrpayment_status_ref status on pay.payment_status_id =
+		status.id
+		inner join ptraccount a on a.id=w.account_id
+		where status.code not in ('fullpayment','advancepayment')
+		and w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by uw.user_id
+	</select>
+	
+	<resultMap id="getDeclassifiedInfoByUsers" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="DECLASSIFIED_AMOUNT" javaType="$" />
+	</resultMap>
+
+	<select id="getDeclassifiedInfoByUsers" resultMap="getDeclassifiedInfoByUsers">
+		select uw.user_id,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptruser_wl_assign uw on uw.work_list_id=w.work_list_id and uw.is_default_user = true
+		left join ptrvw_current_month_total_payment pay on
+		pay.account_id=w.account_id
+		left join ptrpayment_status_ref status on pay.payment_status_id =
+		status.id
+		inner join ptraccount a on a.id=w.account_id
+		where status.code not in ('fullpayment','advancepayment')
+		and ((w.months_in_arrears - a.months_in_arrears) >=2 or (w.months_in_arrears > 0 and a.months_in_arrears=0))
+		and w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by uw.user_id
+	</select>	
+	
+	<resultMap id="getUserKpiWorklistIds" class="hmap">
+		<result property="WORKLIST_ID" javaType="long" />
+	</resultMap>
+
+	<select id="getUserKpiWorklistIds"
+		resultMap="getUserKpiWorklistIds">
+		<include refid="kpiBaseFragment" />
+	</select>
+
+	<resultMap id="getOpeningByUsers" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="OPENING_TOTAL_ACCOUNT" javaType="long" />
+		<result property="OPENING_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getOpeningByUsers" resultMap="getOpeningByUsers">
+		select uw.user_id,count(w.account_id),sum(a.outstanding_balance -
+		(a.interest_rebate_amount + a.write_off_amount))
+		from ptraccount_work_list_assignment w
+		inner join ptruser_wl_assign uw on uw.work_list_id=w.work_list_id and uw.is_default_user = true
+		inner join ptraccount a on a.id=w.account_id
+		where w.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+		group by uw.user_id
+	</select>
+
+	<sql id="inProgressCall">
+		eval.LAST_CALL_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+		and eval.CALL_TYPE_STATUS_ID in
+		(
+		select
+		id
+		from ptrtreatment_type_status_ref
+		where type_id = 8
+		AND
+		(
+		code IN
+		(
+		'PLACE_UNS_IPR',
+		'SCHEDULE_MEET',
+		'CALL_SCH',
+		'PAC_4',
+		'PAC_RNA',
+		'PAC_UTP',
+		'PAC_NEGO',
+		'PAC_RTP',
+		'PAC_LMTP'
+		)
+		OR status_id = 15001
+		))
+
+	</sql>
+	<sql id="smsInprogress">
+		eval.LAST_CALLER_INITIATED_SMS_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="telegramInprogress">
+		eval.LAST_TELEGRAM_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+
+	<sql id="instructionInprogress">
+		eval.last_instruction_date &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+
+	<sql id="maintenanceInprogress">
+		eval.LAST_EMPLOYMENT_MAINTENANCE_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+
+	<sql id="earmarkInprogress">
+		eval.EARMARK_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="visitationInprogress">
+		eval.LAST_SITE_VISIT_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="ccrisInprogress">
+		eval.LAST_CCRIS_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="tpsInprogress">
+		(eval.LAST_TPS_DATE &gt;= CAST(#START_OF_MONTH# AS DATE) AND eval.THIRDPARTY_STATUS in
+		(15004,15001))
+	</sql>
+	<sql id="meetingInprogress">
+		eval.LAST_MEETING_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="letterInprogress">
+		eval.LAST_LETTER_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="instructLegalInprogress">
+		eval.LAST_INSTRUCT_LEGAL_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="managementApprovalInprogress">
+		(eval.LAST_MANAGEMENT_APPROVAL_DATE &gt;= CAST(#START_OF_MONTH# AS DATE) or
+		(eval.escalation_status_id is not null and eval.WIP_INDICATOR = 1))
+	</sql>
+	<sql id="legacyRnrInprogress">
+		(eval.TP_RNR is not null and eval.WIP_INDICATOR = 1)
+	</sql>
+	<sql id="rnrInprogress">
+		eval.LAST_RNR_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="rewriteInprogress">
+		((eval.LAST_REWRITE_DATE &gt;= CAST(#START_OF_MONTH# AS DATE) and eval.REWRITE_PROCESS_STATUS
+		in (15007,15004,15001) ) or
+		(eval.REWRITE_PROCESS_STATUS is not null and eval.WIP_INDICATOR = 1))
+	</sql>
+	<sql id="accountReviewInprogress">
+		eval.LAST_ACCOUNT_REVIEW_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="outlookInprogress">
+		eval.LAST_ACCOUNT_OUTLOOK_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="reviewInprogress">
+		eval.LAST_REVIEW_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="courtOrderInprogress">
+		(eval.LAST_COURT_ORDER_DATE &gt;= CAST(#START_OF_MONTH# AS DATE) AND
+		eval.LAST_COURT_ORDER_STATUS_ID in (15004))
+	</sql>
+	<sql id="auctionInprogress">
+		eval.LAST_AUCTION_DATE &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+	<sql id="emailInprogress">
+		eval.last_email_date &gt;= CAST(#START_OF_MONTH# AS DATE)
+	</sql>
+
+	<resultMap class="java.util.HashMap" id="getInprogressInfoByWorklist">
+		<result property="WORKLIST_ID" javaType="long" />
+		<result property="WIP_TOTAL_ACCOUNT" javaType="long" />
+		<result property="WIP_TOTAL_GROSS_BALANCE" javaType="$" />
+	</resultMap>
+
+	<select id="getInprogressInfoByWorklist" resultMap="getInprogressInfoByWorklist">
+		select
+		wlassign.work_list_id,count(wlassign.account_id),sum(a.outstanding_balance -(a.interest_rebate_amount + a.write_off_amount))
+		from
+		PTRACCOUNT_WORK_LIST_ASSIGNMENT wlassign
+		inner join ptraccount a on a.id=wlassign.account_id
+		inner join PTRWLTAB_EVALUATION eval on wlassign.account_id = eval.account_id
+		where wlassign.work_list_id in (<iterate property="WORK_LIST" conjunction=",">#WORK_LIST[]#</iterate>,0)
+
+		and
+		(
+		(<include refid="outlookInprogress" />)	or (<include refid="inProgressCall" />)	or (<include refid="smsInprogress" />)
+		or (<include refid="telegramInprogress" />)	or (<include refid="earmarkInprogress" />) or (<include refid="visitationInprogress" />)
+		or (<include refid="ccrisInprogress" />) or (<include refid="tpsInprogress" />)	or (<include refid="meetingInprogress" />)
+		or (<include refid="letterInprogress" />) or (<include refid="instructLegalInprogress" />) or (<include refid="managementApprovalInprogress" />)
+		or (<include refid="legacyRnrInprogress" />) or (<include refid="rewriteInprogress" />) or (<include refid="accountReviewInprogress" />)
+		or (<include refid="reviewInprogress" />) or (<include refid="courtOrderInprogress" />) or (<include refid="auctionInprogress" />)
+		or (<include refid="rnrInprogress" />) or (<include refid="maintenanceInprogress" />) or (<include refid="instructionInprogress" />)
+		or (<include refid="emailInprogress" />)
+		)
+		group by wlassign.work_list_id
+	</select>
+	
+<!-- call performance -->
+	<resultMap id="getDailyPerformance" class="hmap">
+		<result property="ID" javaType="long" />
+		<result property="HOUR" javaType="string" />
+		<result property="CALL" javaType="long" />
+		<result property="ACCOUNT_ATTENDED" javaType="long" />
+		<result property="GROSS_BALANCE" javaType="$" />
+	</resultMap>
+	<select id="getDailyPerformance" resultMap="getDailyPerformance">
+		select
+		a.ID,a.HOUR,CALL,ACCOUNT_ATTENDED,0 as GROSS_BALANCE from
+		(
+		values
+		('8','08 AM',0,0),
+		('9','09 AM',0,0),
+		('10','10 AM',0,0),
+		('11','11 AM',0,0),
+		('12','12 PM',0,0),
+		('13','01 PM',0,0),
+		('14','02 PM',0,0),
+		('15','03 PM',0,0),
+		('16','04 PM',0,0),
+		('17','05 PM',0,0),
+		('18','06 PM',0,0),
+		('19','07 PM',0,0),
+		('20','08 PM',0,0),
+		('21','09 PM',0,0)
+		)
+		as a (ID,HOUR,CALL,ACCOUNT_ATTENDED)
+	</select>
+	<resultMap id="getDailyCallPerformance" class="hmap">
+		<result property="ID" javaType="long" />
+		<result property="CALL" javaType="long" />
+		<result property="ACCOUNT_ATTENDED" javaType="long" />
+	</resultMap>
+	<select id="getDailyCallPerformance" resultMap="getDailyCallPerformance">
+		select cast(date_part('hour',t.created_time) as bigint),count(t.id),count(distinct t.account_id)
+		from ptrtreatment t 
+		inner join ptraccount_work_list_assignment wa on wa.account_id=t.account_id and wa.work_list_id is not null
+		inner join ptrtreatment_place_a_call pac on pac.treatment_id=t.id
+		inner join ptruser usr on usr.user_id=t.created_user_id
+		where date(t.created_time) = cast(#CURRENT_DATE# as DATE)
+		and wa.work_list_id in(
+		<include refid="kpiBaseFragment"/>
+		)
+		group by
+		date_part('hour',t.created_time)
+	</select>	
+	<resultMap id="getDailyCallPerformanceGrossBalance" class="hmap">
+		<result property="ID" javaType="long" />
+		<result property="GROSS_BALANCE" javaType="$" />
+	</resultMap>
+	<select id="getDailyCallPerformanceGrossBalance" resultMap="getDailyCallPerformanceGrossBalance">
+		select id,sum(gross_balance) from (
+		select distinct wa.account_id,cast(date_part('hour',t.created_time) as bigint) as id,sum(a.outstanding_balance -(a.interest_rebate_amount + a.write_off_amount)) as gross_balance
+		from ptrtreatment t 
+		inner join ptraccount_work_list_assignment wa on wa.account_id=t.account_id and wa.work_list_id is not null
+		inner join ptraccount a on a.id=wa.account_id
+		inner join ptrtreatment_place_a_call pac on pac.treatment_id=t.id
+		inner join ptruser usr on usr.user_id=t.created_user_id
+		where date(t.created_time) = cast(#CURRENT_DATE# as DATE)
+		and wa.work_list_id in(
+			<include refid="kpiBaseFragment"/>
+		)
+		group by
+		date_part('hour',t.created_time),wa.account_id) a group by id
+	</select>
+	
+	<resultMap id="getDailyCallPerformanceByStatus" class="hmap">
+		<result property="CALL_STATUS" javaType="string" />
+		<result property="NO_OF_ACCOUNT" javaType="long" />
+		<result property="GROSS_BALANCE" javaType="$" />
+	</resultMap>
+	<select id="getDailyCallPerformanceByStatus" resultMap="getDailyCallPerformanceByStatus">
+		select ts.description,count(distinct t.account_id),sum(a.outstanding_balance -(a.interest_rebate_amount + a.write_off_amount)) as gross_balance
+		from ptrtreatment t 
+		inner join ptraccount_work_list_assignment wa on wa.account_id=t.account_id and wa.work_list_id is not null
+		inner join ptraccount a on a.id=wa.account_id
+		inner join ptrtreatment_place_a_call pac on pac.treatment_id=t.id
+		inner join ptrtreatment_type_status_ref ts on ts.id=pac.type_status_id
+		inner join ptruser usr on usr.user_id=t.created_user_id
+		where date(t.created_time) = cast(#CURRENT_DATE# as DATE)
+		and wa.work_list_id in(
+		<include refid="kpiBaseFragment"/>
+		)
+		<isNotNull property="HOUR_ID">
+		and cast(date_part('hour',t.created_time) as bigint) = #HOUR_ID#
+		</isNotNull>
+		group by
+		ts.description	
+	</select>
+	
+	<select id="getEcaAgencyType" resultMap="global.ref">
+		<include refid="refselect" />
+		from ptragency_type_ref where code = 'ECA'
+	</select>
+	<select id="getLegalAgencyType" resultMap="global.ref">
+		<include refid="refselect" />
+		from ptragency_type_ref where code = 'LGL'
+	</select>
+	<select id="getAllLegalCouncellors" resultMap="global.ref">
+		select 1 as id, '1' as code,'All' as description,<include refid="false"/> as disable,0 as sort_priority <include refid="fromdual"/>
+	</select>
+	<resultMap id="getEcaAgenciesForKpi" class="java.util.HashMap">
+		<result property="TYPE_ID" javaType="long"/>
+		<result property="ID" javaType="long"/>
+		<result property="TYPE_CODE" javaType="string"/>
+		<result property="CODE" javaType="string"/>
+		<result property="DESCRIPTION"  javaType="string"/>
+	</resultMap>
+	<select id="getEcaAgenciesForKpi" resultMap="getEcaAgenciesForKpi">
+		select g.type_id,g.id,t.code,g.code,g.description from ptragency g
+		inner join ptragency_type_ref t on t.id=g.type_id
+		where t.code='ECA'
+		<isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		and g.disable = <include refid="false"/>
+	</select>
+	<select id="getLegalAgenciesForKpi" resultMap="getEcaAgenciesForKpi">
+		select g.type_id,g.id,t.code,g.code,g.description from ptragency g
+		inner join ptragency_type_ref t on t.id=g.type_id
+		where t.code='LGL' and g.disable = <include refid="false"/>
+	</select>
+	<resultMap id="getLegalCounsellorsForKpi" class="java.util.HashMap">
+		<result property="TYPE_ID" javaType="long"/>
+		<result property="USER_ID" javaType="string"/>
+		<result property="FIRST_NAME" javaType="string"/>
+		<result property="MIDDLE_NAME" javaType="string"/>
+		<result property="LAST_NAME"  javaType="string"/>
+	</resultMap>
+	<select id="getLegalCounsellorsForKpi" resultMap="getLegalCounsellorsForKpi">
+		select 1 as type_id,wu.user_id,e.first_name,e.middle_name,e.last_name
+		from ptrlegal_worklist w 
+		inner join ptrlegal_user_wl_assign wu on wu.worklist_id=w.id and wu.default_user = <include refid="true"/>
+		INNER join ptruser u on u.user_id=wu.user_id
+		inner join ptremployee e on e.id=u.employee_id
+		where w.disable = <include refid="false"/>
+	</select>
+	
+	<resultMap id="getAgencyForKPIData" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="AGENCY_NAME"  javaType="string"/>
+	</resultMap>
+	<select id="getAgencyForKPIData" resultMap="getAgencyForKPIData">
+		select g.id,g.description from ptragency g
+		inner join ptragency_type_ref t on t.id=g.type_id
+		where t.code='ECA'
+		<isNotEmpty property="AGENCY_ID">and g.id=#AGENCY_ID#</isNotEmpty>
+		<isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		and g.disable = <include refid="false"/>
+	</select>
+	
+	<sql id="agencyReceivableBaseFragment">
+		select ag.agency_id,count(ag.account_id) as noa,sum(w.mtd_pymnts_received) as gross
+		from ptraccount_agency_assignment ag
+		inner join ptragency g on g.id=ag.agency_id <isNotEmpty property="AGENCY_ID">and g.id=#AGENCY_ID#</isNotEmpty>
+		inner join ptrtreatment_subtype_ref s on ag.subtype_id=s.id and s.type_id=19
+
+		inner join ptraccount ptraccount on ptraccount.id = ag.account_id
+		left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+		left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+		left join ptraccount_work_list_assignment w on w.account_id=ag.account_id
+	</sql>
+	
+	<resultMap id="getAgencyDailyBeginReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="BEGIN_NOA"  javaType="long"/>
+		<result property="BEGIN_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyDailyBeginReceivables" resultMap="getAgencyDailyBeginReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date &lt; #CURRENT_DATE#) or (ag.aborted_date between #START_OF_MONTH#  and #CURRENT_DATE#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+	<resultMap id="getAgencyDailyTodayReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ASSIGNED_NOA"  javaType="long"/>
+		<result property="ASSIGNED_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyDailyTodayReceivables" resultMap="getAgencyDailyTodayReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where (ag.status_id=15007 and ag.approved_date = #CURRENT_DATE#)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	<resultMap id="getAgencyDailyTodayAbortedReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ABORT_NOA"  javaType="long"/>
+		<result property="ABORT_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyDailyTodayAbortedReceivables" resultMap="getAgencyDailyTodayAbortedReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where (ag.status_id !=15007 and ag.aborted_date = #CURRENT_DATE#)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	<resultMap id="getAgencyDailyEndReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="END_NOA"  javaType="long"/>
+		<result property="END_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyDailyEndReceivables" resultMap="getAgencyDailyEndReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where (ag.status_id=15007 and ag.approved_date &lt;= #CURRENT_DATE#)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+	<resultMap id="getAgencyMtdBeginReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="BEGIN_NOA"  javaType="long"/>
+		<result property="BEGIN_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyMtdBeginReceivables" resultMap="getAgencyMtdBeginReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date &lt; #START_OF_MONTH#) or (ag.aborted_date between #START_OF_LAST_MONTH#  and #END_OF_LAST_MONTH#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+	<resultMap id="getAgencyMtdCurrentMonthReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ASSIGNED_NOA"  javaType="long"/>
+		<result property="ASSIGNED_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyMtdCurrentMonthReceivables" resultMap="getAgencyMtdCurrentMonthReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date &gt;= #START_OF_MONTH#) or (ag.aborted_date between #START_OF_MONTH#  and #CURRENT_DATE#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	<resultMap id="getAgencyMtdAbortedReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ABORT_NOA"  javaType="long"/>
+		<result property="ABORT_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyMtdAbortedReceivables" resultMap="getAgencyMtdAbortedReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where (ag.status_id !=15007 and ag.aborted_date between #START_OF_MONTH#  and #CURRENT_DATE#)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	<resultMap id="getAgencyPMtdBeginReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="BEGIN_NOA"  javaType="long"/>
+		<result property="BEGIN_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyPMtdBeginReceivables" resultMap="getAgencyPMtdBeginReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date &lt; #START_OF_LAST_MONTH#) or (ag.aborted_date between #START_OF_LAST_MONTH#  and #END_OF_LAST_TWO_MONTH#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+	<resultMap id="getAgencyPMtdCurrentReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ASSIGNED_NOA"  javaType="long"/>
+		<result property="ASSIGNED_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyPMtdCurrentReceivables" resultMap="getAgencyPMtdCurrentReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date &gt;= #START_OF_LAST_MONTH#) or (ag.aborted_date between #START_OF_LAST_MONTH#  and #CURRENT_DATE#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>	
+	<resultMap id="getAgencyPMtdAbortedReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ABORT_NOA"  javaType="long"/>
+		<result property="ABORT_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyPMtdAbortedReceivables" resultMap="getAgencyPMtdAbortedReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where (ag.status_id !=15007 and ag.aborted_date between #START_OF_LAST_MONTH#  and #CURRENT_DATE#)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+	<resultMap id="getAgencyPMEEndingReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="END_NOA"  javaType="long"/>
+		<result property="END_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyPMEEndingReceivables" resultMap="getAgencyPMEEndingReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date &lt; #START_OF_MONTH#) or (ag.aborted_date between #START_OF_LAST_MONTH#  and #END_OF_LAST_MONTH#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>	
+	<resultMap id="getAgencyPMEdBeginReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="BEGIN_NOA"  javaType="long"/>
+		<result property="BEGIN_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyPMEdBeginReceivables" resultMap="getAgencyPMEdBeginReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date &lt; #START_OF_LAST_MONTH#) or (ag.aborted_date between #START_OF_LAST_MONTH#  and #END_OF_LAST_TWO_MONTH#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+	<resultMap id="getAgencyPMECurrentReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ASSIGNED_NOA"  javaType="long"/>
+		<result property="ASSIGNED_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyPMECurrentReceivables" resultMap="getAgencyPMECurrentReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where ((ag.status_id=15007 and ag.approved_date between #START_OF_LAST_MONTH# and #END_OF_LAST_MONTH#) or (ag.aborted_date between #START_OF_LAST_MONTH#  and #END_OF_LAST_MONTH#))
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+	<resultMap id="getAgencyPMEAbortedReceivables" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="ABORT_NOA"  javaType="long"/>
+		<result property="ABORT_GROSS_OS"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyPMEAbortedReceivables" resultMap="getAgencyPMEAbortedReceivables">
+	<include refid="agencyReceivableBaseFragment"/>
+		where (ag.status_id !=15007 and ag.aborted_date between #START_OF_LAST_MONTH#  and #END_OF_LAST_MONTH#)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by ag.agency_id	
+	</select>
+	
+
+	<sql id="agencyReceivableDetails-fragment">
+		select g.description as agency_name,a.account_no,c.customer_name,coalesce(w.months_in_arrears,0) as opening_mia,wl.work_list_name as original_worklist,
+		w.mtd_pymnts_received as opening_gross,acs.description as account_status,wla.user_id as original_caller,ag.expected_end_date as abort_date,ag.created_by as user_id
+		from ptraccount_agency_assignment ag
+		inner join ptraccount a on a.id=ag.account_id
+		left join ptrcustomer c on c.id=a.customer_id
+		inner join ptragency g on g.id=ag.agency_id <isNotEmpty property="AGENCY_ID"> and g.id=#AGENCY_ID#</isNotEmpty>
+		inner join ptrtreatment_subtype_ref s on ag.subtype_id=s.id and s.type_id=19
+		left join ptraccount_work_list_assignment w on w.account_id=ag.account_id
+		left join ptrwork_list wl on wl.work_list_id=w.work_list_id
+		left join ptraccount_status_ref acs on acs.id=a.status_id
+		left join ptruser_wl_assign wla on wla.work_list_id =w.work_list_id and wla.is_default_user = <include refid="true"/>
+
+		left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = a.product_type_id
+		left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	</sql>
+
+
+	<!-- receivable details -->
+	<resultMap id="getAgencyReceivableDetails" class="java.util.HashMap">
+		<result property="AGENCY_NAME" javaType="string"/>
+		<result property="ACCOUNT_NUMBER"  javaType="string"/>
+		<result property="NAME"  javaType="string"/>
+		<result property="OPENING_MIA"  javaType="long"/>
+		<result property="ORIGINAL_WORKLIST"  javaType="string"/>
+		<result property="OPENING_GROSS"  javaType="$"/>
+		<result property="ACCOUNT_STATUS"  javaType="string"/>
+		<result property="ORIGINAL_CALLER"  javaType="string"/>
+		<result property="ABORT_DATE"  javaType="date"/>
+		<result property="USER_ID_LOG"  javaType="string"/>
+	</resultMap>
+	<select id="getAgencyDailyReceivableDetails" resultMap="getAgencyReceivableDetails">
+	<include refid="agencyReceivableDetails-fragment"/>
+		where (ag.status_id=15007 and ag.approved_date = #CURRENT_DATE# )
+		<isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		order by ag.agency_id	
+	</select>
+	<select id="getAgencyMtdReceivableDetails" resultMap="getAgencyReceivableDetails">
+	<include refid="agencyReceivableDetails-fragment"/>
+		where (ag.status_id=15007 and ag.approved_date &gt;= #START_OF_MONTH# <isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty> <isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>)
+		or (ag.aborted_date between #START_OF_MONTH#  and #CURRENT_DATE# <isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty> <isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>)
+
+		order by ag.agency_id	
+	</select>
+	<select id="getAgencyPmtdReceivableDetails" resultMap="getAgencyReceivableDetails">
+	<include refid="agencyReceivableDetails-fragment"/>
+		where (ag.status_id=15007 and ag.approved_date &gt;= #START_OF_LAST_MONTH# <isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty> <isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>)
+		or (ag.aborted_date between #START_OF_LAST_MONTH#  and #CURRENT_DATE# <isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty> <isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>)
+
+		order by ag.agency_id		
+	</select>
+	<select id="getAgencyPmeReceivableDetails" resultMap="getAgencyReceivableDetails">
+	<include refid="agencyReceivableDetails-fragment"/>
+		where (ag.status_id=15007 and ag.approved_date &gt;= #START_OF_LAST_MONTH# <isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty> <isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>)
+		or (ag.aborted_date between #START_OF_LAST_MONTH#  and #CURRENT_DATE# <isNotEmpty property="AGENCY_IDS">and g.id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty> <isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>)
+		order by ag.agency_id
+	</select>
+	
+<!-- payment summary -->
+	<sql id="paymentSummary-fragment">
+		from ptragency_payment_transaction p
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptraccount a on a.id=ag.account_id
+		left join ptraccount_work_list_assignment aw on aw.account_id=a.id
+
+		inner join ptraccount ptraccount on ptraccount.id = ag.account_id
+		left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+		left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	</sql>
+	<resultMap id="getAgencyMtdPaymentReceivedSummary" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="RECEIVED_NOA"  javaType="long"/>
+		<result property="RECEIVED_AMOUNT"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyMtdPaymentReceivedSummary" resultMap="getAgencyMtdPaymentReceivedSummary">
+		select p.agency_id,count(DISTINCT ag.account_id),sum(p.amount)
+		<include refid="paymentSummary-fragment"/>
+		where date(posting_date) between cast(#START_OF_MONTH# as date) and  cast(#YESTERDAY# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by p.agency_id	
+	</select>
+	<select id="getAgencyPmePaymentReceivedSummary" resultMap="getAgencyMtdPaymentReceivedSummary">
+		select p.agency_id,count(DISTINCT ag.account_id),sum(p.amount)
+		<include refid="paymentSummary-fragment"/>
+		where date(posting_date) between cast(#START_OF_LAST_MONTH# as date) and  cast(#END_OF_LAST_MONTH# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by p.agency_id	
+	</select>
+	<resultMap id="getAgencyMtdPaymentOutflowSummary" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="OUTFLOW_NOA"  javaType="long"/>
+		<result property="OUTFLOW_AMOUNT"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyMtdPaymentOutflowSummary" resultMap="getAgencyMtdPaymentOutflowSummary">
+		select p.agency_id,count(DISTINCT ag.account_id),sum(p.amount)
+		<include refid="paymentSummary-fragment"/>
+		where date(posting_date) between cast(#START_OF_MONTH# as date) and  cast(#YESTERDAY# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by p.agency_id	
+	</select>
+	<select id="getAgencyPmePaymentOutflowSummary" resultMap="getAgencyMtdPaymentOutflowSummary">
+		select p.agency_id,count(DISTINCT ag.account_id),sum(p.amount)
+		<include refid="paymentSummary-fragment"/>
+		where date(posting_date) between cast(#START_OF_LAST_MONTH# as date) and  cast(#END_OF_LAST_MONTH# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		group by p.agency_id	
+	</select>	
+	<resultMap id="getAgencyMtdPaymentInflowSummary" class="java.util.HashMap">
+		<result property="AGENCY_ID" javaType="long"/>
+		<result property="INFLOW_NOA"  javaType="long"/>
+		<result property="INFLOW_AMOUNT"  javaType="$"/>
+	</resultMap>
+	<select id="getAgencyMtdPaymentInflowSummary" resultMap="getAgencyMtdPaymentInflowSummary">
+		select p.agency_id,count(DISTINCT ag.account_id),sum(a.outstanding_balance -(a.interest_rebate_amount + a.write_off_amount))
+		<include refid="paymentSummary-fragment"/>
+		where date(posting_date) between cast(#START_OF_MONTH# as date) and  cast(#YESTERDAY# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		and (aw.months_in_arrears &gt;3 or
+		(aw.months_in_arrears &gt; 3 and extract(day from a.last_payment_date) &lt;= extract(day from aw.payment_due_date) and a.months_in_arrears &gt;2) or
+		(aw.months_in_arrears &gt; 3 and extract(day from a.last_payment_date) &gt;= extract(day from aw.payment_due_date) and a.months_in_arrears &gt;3))
+		group by p.agency_id	
+	</select>
+	<select id="getAgencyPmePaymentInflowSummary" resultMap="getAgencyMtdPaymentInflowSummary">
+		select p.agency_id,count(DISTINCT ag.account_id),sum(a.outstanding_balance -(a.interest_rebate_amount + a.write_off_amount))
+		<include refid="paymentSummary-fragment"/>
+		where date(posting_date) between cast(#START_OF_LAST_MONTH# as date) and  cast(#END_OF_LAST_MONTH# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		and (aw.months_in_arrears &gt;3 or
+		(aw.months_in_arrears &gt; 3 and extract(day from a.last_payment_date) &lt;= extract(day from aw.payment_due_date) and a.months_in_arrears &gt;2) or
+		(aw.months_in_arrears &gt; 3 and extract(day from a.last_payment_date) &gt;= extract(day from aw.payment_due_date) and a.months_in_arrears &gt;3))
+		group by p.agency_id	
+	</select>
+	<sql id="getAgencyPaymentsReportFragment">
+		select g.description as agency_name,a.account_no,c.customer_name,aw.months_in_arrears as opening_mia,a.months_in_arrears,
+		aw.mtd_pymnts_received,a.outstanding_balance -(a.interest_rebate_amount + a.write_off_amount) as gross_balance,
+		p.posting_date as payment_date,p.amount,coalesce(tp.current_month_total_payment,0),a.next_payment_due_date,s.description as financing_status
+		from ptragency_payment_transaction p
+		inner join ptraccount_agency_assignment ag on ag.id=p.agency_assignment_id
+		inner join ptraccount a on a.id=ag.account_id
+		inner join ptrcustomer c on c.id=a.customer_id
+		inner join ptragency g on g.id=ag.agency_id <isNotEmpty property="AGENCY_ID"> and g.id=#AGENCY_ID#</isNotEmpty>
+		left join ptrvw_current_month_total_payment tp on tp.account_id=a.id
+		left join ptraccount_work_list_assignment aw on aw.account_id=ag.account_id
+		left join ptraccount_status_ref s on s.id=a.status_id
+
+		inner join ptraccount ptraccount on ptraccount.id = ag.account_id
+		left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+		left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	</sql>
+	<resultMap id="getAgencyMtdPaymentsReport" class="java.util.HashMap">
+		<result property="AGENCY_NAME" javaType="string"/>
+		<result property="ACCOUNT_NUMBER"  javaType="string"/>
+		<result property="NAME"  javaType="string"/>
+		<result property="OPENING_MIA" javaType="long"/>
+		<result property="CURRENT_MIA"  javaType="long"/>
+		<result property="OPENING_GROSS"  javaType="$"/>
+		<result property="CURRENT_GROSS"  javaType="$"/>
+		<result property="PAYMENT_DATE"  javaType="date"/>
+		<result property="PAYMENT_AMOUNT"  javaType="$"/>
+		<result property="TOTAL_PAYMENT" javaType="long"/>
+		<result property="NEXT_PAYMENT_DUE_DATE"  javaType="date"/>
+		<result property="FINANCING_STATUS"  javaType="string"/>
+	</resultMap>
+	<select id="getAgencyMtdPaymentsReport" resultMap="getAgencyMtdPaymentsReport">
+		<include refid="getAgencyPaymentsReportFragment"/>
+		where date(p.posting_date) between cast(#START_OF_MONTH# as date) and  cast(#YESTERDAY# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		order by p.posting_date desc
+	</select>	
+	<select id="getAgencyPmePaymentsReport" resultMap="getAgencyMtdPaymentsReport">
+		<include refid="getAgencyPaymentsReportFragment"/>
+		where date(posting_date) between cast(#START_OF_LAST_MONTH# as date) and  cast(#END_OF_LAST_MONTH# as date)
+		<isNotEmpty property="AGENCY_IDS">and ag.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">#AGENCY_IDS[]#</iterate>)</isNotEmpty>
+		<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+		order by p.posting_date desc
+	</select>
+  
+
+<resultMap id="getAgencyNameForKpiAttempts" class="java.util.HashMap">
+<result property="AGENCY_ID" javaType="long"/>
+<result property="AGENCY_NAME" javaType="string"/>
+<result property="PAYMENT_PLAN" javaType="long"/>
+<result property="PAC" javaType="long"/>
+<result property="SEND_A_LETTER" javaType="long"/>
+<result property="SEND_SMS" javaType="long"/>
+<result property="SCHEDULE_MEETING" javaType="long"/>
+</resultMap> 
+<select id="getAgencyNameForKpiAttempts" resultMap="getAgencyNameForKpiAttempts">
+	select id, description as AGENCY_NAME,
+	0,0,0,0,0
+	from ptragency
+	where type_id = 1
+	and disable != true
+	<isNotEmpty property="AGENCY_ID">
+		and id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and id in(<iterate property="AGENCY_IDS" conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+</select>
+
+<resultMap id="getAgencyNameForKpiAttempts" class="java.util.HashMap">
+<result property="AGENCY_ID" javaType="long"/>
+<result property="AGENCY_NAME" javaType="string"/>
+</resultMap> 
+
+<resultMap id="getAgencyPtpAttempts" class="java.util.HashMap">
+<result property="PAYMENT_PLAN" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap> 
+<select id="getAgencyPtpAttempts" resultMap="getAgencyPtpAttempts">
+	select count(*), asgmt.agency_id from
+	ptraccount a
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptrtreatment_ptp treatment on a.id = treatment.account_id
+
+	inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	where 1 = 1
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+	group by asgmt.agency_id
+</select>
+
+<resultMap id="getAgencyPacAttempts" class="java.util.HashMap">
+<result property="PAC" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap> 
+  <select id="getAgencyPacAttempts" resultMap="getAgencyPacAttempts">
+	  select count(*), asgmt.agency_id from
+	  ptraccount a
+	  inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	  inner join ptrtreatment_place_a_call treatment on a.id = treatment.account_id
+
+	  inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	  left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	  left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	  where 1 = 1
+	  <isNotEmpty property="AGENCY_ID">
+		  and asgmt.agency_id = #AGENCY_ID#
+	  </isNotEmpty>
+	  <isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">
+		  #AGENCY_IDS[]#</iterate>)
+	  </isNotEmpty>
+	  <isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+	  group by asgmt.agency_id
+</select>
+
+<resultMap id="getAgencyLetterAttempts" class="java.util.HashMap">
+<result property="SEND_A_LETTER" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap> 
+<select id="getAgencyLetterAttempts" resultMap="getAgencyLetterAttempts">
+select count(*), asgmt.agency_id  from
+	ptraccount a
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptrtreatment_letter treatment on a.id = treatment.account_id
+
+	inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	where 1 = 1
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+	group by asgmt.agency_id
+</select>
+
+<resultMap id="getAgencySmsAttempts" class="java.util.HashMap">
+<result property="SEND_SMS" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap> 
+
+<select id="getAgencySmsAttempts" resultMap="getAgencySmsAttempts">
+	select count(*), asgmt.agency_id from
+	ptraccount a
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptrtreatment_sms treatment on a.id = treatment.account_id
+
+	inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	where 1 = 1
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+	group by asgmt.agency_id
+</select>
+
+
+<resultMap id="getAgencyMettingAttempts" class="java.util.HashMap">
+<result property="SCHEDULE_MEETING" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap> 
+
+<select id="getAgencyMettingAttempts" resultMap="getAgencyMettingAttempts">
+	select count(*), asgmt.agency_id from
+	ptraccount a
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptrtreatment_meeting treatment on a.id = treatment.account_id
+
+	inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	where 1 = 1
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS" conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+
+	group by asgmt.agency_id
+</select>
+
+<resultMap id="getAgencyNameForPtpSummary" class="java.util.HashMap">
+<result property="AGENCY_ID" javaType="long"/>
+<result property="AGENCY_NAME" javaType="string"/>
+<result property="PROMISE_KEPT" javaType="long"/>
+<result property="BROKEN_PROMISE" javaType="long"/>
+<result property="PTP_CREATED" javaType="long"/>
+<result property="SUCCESS_RATE" javaType="long"/>
+</resultMap> 
+<select id="getAgencyNameForPtpSummary" resultMap="getAgencyNameForPtpSummary">
+	select
+	id,
+	description as AGENCY_NAME,
+	0,
+	0,
+	0,
+	0
+	from ptragency
+	where type_id = 1
+	and disable != true
+	<isNotEmpty property="AGENCY_ID">
+		and id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and id in(<iterate property="AGENCY_IDS" conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+</select>
+
+
+<resultMap id="getAgencyPromisesKept" class="java.util.HashMap">
+<result property="PROMISE_KEPT" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap> 
+<select id="getAgencyPromisesKept" resultMap="getAgencyPromisesKept">
+	select count(*), asgmt.agency_id from
+	ptraccount a
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptrtreatment_ptp treatment on a.id = treatment.account_id
+	inner join ptrtreatment_type_status_ref status on treatment.type_status_id = status.id
+
+	inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	where status.status_id = 15004
+	and status.type_id = 2
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS"
+																	 conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+	group by asgmt.agency_id
+</select>
+
+<resultMap id="getAgencyBrokenPtpAttempts" class="java.util.HashMap">
+<result property="BROKEN_PROMISE" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap>
+<select id="getAgencyBrokenPtpAttempts" resultMap="getAgencyBrokenPtpAttempts">
+	select count(*), asgmt.agency_id from
+	ptraccount a
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptrtreatment_ptp treatment on a.id = treatment.account_id
+	inner join ptrtreatment_type_status_ref status on treatment.type_status_id = status.id
+
+	inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+
+	where status.status_id = 15001
+	and status.type_id = 2
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS"
+																	 conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+	group by asgmt.agency_id
+</select>
+
+<resultMap id="getAgencyPtpCreated" class="java.util.HashMap">
+<result property="PTP_CREATED" javaType="long"/>
+<result property="AGENCY_ID" javaType="long"/>
+</resultMap> 
+<select id="getAgencyPtpCreated" resultMap="getAgencyPtpCreated">
+	select count(*), asgmt.agency_id from
+	ptraccount a
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptrtreatment_ptp treatment on a.id = treatment.account_id
+	inner join ptrtreatment_type_status_ref status on treatment.type_status_id = status.id
+
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = a.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	where status.type_id = 2
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS"
+																	 conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+	group by asgmt.agency_id
+</select>
+
+
+
+<resultMap id="getAgencyAttemptsDetails" class="java.util.HashMap">
+<result property="AGENCY_NAME" javaType="string"/>
+<result property="CUSTOMER_ID" javaType="string"/>
+<result property="CUSTOMER_NAME" javaType="string"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+<result property="CREATED_DATE" javaType="date"/>
+<result property="ACTION_TYPE" javaType="string"/>
+<result property="ACTION_SUBTYPE" javaType="string"/>
+<result property="ACTION_STATUS" javaType="string"/>
+<result property="REMARK" javaType="string"/>
+</resultMap> 
+<select id="getAgencyAttemptsDetails" resultMap="getAgencyAttemptsDetails">
+	select
+	agency.description as AGENCY_NAME,
+	c.customer_no as CUSTOMER_ID,
+	c.customer_name as CUSTOMER_NAME,
+	a.account_no as ACCOUNT_NUMBER,
+	treatment.created_time as CREATED_DATE,
+	ttype.description as ACTION_TYPE,
+	stype.description as ACTION_SUBTYPE,
+	status.description as ACTION_STATUS,
+	note.NOTE_TEXT as REMARK
+	from
+	ptraccount a
+	inner join ptrcustomer c on a.customer_id = c.id
+	inner join ptraccount_agency_assignment asgmt on a.id = asgmt.account_id
+	inner join ptragency agency on asgmt.agency_id = agency.id
+	inner join ptrtreatment treatment on a.id = treatment.account_id
+	left join ptrtreatment_note note on treatment.id = note.treatment_id
+	inner join ptrtreatment_type_ref ttype on treatment.type_id = ttype.id
+	inner join ptrtreatment_subtype_ref stype on treatment.subtype_id = stype.id
+	inner join ptrtreatment_type_status_ref status on treatment.type_status_id = status.id
+
+	inner join ptraccount ptraccount on ptraccount.id = asgmt.account_id
+	left join ptrproduct_type_ref ptrproduct_type_ref on ptrproduct_type_ref.id = ptraccount.product_type_id
+	left join ptrproduct_type_category_ref ptrproduct_type_category_ref on ptrproduct_type_category_ref.id  = ptrproduct_type_ref.category_id
+
+	where status.type_id in (2,8,13,14,27)
+	and agency.type_id = 1
+	and agency.disable != true
+	<isNotEmpty property="AGENCY_IDS">and asgmt.agency_id in(<iterate property="AGENCY_IDS"
+																	 conjunction=",">
+		#AGENCY_IDS[]#</iterate>)
+	</isNotEmpty>
+	<isNotEmpty property="AGENCY_ID">
+		and asgmt.agency_id = #AGENCY_ID#
+	</isNotEmpty>
+	<isNotEmpty property="PRODUCT_CATEGORY">and ptrproduct_type_category_ref.code=#PRODUCT_CATEGORY#</isNotEmpty>
+</select>
+  
+  
+  
+  
+</sqlMap>

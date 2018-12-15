@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTRACT_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="CONTRACT_ID" operator="&lt;&gt;" rhsvalue="parent.CONTRACT_ID"/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec statement="getContractForEditing" type="select"/>
+  <exec argument="TAGS" query="getContractTags" type="query"/>
+  <exec from="CODE" key="CODE" type="copyintolist"/>
+  <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+  <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+  <exec from="DEFAULT" key="DEFAULT" type="copyintolist"/>
+  <exec from="TAGS" key="TAGS" type="copyintolist"/>
+ </exec>
+</event>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="PAGE_NUMBER" key="PAGE_NUMBER" type="copyintolist"/>
+ <exec from="LIMIT_RESULT" key="LIMIT_RESULT" type="copyintolist"/>
+ <exec from="SEARCH" key="SEARCH" type="copyintolist"/>
+ <exec from="PREVIOUS" key="PREVIOUS" type="copyintolist"/>
+ <exec from="NEXT" key="NEXT" type="copyintolist"/>
+ <exec from="NUMBER_OF_ACCOUNTS" key="NUMBER_OF_ACCOUNTS" type="copyintolist"/>
+ <exec from="CATEGORY_ID" key="CATEGORY_ID" type="copyintolist"/>
+ <exec from="PRODUCT_TYPE_ID" key="PRODUCT_TYPE_ID" type="copyintolist"/>
+ <exec from="ACCOUNT_STATUS_ID" key="ACCOUNT_STATUS_ID" type="copyintolist"/>
+ <exec from="CENTRE_ID" key="CENTRE_ID" type="copyintolist"/>
+ <exec from="BRANCH_ID" key="BRANCH_ID" type="copyintolist"/>
+ <exec from="TYPE_ID" key="TYPE_ID" type="copyintolist"/>
+ <exec from="SPTF_TYPE_ID" key="SPTF_TYPE_ID" type="copyintolist"/>
+ <exec from="CUSTOMER_ID" key="CUSTOMER_ID" type="copyintolist"/>
+ <exec from="CUSTOMER_NAME" key="CUSTOMER_NAME" type="copyintolist"/>
+ <exec from="ACCOUNT_NUMBER" key="ACCOUNT_NUMBER" type="copyintolist"/>
+ <exec from="OS_BALANCE_FROM" key="OS_BALANCE_FROM" type="copyintolist"/>
+ <exec from="OS_BALANCE_TO" key="OS_BALANCE_TO" type="copyintolist"/>
+ <exec from="CURRENT_NLB_FROM" key="CURRENT_NLB_FROM" type="copyintolist"/>
+ <exec from="CURRENT_NLB_TO" key="CURRENT_NLB_TO" type="copyintolist"/>
+ <exec from="MIA_FROM" key="MIA_FROM" type="copyintolist"/>
+ <exec from="MIA_TO" key="MIA_TO" type="copyintolist"/>
+ <exec from="JUDGEMENT_SUM" key="JUDGEMENT_SUM" type="copyintolist"/>
+ <exec from="AKPK_START_DATE" key="AKPK_START_DATE" type="copyintolist"/>
+ <exec from="AKPK_END_DATE" key="AKPK_END_DATE" type="copyintolist"/>
+ <exec from="AKPK_COUNTER_FROM" key="AKPK_COUNTER_FROM" type="copyintolist"/>
+ <exec from="AKPK_COUNTER_TO" key="AKPK_COUNTER_TO" type="copyintolist"/>
+ <exec from="AKPK_FLAG_ID" key="AKPK_FLAG_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec statement="booleanvalues" type="select"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SEARCH" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec statement="getakpkNOA" type="select"/>
+   <exec type="nullify">
+    <key value="PREVIOUS"/>
+    <key value="NEXT"/>
+    <key value="PAGE_NUMBER"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PREVIOUS" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec type="nullify">
+    <key value="SEARCH"/>
+    <key value="NEXT"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NEXT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec type="nullify">
+    <key value="PREVIOUS"/>
+    <key value="SEARCH"/>
+   </exec>
+  </exec>
+  <exec from="NUMBER_OF_ACCOUNTS" to="FIRST_NUMBER" type="copy"/>
+  <exec from="LIMIT_RESULT" to="SECOND_NUMBER" type="copy"/>
+  <exec event="pagination.select" ignoreresult="true" type="raise"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NUMBER_OF_ACCOUNTS" operator="&lt;&gt;" rhsvalue="0"/>
+   </conditions>
+   <exec event="akpkBlanketApproval.fileSubmissionResults" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NUMBER_OF_ACCOUNTS" operator="=" rhsvalue="0"/>
+   </conditions>
+   <exec from="TRUE" to="OPEN_MESSAGE" type="copy"/>
+   <exec message="No Records Found" target="MESSAGE" type="formattext"/>
+  </exec>
+ </exec>
+</event>

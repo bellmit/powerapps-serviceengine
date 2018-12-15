@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="AGENCY_ID" key="AGENCY_ID" type="copyintolist"/>
+ <exec from="NOTICE_DATE" key="NOTICE_DATE" type="copyintolist"/>
+ <exec from="FIRST_AUCTION_DATE" key="FIRST_AUCTION_DATE" type="copyintolist"/>
+ <exec type="loop">
+  <exec statement="getNotice14DaysTentativeAuctionDates" type="select"/>
+ </exec>
+</event>

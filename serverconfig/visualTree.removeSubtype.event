@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getTrue" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBTYPE_LIST" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec key="ID" minuend="SUBTYPE_LIST" subtrahend="SELECTED_SUBTYPE_LIST" to="SUBTYPE_LIST" type="remove"/>
+ </exec>
+ <exec from="SUBTYPE_LIST" key="SUBTYPE_LIST" type="copyintolist"/>
+</event>

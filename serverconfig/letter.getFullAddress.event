@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="LINE_1" to="ADDRESS" type="copy"/>
+ <exec from="LINE_1" to="FULL_ADDRESS" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="LINE_2" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="{0}, {1}" target="ADDRESS" type="formattext">
+   <key value="ADDRESS"/>
+   <key value="LINE_2"/>
+  </exec>
+  <exec message="{0},&lt;br&gt;{1}" target="FULL_ADDRESS" type="formattext">
+   <key value="FULL_ADDRESS"/>
+   <key value="LINE_2"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="LINE_3" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="{0}, {1}" target="ADDRESS" type="formattext">
+   <key value="ADDRESS"/>
+   <key value="LINE_3"/>
+  </exec>
+  <exec message="{0},&lt;br&gt;{1}" target="FULL_ADDRESS" type="formattext">
+   <key value="FULL_ADDRESS"/>
+   <key value="LINE_3"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="LINE_4" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="{0}, {1}" target="ADDRESS" type="formattext">
+   <key value="ADDRESS"/>
+   <key value="LINE_4"/>
+  </exec>
+  <exec message="{0},&lt;br&gt;{1}" target="FULL_ADDRESS" type="formattext">
+   <key value="FULL_ADDRESS"/>
+   <key value="LINE_4"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CITY" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="{0}, {1}" target="ADDRESS" type="formattext">
+   <key value="ADDRESS"/>
+   <key value="CITY"/>
+  </exec>
+  <exec message="{0},&lt;br&gt;{1}" target="FULL_ADDRESS" type="formattext">
+   <key value="FULL_ADDRESS"/>
+   <key value="CITY"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="POSTCODE" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="{0}, {1}" target="ADDRESS" type="formattext">
+   <key value="ADDRESS"/>
+   <key value="POSTCODE"/>
+  </exec>
+  <exec message="{0},&lt;br&gt;{1}" target="FULL_ADDRESS" type="formattext">
+   <key value="FULL_ADDRESS"/>
+   <key value="POSTCODE"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="STATE" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="{0}, {1}" target="ADDRESS" type="formattext">
+   <key value="ADDRESS"/>
+   <key value="STATE"/>
+  </exec>
+  <exec message="{0},&lt;br&gt;{1}" target="FULL_ADDRESS" type="formattext">
+   <key value="FULL_ADDRESS"/>
+   <key value="STATE"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="COUNTRY" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec message="{0}, {1}" target="ADDRESS" type="formattext">
+   <key value="ADDRESS"/>
+   <key value="COUNTRY"/>
+  </exec>
+  <exec message="{0},&lt;br&gt;{1}" target="FULL_ADDRESS" type="formattext">
+   <key value="FULL_ADDRESS"/>
+   <key value="COUNTRY"/>
+  </exec>
+ </exec>
+ <exec message="&lt;html&gt;{0}&lt;/html&gt;" target="FULL_ADDRESS" type="formattext">
+  <key value="FULL_ADDRESS"/>
+ </exec>
+</event>

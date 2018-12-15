@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" to="NEW_ROW" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBTYPE_CODE" operator="=" rhsvalue="MA_APPXB"/>
+  </conditions>
+  <exec argument="OPTION_TYPE_LIST" query="getManagementApprovalOptionType" type="query"/>
+  <exec from="OPTION_TYPE_LIST" key="OPTION_TYPE_LIST" to="NEW_ROW" type="copyintolist"/>
+  <exec from="NEW_ROW" to="APPENDIXB_LIST" type="append"/>
+  <exec from="APPENDIXB_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBTYPE_CODE" operator="=" rhsvalue="MA_APPXD"/>
+  </conditions>
+  <exec argument="LEGAL_PROCESS_LIST" query="getManagementApprovalLegalProcess" type="query"/>
+  <exec from="LEGAL_PROCESS_LIST" key="LEGAL_PROCESS_LIST" to="NEW_ROW" type="copyintolist"/>
+  <exec from="NEW_ROW" to="APPENDIXD_LIST" type="append"/>
+  <exec from="APPENDIXD_LIST" type="copy"/>
+ </exec>
+</event>

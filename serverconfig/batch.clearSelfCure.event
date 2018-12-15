@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="clearSelfCure" target="PROCESS_NAME" type="formattext"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="false" type="date"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MAXIMUM_LOAD_EXECUTION_ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec statement="getTransactionMaximumLoadExecution" type="select"/>
+ </exec>
+ <exec event="batch.beforeLoadProcessing" ignoreresult="true" type="raise"/>
+ <exec type="transaction">
+  <exec statement="deleteSelfCure" type="delete"/>
+ </exec>
+ <exec event="batch.afterLoadProcessing" ignoreresult="true" type="raise"/>
+</event>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec event="wlm.getUserType" ignoreresult="true" type="raise"/>
+ <exec from="SELECTED_ACCOUNT_LIST" to="REMOVE_ACCOUNT_LIST" type="copy"/>
+ <exec from="MODULE_NAME" key="MODULE_NAME" to="REMOVE_ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="TYPE_CODE" key="TYPE_CODE" to="REMOVE_ACCOUNT_LIST" type="copyintolist"/>
+ <exec list="REMOVE_ACCOUNT_LIST" to="COUNT_ACCOUNT_LIST" type="countlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="COUNT_ACCOUNT_LIST" operator="&lt;&gt;" rhsvalue="0"/>
+  </conditions>
+  <exec argument="REMOVE_ACCOUNT_LIST" type="loop">
+   <exec type="nullify">
+    <key value="WORK_LIST_ID"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="MODULE_NAME" operator="&lt;&gt;" rhsvalue="RNR"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+     </conditions>
+     <exec recordcount="UPDATE_COUNT" statement="updateAccountAssignmentWorkListId" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="agencyuser"/>
+     </conditions>
+     <exec recordcount="" statement="updateAgencyAccountAssignmentWorkListId" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+    </conditions>
+    <exec recordcount="" statement="updateRnRAccountAssignmentWorkListId" type="update"/>
+   </exec>
+  </exec>
+  <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="REMOVE_ACCOUNT_LIST" to="ACCOUNT_LIST" type="remove"/>
+  <exec from="ACCOUNT_LIST" type="copy"/>
+  <exec from="WORK_LIST_ID_COPY" to="WORK_LIST_ID" type="copy"/>
+ </exec>
+</event>

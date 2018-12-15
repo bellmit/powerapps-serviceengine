@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="24MonthsProfileService">
+
+<resultMap id="get24MonthsProfileMonthsBacklog" class="java.util.HashMap">
+	<result property="MONTHS_BACKLOG"  javaType="java.lang.Long"/>
+	</resultMap>
+	<select id="get24MonthsProfileMonthsBacklog" resultMap="get24MonthsProfileMonthsBacklog" parameterClass="map">
+	SELECT extract(month from age(date(#EFFECTIVE_DATE#),CURRENT_DATE) + interval '1 month')
+	</select>
+	
+	<resultMap id="get24MonthsProfileDateBacklog" class="java.util.HashMap">
+	<result property="MONTHS"  javaType="long"/>
+	</resultMap>
+	
+	<select id="get24MonthsProfileDateBacklog" resultMap="get24MonthsProfileDateBacklog" parameterClass="map">
+	select row_number() over(order by a.id asc) from ptraccount a limit $MONTHS_BACKLOG$
+	</select>
+	
+	<resultMap class="hmap" id="getCurrentMonthProfile">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="PROFILE_DATE" javaType="date"/>
+	<result property="MIA" javaType="long"/>
+	<result property="SELF_CURE" javaType="int"/>
+	<result property="IS_UPDATE" javaType="boolean"/>
+	<result property="NPL_FLAG" javaType="string"/>
+	<result property="NPL_STATUS" javaType="long"/>
+	<result property="LAST_PAYMENT_DATE" javaType="date"/>
+	<result property="TOTAL_PAYMENT_AMOUNT" javaType="$"/>
+	</resultMap>
+	
+	
+	<select id="getCurrentMonthProfile" resultMap="getCurrentMonthProfile">
+	SELECT 
+N.ACCOUNT_ID,
+N.PROFILE_DATE,
+N.MONTHS_IN_ARREARS,
+N.SELF_CURE,
+N.IS_UPDATE,
+N.NPL_FLAG,
+N.NPL_STATUS,
+NULL,
+NULL
+FROM 
+(
+select 
+row_number()over(partition by a.account_id order by a.account_id asc, w.ASSIGNMENT_DATE asc) as row_num,
+a.id as account_id,
+w.ASSIGNMENT_DATE,
+w.ASSIGNMENT_DATE - interval '1 month' AS PROFILE_DATE,
+w.SCORING_ID,
+w.MONTHS_IN_ARREARS,
+w.SELF_CURE,
+case when p.account_id is not null then 1 else 0 end as IS_UPDATE,
+w.NPL_FLAG,
+w.NPL_STATUS
+from ptraccount a
+INNER JOIN ptracc_wl_assign_history  w ON a.id=w.ACCOUNT_ID 
+INNER JOIN PTRPRODUCT_TYPE_REF r ON a.PRODUCT_TYPE_ID=r.id
+left join PTR24MONTH_PROFILE p on p.account_id=w.account_id and p.PROFILE_DATE=(w.ASSIGNMENT_DATE - interval '1 month')
+where  date(w.assignment_date) &gt;= cast(#FIRST_OF_MONTH:DATE# as date)
+AND  date(w.assignment_date) &lt;= cast(#END_OF_MONTH:DATE# as date)
+) N WHERE N.row_num = 1
+	</select>
+	
+	
+  	<insert id="insertCurrent24MthProfile" parameterClass="map">
+	  	insert into PTR24MONTH_PROFILE 
+	  	(ACCOUNT_ID,PROFILE_DATE,MIA,SELF_CURE,NPL_FLAG,
+	  	NPL_STATUS_ID,LAST_PAYMENT_DATE,TOTAL_PAYMENT_AMOUNT) 
+	  	values 
+	  	(#ACCOUNT_ID#,#PROFILE_DATE#,#MIA#,#SELF_CURE#,#NPL_FLAG#,
+	  	#NPL_STATUS#,#LAST_PAYMENT_DATE#,#TOTAL_PAYMENT_AMOUNT#)
+  	</insert> 
+  	
+<update id="updateCurrent24MthProfile" parameterClass="map"> 
+ 	update PTR24MONTH_PROFILE set 
+ 	PROFILE_DATE = #PROFILE_DATE#,
+ 	MIA = #MIA#,
+ 	SELF_CURE = #SELF_CURE#,
+	NPL_FLAG = #NPL_FLAG#, 
+	NPL_STATUS_ID = #NPL_STATUS#,
+	LAST_PAYMENT_DATE = #LAST_PAYMENT_DATE#,
+	TOTAL_PAYMENT_AMOUNT = #TOTAL_PAYMENT_AMOUNT#
+ 	where ACCOUNT_ID = #ACCOUNT_ID# and PROFILE_DATE=#PROFILE_DATE#
+</update>
+
+</sqlMap>

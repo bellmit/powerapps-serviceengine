@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="BEGIN_OF_DAY" truncate="true" type="date"/>
+ <exec ceiling="true" endmonth="true" from="DAY_OF_MONTH" nextweekday="false" startmonth="false" to="END_OF_LAST_MONTH" truncate="false" type="date"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FILTER_ID" operator="=" rhsvalue="1"/>
+  </conditions>
+  <exec query="getPmtdPtpPerformanceDetails" type="query"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FILTER_ID" operator="=" rhsvalue="2"/>
+  </conditions>
+  <exec query="getPmtdCallPerformanceDetails" type="query"/>
+ </exec>
+</event>

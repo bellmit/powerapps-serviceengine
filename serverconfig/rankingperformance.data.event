@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="parallelquery">
+  <query value="getUserKpiWorklistIds"/>
+  <query value="getRankingPerformanceBaseData"/>
+  <target value="WORKLIST"/>
+  <target value="BASE_DATA"/>
+ </exec>
+ <exec from="WORKLIST" key="WORKLIST_ID" to="WORK_LIST" type="extract"/>
+ <exec type="parallelquery">
+  <query value="getOpeningByUsers"/>
+  <query value="getPaidInfoByUsers"/>
+  <query value="getUnpaidInfoByUsers"/>
+  <query value="getDeclassifiedInfoByUsers"/>
+  <target value="OPENING_INFO"/>
+  <target value="PAID_INFO"/>
+  <target value="UNPAID_INFO"/>
+  <target value="DESCLASSIFIED_INFO"/>
+ </exec>
+ <exec from="OPENING_INFO" key="USER_ID" to="BASE_DATA" type="merge"/>
+ <exec from="PAID_INFO" key="USER_ID" to="BASE_DATA" type="merge"/>
+ <exec from="UNPAID_INFO" key="USER_ID" to="BASE_DATA" type="merge"/>
+ <exec from="DESCLASSIFIED_INFO" key="USER_ID" to="BASE_DATA" type="merge"/>
+ <exec argument="BASE_DATA" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="FIRST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0}" target="COLLECTOR_NAME" type="formattext">
+    <key value="FIRST_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MIDDLE_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="COLLECTOR_NAME" type="formattext">
+    <key value="COLLECTOR_NAME"/>
+    <key value="MIDDLE_NAME"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LAST_NAME" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec message="{0} {1}" target="COLLECTOR_NAME" type="formattext">
+    <key value="COLLECTOR_NAME"/>
+    <key value="LAST_NAME"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec from="BASE_DATA" key="DATA" type="copyintolist"/>
+</event>

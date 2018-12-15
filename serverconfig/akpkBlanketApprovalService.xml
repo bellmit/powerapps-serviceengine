@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="akpkBlanketApprovalService">
+
+
+<select id="getakpkProductTypes" resultMap="global.ref">
+<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+union
+<include refid="refselect"/> from PTRPRODUCT_TYPE_REF where CATEGORY_ID=#CATEGORY_ID#
+</select>
+<select id="getakpkAccountStatuses" resultMap="global.ref">
+<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+union
+<include refid="refselect"/> from PTRACCOUNT_STATUS_REF
+</select>
+<select id="getakpkCentres" resultMap="global.ref">
+<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+</select>
+<select id="getakpkBranches" resultMap="global.ref">
+<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+union
+<include refid="refselect"/> from PTRBUSINESS_UNIT
+</select>
+<select id="getakpkInternalExternal" resultMap="global.ref">
+<include refid="refselect"/> from (values
+(NULL,'',' Please Select ',false,-1),
+(1,'I','Internal',false,1),
+(2,'E','External',false,2)
+)as a (ID,CODE,DESCRIPTION,DISABLE,SORT_PRIORITY)
+</select>
+<select id="getakpkYesNo" resultMap="global.ref">
+<include refid="refselect"/> from (values
+(NULL,'',' Please Select ',false,-1),
+(1,'Y','Y',false,1),
+(2,'N','N',false,2)
+)as a (ID,CODE,DESCRIPTION,DISABLE,SORT_PRIORITY)
+</select>
+<resultMap class="hmap" id="getakpkTypeStatuses" extends="global.ref">
+<result property="STATUS_ID" javaType="long"/>
+</resultMap>
+
+<select id="getakpkTypeStatuses" resultMap="getakpkTypeStatuses">
+<include refid="pleaseSelectRef"/>, null <include refid="fromdual"/>
+union
+<include refid="refselect"/>, status_id from ptrtreatment_type_status_ref where type_id=49
+</select>
+
+<sql id="getakpkSearchs">
+inner join ptrcustomer c on c.id=a.customer_id
+inner join ptrtreatment_rnr rnr on rnr.account_id=a.id
+inner join ptrtreatment t on t.id=rnr.treatment_id
+inner join ptrtreatment_subtype_ref sb on sb.id=rnr.subtype_id
+inner join ptrtreatment_type_status_ref ty on ty.id=rnr.type_status_id
+inner join ptrproduct_type_ref pro on pro.id=a.product_type_id
+inner join ptrproduct_type_category_ref ptc on ptc.id=pro.category_id
+where sb.code='RNR_AKPK' and ty.status_id=15007
+<isNotEmpty property="CATEGORY_ID">
+and ptc.id=#CATEGORY_ID#
+</isNotEmpty>
+<isNotEmpty property="PRODUCT_TYPE_ID">
+and pro.id=#CATEGORY_ID#
+</isNotEmpty>
+<isNotEmpty property="ACCOUNT_STATUS_ID">
+and a.STATUS_ID=#CATEGORY_ID#
+</isNotEmpty>
+<isNotEmpty property="CENTRE_ID">
+
+</isNotEmpty>
+<isNotEmpty property="BRANCH_ID">
+and t.created_user_id in 
+(
+select rel.user_id from ptruser_team_rel rel
+inner join ptruser_team ut on ut.id=rel.team_id
+inner join ptrbusiness_unit bu on bu.id=ut.branch_id
+where bu.id=#BRANCH_ID#
+)
+</isNotEmpty>
+<isNotEmpty property="USER_TYPE_ID">
+
+</isNotEmpty>
+<isNotEmpty property="SPTF_TYPE_ID">
+and a.sptf_type_id=#SPTF_TYPE_ID#
+</isNotEmpty>
+<isNotEmpty property="CUSTOMER_ID">
+and c.CUSTOMER_NO=#CUSTOMER_ID#
+</isNotEmpty>
+<isNotEmpty property="CUSTOMER_NAME">
+and c.customer_name like UPPER(#CUSTOMER_NAME#||'%')  
+</isNotEmpty>
+<isNotEmpty property="ACCOUNT_NUMBER">
+and a.account_no=#ACCOUNT_NUMBER#
+</isNotEmpty>
+<isNotEmpty property="OS_BALANCE_FROM">
+<isNotEmpty property="OS_BALANCE_TO">
+and a.outstanding_balance between #OS_BALANCE_FROM# and #OS_BALANCE_TO#
+</isNotEmpty>
+</isNotEmpty>
+<isNotEmpty property="CURRENT_NLB_FROM">
+<isNotEmpty property="CURRENT_NLB_TO">
+
+</isNotEmpty>
+</isNotEmpty>
+<isNotEmpty property="MIA">
+and a.months_in_arrears=#MIA#
+</isNotEmpty>
+<isNotEmpty property="JUDGEMENT_SUM">
+
+</isNotEmpty>
+<isNotEmpty property="AKPK_START_DATE">
+and rnr.implemented_date=#AKPK_START_DATE#
+</isNotEmpty>
+<isNotEmpty property="AKPK_END_DATE">
+and exists
+(
+select treatment_id from (
+select s.treatment_id, s.installment_end_date, row_number() over(partition by tt.id order by s.installment_end_date desc) as rnum 
+from ptrtreatment tt
+inner join ptrtreatment_rnr rnr on rnr.treatment_id=tt.id
+inner join ptrtreatment_rnr_schedule s on s.treatment_id=tt.id
+inner join ptrtreatment_subtype_ref sb on sb.id=rnr.subtype_id
+inner join ptrtreatment_type_status_ref ty on ty.id=rnr.type_status_id
+where sb.code='RNR_AKPK' and ty.status_id=15007
+)a where a.rnum=1 and a.treatment_id=t.id and a.installment_end_date=#AKPK_END_DATE#
+)
+</isNotEmpty>
+<isNotEmpty property="AKPK_COUNTER_FROM">
+<isNotEmpty property="AKPK_COUNTER_TO">
+and rnr.current_no_of_time_in_rnr between #AKPK_COUNTER_FROM# to #AKPK_COUNTER_TO#
+</isNotEmpty>
+</isNotEmpty>
+<isNotEmpty property="AKPK_FLAG">
+
+</isNotEmpty>
+</sql>
+
+<resultMap class="hmap" id="getakpkNOA">
+<result property="NUMBER_OF_ACCOUNTS" javaType="long"/>
+</resultMap>
+
+<select id="getakpkNOA" resultMap="getakpkNOA">
+select count(a.id) from ptraccount a
+<include refid="getakpkSearchs"/>
+</select>
+
+<resultMap class="hmap" id="getakpkAccounts">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_ID" javaType="long"/>
+<result property="TREATMENT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getakpkAccounts" resultMap="getakpkAccounts">
+select a.id, a.customer_id, rnr.treatment_id from ptraccount a
+<include refid="getakpkSearchs"/>
+</select>
+
+<resultMap class="hmap" id="getakpkAccountsInfo">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_NO" javaType="string"/>
+<result property="CUSTOMER_NAME" javaType="string"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+<result property="APPROVE_AMOUNT" javaType="$"/>
+
+<result property="PRINCIPAL" javaType="$"/>
+<result property="INTEREST_IN_SUSPENSE_IIS" javaType="$"/>
+<result property="OTHER_CHARGES" javaType="$"/>
+<result property="OUTSTANDING_BALANCE" javaType="$"/>
+<result property="MIA" javaType="long"/>
+
+<result property="REMAINING_TENURE" javaType="long"/>
+<result property="INSTALLMENT" javaType="$"/>
+<result property="LEGAL_STATUS" javaType="string"/>
+<result property="BLD_DATE" javaType="date"/>
+<result property="PRODUCT_TYPE" javaType="string"/>
+
+<result property="WASLAH_TIER_PAYMENT_1" javaType="$"/>
+<result property="WASLAH_TIER_PAYMENT_2" javaType="$"/>
+</resultMap>
+
+<select id="getakpkAccountsInfo" resultMap="getakpkAccountsInfo">
+select 
+a.id as ACCOUNT_ID,
+c.CUSTOMER_NO as CUSTOMER_NO,
+c.CUSTOMER_NAME as CUSTOMER_NAME,
+a.account_no as ACCOUNT_NUMBER,
+NULL as APPROVE_AMOUNT,
+
+coalesce(a.PRINCIPLE_DUE_AMOUNT,0) as PRINCIPAL,
+coalesce(a.total_interest_in_suspense,0) as INTEREST_IN_SUSPENSE_IIS,
+coalesce(a.other_charge,0) as OTHER_CHARGES,
+coalesce(a.outstanding_balance,0) as OUTSTANDING_BALANCE,
+coalesce(a.months_in_arrears,0) as MIA,
+
+NULL as REMAINING_TENURE,
+NULL as INSTALLMENT,
+NULL as LEGAL_STATUS,
+NULL as BLD_DATE,
+pro.description as PRODUCT_TYPE,
+
+NULL as WASLAH_TIER_PAYMENT_1,
+NULL as WASLAH_TIER_PAYMENT_2
+from ptraccount a
+inner join ptrcustomer c on c.id=a.customer_id
+inner join ptrproduct_type_ref pro on pro.id=a.product_type_id
+inner join ptrproduct_type_category_ref ptc on ptc.id=pro.category_id
+<iterate open="(" close=")" conjunction="," prepend="where a.id in" property="ACCOUNTS">#ACCOUNTS[]#</iterate>
+</select>
+
+<resultMap class="hmap" id="getakpkAcccountsTreatments">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="TREATMENT_ID" javaType="long"/>
+<result property="APPROVE_AMOUNT" javaType="$"/>
+<result property="REMAINING_TENURE" javaType="long"/>
+<result property="INSTALLMENT" javaType="$"/>
+
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+<result property="DOCUMENT_ID" javaType="long"/>
+<result property="PROCESS_TYPE_ID" javaType="long"/>
+<result property="ID" javaType="long"/>
+</resultMap>
+
+<select id="getakpkAcccountsTreatments" resultMap="getakpkAcccountsTreatments">
+select 
+a.id as ACCOUNT_ID,
+rnr.treatment_id as TREATMENT_ID,
+NULL as APPROVE_AMOUNT,
+rnr.tenure as REMAINING_TENURE,
+rnr.installment_amount as INSTALLMENT,
+
+v.ID as TEMPLATE_VERSION_ID,
+v.DOCUMENT_ID as DOCUMENT_ID,
+49 as PROCESS_TYPE_ID,
+rnr.treatment_id
+from ptraccount a
+inner join ptrtreatment_rnr rnr on rnr.account_id=a.id
+inner join ptrtemplate_version v on v.id=rnr.template_version_id
+<iterate open="(" close=")" conjunction="," prepend="where rnr.treatment_id in" property="TREATMENTS">#TREATMENTS[]#</iterate>
+</select>
+
+<update id="updateAkpkBlanketApproval" parameterClass="map">
+update ptrtreatment_rnr set type_status_id=#TYPE_STATUS_ID#, bld_date=#BLD_DATE# where TREATMENT_ID=#TREATMENT_ID#
+</update>
+
+</sqlMap>

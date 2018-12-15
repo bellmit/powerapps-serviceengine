@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec statement="getContactSourcePowerCollect" type="select"/>
+ <exec statement="getContactAddressCurrentVerifiedStatus" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTACT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec recordcount="" statement="updateAddress" type="update"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTACT_ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="insertAddress" type="insert"/>
+  <exec from="ID" to="CONTACT_ID" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_CURRENT_VERIFIED_STATUS" operator="&lt;&gt;" rhsvalue="true"/>
+   <condition lhsfield="VERIFIED_STATUS_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec recordcount="" statement="updateContactAddressVerifiedStatus" type="update"/>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="CANCEL" type="copyintolist"/>
+</event>

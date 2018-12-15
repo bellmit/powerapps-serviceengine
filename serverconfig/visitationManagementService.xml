@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="visitationManagementService">
+
+
+<select id="getVmsStates" resultMap="global.ref">
+<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+union
+select s.id, s.code, s.description, s.disable, s.sort_priority
+from ptrarea_ref a
+inner join ptrstate_ref s on s.id=a.state_id
+where a.supervisor_id=#USER_ID#
+</select>
+
+<select id="getVmsAreas" resultMap="global.ref">
+<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+union
+select id, code, description, disable, sort_priority
+from ptrarea_ref
+where supervisor_id=#USER_ID# and STATE_ID=#STATE_ID#
+</select>
+
+<resultMap class="hmap" id="getVmsVisitationStaff" extends="global.sref">
+<result property="VISITATION_STAFF_NAME" javaType="string"/>
+</resultMap>
+
+<select id="getVmsVisitationStaff" resultMap="getVmsVisitationStaff">
+<include refid="pleaseSelectRef"/>, null<include refid="fromdual"/>
+union
+select us.user_id, '', us.user_id, us.disable, 1 as sort_priority, e.first_name||' '||e.middle_name||' '||e.last_name
+from ptrarea_ref a
+inner join ptruser us on us.user_id=a.visitation_staff_id
+inner join ptremployee e on e.id=us.employee_id
+where a.supervisor_id=#USER_ID# and a.id=#AREA_ID# and a.STATE_ID=#STATE_ID#
+</select>
+
+
+<select id="getVmsInstructionTypes" resultMap="global.ref">
+<include refid="refselect"/> from 
+(values
+(1,'V','Visual',false,1),
+(2,'I','Instruct Visitation',false,2),
+(3,'U','Uncontactable',false,3)
+)a
+(id,code,description,disable,sort_priority)
+</select>
+
+<resultMap class="hmap" id="getVmsTypeStatuses" extends="global.ref">
+<result property="STATUS_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVmsTypeStatuses" resultMap="getVmsTypeStatuses">
+<include refid="pleaseSelectRef"/>, null <include refid="fromdual"/>
+union
+<include refid="refselect"/>, status_id from ptrtreatment_type_status_ref where type_id=15
+</select>
+
+<sql id="getVmsSearchJoin">
+<isEqual property="INSTRUCTION_TYPE_ID" compareValue="1">
+inner join ptrvisitation_assignment v on v.account_id=a.id
+inner join ptrhost_address ho on ho.id=v.contact_id and ho.customer_id=v.customer_id
+<isNotEmpty property="STATE_ID">
+and ho.state_id=#STATE_ID#
+</isNotEmpty>
+</isEqual>
+<isEqual property="INSTRUCTION_TYPE_ID" compareValue="2">
+inner join ptrtreatment t on t.account_id=a.id
+inner join ptrtreatment_visitation v on v.treatment_id=t.id
+inner join ptrtreatment_type_status_ref ty on ty.id=t.type_status_id
+where t.type_id=15 and ty.code='VISIT_IV'
+<isNotEmpty property="STATE_ID">
+and v.state_id=#STATE_ID#
+</isNotEmpty>
+<isNotEmpty property="AREA_ID">
+and v.area_id=#AREA_ID#
+</isNotEmpty>
+</isEqual>
+<isEqual property="INSTRUCTION_TYPE_ID" compareValue="3">
+inner join ptrtreatment t on t.account_id=a.id
+inner join ptrtreatment_type_status_ref ty on ty.id=t.type_status_id
+inner join (
+select a.id, a.customer_id, a.state_id from (select 
+addr.id, addr.customer_id, addr.state_id,
+row_number() over(partition by addr.customer_id order by addr.id desc) as rnum
+from ptrhost_address addr
+inner join ptrhost_address_type_ref ady on ady.id=addr.host_address_type_id and ady.code='M' 
+)a where a.rnum=1
+) v on v.customer_id=a.customer_id
+where t.type_id=8 and ty.code='PAC_4'
+<isNotEmpty property="STATE_ID">
+and v.state_id=#STATE_ID#
+</isNotEmpty>
+</isEqual>
+</sql>
+
+<resultMap class="hmap" id="getVmsNOA">
+<result property="NUMBER_OF_ACCOUNTS" javaType="long"/>
+</resultMap>
+
+<select id="getVmsNOA" resultMap="getVmsNOA">
+select count(a.ID) from PTRACCOUNT a
+<include refid="getVmsSearchJoin"/>
+</select>
+
+<resultMap class="hmap" id="getVmsAccountIds">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_ID" javaType="long"/>
+<result property="TREATMENT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVmsAccountIds" resultMap="getVmsAccountIds">
+select a.ACCOUNT_ID, a.CUSTOMER_ID, a.TREATMENT_ID from
+(
+select a.ID as ACCOUNT_ID, a.CUSTOMER_ID,
+<isEqual property="INSTRUCTION_TYPE_ID" compareValue="1">NULL as TREATMENT_ID</isEqual> 
+<isNotEqual property="INSTRUCTION_TYPE_ID" compareValue="1">t.ID as TREATMENT_ID</isNotEqual>,
+row_number() over(order by a.ID) as RNUM from PTRACCOUNT a
+<include refid="getVmsSearchJoin"/>
+) a
+where
+a.RNUM   
+between (1 + ((cast(#PAGE_NUMBER# AS NUMERIC)  - 1) * #LIMIT_RESULT:NUMERIC#)) 
+and (#LIMIT_RESULT:NUMERIC# * cast(#PAGE_NUMBER# AS NUMERIC))
+</select>
+
+<resultMap class="hmap" id="getVmsVisualResults">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="OFFICER_IN_CHARGE" javaType="string"/>
+<result property="VISITATION_ADDRESS" javaType="string" />
+<result property="VISITATION_USER_ID" javaType="string"/>
+<result property="STATE" javaType="string"/>
+<result property="VISITATION_TO_ID" javaType="long"/>
+<result property="CONTACT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVmsVisualResults" resultMap="getVmsVisualResults">
+select v.ACCOUNT_ID,
+u.USER_ID,
+va.line_1||', '||coalesce(va.line_2,'')||', '||coalesce(va.line_3,'')||', '||coalesce(va.city,'')||', '||coalesce(sr.description,'')||', '||coalesce(va.postal_code,'') as VISITATION_ADDRESS,
+u.USER_ID,
+sr.DESCRIPTION,
+v.CUSTOMER_ID,
+v.CONTACT_ID
+from PTRVISITATION_ASSIGNMENT v
+inner join PTRUSER u on u.ID=v.VISITATION_STAFF_ID
+inner join PTREMPLOYEE e on e.ID=u.EMPLOYEE_ID
+inner join ptrhost_address va on va.customer_id=v.customer_id and v.contact_id=va.id
+left join ptrstate_ref sr on sr.id=va.state_id
+<iterate open="(" close=")" conjunction="," prepend="where v.ACCOUNT_ID in" property="ACCOUNTS">#ACCOUNTS[]#</iterate>
+</select>
+
+<resultMap class="hmap" id="getVmsAccountDetails">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_ID" javaType="long"/>
+<result property="PRODUCT_GROUP" javaType="string"/>
+<result property="PRODUCT_TYPE" javaType="string"/>
+<result property="AGREEMENT_NUMBER" javaType="string"/>
+<result property="CUSTOMER_NAME" javaType="string"/>
+<result property="OPENING_MIA" javaType="long"/>
+<result property="HOST_MIA" javaType="long"/>
+<result property="MIA" javaType="long"/>
+<result property="DATE_OF_FUNDING" javaType="string"/>
+<result property="NLB" javaType="$"/>
+<result property="LAST_PAYMENT_DATE" javaType="date"/>
+<result property="RESULT_CAME_BACK_DATE" javaType="date"/>
+<result property="DISTANCE" javaType="string"/>
+<result property="MILEAGE_COST" javaType="$"/>
+<result property="WORKLIST_NAME" javaType="string"/>
+<result property="EXCESS_DATE" javaType="date"/>
+</resultMap>
+
+<select id="getVmsAccountDetails" resultMap="getVmsAccountDetails">
+select
+a.ID as ACCOUNT_ID,
+a.CUSTOMER_ID,
+ptc.description as PRODUCT_GROUP,
+p.description as PRODUCT_TYPE,
+a.account_no as AGREEMENT_NUMBER,
+c.CUSTOMER_NAME,
+wla.months_in_arrears as OPENING_MIA,
+a.months_in_arrears as HOST_MIA,
+NULL as MIA,
+a.first_release_date DATE_OF_FUNDING,
+NULL as NLB,
+a.LAST_PAYMENT_DATE,
+NULL as RESULT_CAME_BACK_DATE,
+NULL as DISTANCE,
+NULL as MILEAGE_COST,
+wl.work_list_name as WORKLIST_NAME,
+NULL as EXCESS_DATE
+from ptraccount a
+inner join ptrcustomer c on c.id=a.customer_id
+inner join ptrproduct_type_ref p on p.id=a.product_type_id
+inner join ptrproduct_type_category_ref ptc on ptc.id=p.category_id
+left join ptraccount_work_list_assignment wla on wla.account_id=a.id
+left join ptrwork_list wl on wl.work_list_id=wla.work_list_id
+<iterate open="(" close=")" conjunction="," prepend="where a.id in" property="ACCOUNTS">#ACCOUNTS[]#</iterate>
+</select>
+
+<resultMap class="hmap" id="getVmsVisitationTreatments">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="STATE" javaType="string"/>
+<result property="AREA" javaType="string"/>
+<result property="VISITATION_ADDRESS" javaType="string"/>
+<result property="OFFICER_IN_CHARGE" javaType="string"/>
+<result property="VISITATION_STATUS" javaType="string"/>
+<result property="CREATED_USER_ID" javaType="string"/>
+<result property="VISITATION_CREATED_DATE" javaType="date"/>
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+
+<result property="TURNAROUND_TIME" javaType="ts"/>
+<result property="AREA_ID" javaType="long"/>
+<result property="VISITATION_TO_ID" javaType="long"/>
+<result property="STATE_ID" javaType="long"/>
+<result property="PURPOSE_VISIT_ID" javaType="long"/>
+<result property="EXPECTED_VISITATION_DATE" javaType="date"/>
+<result property="RESIDENT_RACE_ID" javaType="long"/>
+<result property="FAMILY_MEMBERS_NO" javaType="long"/>
+<result property="LOCATION" javaType="string"/>
+<result property="HOUSE_OUTLOOK" javaType="string"/>
+
+<result property="HOUSE_TYPE" javaType="string"/>
+<result property="HOUSE_INTERIOR" javaType="string"/>
+<result property="MBSB_CAR" javaType="string"/>
+<result property="OTHER_VEHICLES" javaType="string"/>
+<result property="RESULT_COME_BACK_DATE" javaType="date"/>
+<result property="DOCUMENT_ID_1" javaType="long"/>
+<result property="DOCUMENT_ID_2" javaType="long"/>
+<result property="ID" javaType="long"/>
+<result property="PROCESS_TYPE_ID" javaType="long"/>
+<result property="CONTACT_ID" javaType="long"/>
+
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="VISITATION_STAFF_NAME" javaType="string"/>
+<result property="STATUS_ID" javaType="long"/>
+<result property="NOTE_TEXT" javaType="string"/>
+<result property="TREATMENT_ID" javaType="long"/>
+
+<result property="VISITATION_USER_ID" javaType="string"/>
+</resultMap>
+
+<select id="getVmsVisitationTreatments" resultMap="getVmsVisitationTreatments">
+select
+a.id as ACCOUNT_ID,
+s.DESCRIPTION as STATE,
+ar.description as AREA,
+NULL as VISITATION_ADDRESS,
+v.VISITATION_STAFF_NAME as OFFICER_IN_CHARGE,
+ty.description as VISITATION_STATUS,
+t.created_user_id,
+t.created_time,
+v.TEMPLATE_VERSION_ID,
+
+v.TURNAROUND_TIME,
+v.AREA_ID,
+v.VISITATION_TO_ID,
+v.STATE_ID,
+v.PURPOSE_VISIT_ID,
+v.EXPECTED_VISITATION_DATE,
+v.RESIDENT_RACE_ID,
+v.FAMILY_MEMBERS_NO,
+v.LOCATION,
+v.HOUSE_OUTLOOK,
+
+v.HOUSE_TYPE,
+v.HOUSE_INTERIOR,
+v.MBSB_CAR,
+v.OTHER_VEHICLES,
+v.RESULT_COME_BACK_DATE,
+v.DOCUMENT_ID_1,
+v.DOCUMENT_ID_2,
+v.TREATMENT_ID,
+t.type_id,
+v.CONTACT_ID,
+
+v.SUBTYPE_ID,
+v.VISITATION_STAFF_NAME,
+t.STATUS_ID,
+nt.NOTE_TEXT,
+v.TREATMENT_ID,
+
+v.VISITATION_USER_ID
+from ptraccount a
+inner join ptrtreatment t on t.account_id=a.id
+inner join ptrtreatment_visitation v on v.treatment_id=t.id
+inner join ptrtreatment_type_status_ref ty on ty.id=t.type_status_id
+left join ptrstate_ref s on s.id=v.state_id
+left join ptrarea_ref ar on ar.id=v.area_id
+left join ptrtreatment_note nt on nt.treatment_id=t.id
+where t.type_id=15 <iterate open="(" close=")" conjunction="," prepend="and t.id in" property="TREATMENTS">#TREATMENTS[]#</iterate>
+</select>
+
+<resultMap class="hmap" id="getVmsVisitationAddress">
+<result property="TREATMENT_ID" javaType="long"/>
+<result property="VISITATION_ADDRESS" javaType="string"/>
+</resultMap>
+
+<select id="getVmsVisitationAddress" resultMap="getVmsVisitationAddress">
+select
+v.TREATMENT_ID,
+va.line_1||', '||coalesce(va.line_2,'')||', '||coalesce(va.line_3,'')||', '||coalesce(va.city,'')||', '||coalesce(sr.description,'')||', '||coalesce(va.postcode,'') as VISITATION_ADDRESS
+from ptraccount a
+inner join ptrtreatment t on t.account_id=a.id
+inner join ptrtreatment_visitation v on v.treatment_id=t.id
+inner join 
+(
+select id, line_1, line_2, line_3, city, state_id, postal_code as postcode from ptrhost_address
+<iterate open="(" close=")" conjunction="," prepend="where customer_id in" property="CUSTOMERS">#CUSTOMERS[]#</iterate>
+union
+select id, line_1, line_2, line_3, city, state_id, postcode from ptraddress
+<iterate open="(" close=")" conjunction="," prepend="where customer_id in" property="CUSTOMERS">#CUSTOMERS[]#</iterate>
+) va on v.contact_id=va.id
+left join ptrstate_ref sr on sr.id=va.state_id
+where t.type_id=15 <iterate open="(" close=")" conjunction="," prepend="and t.id in" property="TREATMENTS">#TREATMENTS[]#</iterate>
+</select>
+
+<resultMap class="hmap" id="getVmsHostMailingAddress">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="VISITATION_ADDRESS" javaType="string" />
+<result property="STATE_ID" javaType="long"/>
+<result property="STATE" javaType="string"/>
+<result property="CONTACT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVmsHostMailingAddress" resultMap="getVmsHostMailingAddress">
+select 
+a.ID,
+va.line_1||', '||coalesce(va.line_2,'')||', '||coalesce(va.line_3,'')||', '||coalesce(va.city,'')||', '||coalesce(va.description,'')||', '||coalesce(va.postal_code,'') as VISITATION_ADDRESS,
+va.STATE_ID,
+va.DESCRIPTION as STATE,
+va.ID as CONTACT_ID
+from PTRACCOUNT a
+inner join (
+select a.id, a.customer_id, 
+a.line_1,a.line_2,a.line_3,a.city,a.description,a.postal_code,a.state_id from (select 
+addr.id, addr.customer_id, 
+addr.line_1,addr.line_2,addr.line_3,addr.city,sr.description,addr.postal_code,addr.state_id,
+row_number() over(partition by addr.customer_id order by addr.id desc) as rnum
+from ptrhost_address addr
+inner join ptrhost_address_type_ref ady on ady.id=addr.host_address_type_id and ady.code='M' 
+left join ptrstate_ref sr on sr.id=addr.state_id
+)a where a.rnum=1
+) va on va.customer_id=a.customer_id
+<iterate open="(" close=")" conjunction="," prepend="where a.ID in" property="ACCOUNTS">#ACCOUNTS[]#</iterate>
+</select>
+
+<resultMap class="hmap" id="getVmsVisitationProcessTypeId">
+<result property="PROCESS_TYPE_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVmsVisitationProcessTypeId" resultMap="getVmsVisitationProcessTypeId">
+select 15 <include refid="fromdual"/>
+</select>
+<resultMap class="hmap" id="getVmsVisitationInstructTypeStatus">
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="STATUS_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVmsVisitationInstructTypeStatus" resultMap="getVmsVisitationInstructTypeStatus">
+select id, status_id from ptrtreatment_type_status_ref where type_id=15 and code='VISIT_IV'
+</select>
+<resultMap class="hmap" id="getVmsPacTreatments">
+<result property="TREATMENT_ID" javaType="long"/>
+<result property="ACCOUNT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVmsPacTreatments" resultMap="getVmsPacTreatments">
+select
+t.id as TREATMENT_ID,
+a.id as ACCOUNT_ID
+from ptraccount a
+inner join ptrtreatment t on t.account_id=a.id
+where t.type_id=8 <iterate open="(" close=")" conjunction="," prepend="and t.id in" property="TREATMENTS">#TREATMENTS[]#</iterate>
+</select>
+
+
+<delete id="deleteVisualVisitationAssignmentAccount" parameterClass="map">
+delete from PTRVISITATION_ASSIGNMENT where ACCOUNT_ID=#ACCOUNT_ID#
+</delete>
+
+
+
+
+
+
+
+
+
+
+<!-- ## Visitation Officer Update ## -->
+
+<select id="getVouProductCategory" resultMap="global.ref">
+<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+union
+<include refid="refselect"/> from PTRPRODUCT_TYPE_CATEGORY_REF
+</select>
+
+<resultMap class="hmap" id="getVouTemplates">
+<result property="ID" javaType="long"/>
+<result property="CODE" javaType="string"/>
+<result property="DESCRIPTION" javaType="string"/>
+<result property="TEMPLATE_ID" javaType="long"/>
+<result property="DISABLE" javaType="boolean"/>
+<result property="SORT_PRIORITY" javaType="long"/>
+<result property="ADD_1" javaType="long"/>
+</resultMap>
+
+<select id="getVouTemplates" resultMap="getVouTemplates">
+select NULL as ID, NULL as CODE, 'Please Select' as NAME, NULL as TEMPLATE_ID, false as DISABLE, -1 as SORT_PRIORITY, NULL
+union
+select tv.ID, type.CODE, t.NAME, t.ID as TEMPLATE_ID, tv.DISABLE, 1 as SORT_PRIORITY, 1
+from PTRTEMPLATE t
+inner join PTRTEMPLATE_TYPE_REF type on t.TEMPLATE_TYPE_ID = type.ID
+inner join PTRTEMPLATE_VERSION tv on t.ID = tv.TEMPLATE_ID
+inner join PTRPRODUCT_TYPE_CATEGORY_REF ptc on ptc.ID=t.PRODUCT_TYPE_CATEGORY_ID
+inner join PTRPRODUCT_TYPE_REF pro on pro.category_id=ptc.ID
+inner join PTRACCOUNT a on a.PRODUCT_TYPE_ID=pro.ID
+where t.DISABLE = false and ptc.ID=#CATEGORY_ID#
+and type.code='VISITATION'
+</select>
+
+<resultMap class="hmap" id="getVouPrinters" extends="global.ref">
+<result property="ADD_2" javaType="long"/>
+</resultMap>
+
+<select id="getVouPrinters" resultMap="getVouPrinters">
+<include refid="pleaseSelectRef"/>, NULL <include refid="fromdual"/>
+union
+<include refid="refselect"/>, 1 from ptrprinter_settings
+</select>
+
+<resultMap class="hmap" id="getVouVisitationStaffName">
+<result property="VISITATION_STAFF_NAME" javaType="string"/>
+</resultMap>
+
+<select id="getVouVisitationStaffName" resultMap="getVouVisitationStaffName">
+select e.first_name||' '||e.middle_name||' '||e.last_name as VISITATION_STAFF_NAME
+from ptruser us 
+inner join ptremployee e on e.id=us.employee_id
+where us.user_id=#USER_ID#
+</select>
+
+<insert id="insertVouImage" parameterClass="map">
+insert into ptrtreatment_document_upload (treatment_id,document_id,account_id,upload_document_type_id,user_id,file_name,description)
+values (#TREATMENT_ID#,#DOCUMENT_ID#,#ACCOUNT_ID#,13,#USER_ID#,#FILE_NAME#,#DESCRIPTION#);
+</insert>
+
+<!-- ## Import ## -->
+
+<resultMap class="hmap" id="getVimValidAccounts">
+<result property="ACCOUNT_ID" javaType="long"/>
+<result property="CUSTOMER_ID" javaType="long"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+<result property="CUSTOMER_NAME" javaType="string"/>
+<result property="PRODUCT_GROUP" javaType="string"/>
+<result property="PRODUCT_TYPE" javaType="string"/>
+<result property="AGREEMENT_NUMBER" javaType="string"/>
+<result property="CUSTOMER_NAME" javaType="string"/>
+<result property="OPENING_MIA" javaType="long"/>
+<result property="HOST_MIA" javaType="long"/>
+<result property="MIA" javaType="long"/>
+<result property="DATE_OF_FUNDING" javaType="string"/>
+<result property="NLB" javaType="$"/>
+<result property="LAST_PAYMENT_DATE" javaType="date"/>
+<result property="RESULT_CAME_BACK_DATE" javaType="date"/>
+<result property="DISTANCE" javaType="string"/>
+<result property="MILEAGE_COST" javaType="$"/>
+<result property="WORKLIST_NAME" javaType="string"/>
+<result property="EXCESS_DATE" javaType="date"/>
+<result property="VALID" javaType="boolean" />
+<result property="COLOR" javaType="string"/>
+</resultMap>
+
+<select id="getVimValidAccounts" resultMap="getVimValidAccounts">
+select
+a.ID as ACCOUNT_ID,
+a.CUSTOMER_ID,
+a.account_no as ACCOUNT_NUMBER,
+c.CUSTOMER_NAME,
+ptc.description as PRODUCT_GROUP,
+p.description as PRODUCT_TYPE,
+a.account_no as AGREEMENT_NUMBER,
+c.CUSTOMER_NAME,
+wla.months_in_arrears as OPENING_MIA,
+a.months_in_arrears as HOST_MIA,
+NULL as MIA,
+a.first_release_date DATE_OF_FUNDING,
+NULL as NLB,
+a.LAST_PAYMENT_DATE,
+NULL as RESULT_CAME_BACK_DATE,
+NULL as DISTANCE,
+NULL as MILEAGE_COST,
+wl.work_list_name as WORKLIST_NAME,
+NULL as EXCESS_DATE,
+true as VALID, 
+'33ff33' as COLOR
+from ptraccount a
+inner join ptrcustomer c on c.id=a.customer_id
+inner join ptrproduct_type_ref p on p.id=a.product_type_id
+inner join ptrproduct_type_category_ref ptc on ptc.id=p.category_id
+left join ptraccount_work_list_assignment wla on wla.account_id=a.id
+left join ptrwork_list wl on wl.work_list_id=wla.work_list_id
+<iterate open="(" close=")" conjunction="," prepend="where a.ACCOUNT_NO in" property="ACCOUNT_NUMBERS">#ACCOUNT_NUMBERS[]#</iterate>
+</select>
+
+<resultMap class="hmap" id="getVimStateId">
+<result property="STATE_ID" javaType="long"/>
+<result property="COUNTRY_ID" javaType="long"/>
+</resultMap>
+<resultMap class="hmap" id="getVimAreaId">
+<result property="AREA_ID" javaType="long"/>
+</resultMap>
+<resultMap class="hmap" id="getVimContactTypeId">
+<result property="CONTACT_TYPE_ID" javaType="long"/>
+</resultMap>
+<resultMap class="hmap" id="getVimEmailTypeId">
+<result property="EMAIL_TYPE_ID" javaType="long"/>
+</resultMap>
+<resultMap class="hmap" id="getVimAddressTypeId">
+<result property="ADDRESS_TYPE_ID" javaType="long"/>
+</resultMap>
+
+<select id="getVimStateId" resultMap="getVimStateId">
+select ID, COUNTRY_ID from PTRSTATE_REF where upper(DESCRIPTION)=upper(#STATE#)
+</select>
+<select id="getVimAreaId" resultMap="getVimAreaId">
+select ID from PTRAREA_REF where upper(DESCRIPTION)=upper(#AREA#)
+</select>
+<select id="getVimContactTypeId" resultMap="getVimContactTypeId">
+select id from ptrcontact_number_type_ref where upper(description)=upper(#CONTACT_TYPE#)
+</select>
+<select id="getVimEmailTypeId" resultMap="getVimEmailTypeId">
+select id from ptrcontact_number_type_ref where code='EMAIL'
+</select>
+<select id="getVimAddressTypeId" resultMap="getVimAddressTypeId">
+select id from ptraddress_type_ref where upper(description)=upper(#ADDRESS_TYPE#)
+</select>
+
+<insert id="insertNewVisitationAddress" parameterClass="map">
+	<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix"/>
+			ptraddress_id
+			<include refid="sequenceSuffix"/>
+		</selectKey>
+insert into ptraddress (id, customer_id, contact_name, line_1, line_2, 
+line_3, line_4, postcode, city, state_id, country_id, 
+address_type_id, created_user_id, created_time, contact_source_id)
+values
+(#ID#, #CUSTOMER_ID#, #CUSTOMER_NAME#, #NEW_ADDRESS_LINE1#, #NEW_ADDRESS_LINE2#, 
+#NEW_ADDRESS_LINE3#, #NEW_ADDRESS_LINE4#, #POSTCODE#, #CITY#, #STATE_ID#, #COUNTRY_ID#, 
+#ADDRESS_TYPE_ID#, #CREATED_USER_ID#, #CREATED_TIME#, 8)
+	</insert>
+<insert id="insertNewVisitationContactNumber" parameterClass="map">
+	<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix"/>
+			ptrcontact_number_id
+			<include refid="sequenceSuffix"/>
+		</selectKey>
+	INSERT INTO ptrcontact_number 
+(id, customer_id, contact_name, contact_type_id, no,
+created_user_id, created_time, contact_source_id) 
+VALUES(#ID#, #CUSTOMER_ID#, #CUSTOMER_NAME#, #CONTACT_TYPE_ID#, #NO#, 
+#CREATED_USER_ID#, #CREATED_TIME#, 8)
+	</insert>
+</sqlMap>

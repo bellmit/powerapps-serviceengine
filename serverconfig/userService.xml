@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="userService">
+	<resultMap id="getUserTypes" class="hmap" extends="global.ref">
+		<result property="LOAD_USERS" javaType="boolean" />
+	</resultMap>
+	<select id="getUserTypes" resultMap="getUserTypes">
+		<include refid="selectAllRef" />
+		,
+		<include refid="true" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		,
+		<include refid="true" />
+		from ptruser_type_ref
+	</select>
+	
+	<resultMap id="getUserTypesForEditing" class="hmap" extends="global.ref">
+		<result property="LOAD_USER" javaType="boolean" />
+	</resultMap>
+	<select id="getUserTypesForEditing" resultMap="getUserTypesForEditing">
+		<include refid="refselect" />,<include refid="true" /> from ptruser_type_ref
+	</select>
+	<select id="getEmptyEmployeeDefault" resultMap="global.ref">
+		select null , ' ','No Available Employee',<include refid="false"/>,0 <include refid="fromdual" />	
+	</select>
+	
+	<select id="getUserGroups" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		from PTRUSER_GROUP_REF
+	</select>
+		
+	<resultMap id="getUserList" class="hmap">
+		<result property="USER_ID" javaType="string" />
+		<result property="ACTIVE_STATUS" javaType="boolean" />
+		<result property="PASSWORD_EXPIRY_DATE" javaType="date" />
+		<result property="USER_EXPIRY_DATE" javaType="date" />
+		<result property="LOGON_STATUS" javaType="boolean" />
+		<result property="USER_REMARKS" javaType="string" />
+		<result property="CREATED_TIME" javaType="ts" />
+		<result property="CREATED_BY" javaType="string" />
+		<result property="UPDATED_TIME" javaType="ts" />
+		<result property="UPDATED_BY" javaType="string" />
+		<result property="USER_TYPE" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="EMPLOYEE_ID" javaType="string" />
+		<result property="EMAIL_ADDRESS" javaType="string" />
+		<result property="USER_GROUP" javaType="string" />
+	</resultMap>
+	<select id="getUserList" resultMap="getUserList">
+		SELECT
+		U.USER_ID,
+		case when U.ACTIVE_STATUS = 'Y' then <include refid="true"/> else <include refid="false"/> end as ACTIVE_STATUS,
+		U.PASSWD_EXP_DATE,
+		U.USER_EXP_DATE,
+		case when U.LOGON_STATUS = 'T' then <include refid="true"/> else <include refid="false"/> end as LOGON_STATUS,
+		U.USER_REMARKS,
+		U.CREATE_DATE,
+		U.CREATED_USER_ID,
+		U.UPDATED_TIME,
+		U.UPDATED_USER_ID,
+		R.DESCRIPTION AS USER_TYPE,
+		E.FIRST_NAME,
+		E.MIDDLE_NAME,
+		E.LAST_NAME,
+		E.EMPLOYEE_NO,
+		E.EMAIL_ADDRESS,
+		UR.DESCRIPTION
+		FROM PTRUSER U
+		INNER JOIN PTREMPLOYEE E ON E.ID=U.EMPLOYEE_ID
+		INNER JOIN PTRUSER_TYPE_REF R ON R.ID=U.USER_TYPE_ID
+		LEFT JOIN PTRUSER_GROUP_REF UR ON UR.ID=U.USER_GROUP_ID
+		where 1=1
+		<isNotEqual property="INCLUDE_ALL" compareValue="true">
+		and U.ACTIVE_STATUS = 'Y'
+		</isNotEqual>
+		<isNotNull property="USER_TYPE_ID">
+		and u.USER_TYPE_ID = #USER_TYPE_ID#
+		</isNotNull>
+		<isNotEmpty property="EMPLOYEE_NAME">
+		and(upper(E.FIRST_NAME) like '%'||upper(#EMPLOYEE_NAME#)||'%' or  
+		upper(E.MIDDLE_NAME) like '%'||upper(#EMPLOYEE_NAME#)||'%' or  
+		upper(E.LAST_NAME) like '%'||upper(#EMPLOYEE_NAME#)||'%' or
+		upper(E.EMPLOYEE_NO) like '%'||upper(#EMPLOYEE_NAME#)||'%')
+		</isNotEmpty>	
+		<isNotEmpty property="USER_NAME">
+		and upper(U.USER_ID) like '%'||upper(#USER_NAME#)||'%'
+		</isNotEmpty>
+		order by U.USER_ID asc
+	</select>
+	<resultMap id="getEmployeeForUserEditing" class="hmap">
+		<result property="EMPLOYEE_ID" javaType="long" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+		<result property="DATE_OF_BIRTH" javaType="date" />
+		<result property="IC_NUMBER" javaType="string" />
+		<result property="OLD_IC_NUMBER" javaType="string" />
+		<result property="CITIZENSHIP_ID" javaType="long" />
+		<result property="HIRED_DATE" javaType="date" />
+		<result property="DEPARTMENT" javaType="string" />
+		<result property="DESIGNATION" javaType="string" />
+		<result property="EMAIL_ADDRESS" javaType="string" />
+		<result property="AGENCY_ID" javaType="long" />
+	</resultMap>
+	<select id="getEmployeeForUserEditing" resultMap="getEmployeeForUserEditing">
+		SELECT ID,FIRST_NAME,MIDDLE_NAME,LAST_NAME,DISABLE,DATE_OF_BIRTH,
+		IDENTITY_NUMBER,OLD_IDENTITY_NUMBER,CITIZENSHIP_ID,HIRED_DATE,DEPARTMENT,DESIGNATION,
+		EMAIL_ADDRESS,AGENCY_ID FROM PTREMPLOYEE 
+		WHERE TYPE_ID = #EMPLOYEE_TYPE_ID#
+	</select>
+	<insert id="insertUser" parameterClass="map">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRUSER_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>
+		INSERT INTO PTRUSER (ID,EMPLOYEE_ID,USER_ID,USER_TYPE_ID,PASSWORD,
+		PASSWD_EXP_DATE,USER_EXP_DATE,AGENCY_ID,USER_REMARKS,CREATE_DATE,CREATED_USER_ID,LOGON_STATUS,ACTIVE_STATUS,USER_GROUP_ID) 
+		VALUES (#ID#,#EMPLOYEE_ID#,#USER_ID#,#USER_TYPE_ID#,#PASSWORD#,#PASSWORD_EXPIRY_DATE#,#USER_EXPIRY_DATE#,
+		#AGENCY_ID#,#REMARKS#,#CURRENT_TIME#,#LOGON_USER#,'F',case when #ACTIVE_STATUS# = <include refid="true"/> then 'Y' else 'N' end,#USER_GROUP_ID#)	
+	</insert>
+	
+	<update id="updateUser" parameterClass="map">
+		UPDATE PTRUSER SET
+		PASSWORD = #PASSWORD#,
+		USER_REMARKS = #REMARKS#,
+		PASSWD_EXP_DATE = #PASSWORD_EXPIRY_DATE#,
+		USER_EXP_DATE = #USER_EXPIRY_DATE#,
+		LOGON_STATUS = case when #LOGON_STATUS# = <include refid="true"/> then 'T' else 'F' end,
+		ACTIVE_STATUS = case when #ACTIVE_STATUS# = <include refid="true"/> then 'Y' else 'N' end,
+		USER_GROUP_ID = #USER_GROUP_ID#,
+		UPDATED_USER_ID = #LOGON_USER#,
+		UPDATED_TIME = #CURRENT_TIME#
+		WHERE USER_ID = #USER_ID#
+	</update>
+	
+	<resultMap id="checkUserIdAvailability" class="hmap" >
+		<result property="VALID_USER_ID" javaType="boolean" />
+	</resultMap>
+	<select id="checkUserIdAvailability" resultMap="checkUserIdAvailability">
+		SELECT CASE WHEN COUNT(USER_ID) = 0 THEN TRUE ELSE FALSE END FROM PTRUSER WHERE USER_ID =#USER_ID#
+	</select>
+	
+	<resultMap id="availableUserRoles" class="hmap" >
+		<result property="ROLE_ID" javaType="long" />
+		<result property="DESCRIPTION" javaType="string" />
+	</resultMap>
+	<select id="availableUserRoles" resultMap="availableUserRoles">
+		select role_id,role_name from ptruser_role_ref where role_type_id = #USER_TYPE_ID#
+		and disable = 0
+		<isNotNull property="ROLES">
+		and role_id not in (0 <iterate prepend="," property="ROLES" conjunction=",">#ROLES[]#</iterate>)
+		</isNotNull>
+	</select>
+	<delete id="deleteUserAssignedRoles">
+		DELETE FROM PTRUSER_ROLE WHERE USER_ID = #USER_ID#
+	</delete>
+	<insert id="insertUserAssignedRoles">
+		insert into PTRUSER_ROLE(user_id,role_id)
+		values(#USER_ID#,#ROLE_ID#)
+	</insert>
+	
+	<resultMap id="getUserForEditing" class="hmap">
+		<result property="USER_TYPE" javaType="string" />
+		<result property="USER_TYPE_ID" javaType="long" />
+		<result property="EMPLOYEE_ID" javaType="long" />
+		<result property="PASSWORD" javaType="string" />
+		<result property="ACTIVE_STATUS" javaType="boolean" />
+		<result property="LOGON_STATUS" javaType="boolean" />
+		<result property="PASSWORD_EXPIRY_DATE" javaType="date" />
+		<result property="USER_EXPIRY_DATE" javaType="date" />
+		<result property="AGENCY_NAME" javaType="string" />
+		<result property="PASSWORD_EXPIRY" javaType="boolean" />
+		<result property="USER_EXPIRED" javaType="boolean" />
+		<result property="REMARKS" javaType="string" />
+		<result property="FIRST_NAME" javaType="string" />
+		<result property="MIDDLE_NAME" javaType="string" />
+		<result property="LAST_NAME" javaType="string" />
+		<result property="DATE_OF_BIRTH" javaType="date" />
+		<result property="HIRED_DATE" javaType="date" />
+		<result property="IC_NUMBER" javaType="string" />
+		<result property="OLD_IC_NUMBER" javaType="string" />
+		<result property="DEPARTMENT" javaType="string" />
+		<result property="DESIGNATION" javaType="string" />
+		<result property="EMAIL_ADDRESS" javaType="string" />
+		<result property="CITIZENSHIP" javaType="string" />
+		<result property="USER_GROUP_ID" javaType="long" />
+	</resultMap>
+	<select id="getUserForEditing" resultMap="getUserForEditing">
+		SELECT R.DESCRIPTION AS USER_TYPE,U.USER_TYPE_ID,U.EMPLOYEE_ID,U.PASSWORD,
+		CASE WHEN U.ACTIVE_STATUS = 'Y' THEN <include refid="true"/> ELSE <include refid="false"/> END ,
+		CASE WHEN U.LOGON_STATUS = 'T' THEN <include refid="true"/> ELSE <include refid="false"/> END,
+		U.PASSWD_EXP_DATE,U.USER_EXP_DATE,G.DESCRIPTION,
+		CASE WHEN U.PASSWD_EXP_DATE IS NOT NULL THEN <include refid="true"/> ELSE <include refid="false"/> END,
+		CASE WHEN U.USER_EXP_DATE IS NOT NULL THEN <include refid="true"/> ELSE <include refid="false"/> END,
+		U.USER_REMARKS,E.FIRST_NAME,E.MIDDLE_NAME,E.LAST_NAME,E.DATE_OF_BIRTH,E.HIRED_DATE,
+		E.IDENTITY_NUMBER,E.OLD_IDENTITY_NUMBER,E.DEPARTMENT,E.DESIGNATION,E.EMAIL_ADDRESS,
+		CR.DESCRIPTION,U.USER_GROUP_ID
+		FROM PTRUSER U
+		INNER JOIN PTREMPLOYEE E ON E.ID=U.EMPLOYEE_ID
+		INNER JOIN PTRUSER_TYPE_REF R ON R.ID=U.USER_TYPE_ID
+		LEFT JOIN PTRAGENCY G ON G.ID=E.AGENCY_ID
+		LEFT JOIN PTRCOUNTRY_REF CR ON CR.ID = CITIZENSHIP_ID
+		WHERE U.USER_ID = #USER_ID#
+	</select>
+	<resultMap id="getUserAssignedRoles" class="hmap">
+		<result property="ROLE_ID" javaType="long" />
+		<result property="DESCRIPTION" javaType="string" />
+	</resultMap>
+	<select id="getUserAssignedRoles" resultMap="getUserAssignedRoles">
+		SELECT R.ROLE_ID,RR.ROLE_NAME 
+		FROM PTRUSER_ROLE R INNER JOIN PTRUSER_ROLE_REF RR ON RR.ROLE_ID=R.ROLE_ID
+		WHERE R.USER_ID=#USER_ID#
+	</select>
+</sqlMap>

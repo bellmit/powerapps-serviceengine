@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="2" type="createlist"/>
+ <exec from="TRUE" key="LOAD_DETAILS" type="copyintolist"/>
+ <exec index="ID" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec message="Account" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec message="Count" target="DESCRIPTION" type="formattext"/>
+  </exec>
+ </exec>
+</event>

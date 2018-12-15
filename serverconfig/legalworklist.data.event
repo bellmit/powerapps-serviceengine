@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="DATA" query="getLegalWorklist" type="query"/>
+ <exec type="parallelquery">
+  <query value="getLegalWorklistCount"/>
+  <query value="getLegalWorklist"/>
+  <target value="COUNT"/>
+  <target value="DATA"/>
+ </exec>
+ <exec from="COUNT" key="ID" to="DATA" type="merge"/>
+ <exec from="TRUE" key="LOAD_SUBPAGE" to="DATA" type="copyintolist"/>
+ <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+ <exec from="DATA" key="DATA" type="copyintolist"/>
+</event>

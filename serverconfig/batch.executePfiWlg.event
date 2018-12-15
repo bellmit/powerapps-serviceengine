@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getWlTreeForMainUplBatch" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="true" type="date"/>
+ </exec>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec event="wlg.execute" ignoreresult="true" type="raise"/>
+  <exec event="wlg.executeUserAssignment" ignoreresult="true" type="raise"/>
+ </exec>
+</event>

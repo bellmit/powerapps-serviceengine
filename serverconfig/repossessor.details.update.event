@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec argument="REPOSSESSOR_DETAILS_TBL" type="loop">
+  <exec recordcount="" statement="updateAgenciesForEditing" type="update"/>
+ </exec>
+ <exec event="query.getAgenciesForEditing" ignoreresult="true" type="raise"/>
+ <exec from="REPOSSESSOR_DETAILS_TBL" type="copy"/>
+</event>

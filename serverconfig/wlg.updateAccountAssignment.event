@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="TREE_RUN_ID" key="TREE_RUN_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+ <exec argument="CUSTOMER_DATA" type="loop">
+  <exec text="Main worklist assignment" type="comment">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TYPE_ID" operator="=" rhsvalue="1"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="WORK_LIST_ID" operator="exists" rhsvalue=""/>
+      <condition lhsfield="WORK_LIST_ID" operator="is not empty" rhsvalue=""/>
+     </conditions>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="UPDATE_FIRST_OF_MONTH_SNAPSHOT" operator="=" rhsvalue="true"/>
+      </conditions>
+      <exec recordcount="" statement="updateWlgAccountForAssignment" type="update"/>
+      <exec type="guard">
+       <conditions>
+        <condition lhsfield="UI_EXECUTION" operator="=" rhsvalue="true"/>
+       </conditions>
+       <exec recordcount="" statement="updateWlgAccountForRecentAssignment" type="update"/>
+       <exec recordcount="" statement="updateWlgAccountForAssignmentHistory" type="update"/>
+      </exec>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="UPDATE_FIRST_OF_MONTH_SNAPSHOT" operator="=" rhsvalue="false"/>
+      </conditions>
+      <exec text="1st of month data does not exist: Raise application error" type="comment">
+       <exec code="WLG_ACCOUNT_SNAPSHOT_NOT_FOUND" type="error">
+        <key value="WLG_ACCOUNT_SNAPSHOT_NOT_FOUND"/>
+       </exec>
+      </exec>
+     </exec>
+    </exec>
+   </exec>
+  </exec>
+  <exec text="Supplementary worklist assignment" type="comment">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TYPE_ID" operator="=" rhsvalue="2"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="WORK_LIST_ID" operator="is not empty" rhsvalue=""/>
+     </conditions>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="UPDATE_SUPPLEMENTARY_ACCOUNT" operator="=" rhsvalue="false"/>
+      </conditions>
+      <exec statement="insertWlgCurrentAssignment" type="insert"/>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="UPDATE_SUPPLEMENTARY_ACCOUNT" operator="=" rhsvalue="true"/>
+      </conditions>
+      <exec statement="updateWlgAssignmentForSupplementaryAccounts" type="insert"/>
+     </exec>
+     <exec recordcount="RECENT_ASSIGN_COUNT" statement="updateWlgAccountForRecentAssignment" type="update"/>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="RECENT_ASSIGN_COUNT" operator="=" rhsvalue="0"/>
+      </conditions>
+      <exec statement="insertWlgRecentAssignment" type="insert"/>
+     </exec>
+     <exec statement="insertWlgAssignmentHistory" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+</event>

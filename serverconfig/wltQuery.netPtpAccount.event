@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Fetch all paid accounts" type="comment">
+  <exec event="wltQuery.getPaidAccount" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Fetch PTP Accounts" type="comment">
+  <exec event="wltQuery.getPtpAccount" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Get net PTP account" type="comment">
+  <exec event="wltQuery.excludeAccount" ignoreresult="true" type="raise"/>
+ </exec>
+</event>

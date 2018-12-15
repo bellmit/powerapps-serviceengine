@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="DOCUMENTS" query="getAccountDocuments" type="query"/>
+ <exec from="DOCUMENTS" key="DOCUMENTS" type="copyintolist"/>
+ <exec from="TRUE" key="INIT" type="copyintolist"/>
+</event>

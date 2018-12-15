@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="SUBTYPE_ID" key="SUBTYPE_ID" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec from="FALSE" key="FALSE" type="copyintolist"/>
+ <exec from="APPROVAL_CODE" key="APPROVAL_CODE" type="copyintolist"/>
+ <exec type="loop">
+  <exec argument="ACCOUNT_LIST" query="getMiscAccountTaggingTreatment" type="query"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec size="999" source="ACCOUNT_LIST" target="DIVIDED_ACCOUNT_LIST" type="dividelist"/>
+   <exec argument="DIVIDED_ACCOUNT_LIST" type="loop">
+    <exec from="ACCOUNT_LIST" key="ACCOUNT_ID" to="ACCOUNTS" type="extract"/>
+    <exec argument="ACCOUNT_INFO" query="getMiscAccountTaggingData" type="query"/>
+    <exec from="ACCOUNT_INFO" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   </exec>
+   <exec from="DIVIDED_ACCOUNT_LIST" key="ACCOUNT_LIST" to="DATA" type="extract"/>
+  </exec>
+  <exec event="misc.accountTaggingColumnHighlight" ignoreresult="true" type="raisewith"/>
+ </exec>
+</event>

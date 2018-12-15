@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getTreatmentCcrisService" type="select"/>
+ <exec type="parallelquery">
+  <query value="getCcrisAccountStatusTreatment"/>
+  <query value="getTreatmentCcrisPaymentActivity"/>
+  <target value="ACCOUNT_STATUS_LIST"/>
+  <target value="CCRIS_TABLE"/>
+ </exec>
+</event>

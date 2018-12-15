@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec key="ID" list="SELECTED_BUCKET_LIST" to="TEMPLATE_ID" type="sumlist"/>
+ <exec from="TEMPLATE_ID" key="TEMPLATE_ID" type="copyintolist"/>
+ <exec from="TREE_TYPE_ID" key="TREE_TYPE_ID" type="copyintolist"/>
+ <exec from="TREE_ID" key="TREE_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec argument="SUBTYPE_LIST" query="getTreeAssignSubtypes" type="query"/>
+ </exec>
+</event>

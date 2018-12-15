@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="VERIFIED_DATE_FROM" key="VERIFIED_DATE_FROM" type="copyintolist"/>
+ <exec from="VERIFIED_DATE_TO" key="VERIFIED_DATE_TO" type="copyintolist"/>
+ <exec type="loop">
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+  <exec statement="getPreviousThreeMonths" type="select"/>
+ </exec>
+</event>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec statement="insertTreatmentSms" type="insert"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec recordcount="" statement="updateTreatmentSms" type="update"/>
+ </exec>
+</event>

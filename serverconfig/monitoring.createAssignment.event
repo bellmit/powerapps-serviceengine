@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec from="CURRENT_TIME" key="CURRENT_TIME" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="LOGON_USER" key="LOGON_USER" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="SUBTYPE_ID" key="SUBTYPE_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="PROCESS_TYPE_ID" key="PROCESS_TYPE_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="EXPECTED_END_TIME" key="EXPECTED_END_TIME" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="CONTRACT_ID" key="CONTRACT_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="AGENCY_ID" key="AGENCY_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="REMARKS" key="REMARKS" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="MODULE" key="MODULE" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec argument="ACCOUNT_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PROCESS_TYPE_ID" operator="=" rhsvalue="19"/>
+   </conditions>
+   <exec statement="createAssignment" type="insert"/>
+   <exec from="ID" to="AGENCY_ASSIGNMENT_ID" type="copy"/>
+   <exec statement="submitRecommendation" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PROCESS_TYPE_ID" operator="&lt;&gt;" rhsvalue="19"/>
+   </conditions>
+   <exec event="monitoring.process" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec statement="clearRejectedOnCreateAction" type="delete"/>
+  <exec statement="clearQueueOnCreateAction" type="delete"/>
+  <exec recordcount="LAST_ASSIGNMENT_SUMMARY_UPDATE_COUNT" statement="updateAccountLastAssignmentSummary" type="update"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LAST_ASSIGNMENT_SUMMARY_UPDATE_COUNT" operator="=" rhsvalue="0"/>
+   </conditions>
+   <exec statement="insertAccountLastAssignmentSummary" type="insert"/>
+  </exec>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec message="Completed" target="MESSAGE" type="formattext"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+</event>

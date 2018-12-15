@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="transaction">
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="END_TIME" truncate="false" type="date"/>
+  <exec recordcount="" statement="updateHostProcessing" type="update"/>
+ </exec>
+</event>

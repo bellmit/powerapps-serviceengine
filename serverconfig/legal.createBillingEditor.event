@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec from="DATA" key="INSTRUCTION_PROCESS_ID" to="INSTRUCTION_PROCESS_IDS" type="extract"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="INSTRUCTION_PROCESS_IDS" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec argument="INVOICE_LIST" query="getCreateBillingDetails" type="query"/>
+  <exec from="INSTRUCTION_PROCESS_IDS" key="INSTRUCTION_PROCESS_IDS" to="INVOICE_LIST" type="copyintolist"/>
+  <exec from="CURRENT_TIME" key="INVOICE_DATE" to="INVOICE_LIST" type="copyintolist"/>
+  <exec argument="INVOICE_LIST" type="loop">
+   <exec argument="TRANSACTIONS" query="legalCreateBillingTransactionDetails" type="query"/>
+   <exec from="LEGAL_FIRM" to="AGENCY_NAME" type="copy"/>
+  </exec>
+ </exec>
+ <exec from="INVOICE_LIST" key="INVOICE_LIST" type="copyintolist"/>
+ <exec from="SUBTYPE_ID" key="SUBTYPE_ID" type="copyintolist"/>
+</event>

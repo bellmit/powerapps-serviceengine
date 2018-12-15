@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec count="100" to="EMPTY_LIST" type="createlist"/>
+ <exec event="treatment.documentUploadList" ignoreresult="true" type="raisewith">
+  <sources value="DOCUMENT_LIST"/>
+  <targets value="DOCUMENT_LIST"/>
+ </exec>
+ <exec from="DOCUMENT_LIST" to="PDC_CHEQUE_LIST" type="copy"/>
+ <exec from="DOCUMENT_LIST" to="PDC_BOUNCED_LIST" type="copy"/>
+ <exec argument="PDC_CHEQUE_LIST" type="loop">
+  <exec from="OPEN_FILE_SELECTION" to="OPEN_UPLOAD_CHEQUE" type="copy"/>
+ </exec>
+ <exec argument="PDC_BOUNCED_LIST" type="loop">
+  <exec from="OPEN_FILE_SELECTION" to="OPEN_UPLOAD_BOUNCED_SLIP" type="copy"/>
+ </exec>
+ <exec from="PDC_CHEQUE_LIST" key="PDC_CHEQUE_LIST" to="EMPTY_LIST" type="copyintolist"/>
+ <exec from="PDC_BOUNCED_LIST" key="PDC_BOUNCED_LIST" to="EMPTY_LIST" type="copyintolist"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec from="EMPTY_LIST" key="EMPTY_LIST" type="copyintolist"/>
+</event>

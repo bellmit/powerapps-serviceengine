@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec argument="TREATMENT_PLANS" query="getAccountTreatmentPlans" type="query"/>
+ <exec from="ACCOUNT_ID" key="ACCOUNT_ID" to="TREATMENT_PLANS" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="CURRENT_DATE" to="TREATMENT_PLANS" type="copyintolist"/>
+ <exec argument="TREATMENT_PLANS" type="loop">
+  <exec adddays="START" ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="false" to="START_DATE" truncate="true" type="date"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="END" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec adddays="END" ceiling="true" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="false" to="END_DATE" truncate="false" type="date"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TREATMENT_PLAN_ID" operator="&lt;&gt;" rhsvalue="1"/>
+   </conditions>
+   <exec from="START_DATE" to="TREATMENT_END_DATE" type="copy"/>
+  </exec>
+ </exec>
+ <exec from="TREATMENT_PLANS" type="copy"/>
+</event>

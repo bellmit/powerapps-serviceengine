@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="treatmentProcessService">
+
+<update id="updateWorkListTabEvaluation">
+UPDATE PTRWLTAB_EVALUATION
+SET ACCOUNT_ID = CAST(#ACCOUNT_ID# AS BIGINT)
+WHERE ACCOUNT_ID = CAST(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+<update id="updatePdcWorklistTabs">
+update PTRWLTAB_EVALUATION
+set 
+LAST_PDC_DATE = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+
+<update id="updateLastManagementApproval">
+update PTRWLTAB_EVALUATION
+set 
+LAST_MANAGEMENT_APPROVAL_DATE = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+<update id="updateWorkListTabEvaluationForShortFall" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+LAST_SHORTFALL_DATE = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+
+<update id="updateInstructionWorkListTabs" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set TP_INSTRUCTION = #TREATMENT_PROCESS_ID#,  
+LAST_TREATMENT_PROCESS_ID = #TREATMENT_PROCESS_ID#,                           
+TP_INSTRUCTION_STATUS = #PROCESS_STATUS_ID:BIGINT#,
+LAST_INSTRUCTION_DATE = cast(#CURRENT_DATE:DATE# as DATE)    
+where account_id = #ACCOUNT_ID:BIGINT# 
+</update>
+
+<update id="updateWorkListTabEvaluationForEmplMaint" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+LAST_EMPLOYMENT_MAINTENANCE_DATE = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+<!-- 43 -->
+<update id="updateWorkListTabEvaluationForAuction" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+LAST_AUCTION_DATE = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+<update id="updateWorkListTabEvaluationForEmail" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+last_email_date = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+
+
+<!-- 23 -->
+<update id="updateRepossessionOrderWorkListTabs" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set TP_REPOSSESSION  = #TREATMENT_PROCESS_ID#,  
+LAST_TREATMENT_PROCESS_ID = #TREATMENT_PROCESS_ID#,
+LAST_REPO_DATE = cast(#CURRENT_DATE:DATE# as DATE),
+WIP_INDICATOR = 1                 
+where account_id = #ACCOUNT_ID:BIGINT# 
+</update>
+
+
+<insert id="insertWorkListTabEvaluation">
+ insert into PTRWLTAB_EVALUATION (ACCOUNT_ID) values (#ACCOUNT_ID#)
+</insert>
+
+<!-- CALL -->
+<update id="updateCallWorkListTabs" parameterClass="java.util.Map">
+UPDATE PTRWLTAB_EVALUATION 
+SET 
+<isEqual property="NEW_TREATMENT" compareValue="true">
+CALL_TREATMENT_PROCESS_ID = #TREATMENT_PROCESS_ID#, 
+LAST_TREATMENT_PROCESS_ID = #TREATMENT_PROCESS_ID#,
+</isEqual>
+			
+LAST_CALL_DATE = CAST(#CURRENT_DATE# AS DATE),
+CALL_TYPE_STATUS_ID = #PROCESS_TYPE_STATUS_ID#, 
+CALL_STATUS_ID = #PROCESS_STATUS_ID#,
+WIP_INDICATOR = 1,
+LAST_CALL_TYPE_STATUS_ID = #PROCESS_TYPE_STATUS_ID#,
+reason_default_id = #REASON_DEFAULT_ID#,
+
+pac_uncontactable_count = case when #PROCESS_STATUS_ID# = 15004 then (coalesce(pac_uncontactable_count,0) + 1) else 0 end,
+
+LAST_SUCCESSFUL_CALL_DATE = CASE WHEN #PROCESS_STATUS_ID# = 15004 then #UPDATED_TIME:DATE# else LAST_SUCCESSFUL_CALL_DATE END,
+LAST_UNSUCCESSFUL_CALL_DATE = CASE WHEN #PROCESS_STATUS_ID# IN (15001,15005) then #UPDATED_TIME:DATE# else LAST_UNSUCCESSFUL_CALL_DATE END,
+LOST_CONTACT_SINCE_DATE = CASE WHEN #IS_LOST_CONTACT# = true then #UPDATED_TIME:DATE# else LOST_CONTACT_SINCE_DATE END
+
+<isNotEmpty property="FOLLOW_UP_DATE">
+, LAST_FOLLOW_UP_DATE = #FOLLOW_UP_DATE#,
+last_follow_up_contact_no = #CONTACT_NO#
+</isNotEmpty>
+<isEqual property="PROCESS_STATUS_CODE" compareValue="R_N_R">
+, LAST_CALL_RNR_DATE = cast(#CURRENT_DATE# as DATE)
+</isEqual>
+<isEqual property="PROCESS_STATUS_CODE" compareValue="R_N_R_MG">
+, LAST_CALL_RNR_DATE = cast(#CURRENT_DATE# as DATE)
+</isEqual>
+
+WHERE ACCOUNT_ID = #ACCOUNT_ID# 
+</update>
+
+
+
+<update id="updateWorkListTabEvaluationForPromise" parameterClass="java.util.Map">
+ update PTRWLTAB_EVALUATION
+ set
+ TP_PTP = #TREATMENT_PROCESS_ID#, 
+ LAST_TREATMENT_PROCESS_ID = #TREATMENT_PROCESS_ID#, 
+ PTP_PROCESS_STATUS = #PROCESS_STATUS_ID#,
+ WIP_INDICATOR = 1
+ 
+ <isEqual prepend="," property="PROCESS_STATUS_ID" compareValue="15007">
+  PTP_PENDING_SINCE_DATE = #CURRENT_DATE:DATE#,
+  PTP_DATE = #PTP_DATE:DATE#,
+  LAST_PTP_DATE = CAST(#CURRENT_DATE# AS DATE),
+  PTP_AMOUNT = #PTP_AMOUNT:NUMERIC#
+ </isEqual>
+ 
+ <isEqual prepend="," property="PROCESS_STATUS_ID" compareValue="15001">
+  PTP_PENDING_SINCE_DATE = null,
+  LAST_BROKEN_PROMISE_DATE = cast(#ACTUAL_END_DATE# as DATE)
+ </isEqual>
+ 
+ <isEqual prepend="," property="PROCESS_STATUS_ID" compareValue="15005">
+  PTP_PENDING_SINCE_DATE = null
+ </isEqual>
+ 
+ where ACCOUNT_ID = #ACCOUNT_ID#
+</update>
+
+
+<!-- TELEGRAM -->
+<parameterMap class="hmap" id="updateTelegramWorkListTab">
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="CURRENT_DATE"  jdbcType="DATE"/>
+<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateTelegramWorkListTab" parameterMap="updateTelegramWorkListTab">
+update ptrwltab_evaluation 
+set TP_TELEGRAM = ?, 
+LAST_TREATMENT_PROCESS_ID = ?,
+LAST_TELEGRAM_DATE = ?,
+TELEGRAM_PROCESS_STATUS = ?,
+WIP_INDICATOR = 1
+where account_id = ? 
+</update>
+
+<!-- LETTER -->
+<parameterMap class="hmap" id="updateLetterWorkListTab-map">
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+<parameter property="CURRENT_DATE"  jdbcType="DATE"/>
+<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateLetterWorkListTab" parameterMap="updateLetterWorkListTab-map">
+update ptrwltab_evaluation 
+set TP_LETTER = ?, 
+LAST_TREATMENT_PROCESS_ID = ?,
+LETTER_PROCESS_STATUS= ?,
+LAST_LETTER_DATE = ?,
+WIP_INDICATOR = 1
+where account_id = ? 
+</update>
+
+<!-- SMS -->
+<update id="updateSmsWorkListTab" parameterClass="java.util.HashMap">
+update ptrwltab_evaluation 
+set 
+TP_SMS = CAST(#TREATMENT_PROCESS_ID# AS BIGINT), 
+LAST_TREATMENT_PROCESS_ID = CAST(#TREATMENT_PROCESS_ID# AS BIGINT),
+SMS_PROCESS_STATUS = CAST(#PROCESS_STATUS_ID# AS BIGINT),
+LAST_CALLER_INITIATED_SMS_DATE = CAST(#CURRENT_DATE# AS DATE), 
+WIP_INDICATOR = 1
+where account_id = CAST(#ACCOUNT_ID# AS BIGINT) 
+</update>
+
+<update id="updateMeetingWorkListTab" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set LAST_MEETING_DATE = CAST(#CURRENT_DATE# AS DATE)
+where ACCOUNT_ID = CAST(#ACCOUNT_ID# AS BIGINT) 
+</update>
+
+<!-- THIRD PARTY SEARCH -->
+<parameterMap class="hmap" id="updateTpsWorkListTab-map">
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+<parameter property="CURRENT_DATE" jdbcType="DATE"/>
+<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateTpsWorkListTab" parameterMap="updateTpsWorkListTab-map">
+update ptrwltab_evaluation 
+set TP_THIRDPARTY_ID = ?, 
+LAST_TREATMENT_PROCESS_ID = ?,
+THIRDPARTY_STATUS = ?,
+WIP_INDICATOR = 1,
+LAST_TPS_DATE = ?
+where account_id = ? 
+</update>
+
+
+<!-- CCRIS -->
+<parameterMap class="hmap" id="updateCcrisWorkListTab-map">
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+<parameter property="CURRENT_DATE" jdbcType="DATE"/>
+<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateCcrisWorkListTab" parameterMap="updateCcrisWorkListTab-map">
+update ptrwltab_evaluation 
+set TP_CCRIS_ID = ?, 
+LAST_TREATMENT_PROCESS_ID = ?,
+WIP_INDICATOR = 1,
+LAST_CCRIS_DATE = ?
+where account_id = ? 
+</update>
+
+<update id="updateAccClassificationWorkListTab" parameterClass="java.util.Map">
+update ptrwltab_evaluation
+set 
+tp_acc_class = #TREATMENT_PROCESS_ID#,  
+last_treatment_process_id = #TREATMENT_PROCESS_ID#,
+acc_class_status = #PROCESS_STATUS_ID#,
+classification_last_contact_source = #SOURCE_CONTACT_ID:BIGINT#, 
+classification_last_payment_reason = #REASON_PAYMENT_ID:BIGINT#,
+last_account_classification_date = #UPDATED_TIME#,
+last_account_classification_sub_type_id = #PROCESS_SUBTYPE_ID# 
+where account_id = #ACCOUNT_ID:BIGINT#
+</update>
+
+<update id="updateWorkListTabEvaluationForAccountReview" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+LAST_ACCOUNT_REVIEW_DATE = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+<update id="updateWorkListTabEvaluationForOutlook" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+OUTLOOK_LAST_CONTACT_SOURCE = #SOURCE_OF_CONTACT_ID:BIGINT#, 
+OUTLOOK_LAST_PAYMENT_REASON = #REASON_OF_PAYMENT_ID:BIGINT#,
+LAST_ACCOUNT_OUTLOOK_DATE = cast(#CURRENT_DATE# AS DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+
+
+
+<update id="updateWorkListTabEvaluationForReview" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+LAST_REVIEW_DATE = cast(#CURRENT_DATE:DATE# as DATE)
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+
+<update id="updateWorkListTabEvaluationForNewCourtOrder" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set 
+LAST_COURT_ORDER_DATE = cast(#CURRENT_DATE:DATE# as DATE),
+LAST_COURT_ORDER_STATUS_ID = #PROCESS_STATUS_ID#,
+LAST_COURT_ORDER_TYPE_STATUS_ID = #PROCESS_TYPE_STATUS_ID#
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+<update id="updateWorkListTabEvaluationForCourtOrder" parameterClass="java.util.Map">
+update PTRWLTAB_EVALUATION
+set
+LAST_COURT_ORDER_STATUS_ID = #PROCESS_STATUS_ID#,
+LAST_COURT_ORDER_TYPE_STATUS_ID = #PROCESS_TYPE_STATUS_ID#
+WHERE ACCOUNT_ID = #ACCOUNT_ID:BIGINT#
+</update>
+
+
+
+<update id="updateManualEscalationWorkListTabs" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set LAST_ESCALATION_TREATMENT_ID = #TREATMENT_PROCESS_ID#, 
+LAST_TREATMENT_PROCESS_ID = #TREATMENT_PROCESS_ID#, 
+LAST_ESCALATION_TYPE_STATUS_ID = #PROCESS_TYPE_STATUS_ID#,
+LAST_ESCALATION_TYPE_ID = #PROCESS_SUBTYPE_ID#,
+ESCALATION_STATUS_ID = #PROCESS_STATUS_ID#,
+LAST_ESCALATION_DATE = #CURRENT_DATE#,
+TURNAROUND_DATE = #TURNAROUND_DATE#,
+WIP_INDICATOR = 1
+where account_id = #ACCOUNT_ID# 
+</update>
+
+
+<update id="updateRnrWorkListTabsForNewTreatment" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set 
+LAST_RNR_TYPE_STATUS_ID = #PROCESS_TYPE_STATUS_ID#,
+LAST_RNR_STATUS_ID = #PROCESS_STATUS_ID#,
+LAST_RNR_SUBTYPE_ID = #PROCESS_SUBTYPE_ID#,
+LAST_RNR_DATE = CAST(#CURRENT_DATE# AS DATE),
+<isEqual property="PROCESS_STATUS_ID" compareValue="15004">
+LAST_RNR_IMPLEMENTED_DATE = CAST(#CURRENT_DATE# AS DATE),
+</isEqual>
+INSTALLMENT_AMOUNT = CAST(#INSTALLMENT_AMOUNT# AS DECIMAL(14,2))
+where ACCOUNT_ID = CAST(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+<update id="updateRnrWorkListTabsForExistingTreatment" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set 
+LAST_RNR_TYPE_STATUS_ID = #PROCESS_TYPE_STATUS_ID#,
+LAST_RNR_STATUS_ID = #PROCESS_STATUS_ID#,
+LAST_RNR_SUBTYPE_ID = #PROCESS_SUBTYPE_ID#,
+<isEqual property="PROCESS_STATUS_ID" compareValue="15004">
+LAST_RNR_IMPLEMENTED_DATE = CAST(#CURRENT_DATE# AS DATE),
+</isEqual>
+INSTALLMENT_AMOUNT = CAST(#INSTALLMENT_AMOUNT# AS DECIMAL(14,2))
+where ACCOUNT_ID = CAST(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+
+<!-- LEGAL / VISITATION -->
+<update id="updateVisitationWorkListTabs" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set visitation_type_status_id = CAST(#PROCESS_TYPE_STATUS_ID# AS BIGINT), 
+last_treatment_process_id = CAST(#TREATMENT_PROCESS_ID# AS BIGINT), 
+LAST_SITE_VISIT_DATE = CAST(#CURRENT_DATE# AS DATE),
+WIP_INDICATOR = 1
+where account_id = CAST(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+
+<update id="updateAccountVisitation" parameterClass="java.util.Map">
+update ptraccount_visitation 
+set status_id = CAST(#PROCESS_STATUS_ID# AS BIGINT), 
+type_status_id = CAST(#PROCESS_TYPE_STATUS_ID# AS BIGINT),
+state_id = CAST(#STATE_ID# AS BIGINT), 
+area_id = CAST(#AREA_ID# AS BIGINT)
+where account_id = CAST(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+<insert id="insertAccountVisitation" parameterClass="java.util.Map">
+insert into ptraccount_visitation 
+(account_id,status_id,type_status_id,state_id,area_id,created_date) 
+values
+(
+CAST(#ACCOUNT_ID# AS BIGINT),
+CAST(#PROCESS_STATUS_ID# AS BIGINT),
+CAST(#PROCESS_TYPE_STATUS_ID# AS BIGINT),
+CAST(#STATE_ID# AS BIGINT), 
+CAST(#AREA_ID# AS BIGINT),
+CAST(#CREATED_DATE# AS DATE)
+)
+</insert>
+
+
+<update id="updateLegalWorkListTabs" parameterClass="java.util.Map">
+update ptrwltab_evaluation 
+set legal_type_status_id = CAST(#PROCESS_TYPE_STATUS_ID# AS BIGINT), 
+last_treatment_process_id = CAST(#TREATMENT_PROCESS_ID# AS BIGINT), 
+LAST_INSTRUCT_LEGAL_DATE = CAST(#CURRENT_DATE# AS DATE),
+WIP_INDICATOR = 1
+where account_id = CAST(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+
+<!-- PAYOFF -->
+<parameterMap class="hmap" id="updatePayOffWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+	    <parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+	    <parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>	
+<update id="updatePayOffWorkListTabs" parameterMap="updatePayOffWorkListTabs-map">
+        update ptrwltab_evaluation 
+        set TP_PAYOFF = ?,  
+	    	LAST_TREATMENT_PROCESS_ID = ?,
+        	PAYOFF_STATUS = ?,
+        	WIP_INDICATOR = 1
+        where account_id = ? 
+</update>	
+
+<parameterMap class="hmap" id="updatePayOffWorkListTabs1-map">
+		<parameter property="PROCESS_STATUS_ID" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+</parameterMap>	
+<update id="updatePayOffWorkListTabs1" parameterMap="updatePayOffWorkListTabs1-map">
+        update ptrwltab_evaluation 
+        set PAYOFF_STATUS = ?
+        where TP_PAYOFF = ? 
+</update>	
+
+
+<!-- ACCOUNT CLASSIFICATION -->
+<parameterMap class="hmap" id="updateAcctClassWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+	    <parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+	    <parameter property="CLASSIFICATION_LAST_CONTACT_SOURCE" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="CLASSIFICATION_LAST_PAYMENT_REASON" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="LAST_ACCOUNT_CLASSIFICATION_DATE" jdbcType="DATE"/>
+		<parameter property="PROCESS_SUBTYPE_ID" javaType="long"  jdbcType="NUMERIC"/>
+	    <parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>	
+<update id="updateAcctClassWorkListTabs" parameterMap="updateAcctClassWorkListTabs-map">
+        update ptrwltab_evaluation 
+        set TP_ACC_CLASS = ?,  
+	    	LAST_TREATMENT_PROCESS_ID = ?,                           
+        	ACC_CLASS_STATUS = ?,
+        	CLASSIFICATION_LAST_CONTACT_SOURCE = ?, 
+			CLASSIFICATION_LAST_PAYMENT_REASON = ?,
+			LAST_ACCOUNT_CLASSIFICATION_DATE = ?,
+			LAST_ACCOUNT_CLASSIFICATION_SUB_TYPE_ID = ?     
+        where account_id = ? 
+</update>	
+
+
+
+
+
+<!-- CONFIRM PAYMENT -->
+<parameterMap class="hmap" id="updateConfirmPaymentWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+	    <parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+	    <parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>	
+<update id="updateConfirmPaymentWorkListTabs" parameterMap="updateConfirmPaymentWorkListTabs-map">
+        update ptrwltab_evaluation 
+        set TP_CONFIRM_PAYMENT  = ?,
+	    	LAST_TREATMENT_PROCESS_ID = ?,                           
+        	CONFIRM_PAYMENT_STATUS = ?
+        where account_id = ? 
+</update>	
+	
+
+
+<!-- *** CROSS MONTH TREATMENT *** -->
+<!-- SETOFF / EARMARK -->
+<parameterMap class="hmap" id="updateearmarksetoffWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID"  javaType="long"/>
+	    <parameter property="TREATMENT_PROCESS_ID"  javaType="long"/>
+		<parameter property="PROCESS_STATUS_ID" javaType="long"/>
+		<parameter property="CURRENT_DATE" jdbcType="DATE"/>
+		<parameter property="ACCOUNT_ID" javaType="long"/>
+</parameterMap>
+<update id="updateearmarksetoffWorkListTabs" parameterMap="updateearmarksetoffWorkListTabs-map">
+		update ptrwltab_evaluation 
+		set TP_EARMARK_ID = ?, 
+	    	LAST_TREATMENT_PROCESS_ID = ?,
+			EARMARK_STATUS = ?,
+			EARMARK_DATE = ?,
+	    	WIP_INDICATOR = 1
+		where account_id = ? 
+</update>
+
+
+
+
+<!-- AGENCY-->
+<parameterMap class="hmap" id="updateOCAinWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+	    <parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateOCAinWorkListTabs" parameterMap="updateOCAinWorkListTabs-map">
+		update ptrwltab_evaluation 
+		set TP_AGENCY_ID = ?, 
+	    	LAST_TREATMENT_PROCESS_ID = ?,
+			AGENCY_STATUS = ?,
+	    	WIP_INDICATOR = 1
+		where account_id = ? 
+</update>
+
+
+
+
+<!-- RnR -->
+<parameterMap class="hmap" id="updateRNREscalationWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID" jdbcType="NUMERIC"/>
+		<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" jdbcType="NUMERIC"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateRNREscalationWorkListTabs" parameterMap="updateRNREscalationWorkListTabs-map">
+		update ptrwltab_evaluation 
+		set TP_RNR = ?,
+			RNR_PROCESS_STATUS = ?, 
+			last_treatment_process_id = ?, 
+			WIP_INDICATOR = 1
+		where account_id = ? 
+</update>
+
+<parameterMap class="hmap" id="updateRnRWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+	    <parameter property="TREATMENT_PROCESS_ID" javaType="long"  jdbcType="NUMERIC"/>
+		<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateRnRWorkListTabs" parameterMap="updateRnRWorkListTabs-map">
+		update ptrwltab_evaluation 
+		set TP_RNR = ?, 
+	    	LAST_TREATMENT_PROCESS_ID = ?,
+			RNR_PROCESS_STATUS  = ?,
+			WIP_INDICATOR = 1
+		where account_id = ? 
+</update>
+
+
+<!-- MANAGEMENT APPROVAL -->
+<parameterMap class="hmap" id="updateStatusWorkListTabs-map">
+		<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" jdbcType="NUMERIC"/>
+	    <parameter property="ACTION_TYPE" jdbcType="NUMERIC" />
+	    <parameter property="CURRENT_DATE" jdbcType="DATE"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateEscalationWorkListTabs" parameterMap="updateStatusWorkListTabs-map">
+		update ptrwltab_evaluation 
+		set escalation_status_id = ?, 
+			last_treatment_process_id = ?, 
+			mgmt_app_action_type_id = ?,
+	    	WIP_INDICATOR = 1,
+	    	LAST_MANAGEMENT_APPROVAL_DATE = ?
+		where account_id = ? 
+</update>
+
+<parameterMap class="hmap" id="updateStatusWorkListTabs1-map">
+		<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateEscalationWorkListTabs1" parameterMap="updateStatusWorkListTabs1-map">
+		update ptrwltab_evaluation 
+		set escalation_status_id = ?
+		where account_id = ? 
+</update>
+
+
+<!-- REWRITE -->
+<parameterMap class="hmap" id="updateReWriteEscalationWorkListTabs-map">
+		<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" jdbcType="NUMERIC"/>
+		<parameter property="CURRENT_DATE" jdbcType="DATE"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateReWriteEscalationWorkListTabs" parameterMap="updateReWriteEscalationWorkListTabs-map">
+		update ptrwltab_evaluation 
+		set REWRITE_PROCESS_STATUS = ?, 
+			last_treatment_process_id = ?, 
+			LAST_REWRITE_DATE = ?,
+			WIP_INDICATOR = 1
+		where account_id = ? 
+</update>
+
+<parameterMap class="hmap" id="updateReWriteEscalationWorkListTabs1-map">
+		<parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+</parameterMap>
+<update id="updateReWriteEscalationWorkListTabs1" parameterMap="updateReWriteEscalationWorkListTabs1-map">
+		update ptrwltab_evaluation 
+		set REWRITE_PROCESS_STATUS = ?
+		where account_id = ? 
+</update>
+
+<!-- ACCOUNT REVIEW -->
+<parameterMap class="hmap" id="updateAccountReviewWorkListTabs-map">
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long" jdbcType="NUMERIC"/>
+		<parameter property="TREATMENT_PROCESS_ID" javaType="long" jdbcType="NUMERIC"/>
+	    <parameter property="PROCESS_TYPE_STATUS_ID" javaType="long" jdbcType="NUMERIC"/>
+	    <parameter property="PROCESS_STATUS_ID" jdbcType="NUMERIC"/>
+	    <parameter property="PROCESS_TYPE_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>		
+</parameterMap>
+<update id="updateAccountReviewWorkListTabs" parameterMap="updateAccountReviewWorkListTabs-map">
+		update ptrwltab_evaluation 
+		set call_treatment_process_id = ?, 
+			last_treatment_process_id = ?,
+			CALL_TYPE_STATUS_ID =?, 
+	    	CALL_STATUS_ID =?,
+	    	WIP_INDICATOR = 1,
+	    	LAST_CALL_TYPE_STATUS_ID = ?
+		where account_id = ? 
+</update>
+
+	
+
+<insert id="getLatestPTPStatus" >
+	merge into PTRWLTAB_EVALUATION e using
+	(select w.TP_PTP, p.PROCESS_STATUS_ID 
+	from PTRWLTAB_EVALUATION w,PTRTREATMENT_PROCESS p
+	where w.TP_PTP=p.TREATMENT_PROCESS_ID) q
+	on (q.TP_PTP=e.TP_PTP)
+	when matched then 
+	update set
+	e.PTP_PROCESS_STATUS=q.PROCESS_STATUS_ID
+</insert>
+
+
+<insert id="updateWLTabAccounts" >
+	merge into ptrwltab_evaluation w using
+	(select account_id from ptraccount a,PTRPRODUCT_TYPE_REF r,PTRPRODUCT_TYPE_CATEGORY_REF cr
+	where a.PRODUCT_TYPE_ID=r.PRODUCT_TYPE_ID and r.PRODUCT_TYPE_CATEGORY_ID=cr.PRODUCT_TYPE_CATEGORY_ID
+	and cr.PRODUCT_TYPE_CATEGORY_CODE in ('HP','PL','MG','OD')) e
+	on (e.account_id =w.account_id)
+	when not matched then
+	insert (w.account_id)
+	values (e.account_id)
+</insert>
+<!--upl paid evaluation -->  
+
+
+
+
+
+
+
+
+
+
+</sqlMap>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="BEGIN_OF_MONTH" truncate="true" type="date"/>
+ <exec ceiling="true" endmonth="true" nextweekday="false" startmonth="false" to="END_OF_MONTH" truncate="false" type="date"/>
+ <exec addmonths="NEGATIVE_ONE" ceiling="true" endmonth="false" nextweekday="false" startmonth="false" to="LAST_MONTH" truncate="false" type="date"/>
+ <exec ceiling="true" endmonth="true" from="LAST_MONTH" nextweekday="false" startmonth="false" to="END_OF_LAST_MONTH" truncate="false" type="date"/>
+ <exec ceiling="false" endmonth="false" from="LAST_MONTH" nextweekday="false" startmonth="true" to="BEGIN_OF_LAST_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="BEGIN_OF_DAY" truncate="true" type="date"/>
+ <exec event="kpi.dailyCallPerformance" ignoreresult="true" type="raise"/>
+ <exec event="kpi.mtdCallPerformance" ignoreresult="true" type="raise"/>
+ <exec event="kpi.previousMonthCallPerformance" ignoreresult="true" type="raise"/>
+ <exec from="DAILY_CALL_PERFORMANCE" key="DAILY_CALL_PERFORMANCE" type="copyintolist"/>
+ <exec from="MONTH_TO_DATE_CALL_PERFORMANCE" key="MONTH_TO_DATE_CALL_PERFORMANCE" type="copyintolist"/>
+ <exec from="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" key="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" type="copyintolist"/>
+</event>

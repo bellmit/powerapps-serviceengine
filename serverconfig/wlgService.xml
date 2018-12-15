@@ -1,0 +1,1529 @@
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="workListVisualAssignmentService.xml">
+
+
+<resultMap id="getWlgDecisionTreeType" class="hmap">
+ <result property="WLG_ASSIGNMENT_TYPE_ID" javaType="java.lang.Long"/>
+ <result property="WLG_TYPE_CODE" javaType="java.lang.String"/>
+ <result property="WLG_TYPE_DESC" javaType="java.lang.String"/>
+</resultMap>
+<select id="getWlgDecisionTreeType" resultMap="getWlgDecisionTreeType" parameterClass="hmap"> 
+  select 1 as WLG_ASSIGNMENT_TYPE_ID, 'PRE_IL_WLG' as WLG_TYPE_CODE, 'Pre IL Work List Generation'
+  order by WLG_TYPE_CODE desc
+</select>
+<select id="getWlgDecisionTreeTypeRnR" resultMap="getWlgDecisionTreeType" parameterClass="hmap"> 
+  select 1 as WLG_ASSIGNMENT_TYPE_ID, 'R_N_R_IL_WLG' as WLG_TYPE_CODE, 'R and R Work List Generation'
+  order by WLG_TYPE_CODE desc
+</select>
+
+
+<resultMap id="getWlgType" class="hmap">
+ <result property="TREE_TYPE_FILTER_CODE" javaType="java.lang.String"/>
+ <result property="TREE_TYPE_FILTER_DESC" javaType="java.lang.String"/>
+ <result property="TREE_TYPE_FILTER" javaType="java.lang.Long"/>
+ <result property="SORT_PRIORITY" javaType="java.lang.Long"/>
+</resultMap>
+<select id="getWlgType" resultMap="getWlgType" parameterClass="hmap"> 
+SELECT CODE,DESCRIPTION,ID,SORT_PRIORITY FROM PTRWORK_LIST_GENERATION_TREE_TYPE_REF WHERE ID IN (1,2,10) ORDER BY ID ASC, CODE ASC
+</select>
+
+
+<resultMap id="getWlgProductType" class="hmap">
+ <result property="PRODUCT_TYPE_FILTER" javaType="java.lang.Long"/>
+ <result property="WLG_PRODUCT_TYPE_DESC" javaType="java.lang.String"/>
+ <result property="ACCESS_RIGHTS_ID" javaType="java.lang.Long"/>
+</resultMap>
+<select id="getWlgProductType" resultMap="getWlgProductType" parameterClass="hmap"> 
+  SELECT ID,DESCRIPTION, 90002022 AS ACCESS_RIGHTS_ID FROM PTRWORK_LIST_GENERATION_PRODUCT_TYPE_REF WHERE ID = 4
+  union
+  SELECT ID,DESCRIPTION, 90002024 AS ACCESS_RIGHTS_ID FROM PTRWORK_LIST_GENERATION_PRODUCT_TYPE_REF WHERE ID = 8
+  union
+  SELECT ID,DESCRIPTION, 90002023 AS ACCESS_RIGHTS_ID FROM PTRWORK_LIST_GENERATION_PRODUCT_TYPE_REF WHERE ID = 12
+  union
+  SELECT ID,DESCRIPTION, 90002025 AS ACCESS_RIGHTS_ID FROM PTRWORK_LIST_GENERATION_PRODUCT_TYPE_REF WHERE ID = 14
+</select>
+
+
+
+<resultMap id="getWlTreeList-map" class="hmap">
+ <result property="ID" javaType="long"/>
+ <result property="DESCRIPTION"/>
+ <result property="IS_BATCH" javaType="boolean"/>
+ <result property="IS_CUSTOMER_LEVEL" javaType="boolean"/>
+ <result property="LETTER_EXTRACTION" javaType="boolean"/>
+</resultMap>
+<select id="getWlTreeList" resultMap="getWlTreeList-map" parameterClass="hmap"> 
+  select id,DESCRIPTION,IS_BATCH,IS_CUSTOMER_LEVEL,LETTER_EXTRACTION
+  from ptrwork_list_generation_tree
+  where (disable=false or disable is null)  
+  and PRODUCT_CATEGORY_ID =#CATEGORY_ID# and TYPE_ID=#TYPE_ID#
+</select>
+  
+<select id="getWlTreeForEditing" resultMap="getWlTreeList-map" parameterClass="hmap"> 
+  select id,DESCRIPTION,IS_BATCH,IS_CUSTOMER_LEVEL,LETTER_EXTRACTION
+  from ptrwork_list_generation_tree
+  where 
+  id=#TREE_ID#
+</select>
+
+<select id="getWlTreeListAdhoc" resultMap="getWlTreeList-map" parameterClass="hmap"> 
+  select id,DESCRIPTION,IS_BATCH,IS_CUSTOMER_LEVEL,LETTER_EXTRACTION
+  from ptrwork_list_generation_tree
+  where (disable=false or disable is null)
+  and PRODUCT_CATEGORY_ID = #CATEGORY_ID# 
+  and TYPE_ID=#TYPE_ID#
+</select> 
+
+<resultMap id="getWlTreeDocumentId-map" class="hmap">
+ <result property="DOCUMENT_ID" javaType="long"/>
+ <result property="IS_CUSTOMER_LEVEL" javaType="java.lang.Boolean"/>
+ <result property="LETTER_EXTRACTION" javaType="boolean"/>
+</resultMap>  
+<select id="getWlTreeDocumentId" resultMap="getWlTreeDocumentId-map" parameterClass="hmap"> 
+  select 
+  DOCUMENT_ID,
+  IS_CUSTOMER_LEVEL,
+  LETTER_EXTRACTION
+  from ptrwork_list_generation_tree
+  where 
+  id=#TREE_ID#
+</select>
+<resultMap id="getWlTreeForBatch-map" class="hmap">
+ <result property="DOCUMENT_ID" javaType="long"/>
+ <result property="PRODUCT_CATEGORY_ID" javaType="long"/>
+ <result property="TYPE_ID" javaType="long"/>
+ <result property="TREE_ID" javaType="long"/>
+ <result property="WLG_TYPE_CODE" javaType="java.lang.String"/>
+ <result property="IS_CUSTOMER_LEVEL" javaType="boolean"/>
+</resultMap>  
+<select id="getWlTreeForMainUplBatch" resultMap="getWlTreeForBatch-map" parameterClass="hmap"> 
+  select document_id,12,1,ID,'PRE_IL_WLG' as WLG_TYPE_CODE,IS_CUSTOMER_LEVEL from PTRWORK_LIST_GENERATION_TREE where TYPE_ID=1 and PRODUCT_CATEGORY_ID=12 and IS_BATCH=true
+</select>
+<select id="getWlTreeForSupplementryUplBatch" resultMap="getWlTreeForBatch-map" parameterClass="hmap"> 
+  select document_id,12,2,ID,'PRE_IL_WLG' as WLG_TYPE_CODE,IS_CUSTOMER_LEVEL from PTRWORK_LIST_GENERATION_TREE where TYPE_ID=2 and PRODUCT_CATEGORY_ID=12 and IS_BATCH=true
+</select>
+<select id="getWlTreeForMainHpBatch" resultMap="getWlTreeForBatch-map" parameterClass="hmap"> 
+  select document_id,4,1,ID,'PRE_IL_WLG' as WLG_TYPE_CODE,IS_CUSTOMER_LEVEL from PTRWORK_LIST_GENERATION_TREE where TYPE_ID=1 and PRODUCT_CATEGORY_ID=4 and IS_BATCH=true
+</select>
+<select id="getWlTreeForSupplementryHpBatch" resultMap="getWlTreeForBatch-map" parameterClass="hmap"> 
+  select document_id,4,2,ID,'PRE_IL_WLG' as WLG_TYPE_CODE,IS_CUSTOMER_LEVEL from PTRWORK_LIST_GENERATION_TREE where TYPE_ID=2 and PRODUCT_CATEGORY_ID=4 and IS_BATCH=true
+</select>
+<select id="getWlTreeForMainMgBatch" resultMap="getWlTreeForBatch-map" parameterClass="hmap"> 
+  select document_id,8,1,ID,'PRE_IL_WLG' as WLG_TYPE_CODE,IS_CUSTOMER_LEVEL from PTRWORK_LIST_GENERATION_TREE where TYPE_ID=1 and PRODUCT_CATEGORY_ID=8 and IS_BATCH=true
+</select>
+<select id="getWlTreeForSupplementryMGBatch" resultMap="getWlTreeForBatch-map" parameterClass="hmap"> 
+  select document_id,8,2,id,'PRE_IL_WLG' as WLG_TYPE_CODE,IS_CUSTOMER_LEVEL from PTRWORK_LIST_GENERATION_TREE where TYPE_ID=2 and PRODUCT_CATEGORY_ID=8 and IS_BATCH=true
+</select>
+
+  <resultMap id="wlgTreeOption-map" class="hmap">
+     <result property="FIELD_NAME" javaType="string"/>
+     <result property="FIELD_TYPE" javaType="string"/>
+     <result property="FIELD_DESCRIPTION" javaType="string"/>
+     <result property="DISCRETE_VALUE_DESCRIPTION" javaType="string"/>
+     <result property="DISCRETE_VALUE_ID" javaType="long"/>
+     <result property="DISCRETE_VALUE_DISABLED" javaType="boolean"/>
+  </resultMap>
+<select id="getWlgTreeOptions" resultMap="wlgTreeOption-map" parameterClass="hmap">
+select 
+FIELD_NAME,
+FIELD_TYPE,
+FIELD_DESCRIPTION,
+DISCRETE_VALUE_DESCRIPTION,
+DISCRETE_VALUE_ID,
+DISCRETE_VALUE_DISABLED 
+FROM (
+select 
+op.FIELD_NAME,
+op.FIELD_TYPE,
+op.FIELD_DESCRIPTION,
+op.DISCRETE_VALUE_DESCRIPTION,
+op.DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID=#PRODUCT_CATEGORY_ID# 
+<!-- and cr.TREE_TYPE_ID=#TYPE_ID#  -->
+and (DISABLE is null or DISABLE = false) 
+and (op.REFERENCE is null or op.REFERENCE != 1)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='UNDER_CONSTRUCTION_ID' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='UNCONTACTABLE_ACCOUNT_ID' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='RR_REJECTED_STATUS_ID' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='DIBS' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='AKPK_FLAG' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='ADDRESS_SOURCE_TYPE_ID' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='CONTACT_SOURCE_TYPE_ID' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptryes_no_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='ECA_ASSIGNED_ID' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrcitizenship_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='RACE_TYPE_ID' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrreason_of_default_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='CUSTOMERS_REASON_OF_DEFAULT' 
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select 
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrtreatment_type_status_ref sr,ptrwork_list_generation_condition op 
+inner join PTRWORK_LIST_GENERATION_CONDITION_REL cr on cr.CONDITION_ID=op.id
+where cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+and op.FIELD_NAME='LAST_CALL_STATUS_ID' 
+and sr.type_id = 8
+and (op.DISABLE is null or op.DISABLE = false) and (sr.DISABLE is null or sr.DISABLE = false)
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptrunmapped_condition_ref sr
+where op.FIELD_NAME in (
+'CAR_MAKE_SEGMENT_ID',
+'STATE_ID',
+'MATURED_LOAN_MIA',
+'BRANCH_GEOGRAPHICAL_STATE_ID',
+'IRC_FLAG',
+'IRC_CODE',
+'DEALER_ID',
+'DELIVERY_CHANNEL_ID',
+'PREFIX_NAME_ID',
+'TAKAFUL_TAGGING_TYPE',
+'TAKAFUL_TAGGING_STATUS',
+'LATEST_VISITATION_STATUS_ECA_ID',
+'LATEST_VISITATION_STATUS_INTERNAL_ID',
+'RR_STATUS_ID'
+
+)
+union
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptraccount_status_ref sr
+where op.FIELD_NAME='ACCOUNT_STATUS_ID' 
+union
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptrbank_branch_ref sr
+where op.FIELD_NAME='BRANCH_ID'
+union
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptremployment_status_ref sr
+where op.FIELD_NAME='EMPLOYMENT_STATUS_ID' 
+
+
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptrnpl_status_ref sr
+where op.FIELD_NAME='NPL_STATUS' 
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptroccupation_ref sr
+where op.FIELD_NAME='OCCUPATION_ID'
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptrspecial_status_ref sr
+where op.FIELD_NAME='SPECIAL_STATUS'
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptrproduct_type_category_ref sr
+where op.FIELD_NAME='PRODUCT_TYPE_CATEGORY_ID' 
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptrproduct_type_ref sr
+where op.FIELD_NAME='PRODUCT_TYPE_ID' 
+
+
+union
+
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+(select work_list_id as id, work_list_name as description, disable, work_list_group from ptrwork_list) sr
+where op.FIELD_NAME='WORK_LIST_ID_RECLASSIFICATION' 
+and cr.PRODUCT_CATEGORY_ID = #PRODUCT_CATEGORY_ID# 
+and cr.TREE_TYPE_ID = #TYPE_ID# 
+<isEqual property="PRODUCT_CATEGORY_ID" compareValue="4">
+and sr.work_list_group = 3
+</isEqual>
+
+<isEqual property="PRODUCT_CATEGORY_ID" compareValue="12">
+and sr.work_list_group = 2
+</isEqual>
+
+<isEqual property="PRODUCT_CATEGORY_ID" compareValue="8">
+and sr.work_list_group = 1
+</isEqual>
+
+
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+inner join ptrwork_list_generation_condition_rel cr on cr.CONDITION_ID=op.id,
+ptrresidence_or_business_ref sr
+where op.FIELD_NAME='RESIDENTIAL_NRESIDENTIAL_ID' 
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op,
+ptremployer_default_reason_ref sr
+where op.FIELD_NAME='EMPLOYER_DEFAULT_REASON_ID' 
+
+union
+
+select 
+op.FIELD_NAME,
+op.FIELD_TYPE,
+op.FIELD_DESCRIPTION,
+op.DISCRETE_VALUE_DESCRIPTION,
+op.DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op 
+where op.FIELD_NAME='CHECK_DIGIT_ID' 
+and (op.DISABLE is null or op.DISABLE = false)
+
+union
+
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op,
+ptrpayment_method_ref sr
+where op.FIELD_NAME='LAST_PAYMENT_METHOD_ID' 
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op,
+ptrpayment_status_ref sr
+where op.FIELD_NAME='PAYMENT_STATUS_ID' 
+
+union
+
+select distinct
+op.FIELD_NAME AS FIELD_NAME,
+op.FIELD_TYPE AS FIELD_TYPE,
+op.FIELD_DESCRIPTION AS FIELD_DESCRIPTION,
+sr.DESCRIPTION as DISCRETE_VALUE_DESCRIPTION,
+sr.ID AS DISCRETE_VALUE_ID,
+op.DISCRETE_VALUE_DISABLED 
+from ptrwork_list_generation_condition op,
+ptrpayment_method_ref sr
+where op.FIELD_NAME='PRIORITY_PAYMENT_ID' 
+and sr.code in ('ag','biro1','biro2','salarydeduction','securitydeposit')
+) AS A
+order by FIELD_DESCRIPTION, UPPER(DISCRETE_VALUE_DESCRIPTION) 
+</select>
+
+<sql id="getWlgProductGenerationTypeFragment">
+<isNotEmpty property="WLG_TYPE_CODE">
+<isEqual property="WLG_TYPE_CODE" compareValue="PRE_IL_WLG">
+    <!-- Hire Purchase (HP) --> 
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="4">
+    wl.WORK_LIST_GROUP = 3
+  </isEqual>
+  <!-- Unsecured Personal Loan (UPL) -->  
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="12">
+    wl.WORK_LIST_GROUP = 2
+  </isEqual>
+  <!-- Mortgage (MG) -->  
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="8">
+    wl.WORK_LIST_GROUP = 1
+  </isEqual> 
+</isEqual>  
+</isNotEmpty>
+</sql>
+
+
+<resultMap id="getWlgBuckets" class="hmap">
+ <result property="ID" javaType="long"/>
+ <result property="WORK_LIST_ID" javaType="long"/>
+ <result property="DESCRIPTION"/>
+ <result property="WORK_LIST_DESC" javaType="java.lang.String"/>
+</resultMap>
+
+<sql id="getWlgBuckets-Fragment">
+SELECT 
+wl.WORK_LIST_ID,
+wl.WORK_LIST_ID, 
+wl.WORK_LIST_NAME || ' (' || wlcate.DESCRIPTION || ')',
+wl.WORK_LIST_DESC as WORK_LIST_DESC
+FROM PTRWORK_LIST wl
+inner join ptrwork_list_group_ref wlgroup on wl.work_list_group = wlgroup.id
+inner join ptrwork_list_category_ref wlcate on wl.work_list_category = wlcate.id
+where (wl.disable is null or wl.disable = false)
+</sql>
+
+<select id="getWlgBuckets" resultMap="getWlgBuckets">
+    <include refid="getWlgBuckets-Fragment"/>
+  and <include refid="getWlgProductGenerationTypeFragment"/>
+  order by upper(wl.WORK_LIST_NAME) asc
+</select>
+<select id="getWlgBucketsForUserAssignments" resultMap="getWlgBuckets">
+  <include refid="getWlgBuckets-Fragment"/> 
+    and <include refid="getWlgProductGenerationTypeFragment"/> 
+  and wl.work_list_id in 
+  (0 <iterate prepend="," property="ASSIGNED_WORK_LIST" conjunction=",">#ASSIGNED_WORK_LIST[]#</iterate>)
+  order by upper(wl.WORK_LIST_NAME) asc
+</select>
+
+
+
+
+
+<resultMap id="getWlgBucketsAssignedUsers" class="hmap">
+ <result property="USER_ID" javaType="string"/>
+ <result property="USERNAME" javaType="string"/>
+</resultMap>
+<select id="getWlgBucketsAssignedUsers" resultMap="getWlgBucketsAssignedUsers">
+select u.user_id, 
+coalesce(e.FIRST_NAME,'')||' '||coalesce(e.MIDDLE_NAME,'')||' '||coalesce(e.LAST_NAME,'') 
+from ptrwork_list_generation_user_template t 
+inner join PTRUSER u on u.USER_ID=t.USER_ID
+left join PTREMPLOYEE e on e.ID=u.EMPLOYEE_ID
+where t.WORK_LIST_ID=#WORK_LIST_ID# and t.TREE_ID=#TREE_ID#
+and (u.ACTIVE_STATUS NOT IN ('D', 'N')) 
+and (u.disable is null or u.disable &lt;&gt; true)
+</select>
+<resultMap id="getWlgSupplementryBucketsAssignedUsers" class="hmap">
+ <result property="USER_ID" javaType="string"/>
+ <result property="USERNAME" javaType="string"/>
+ <result property="SOURCE" javaType="boolean"/>
+</resultMap>
+<select id="getWlgSupplementryBucketsAssignedUsers" resultMap="getWlgSupplementryBucketsAssignedUsers">
+select u.user_id,coalesce(e.FIRST_NAME,'')||' '||coalesce(e.MIDDLE_NAME,'')||' '||coalesce(e.LAST_NAME,''),case when wl.user_id is not null then 1 else 0 end as SOURCE 
+from  PTRUSER u
+left join PTREMPLOYEE e on e.ID=u.EMPLOYEE_ID
+left join ptruser_wl_assign wl on wl.user_id=u.user_id and wl.work_list_id=#WORK_LIST_ID#
+where 
+exists ( select 1 from  ptrwork_list_generation_user_template t 
+  where t.user_id=u.user_id and t.tree_id=#TREE_ID# and t.work_list_id=#WORK_LIST_ID#)
+or exists(select 1 from ptruser_wl_assign uwl where uwl.user_id=u.user_id and uwl.work_list_id=#WORK_LIST_ID#)
+</select>
+<select id="getWlgBucketsAvailableUsers" resultMap="getWlgBucketsAssignedUsers">
+select u.user_id, coalesce(e.FIRST_NAME,'')||' '||coalesce(e.MIDDLE_NAME,'')||' '||coalesce(e.LAST_NAME,'') 
+from  PTRUSER u
+inner join PTRUSER_GROUP_REF usergroup on u.USER_GROUP_ID = usergroup.ID
+left join PTREMPLOYEE e on e.ID=u.EMPLOYEE_ID
+where 
+  (u.ACTIVE_STATUS NOT IN ('D', 'N')) and (u.disable is null or u.disable &lt;&gt; true)
+<isNotEmpty property="WLG_TYPE_CODE">
+<isEqual property="WLG_TYPE_CODE" compareValue="PRE_IL_WLG">
+  <!-- HP -->
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="4">
+    and usergroup.code in ('ALL','AF') 
+  </isEqual> 
+  <!-- PL -->
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="12">
+    and usergroup.code in ('ALL','PFI') 
+  </isEqual> 
+  <!-- MG -->
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="8">
+    and usergroup.code in ('ALL','PF') 
+  </isEqual> 
+</isEqual>  
+</isNotEmpty>
+and u.user_id not in(select t.user_id from ptrwork_list_generation_user_template t 
+where t.WORK_LIST_ID=#WORK_LIST_ID# and t.TREE_ID=#TREE_ID#)
+order by upper(u.user_id) asc
+</select>
+
+
+<resultMap id="getWlgTreeAssignedUsers" class="hmap">
+<result property="WORK_LIST_ID" javaType="long"/> 
+<result property="USER_ID" javaType="string"/>
+<result property="USERNAME" javaType="string"/>
+</resultMap>
+<select id="getWlgTreeAssignedUsers" resultMap="getWlgTreeAssignedUsers">
+<isEqual property="TYPE_ID" compareValue="1">
+select 
+t.work_list_id,
+u.user_id, 
+coalesce(e.first_name,'')||' '||coalesce(e.middle_name,'')||' '||coalesce(e.last_name,'') 
+from ptrwork_list_generation_user_template t 
+inner join PTRUSER u on u.USER_ID=t.USER_ID
+left join PTREMPLOYEE e on e.ID=u.EMPLOYEE_ID
+where t.TREE_ID=#TREE_ID#
+and (u.ACTIVE_STATUS NOT IN ('D', 'N')) 
+and (u.disable is null or u.disable = false) 
+</isEqual>
+<isEqual property="TYPE_ID" compareValue="2">
+select distinct 
+case when t.user_id is not null then t.work_list_id else wl.work_list_id end,
+u.user_id,
+coalesce(e.first_name,'')||' '||coalesce(e.middle_name,'')||' '||coalesce(e.last_name,'')
+from  PTRUSER u
+left join PTREMPLOYEE e on e.ID=u.EMPLOYEE_ID
+left join ptruser_wl_assign wl on wl.user_id=u.user_id
+left join ptrwork_list_generation_user_template t on t.user_id=u.user_id and t.tree_id=#TREE_ID#
+where 
+exists ( select 1 from  ptrwork_list_generation_user_template t 
+where t.user_id=u.user_id and t.tree_id=#TREE_ID#)
+or exists (select 1 from ptruser_wl_assign uwl where uwl.user_id=u.user_id and 
+uwl.work_list_id in (0 <iterate prepend="," property="ASSIGNED_WORK_LIST" conjunction=",">#ASSIGNED_WORK_LIST[]#</iterate>))
+</isEqual>
+</select>
+
+<delete id="deleteWlgTree">
+  update ptrwork_list_generation_tree set disable=#DISABLE:BOOLEAN#,updated_user_id=#UPDATED_USER_ID#,updated_time=#UPDATED_TIME:TIMESTAMP# 
+  where id=#TREE_ID#
+</delete>
+
+<update id="updateWlgTree">
+  update PTRWORK_LIST_GENERATION_TREE set 
+  DESCRIPTION=#DESCRIPTION#,
+  IS_CUSTOMER_LEVEL = #IS_CUSTOMER_LEVEL#,
+  IS_BATCH=#IS_BATCH#,UPDATED_TIME=#UPDATED_TIME#,
+  updated_user_id=#UPDATED_USER_ID#,
+  LETTER_EXTRACTION=#LETTER_EXTRACTION#,
+  WLG_ASSIGNMENT_TYPE_ID = cast(#WLG_ASSIGNMENT_TYPE_ID# as bigint)
+  where id=#TREE_ID#
+</update>
+
+<update id="setIsbatchToFalse">
+  update ptrwork_list_generation_tree set 
+  is_batch=false,
+  updated_user_id=#UPDATED_USER_ID#,
+  updated_time=#UPDATED_TIME:TIMESTAMP# 
+  where type_id=#TYPE_ID# 
+  and PRODUCT_CATEGORY_ID=#PRODUCT_CATEGORY_ID#
+</update>
+
+<update id="setIsbatchToFalseAdhoc">
+  update ptrwork_list_generation_tree set 
+  is_batch=false,
+  updated_user_id=#UPDATED_USER_ID#,
+  updated_time=#UPDATED_TIME:TIMESTAMP# 
+  where type_id=#TYPE_ID# 
+  and PRODUCT_CATEGORY_ID=#PRODUCT_CATEGORY_ID#
+  and WLG_ASSIGNMENT_TYPE_ID = cast(#WLG_ASSIGNMENT_TYPE_ID# as bigint)
+</update>
+
+<update id="updateWlgContent">
+  update ptrwork_list_generation_tree set document_id=#DOCUMENT_ID#,updated_user_id=#UPDATED_USER_ID#,updated_time=#UPDATED_TIME:TIMESTAMP# 
+  where id=#TREE_ID#  
+  
+</update>
+<insert id="insertWlgTree">
+  <selectKey resultClass="long" keyProperty="ID">
+    select nextval('ptrwork_list_generation_tree_id')
+  </selectKey>
+  insert into PTRWORK_LIST_GENERATION_TREE 
+  (ID,DESCRIPTION,PRODUCT_CATEGORY_ID,TYPE_ID,IS_BATCH,CREATED_TIME,CREATED_USER_ID,UPDATED_TIME,UPDATED_USER_ID,IS_CUSTOMER_LEVEL,LETTER_EXTRACTION,WLG_ASSIGNMENT_TYPE_ID)
+  values
+  (#ID#,#DESCRIPTION#,#PRODUCT_CATEGORY_ID#,#TYPE_ID#,#IS_BATCH#,#CREATED_TIME#,#CREATED_USER_ID#,#UPDATED_TIME#,#UPDATED_USER_ID#,COALESCE(#IS_CUSTOMER_LEVEL#,false),#LETTER_EXTRACTION#,#WLG_ASSIGNMENT_TYPE_ID#)
+</insert>
+
+<insert id="insertWlgUserTemplate">
+  INSERT INTO ptrwork_list_generation_user_template (USER_ID,WORK_LIST_ID,TREE_ID) 
+  VALUES (#USER_ID#,#WORK_LIST_ID#,#TREE_ID#)
+</insert>
+
+<delete id="deleteWlgUserTemplate">
+  delete from ptrwork_list_generation_user_template 
+  where user_id=#USER_ID# and WORK_LIST_ID=#WORK_LIST_ID# and TREE_ID=#TREE_ID#
+</delete>
+
+<delete id="deleteTreeInvalidWorkList">
+  delete from PTRWORK_LIST_GENERATION_USER_TEMPLATE where TREE_ID = #TREE_ID# and 
+  work_list_id not in(0 <iterate prepend="," property="ASSIGNED_WORK_LIST" conjunction=",">#ASSIGNED_WORK_LIST[]#</iterate>)
+</delete>
+
+<delete id="deleteUserWorklistOnMainGeneration">
+delete from ptruser_wl_assign where work_list_id in
+  (     SELECT WORK_LIST_ID
+    FROM PTRWORK_LIST
+    WHERE 
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="4">
+    WORK_LIST_GROUP = 1
+  </isEqual> 
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="12">
+    WORK_LIST_GROUP = 3
+  </isEqual> 
+    <isEqual property="PRODUCT_CATEGORY_ID" compareValue="8">
+    WORK_LIST_GROUP = 2
+  </isEqual> 
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="14">
+    WORK_LIST_GROUP = 4
+  </isEqual>
+  )
+</delete>
+
+
+<delete id="deleteUserWorklistOnAppendixAReassignment">
+delete from ptruser_wl_assign where work_list_id in
+  (     SELECT WORK_LIST_ID
+    FROM PTRWORK_LIST
+    WHERE 
+    <!-- HP -->
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="4">
+    WORK_LIST_GROUP IN (5,6,7)
+  </isEqual> 
+  <!-- PL -->
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="12">
+    WORK_LIST_GROUP IN (14)
+  </isEqual> 
+  <!-- MG -->
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="8">
+    WORK_LIST_GROUP IN (8,9,10)
+  </isEqual>
+  <!-- OD --> 
+  <isEqual property="PRODUCT_CATEGORY_ID" compareValue="14">
+    WORK_LIST_GROUP IN (11,12,13)
+  </isEqual>
+  )
+</delete>
+
+
+
+
+  <insert id="insertUserWorkListAssignmentOnExecute">
+    insert into PTRUSER_WL_ASSIGN (ASSIGNER_ID, USER_ID, WORK_LIST_ID, EFFECTIVE_DATE,IS_DEFAULT_USER)
+                           values (#LOGON_USER#, #USER_ID#, #WORK_LIST_ID#, #EFFECTIVE_DATE#,#IS_DEFAULT_USER#)
+  </insert>
+  
+  <resultMap id="getUsersForWorkListAssignment" class="hmap">
+ <result property="USER_ID" javaType="string"/>
+ <result property="WORK_LIST_ID" javaType="long"/>
+ <result property="IS_DEFAULT_USER" javaType="Boolean"/>
+</resultMap>
+<select id="getUsersForWorkListAssignment" resultMap="getUsersForWorkListAssignment">
+  select t.user_id,t.work_list_id,t.IS_DEFAULT_USER 
+  from 
+  ptrwork_list_generation_user_template t 
+  inner join ptrwork_list wl on t.work_list_id = wl.work_list_id
+  where t.tree_id=#TREE_ID#
+  and wl.WORK_LIST_GROUP is not null
+  and not exists(select 1 from ptruser_wl_assign uwl 
+  where uwl.user_id= t.user_id and uwl.work_list_id=t.work_list_id)
+</select> 
+  <delete id="deleteTodayAssignHistory">
+     delete from PTRUSER_WL_ASSIGN_HISTORY where ASSIGNMENT_DATE = #EFFECTIVE_DATE:DATE#
+  </delete>
+   <insert id="insertTodayUserAssignmentHistory">
+    insert into PTRUSER_WL_ASSIGN_HISTORY 
+      (USER_ID, WORK_LIST_ID, ASSIGNMENT_DATE)
+        select uwa.user_id, uwa.work_list_id,uwa.EFFECTIVE_DATE
+          from ptruser_wl_assign uwa where uwa.effective_date= #EFFECTIVE_DATE:DATE#
+  </insert>
+ 
+
+<sql id="specialStatus-fragment">
+select account_id, special_status_id
+from ptraccount_special_status where 
+status_id = 15004 
+and is_priority = true 
+and expiry_date >= now()::date
+</sql>
+
+<sql id="accountTagging-fragment">
+CASE WHEN tagging.AKPK_FLAG is true then 1 when             tagging.AKPK_FLAG is false then 2 else 2 end as AKPK_FLAG,
+CASE WHEN tagging.BLD is true then 1 when            tagging.BLD is false then 2 else 2 end as bld,
+CASE WHEN tagging.REFUND_OA_DEPOSIT is true then 1 when tagging.REFUND_OA_DEPOSIT is false then 2 else 2 end as REFUND_OA_DEPOSIT,
+CASE WHEN tagging.DEBT_SALES is true then 1 when tagging.DEBT_SALES is false then 2 else 2 end as DEBT_SALES,
+CASE WHEN tagging.NEW_DISBURSEMENT is true then 1 when tagging.NEW_DISBURSEMENT is false then 2 else 2 end as NEW_DISBURSEMENT,   
+CASE WHEN tagging.BANKRUPT is true then 1 when                     tagging.BANKRUPT is false then 2 else 2 end as BANKRUPT,
+CASE WHEN tagging.SHORTFALL is true then 1 when                    tagging.SHORTFALL is false then 2 else 2 end as SHORTFALL,
+CASE WHEN tagging.PENDING_BPP is true then 1 when                  tagging.PENDING_BPP is false then 2 else 2 end as PENDING_BPP,
+CASE WHEN tagging.AUCTION is true then 1 when                      tagging.AUCTION is false then 2 else 2 end as AUCTION,
+CASE WHEN tagging.AUCTION_RECEIVED_DEPOSIT is true then 1 when     tagging.AUCTION_RECEIVED_DEPOSIT is false then 2 else 2 end as AUCTION_RECEIVED_DEPOSIT,   
+CASE WHEN tagging.AUCTION_RECEIVED_BALANCE is true then 1 when     tagging.AUCTION_RECEIVED_BALANCE is false then 2 else 2 end as AUCTION_RECEIVED_BALANCE,
+CASE WHEN tagging.EX_STAFF is true then 1 when                     tagging.EX_STAFF is false then 2 else 2 end as EX_STAFF,
+CASE WHEN tagging.DIBS is true then 1 when                         tagging.DIBS is false then 2 else 2 end as DIBS,
+CASE WHEN tagging.UNDER_CONSTRUCTION is true then 1 when           tagging.UNDER_CONSTRUCTION is false then 2 else 2 end as UNDER_CONSTRUCTION,
+CASE WHEN tagging.EXTERNAL_COLLECTION_AGENCIES is true then 1 when tagging.EXTERNAL_COLLECTION_AGENCIES is false then 2 else 2 end as EXTERNAL_COLLECTION_AGENCIES,
+CASE WHEN tagging.RNR is true then 1 when tagging.RNR is false then 2 else 2 end as RNR,
+CASE WHEN tagging.WRITE_OFF is true then 1 when tagging.WRITE_OFF is false then 2 else 2 end as WRITE_OFF,
+CASE WHEN tagging.FRAUD is true then 1 when tagging.FRAUD is false then 2 else 2 end as FRAUD,
+CASE WHEN tagging.SETTLEMENT_PROPOSAL is true then 1 when tagging.SETTLEMENT_PROPOSAL is false then 2 else 2 end as SETTLEMENT_PROPOSAL,
+CASE WHEN tagging.SECURITY_DEPOSIT is true then 1 when tagging.SECURITY_DEPOSIT is false then 2 else 2 end as SECURITY_DEPOSIT,
+CASE WHEN tagging.ECA_MONITORING is true then 1 when tagging.ECA_MONITORING is false then 2 else 2 end as ECA_MONITORING,
+CASE WHEN tagging.LEGAL_MONITORING is true then 1 when tagging.LEGAL_MONITORING is false then 2 else 2 end as LEGAL_MONITORING,
+CASE WHEN tagging.ADMIN_MONITORING is true then 1 when tagging.ADMIN_MONITORING is false then 2 else 2 end as ADMIN_MONITORING,
+CASE WHEN tagging.MORATORIUM is true then 1 when tagging.MORATORIUM is false then 2 else 2 end as MORATORIUM,
+CASE WHEN tagging.REDEMPTION_STATEMENT is true then 1 when tagging.REDEMPTION_STATEMENT is false then 2 else 2 end as REDEMPTION_STATEMENT,
+CASE WHEN tagging.REPO is true then 1 when tagging.REPO is false then 2 else 2 end as REPO,
+CASE WHEN tagging.REPO_REDEEM is true then 1 when tagging.REPO_REDEEM is false then 2 else 2 end as REPO_REDEEM,
+CASE WHEN tagging.DECEASED is true then 1 when tagging.DECEASED is false then 2 else 2 end as DECEASED,
+CASE WHEN tagging.TPD is true then 1 when tagging.TPD is false then 2 else 2 end as TPD,
+CASE WHEN tagging.TPD_REJECTED is true then 1 when tagging.TPD_REJECTED is false then 2 else 2 end as TPD_REJECTED,
+CASE WHEN tagging.ABANDONED is true then 1 when tagging.ABANDONED is false then 2 else 2 end as ABANDONED,
+CASE WHEN tagging.EPF_WITHDRAWAL is true then 1 when tagging.EPF_WITHDRAWAL is false then 2 else 2 end as EPF_WITHDRAWAL,
+CASE WHEN tagging.REFUND_COURT_DEPOSIT is true then 1 when tagging.REFUND_COURT_DEPOSIT is false then 2 else 2 end as REFUND_COURT_DEPOSIT,
+</sql>
+
+
+<resultMap id="getWlgUplCustomerAccountsForAssignment-map" class="java.util.HashMap">
+<result property="ASSIGNMENT_DATE" javaType="date"/>
+<result property="CUSTOMER_ID" javaType="long"/>
+<result property="ACCOUNT_ID"  javaType="long"/>
+
+<result property="_DIBS"  javaType="long"/>
+<result property="UNDER_CONSTRUCTION_ID"  javaType="long"/>
+<result property="ACCOUNT_STATUS_ID"  javaType="long"/>
+<result property="ADVANCE_PAYMENT_AMOUNT"  javaType="long"/>
+<result property="MONTHS_IN_ARREARS"  javaType="long"/>
+<result property="OPENING_MIA"  javaType="long"/>
+<result property="BANK_BRANCH_ID"  javaType="long"/>
+<result property="CAR_MAKE_SEGMENT_ID"  javaType="long"/>
+<result property="DAY_OF_FUNDINGS"  javaType="long"/>
+<result property="DAYS_PAST_DUE"  javaType="long"/>
+<result property="DAYS_SINCE_LAST_PAYMENT_DATE"  javaType="long"/>
+
+<result property="DUE_DATE"  javaType="long"/>
+<result property="EMPLOYMENT_STATUS_ID"  javaType="long"/>
+<result property="FIRST_RELEASE"  javaType="date"/>
+<result property="FULL_RELEASE"  javaType="long"/>
+<result property="ANNUAL_INCOME_ID"  javaType="long"/>
+<result property="INTEREST_DUE_DAY"  javaType="long"/>
+<result property="INSTALLMENT_AMOUNT_IN_ARREARS"  javaType="long"/>
+<result property="LOAN_MATURED"  javaType="long"/>
+<result property="LOAN_TO_VALUE"  javaType="long"/>
+<result property="MONTHS_SINCE_LAST_DAY_OF_FUNDING"  javaType="long"/>
+
+<result property="NPL_FLAG"  javaType="long"/>
+<result property="NPL_STATUS_ID"  javaType="long"/>
+<result property="ECA_ASSIGNED_ID"  javaType="long"/>
+<result property="OCCUPATION_ID"  javaType="long"/>
+<result property="PRODUCT_TYPE_CATEGORY_ID"  javaType="long"/>
+<result property="PRODUCT_TYPE_ID"  javaType="long"/>
+<result property="RACE_TYPE_ID"  javaType="long"/>
+<result property="SPECIAL_STATUS"  javaType="long"/>
+<result property="STATE_ID"  javaType="long"/>
+<result property="LOAN_DURATION"  javaType="long"/>
+
+
+<result property="OUTSTANDING_AMT"  javaType="long"/>
+<result property="TOTAL_GROSS_BALANCE"  javaType="long"/>
+<result property="ISLAMIC_ACCOUNT_FLAG"  javaType="long"/>
+<result property="HAS_LAST_PAYMENT_DATE"  javaType="long"/>
+<result property="MATURED_LOAN_MIA"  javaType="long"/>
+<result property="CHARGEOFF_DATE"  javaType="date"/>
+<result property="PRINCIPLE_BALANCE"  javaType="long"/>
+<result property="WORK_LIST_ID_RECLASSIFICATION"  javaType="long"/>
+<result property="BRANCH_GEOGRAPHICAL_STATE_ID"  javaType="long"/>
+<result property="REPAYMENT_RATIO"  javaType="long"/>
+<result property="IRC_FLAG"  javaType="long"/>
+<result property="IRC_CODE"  javaType="long"/>
+<result property="BORROWER_AGE"  javaType="long"/>
+<result property="RESIDENTIAL_NRESIDENTIAL_ID"  javaType="long"/>
+<result property="INTEREST_PROFIT_RATE"  javaType="long"/>
+<result property="DELIVERY_CHANNEL_ID"  javaType="long"/>
+<result property="DEALER_ID"  javaType="long"/>
+<result property="JUDGEMENT_DATE"  javaType="date"/>
+<result property="PROMISES_BROKEN"  javaType="long"/>
+<result property="PROMISES_KEPT"  javaType="long"/>
+<result property="PROMISES_TAKEN"  javaType="long"/>
+<result property="PREFIX_NAME_ID"  javaType="long"/>
+
+<result property="LOAN_AMOUNT"  javaType="long"/>
+<result property="DRAWING_LIMIT"  javaType="long"/>
+<result property="TOTAL_AMOUNT_DUE"  javaType="long"/>
+<result property="UNCONTACTABLE_ACCOUNT_ID"  javaType="long"/>
+<result property="CHECK_DIGIT_ID"  javaType="long"/>
+<result property="CONTACT_SOURCE_TYPE_ID"  javaType="long"/>
+
+<result property="ADDRESS_SOURCE_TYPE_ID"  javaType="long"/>
+<result property="LAST_DISBURSE_DATE"  javaType="date"/>
+<result property="FIRST_PAYMENT_DATE"  javaType="date"/>
+<result property="RESCHEDULE_DATE"  javaType="date"/>
+<result property="RESTRUCTURING_DATE"  javaType="date"/>
+<result property="RR_REJECTED_STATUS_ID"  javaType="long"/>
+<result property="RR_REJECTED_RECOUNT_DATE"  javaType="date"/>
+<result property="RR_STATUS_ID"  javaType="long"/>
+<result property="NEXT_PAYMENT_DUE_DATE"  javaType="date"/>
+<result property="NPL_DATE"  javaType="date"/>
+<result property="LAST_CALL_STATUS_ID"  javaType="long"/>
+<result property="REASON_DEFAULT_ID"  javaType="long"/>
+<result property="EMPLOYEE_DEFAULT_REASON_ID"  javaType="long"/>
+<result property="LAST_PAYMENT_METHOD_ID"  javaType="long"/>
+<result property="PAYMENT_STATUS_ID"  javaType="long"/>
+<result property="PRIORITY_PAYMENT_ID"  javaType="long"/>
+
+<result property="AKPK_FLAG"  javaType="long"/>
+<result property="BLD"  javaType="long"/>
+<result property="REFUND_OA_DEPOSIT"  javaType="long"/>
+<result property="DEBT_SALES"  javaType="long"/>
+<result property="NEW_DISBURSEMENT"  javaType="long"/>
+
+<result property="BANKRUPT"  javaType="long"/>
+<result property="SHORTFALL"  javaType="long"/>
+<result property="PENDING_BPP"  javaType="long"/>
+<result property="AUCTION"  javaType="long"/>
+<result property="AUCTION_RECEIVED_DEPOSIT"  javaType="long"/>
+
+<result property="AUCTION_RECEIVED_BALANCE"  javaType="long"/>
+<result property="EX_STAFF"  javaType="long"/>
+<result property="DIBS"  javaType="long"/>
+<result property="UNDER_CONSTRUCTION"  javaType="long"/>
+<result property="EXTERNAL_COLLECTION_AGENCIES"  javaType="long"/>
+
+<result property="RNR"  javaType="long"/>
+<result property="WRITE_OFF"  javaType="long"/>
+<result property="FRAUD"  javaType="long"/>
+<result property="SETTLEMENT_PROPOSAL"  javaType="long"/>
+<result property="SECURITY_DEPOSIT"  javaType="long"/>
+
+<result property="ECA_MONITORING"  javaType="long"/>
+<result property="LEGAL_MONITORING"  javaType="long"/>
+<result property="ADMIN_MONITORING"  javaType="long"/>
+<result property="MORATORIUM"  javaType="long"/>
+<result property="REDEMPTION_STATEMENT"  javaType="long"/>
+
+<result property="REPO"  javaType="long"/>
+<result property="REPO_REDEEM"  javaType="long"/>
+<result property="DECEASED"  javaType="long"/>
+<result property="TPD"  javaType="long"/>
+<result property="TPD_REJECTED"  javaType="long"/>
+
+<result property="ABANDONED"  javaType="long"/>
+<result property="EPF_WITHDRAWAL"  javaType="long"/>    
+<result property="REFUND_COURT_DEPOSIT"  javaType="long"/>
+
+
+<result property="UPDATE_FIRST_OF_MONTH_SNAPSHOT"  javaType="string"/>
+<result property="UPDATE_SUPPLEMENTARY_ACCOUNT"  javaType="string"/>
+<result property="WRITE_OFF_AMOUNT" javaType="$"/>
+<result property="TOTAL_AMOUNT_DUE" javaType="$"/>
+<result property="INTEREST_REBATE" javaType="$"/>
+</resultMap>
+
+
+<sql id="assignmentCustomerQueryFragment">
+SELECT distinct 
+dd.data_date + interval '1 day' as ASSIGNMENT_DATE, 
+a.CUSTOMER_ID, 
+a.ID as ACCOUNT_ID,
+case 
+when pr.DIBS = true then 1 
+when pr.DIBS = false then 0 else -1 end as DIBS,
+case 
+when a.FULL_RELEASE_DATE &lt; current_date then 1
+when a.FULL_RELEASE_DATE &lt; current_date then 0 else -1 end as  UNDER_CONSTRUCTION_ID,
+a.STATUS_ID AS ACCOUNT_STATUS_ID,
+a.ADVANCE_PAYMENT_AMOUNT,
+a.MONTHS_IN_ARREARS,
+coalesce(wlassign.months_in_arrears,0) as OPENING_MIA,
+a.BANK_BRANCH_ID,
+-1 AS CAR_MAKE_SEGMENT_ID,
+EXTRACT(day FROM a.first_release_date) as DAY_OF_FUNDINGS,
+a.MONTHS_IN_ARREARS * 30 AS DAYS_PAST_DUE,
+DATE_PART('day', dd.DATA_DATE::date + interval '1 day' - a.LAST_PAYMENT_DATE::date) as DAYS_SINCE_LAST_PAYMENT_DATE,
+
+EXTRACT(day from a.NEXT_PAYMENT_DUE_DATE) as DUE_DATE,
+<!-- emphist.EMPLOYMENT_STATUS_ID, --> -1 as EMPLOYMENT_STATUS_ID,
+a.first_release_date as FIRST_RELEASE, 
+case when a.FULL_RELEASE_DATE is null then 0 else 1 end as FULL_RELEASE,
+<!-- emphist.income_bracket_id AS ANNUAL_INCOME_ID,  -->
+-1 as ANNUAL_INCOME_ID,
+EXTRACT(day from A.next_interest_payment_due_date) as INTEREST_DUE_DAY,
+a.INSTALLMENT_AMOUNT_IN_ARREARS,
+case when coalesce(maturity_date, original_maturity_date) &lt;= current_date then 1 else 0 end as LOAN_MATURED,
+-1 as LOAN_TO_VALUE,
+(DATE_PART('year', current_date::date) - DATE_PART('year', a.FULL_RELEASE_DATE::date)) * 12 + (DATE_PART('month', current_date::date) - DATE_PART('month', a.FULL_RELEASE_DATE::date)) as MONTHS_SINCE_LAST_DAY_OF_FUNDING,
+
+case when A.NPL_FLAG = 'Y' then 1 else 0 end as NPL_FLAG,
+A.NPL_STATUS_ID,
+-1 AS ECA_ASSIGNED_ID,
+<!-- emphist.OCCUPATION_ID,  -->
+-1 as OCCUPATION_ID,
+pr.CATEGORY_ID AS PRODUCT_TYPE_CATEGORY_ID,
+pr.id as PRODUCT_TYPE_ID,
+C.ETHNICITY_ID AS RACE_TYPE_ID,
+sstatus.special_status_id as SPECIAL_STATUS,
+-1 AS STATE_ID,
+A.loan_term AS LOAN_DURATION,
+
+A.outstanding_balance AS OUTSTANDING_AMT,
+a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount) as TOTAL_GROSS_BALANCE,
+A.SPTF_TYPE_ID AS ISLAMIC_ACCOUNT_FLAG,
+case when a.LAST_PAYMENT_DATE is not null then 0 else 1 end as HAS_LAST_PAYMENT_DATE,
+A.MONTHS_IN_ARREARS AS MATURED_LOAN_MIA,
+A.charge_off_date AS CHARGEOFF_DATE,
+A.principle_due_amount AS PRINCIPLE_BALANCE,
+wlassign.work_list_id AS WORK_LIST_ID_RECLASSIFICATION,
+-1 AS BRANCH_GEOGRAPHICAL_STATE_ID,
+-1 AS REPAYMENT_RATIO,
+-1 AS IRC_FLAG,
+-1 AS IRC_CODE,
+DATE_PART('year', CURRENT_DATE::date) - DATE_PART('year', C.DATE_OF_BIRTH::date) AS BORROWER_AGE,
+C.bumi_status_id AS RESIDENTIAL_NRESIDENTIAL_ID,
+A.interest_rate AS INTEREST_PROFIT_RATE,
+-1 AS DELIVERY_CHANNEL_ID,
+-1 AS DEALER_ID,
+A.JUDGEMENT_DATE,
+-1 AS PROMISES_BROKEN,
+-1 AS PROMISES_KEPT,
+-1 AS PROMISES_TAKEN,
+-1 AS PREFIX_NAME_ID,
+-1 AS LOAN_AMOUNT,
+A.OD_DRAWING_LIMIT AS DRAWING_LIMIT,
+A.TOTAL_AMOUNT_DUE AS TOTAL_AMOUNT_DUE,
+case when eval.pac_uncontactable_count >= 3 then 1 else 0 end as UNCONTACTABLE_ACCOUNT_ID,
+cast(substr(a.account_no,12,1) as int8) AS CHECK_DIGIT_ID,
+coalesce(cont.CONTACT_SOURCE_TYPE_ID,0) as CONTACT_SOURCE_TYPE_ID,
+
+
+coalesce(add.ADDRESS_SOURCE_TYPE_ID,0) as ADDRESS_SOURCE_TYPE_ID,
+a.FULL_RELEASE_DATE as LAST_DISBURSE_DATE,
+a.FIRST_PAYMENT_DATE as FIRST_PAYMENT_DATE,
+a.RESCHEDULE_DATE as RESCHEDULE_DATE,
+current_date as RESTRUCTURING_DATE,
+-1 AS RR_REJECTED_STATUS_ID,
+current_date as RR_REJECTED_RECOUNT_DATE,
+-1 AS RR_STATUS_ID,
+a.NEXT_PAYMENT_DUE_DATE AS NEXT_PAYMENT_DUE_DATE,
+a.NPL_DATE AS NPL_DATE,
+eval.LAST_CALL_TYPE_STATUS_ID as LAST_CALL_STATUS_ID,
+eval.reason_default_id AS REASON_DEFAULT_ID,
+custhist.employer_default_reason_id as EMPLOYEE_DEFAULT_REASON_ID,
+lastpay.LAST_PAYMENT_METHOD_ID as LAST_PAYMENT_METHOD_ID,
+currentpay.PAYMENT_STATUS_ID as PAYMENT_STATUS_ID,
+lastpay.LAST_PAYMENT_METHOD_ID as PRIORITY_PAYMENT_ID,
+<include refid="accountTagging-fragment"/>
+
+case 
+when wlassign.account_id = a.id then 'true' else 'false' end as UPDATE_FIRST_OF_MONTH_SNAPSHOT,
+
+case 
+when (wlassign.account_id = a.id and wlassign.work_list_id is null) then 'true' else 'false' end as UPDATE_SUPPLEMENTARY_ACCOUNT,
+a.WRITE_OFF_AMOUNT,
+a.TOTAL_AMOUNT_DUE,
+a.INTEREST_REBATE_AMOUNT
+from ptraccount a
+left join PTRACCOUNT_TREATMENT_TAGGING tagging on a.id = tagging.account_id
+<isEqual property="TYPE_ID" compareValue="10">
+inner join ptraccount_work_list_assignment wlassign on a.id = wlassign.account_id
+</isEqual>
+<isNotEqual property="TYPE_ID" compareValue="10">
+left join ptraccount_work_list_assignment wlassign on a.id = wlassign.account_id
+</isNotEqual>
+left join ptrwltab_evaluation eval on a.id = eval.account_id
+left join ptrwork_list wl on wlassign.work_list_id = wl.work_list_id
+left join ptrwork_list_group_ref wlgroup on wl.work_list_group = wlgroup.id
+left join ptrvw_account_last_payment_method lastpay on a.id = lastpay.account_id
+left join ptrvw_current_month_total_payment currentpay on a.id = currentpay.account_id
+left join (<include refid="specialStatus-fragment"/>) sstatus on a.id = sstatus.account_id
+inner join ptrcustomer c on (c.id = a.customer_id)
+<!-- inner join ptrhost_employment_history emphist on c.id = emphist.customer_id -->
+left join ptrcustomer_employment_details custhist on c.id = custhist.customer_id
+left join (select customer_id, 1 as ADDRESS_SOURCE_TYPE_ID from ptraddress where verified_date is null group by customer_id) add on c.id = add.customer_id
+left join (select customer_id, 1 as CONTACT_SOURCE_TYPE_ID from ptrcontact_number where verified_date is null group by customer_id) cont on c.id = cont.customer_id
+inner join ptrproduct_type_ref pr on (a.product_type_id = pr.id)
+inner join ptrproduct_type_category_ref cat on (pr.category_id = cat.id),
+PTRDATA_DATE dd
+</sql>
+
+
+<!-- Pre-Il work list HP generation query for main & supplementary -->
+<select id="getWlgHPCustomerAccountsForAssignment" resultMap="getWlgUplCustomerAccountsForAssignment-map">
+<include refid="assignmentCustomerQueryFragment"/>
+where cat.code in ('AF')
+<isEqual property="TYPE_ID" compareValue="2">
+and wlassign.work_list_id is null
+</isEqual> 
+order by customer_id asc, account_id asc
+</select>
+
+
+<select id="getWlgHPCustomerAccountsForAssignmentAdhoc" resultMap="getWlgUplCustomerAccountsForAssignment-map">
+<include refid="assignmentCustomerQueryFragment"/>
+where cat.code in ('AF')
+and wlassign.work_list_id &gt; -1
+order by customer_id asc, account_id asc
+</select>
+
+<select id="getWlgUplCustomerAccountsForAssignment" resultMap="getWlgUplCustomerAccountsForAssignment-map">
+<include refid="assignmentCustomerQueryFragment"/>
+where cat.code in ('PFI')
+<isEqual property="TYPE_ID" compareValue="2">
+and wlassign.work_list_id is null
+</isEqual> 
+order by customer_id asc, account_id asc
+</select>
+
+
+<select id="getWlgUplCustomerAccountsForAssignmentAdhoc" resultMap="getWlgUplCustomerAccountsForAssignment-map">
+<include refid="assignmentCustomerQueryFragment"/>
+where cat.code in ('PFI')
+and wlassign.work_list_id &gt; -1
+order by customer_id asc, account_id asc
+</select>
+
+
+
+
+
+<select id="getWlgMgCustomerAccountsForAssignment" resultMap="getWlgUplCustomerAccountsForAssignment-map">
+<include refid="assignmentCustomerQueryFragment"/>
+where cat.code in ('PF')
+<isEqual property="TYPE_ID" compareValue="2">
+and wlassign.work_list_id is null
+</isEqual>  
+order by customer_id asc, account_id asc
+</select>
+
+
+<select id="getWlgMgCustomerAccountsForAssignmentAdhoc" resultMap="getWlgUplCustomerAccountsForAssignment-map">
+<include refid="assignmentCustomerQueryFragment"/>
+where cat.code in ('PF')
+and wlassign.work_list_id &gt; -1 
+order by customer_id asc, account_id asc
+</select>
+
+
+
+
+<sql id="insertWlgAssignmentFragment">
+(
+USER_ID,
+ACCOUNT_ID,
+NPL_STATUS, 
+OUTSTANDING_AMT, 
+OUTSTANDING_BALANCE,
+INSTALLMENT_AMOUNT_IN_ARREARS, 
+ASSIGNMENT_DATE, 
+DAYS_PAST_DUE, 
+MONTHS_IN_ARREARS,
+PAYMENT_DUE_DATE, 
+ASSIGNMENT_TYPE_ID, 
+SELF_CURE, 
+ASSIGNMENT_SOURCE_ID,
+FULL_RELEASE_DATE,
+RELEASE_DATE,
+INTEREST_DUE_DATE,
+NPL_FLAG,
+mtd_pymnts_received,
+MOVEMENT_STATUS_ID,
+LAST_MONTH_BEGIN_MIA,
+WRITE_OFF_AMOUNT,
+TOTAL_AMOUNT_DUE,
+INTEREST_REBATE
+)
+values
+(
+CAST(#USER_ID# AS VARCHAR(25)),
+CAST(#ACCOUNT_ID# as BIGINT), 
+CAST(#NPL_STATUS# as BIGINT), 
+CAST(#OUTSTANDING_AMT# as DECIMAL(14,2)), 
+CAST(#OUTSTANDING_BALANCE# as DECIMAL(14,2)),
+CAST(#INSTALLMENT_AMOUNT_IN_ARREARS# as DECIMAL(14,2)), 
+CAST(#ASSIGNMENT_DATE# as DATE), 
+CAST(#DAYS_PAST_DUE# as BIGINT), 
+CAST(#MONTHS_IN_ARREARS# as BIGINT), 
+CAST(#PAYMENT_DUE_DATE# as DATE), 
+CAST(1 as SMALLINT), 
+CAST(#SELF_CURE# as SMALLINT),
+cast(#ASSIGNMENT_SOURCE_ID# as BIGINT),
+CAST(#FULL_RELEASE_DATE# as DATE),
+CAST(#RELEASE_DATE# as DATE),
+CAST(#INTEREST_DUE_DATE# as DATE), 
+CAST(#NPL_FLAG# as SMALLINT),
+#TOTAL_GROSS_BALANCE#,
+#MOVEMENT_STATUS_ID#,
+#LAST_MONTH_BEGIN_MIA#,
+CAST(#WRITE_OFF_AMOUNT# as DECIMAL(19,2)),
+CAST(#TOTAL_AMOUNT_DUE# as DECIMAL(19,2)),
+CAST(#INTEREST_REBATE# as DECIMAL(19,2))
+
+)
+
+</sql>
+
+ <insert id="insertWlgCurrentAssignment">
+ INSERT INTO PTRACCOUNT_WORK_LIST_ASSIGNMENT
+ <include refid="insertWlgAssignmentFragment"/>
+ </insert>
+ 
+ <insert id="insertWlgRecentAssignment">
+ INSERT INTO PTRACC_WL_RECENT_ASSIGN
+ <include refid="insertWlgAssignmentFragment"/> 
+ </insert>
+ 
+ <insert id="insertWlgAssignmentHistory">
+ INSERT INTO PTRACC_WL_ASSIGN_HISTORY
+ <include refid="insertWlgAssignmentFragment"/>
+ </insert>
+ 
+ <sql id="updateAccountAssignment-Fragment">
+  USER_ID = CAST(#USER_ID# AS VARCHAR(25)),
+  OUTSTANDING_AMT = CAST(#OUTSTANDING_AMT# as DECIMAL(14,2)),  
+  OLDEST_OVERDUE_DATE = CAST(#OLDEST_OVERDUE_DATE# as DATE), 
+  ASSIGNMENT_DATE = CAST(#ASSIGNMENT_DATE# as DATE),
+  DAYS_PAST_DUE = CAST(#DAYS_PAST_DUE# as BIGINT), 
+  INSTALLMENT_AMOUNT_IN_ARREARS = CAST(#INSTALLMENT_AMOUNT_IN_ARREARS# as DECIMAL(14,2)),
+  OUTSTANDING_BALANCE = CAST(#OUTSTANDING_BALANCE# as DECIMAL(14,2)),
+  NPL_FLAG = CAST(#NPL_FLAG# as SMALLINT),
+  NPL_STATUS = CAST(#NPL_STATUS# as SMALLINT),
+  MONTHS_IN_ARREARS = CAST(#MONTHS_IN_ARREARS# as BIGINT), 
+  INTEREST_DUE_DATE = CAST(#INTEREST_DUE_DATE# as DATE),
+  PAYMENT_DUE_DATE = CAST(#PAYMENT_DUE_DATE# as DATE),
+  RELEASE_DATE = CAST(#RELEASE_DATE# as DATE),
+  FULL_RELEASE_DATE = CAST(#FULL_RELEASE_DATE# as DATE),
+  ASSIGNMENT_TYPE_ID = CAST(1 as SMALLINT), 
+  SELF_CURE = CAST(#SELF_CURE# as SMALLINT),
+  ASSIGNMENT_SOURCE_ID = -777,
+  mtd_pymnts_received = #TOTAL_GROSS_BALANCE#,
+  MOVEMENT_STATUS_ID = #MOVEMENT_STATUS_ID#,
+  LAST_MONTH_BEGIN_MIA = #LAST_MONTH_BEGIN_MIA#,
+  WRITE_OFF_AMOUNT = CAST(#WRITE_OFF_AMOUNT# as DECIMAL(19,2)),
+  TOTAL_AMOUNT_DUE = CAST(#TOTAL_AMOUNT_DUE# as DECIMAL(19,2)),
+  INTEREST_REBATE = CAST(#INTEREST_REBATE# as DECIMAL(19,2))
+ </sql>
+
+ 
+
+ <update id="updateAccountAssignmentSnapshot" parameterClass="java.util.Map">
+    update PTRACCOUNT_WORK_LIST_ASSIGNMENT
+   set
+   <include refid="updateAccountAssignment-Fragment"/>
+   where ACCOUNT_ID = #ACCOUNT_ID#
+ </update>
+ 
+  <update id="updateAccountRecentAssignmentSnapshot" parameterClass="java.util.Map">
+    update PTRACC_WL_RECENT_ASSIGN
+   set
+   <include refid="updateAccountAssignment-Fragment"/>
+   where ACCOUNT_ID = #ACCOUNT_ID#
+  and  assignment_date = #ASSIGNMENT_DATE:DATE#
+ </update>
+ 
+   <update id="updateAccountAssignmentHistorySnapshot" parameterClass="java.util.Map">
+     update PTRACC_WL_ASSIGN_HISTORY
+     set
+   <include refid="updateAccountAssignment-Fragment"/>
+   where ACCOUNT_ID = #ACCOUNT_ID#
+   and  assignment_date = #ASSIGNMENT_DATE:DATE#
+ </update>
+ 
+ 
+  <update id="updateWlgAccountForAssignment" parameterClass="java.util.Map">
+   update PTRACCOUNT_WORK_LIST_ASSIGNMENT
+   set
+   user_id = #USER_ID#,
+   tree_run_id = cast(#TREE_RUN_ID# as bigint),
+   work_list_id = cast(#WORK_LIST_ID# as bigint),
+   updated_time = cast(#CURRENT_DATE# as timestamp)
+   where account_id = cast(#ACCOUNT_ID# as bigint)
+ </update>
+ 
+ 
+ <update id="updateWlgAccountForRecentAssignment" parameterClass="java.util.Map">
+   update PTRACC_WL_RECENT_ASSIGN
+   set
+   tree_run_id = cast(#TREE_RUN_ID# as bigint),
+   work_list_id = cast(#WORK_LIST_ID# as bigint),
+   updated_time = cast(#CURRENT_DATE# as timestamp)
+   where account_id = cast(#ACCOUNT_ID# as bigint)
+   and  assignment_date = #ASSIGNMENT_DATE:DATE#
+ </update>
+ 
+
+ <update id="updateWlgAccountForAssignmentHistory" parameterClass="java.util.Map">
+   update PTRACC_WL_ASSIGN_HISTORY
+   set
+   tree_run_id = cast(#TREE_RUN_ID# as bigint),
+   work_list_id = cast(#WORK_LIST_ID# as bigint),
+   updated_time = cast(#CURRENT_DATE# as timestamp)
+   where account_id = cast(#ACCOUNT_ID# as bigint)
+   and  assignment_date = #ASSIGNMENT_DATE:DATE#
+ </update>
+ 
+
+ 
+ <update id="updateWlgAssignmentForSupplementaryAccounts">
+ update PTRACCOUNT_WORK_LIST_ASSIGNMENT
+ set 
+ tree_run_id = cast(#TREE_RUN_ID# as bigint),
+ assignment_date = cast(#ASSIGNMENT_DATE# as date),
+ work_list_id = cast(#WORK_LIST_ID# as bigint)
+ where account_id = cast(#ACCOUNT_ID# as bigint)
+ </update>
+      
+
+
+
+
+<update id="updateNullifyUserTemplateIsDefault" parameterClass="java.util.Map">
+UPDATE ptrwork_list_generation_user_template set IS_DEFAULT_USER = null 
+where WORK_LIST_ID = CAST(#WORK_LIST_ID# AS BIGINT)
+AND TREE_ID = CAST(#TREE_ID# AS BIGINT)
+</update>
+
+<update id="updateWorkListUserTemplateIsDefault" parameterClass="java.util.Map">
+UPDATE ptrwork_list_generation_user_template set IS_DEFAULT_USER = true
+where WORK_LIST_ID = CAST(#WORK_LIST_ID# AS BIGINT)
+AND TREE_ID = CAST(#TREE_ID# AS BIGINT)
+AND USER_ID IN (<iterate property="USERS" conjunction=",">#USERS[]#</iterate>)
+</update>
+
+
+
+<resultMap class="java.util.HashMap" id="getWorkListUserTemplateIsDefault">
+  <result property="USER_ID" javaType="java.lang.String"/>
+  <result property="IS_DEFAULT_USER" javaType="java.lang.Boolean"/>
+</resultMap>
+
+<select id="getWorkListUserTemplateIsDefault" resultMap="getWorkListUserTemplateIsDefault">
+select USER_ID, IS_DEFAULT_USER
+from ptrwork_list_generation_user_template
+WHERE work_list_id = CAST(#WORK_LIST_ID# AS BIGINT)
+AND TREE_ID = CAST(#TREE_ID# AS BIGINT)
+AND IS_DEFAULT_USER = true
+</select>
+
+
+<resultMap id="getAccountForUnassignment" class="hmap">
+ <result property="ACCOUNT_ID" javaType="java.lang.Long"/>
+</resultMap>
+<select id="getAccountForUnassignment" resultMap="getAccountForUnassignment" parameterClass="hmap"> 
+   SELECT
+   assign.ACCOUNT_ID
+   FROM ptraccount_work_list_assignment assign
+   inner join PTRWORK_LIST wl on assign.WORK_LIST_ID = wl.WORK_LIST_ID
+   inner join PTRWORK_LIST_GROUP_REF wlgroup on wl.WORK_LIST_GROUP = wlgroup.id
+   where wlgroup.code = #WORK_LIST_GROUP_CODE#
+</select>
+
+<update id="unAssignAccountAssignmentWorklist">
+update ptraccount_work_list_assignment set WORK_LIST_ID = NULL where account_id = cast(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+
+<update id="unAssignAccountWorklist">
+update PTRACCOUNT set WORK_LIST_ID = NULL where account_id = cast(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+
+<resultMap id="getPreviousMonthMgPreILAccount" class="hmap">
+ <result property="ACCOUNT_ID" javaType="java.lang.Long"/>
+</resultMap>
+<select id="getPreviousMonthMgPreILAccount" resultMap="getPreviousMonthMgPreILAccount" parameterClass="hmap"> 
+   SELECT
+   assign.ACCOUNT_ID
+   FROM ptraccount_work_list_assignment assign
+   inner join PTRWORK_LIST wl on assign.WORK_LIST_ID = wl.WORK_LIST_ID
+   inner join PTRWORK_LIST_GROUP_REF wlgroup on wl.WORK_LIST_GROUP = wlgroup.id
+   where wlgroup.code = 'MG'
+   and date(assign.assignment_date) &gt;= CAST(#FIRST_OF_PREV_MONTH# AS DATE)
+   and date(assign.assignment_date) &lt;= CAST(#END_OF_PREV_MONTH# AS DATE)
+   order by assign.ACCOUNT_ID asc
+</select>
+
+<resultMap id="getPreviousMonthMgPreILAccountArgs" class="hmap">
+ <result property="MINUS_ONE" javaType="java.lang.Long"/>
+</resultMap>
+<select id="getPreviousMonthMgPreILAccountArgs" resultMap="getPreviousMonthMgPreILAccountArgs" parameterClass="hmap"> 
+   SELECT -1 FROM SYSIBM.SYSDUMMY1
+</select>
+
+<resultMap id="getWlgBdrOptionHp" class="java.util.HashMap">  
+<result property="REFRESH_BDR_ALL" javaType="long" />
+</resultMap>
+
+<select id="getWlgBdrOptionHp" resultMap="getWlgBdrOptionHp">
+select WLG_BDR_OPTION_ID as REFRESH_BDR_ALL from ptrwlg_bdr_ref where PRODUCT_CATEGORY_ID = 4
+</select>
+
+<select id="getWlgBdrOptionMg" resultMap="getWlgBdrOptionHp">
+select WLG_BDR_OPTION_ID as REFRESH_BDR_ALL from ptrwlg_bdr_ref where PRODUCT_CATEGORY_ID = 8
+</select>
+
+<select id="getWlgBdrOptionPl" resultMap="getWlgBdrOptionHp">
+select WLG_BDR_OPTION_ID as REFRESH_BDR_ALL from ptrwlg_bdr_ref where PRODUCT_CATEGORY_ID = 12
+</select>
+
+<select id="getWlgBdrOptionOd" resultMap="getWlgBdrOptionHp">
+select WLG_BDR_OPTION_ID as REFRESH_BDR_ALL from ptrwlg_bdr_ref where PRODUCT_CATEGORY_ID = 14
+</select>
+
+
+<insert id="insertWorklistRunHistory">
+insert into ptrworklist_gen_run_history (id,tree_type_id,run_date,tree_id)
+values(#RUN_ID#,#TREE_TYPE_ID#,#CURRENT_DATE#,#TREE_ID#)  
+</insert>
+
+<resultMap id="selectTreeRunId-map" class="hmap">
+<result property="RUN_ID" javaType="long"/>
+</resultMap>
+<select id="selectTreeRunId" resultMap="selectTreeRunId-map" parameterClass="map">
+select nextval('ptrworklist_gen_run_history_id')
+</select>
+
+<resultMap class="hmap" id="getDataDate-map">
+<result property="DATA_DATE" javaType="date"/>
+</resultMap>
+
+<select id="getDataDate" resultMap="getDataDate-map">
+select DATA_DATE from PTRDATA_DATE
+</select>
+
+
+</sqlMap>

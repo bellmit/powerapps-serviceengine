@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Fetch Paid Accounts" type="comment">
+  <exec event="wltQuery.getPaidAccount" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Fetch PTP Accounts" type="comment">
+  <exec event="wltQuery.getPtpAccount" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Fetch Broken PTP Accounts" type="comment">
+  <exec event="wltQuery.getBrokenPromiseAccount" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Fetch WIP Accounts" type="comment">
+  <exec event="wltQuery.getWipAccount" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec text="Get net WIP account" type="comment">
+  <exec event="wltQuery.excludeAccount" ignoreresult="true" type="raise"/>
+ </exec>
+</event>

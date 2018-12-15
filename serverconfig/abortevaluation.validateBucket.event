@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="SAVE" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="BUCKET_LIST" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TOTAL_RATIO" operator="greater than value of" rhsvalue="ONE"/>
+   </conditions>
+   <exec from="FALSE" key="SAVE" type="copyintolist"/>
+   <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+   <exec message="Ratio exceed 100% limit !!!" target="MESSAGE" type="formattext"/>
+   <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+  </exec>
+ </exec>
+</event>

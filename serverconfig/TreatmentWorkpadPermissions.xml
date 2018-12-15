@@ -1,0 +1,117 @@
+<treatmentpermissions>
+<process type="5"  authorization="80565"/>
+<process type="2"  authorization="80566"/>
+<process type="8"  authorization="80567"/>
+<process type="9"  authorization="80765"/>
+<process type="13"  authorization="80568"/>
+<process type="14"  authorization="80569"/>
+<process type="15"  authorization="88430"/>
+<process type="23"  authorization="80572"/>
+<process type="27"  authorization="80573"/>
+<process type="28"  authorization="80574"/>
+<process type="29"  authorization="80575"/>
+
+<process type="31"  authorization="80596"/>
+<process type="32"  authorization="80597"/>
+<process type="33"  authorization="80598"/>
+<process type="34"  authorization="80599"/>
+<process type="35"  authorization="80600"/>
+<process type="36"  authorization="80738"/>
+<process type="37"  authorization="80273"/>
+<process type="38"  authorization="87232"/>
+<process type="39"  authorization="87287"/>
+<process type="40"  authorization="87360"/>
+<process type="41"  authorization="86998"/>
+<process type="42"  authorization="84789"/>
+<process type="43"  authorization="87361"/>
+<process type="44"  authorization="87365"/>
+<process type="45"  authorization="87370"/>
+<process type="46"  authorization="84744"/>
+<process type="47"  authorization="85748"/>
+<process type="49"  authorization="84748"/>
+
+<process type="53"  authorization="87476"/>
+<process type="54"  authorization="84084"/>
+<process type="55"  authorization="84490"/>
+<process type="56"  authorization="87477"/>
+<!-- ACCOUNT AUTHORIZATIONS -->
+  
+  <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="TF"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="BD"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="FS"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="AF"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="IH"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="LS"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="LX"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="PF"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="RC"/>
+    </properties>
+  </account> 
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="SM"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="TL"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="PFI"/>
+    </properties>
+  </account>
+    <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="OD"/>
+    </properties>
+  </account>
+  <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="TL"/>
+    </properties>
+  </account>
+  <account authorization="80503">
+    <properties>
+      <property name="LOAN_CATEGORY_PERMISSIONS" value="CASA"/>
+    </properties>
+  </account>
+   
+  
+</treatmentpermissions>
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="INVOICE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec argument="TRANSACTIONS" query="getEcaBillingTransactions" type="query"/>
+  <exec argument="ADJUSTMENTS" query="getAdjustmentInvoicesTransaction" type="query"/>
+  <exec from="TRANSACTIONS" key="ACCOUNT_ID" to="ACCOUNTS" type="extract"/>
+  <exec argument="ACCOUNT_TAGGINGS" query="getEcaBillingTransactionAccountTagging" type="query"/>
+  <exec from="ACCOUNT_TAGGINGS" key="ACCOUNT_ID" target="ACCOUNT_TAGGINGS" to="TRANSACTIONS" type="groupedmerge"/>
+  <exec from="ADJUSTMENTS" key="ACCOUNT_ID" target="ADJUSTMENTS" to="TRANSACTIONS" type="groupedmerge"/>
+  <exec argument="TRANSACTIONS" type="loop">
+   <exec key="AMOUNT" list="ADJUSTMENTS" to="FINAL_COMMISSION" type="sumlist"/>
+   <exec from="ACCOUNT_TAGGINGS" key="ACCOUNT_TAGGING" to="ACCOUNT_TAGGING" type="extract"/>
+   <exec message="{0}" target="ACCOUNT_TAGGING" type="formattext">
+    <key value="ACCOUNT_TAGGING"/>
+   </exec>
+  </exec>
+  <exec from="TRANSACTIONS" key="TRANSACTIONS" type="copyintolist"/>
+  <exec from="ADJUSTMENTS" key="ADJUSTMENTS" type="copyintolist"/>
+ </exec>
+</event>

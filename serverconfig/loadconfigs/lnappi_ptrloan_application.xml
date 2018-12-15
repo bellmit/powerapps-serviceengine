@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="" fullcache="false" mode="mixed" padline="true" type="fixed" verifyfilekey="false">
+ <doc/>
+ <table>PTRLOAN_APPLICATION</table>
+ <recordindicatortag/>
+ <xquery/>
+ <generatedkey>ID</generatedkey>
+ <generatedkeyseqname>PTRLOAN_APPLICATION_ID</generatedkeyseqname>
+ <querywhere>
+  <select/>
+  <update/>
+ </querywhere>
+ <post>
+  <insertinsertion/>
+  <insertupdate/>
+  <updateinsertion/>
+  <updateupdate/> 
+ </post>
+ <header/>
+ <trailer/>
+
+ <field iskey="true">
+ <name></name>
+ <default/>
+ <location end="20" start="2"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field iskey="true">
+ <name></name>
+ <default/>
+ <location end="23" start="21"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field iskey="true">
+ <name></name>
+ <default/>
+ <location end="42" start="24"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+
+<field isoptional="true">
+ <name></name>
+ <default/>
+ <location end="45" start="43"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name></name>
+ <default/>
+ <location end="46" start="46"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name></name>
+ <default/>
+ <location end="47" start="47"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name></name>
+ <default/>
+ <location end="48" start="48"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name></name>
+ <default/>
+ <location end="49" start="49"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name></name>
+ <default/>
+ <location end="50" start="50"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name></name>
+ <default/>
+ <location end="51" start="51"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+ 
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('PTRLOAD_EXECUTION_ID')</insertkey>
+  </lookup>
+ </field>
+</load>

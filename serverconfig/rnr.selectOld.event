@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="header" type="comment">
+  <exec message="Reschedule &amp; Restructurement" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1116_24x24.png" target="ICON" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="getAccountCategoryAndStatus" type="select"/>
+  <exec statement="getRnrTreatmentProcessInformation" type="select"/>
+  <exec event="select.list" ignoreresult="true" type="raise"/>
+  <exec type="parallelquery">
+   <query value="getTreatmentRnrHouseholdExpenditure"/>
+   <query value="getTreatmentRnrFinancialCommitment"/>
+   <query value="getTreatmentRnrOthRemarks"/>
+   <query value="getTreatmentRnrBorRemarks"/>
+   <query value="getTreatmentRnrTlrRemarks"/>
+   <query value="getTreatmentRnrTmrRemarks"/>
+   <query value="getTreatmentRnrHqrRemarks"/>
+   <target value="HOUSEHOLD_EXPENDITURES"/>
+   <target value="FINANCIAL_COMMITMENTS"/>
+   <target value="APPROVAL_OTHER_TERMS"/>
+   <target value="BASIS_OF_RECOMMENDATIONx"/>
+   <target value="TEAM_LEADER_REMARKSx"/>
+   <target value="TEAM_MANAGER_REMARKSx"/>
+   <target value="HQ_MANAGER_REMARKSx"/>
+  </exec>
+  <exec type="parallelquery">
+   <query value="getTreatmentRnrVariableSchedule"/>
+   <query value="getTreatmentTemplate"/>
+   <target value="VARIABLE_SETTLEMENT_LIST"/>
+   <target value="TEMPLATE_LIST"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="PF"/>
+   </conditions>
+   <exec from="VARIABLE_SETTLEMENT_LIST" to="MG_VARIABLE_SETTLEMENT_LIST" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="OD"/>
+   </conditions>
+   <exec from="VARIABLE_SETTLEMENT_LIST" to="MG_VARIABLE_SETTLEMENT_LIST" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="AF"/>
+   </conditions>
+   <exec from="VARIABLE_SETTLEMENT_LIST" to="HP_VARIABLE_SETTLEMENT_LIST" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY" operator="=" rhsvalue="PFI"/>
+   </conditions>
+   <exec from="VARIABLE_SETTLEMENT_LIST" to="HP_VARIABLE_SETTLEMENT_LIST" type="copy"/>
+  </exec>
+ </exec>
+</event>

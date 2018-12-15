@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec key="VALID" minuend="SPREADSHEET_LIST" subtrahend="FALSE" to="SPREADSHEET_LIST" type="remove"/>
+ <exec from="LOGON_USER" key="CREATED_USER_ID" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="CREATED_TIME" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec argument="EMPLOYER_LIST" query="getEmployerId" type="query"/>
+ <exec from="EMPLOYER_LIST" key="EMPLOYER_CODE" to="SPREADSHEET_LIST" type="merge"/>
+ <exec argument="SPREADSHEET_LIST" type="loop">
+  <exec statement="insertCustomerEmploymentDetailsHistory" type="insert"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="IS_UPDATE" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec recordcount="UPDATE_COUNT" statement="updateCustomerEmploymentDetails" type="update"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="IS_UPDATE" operator="&lt;&gt;" rhsvalue="true"/>
+   </conditions>
+   <exec statement="insertCustomerEmploymentDetails" type="insert"/>
+  </exec>
+ </exec>
+ <exec message="Save Successful" target="MESSAGE" type="formattext"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+</event>

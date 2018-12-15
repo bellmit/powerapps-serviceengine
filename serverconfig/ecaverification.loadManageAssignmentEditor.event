@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec text="load agencies" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AGENCY_ID" operator="&lt;&gt;" rhsvalue="parent.AGENCY_ID"/>
+   </conditions>
+   <exec argument="AGENCIES" query="getEcaManageAgencies" type="query"/>
+  </exec>
+  <exec from="TRUE" key="LOAD_CONTRACT" to="AGENCIES" type="copyintolist"/>
+  <exec from="AGENCIES" key="AGENCIES" type="copyintolist"/>
+ </exec>
+ <exec text="load action list" type="comment">
+  <exec count="2" to="MANAGE_LIST" type="createlist"/>
+  <exec argument="MANAGE_LIST" index="ID" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+    </conditions>
+    <exec message="TRANSFER" target="CODE" type="formattext"/>
+    <exec message="Transfer" target="DESCRIPTION" type="formattext"/>
+    <exec message="HIDE" target="remove" type="formattext"/>
+    <exec message="SHOW" target="agency" type="formattext"/>
+    <exec message="SHOW" target="transfer" type="formattext"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+    </conditions>
+    <exec message="REMOVE" target="CODE" type="formattext"/>
+    <exec message="Remove" target="DESCRIPTION" type="formattext"/>
+    <exec message="SHOW" target="remove" type="formattext"/>
+    <exec message="HIDE" target="agency" type="formattext"/>
+    <exec message="HIDE" target="transfer" type="formattext"/>
+   </exec>
+  </exec>
+  <exec from="MANAGE_LIST" key="MANAGE_LIST" type="copyintolist"/>
+ </exec>
+</event>

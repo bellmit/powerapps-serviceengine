@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="60" to="MINUTES" type="createlist"/>
+ <exec from="MINUTE_INTERVAL" key="MINUTE_INTERVAL" to="MINUTES" type="copyintolist"/>
+ <exec argument="MINUTES" index="INDEX" type="loop">
+  <exec lhs="INDEX" rhs="MINUTE_INTERVAL" target="ID" type="multiply"/>
+  <exec message="00:{0}" target="DESCRIPTION" type="formattext">
+   <key value="ID"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="5"/>
+   </conditions>
+   <exec message="00:0{0}" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

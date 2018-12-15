@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="4"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="5"/>
+  </conditions>
+  <exec message="HP IL Float Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="4"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="6"/>
+  </conditions>
+  <exec message="HP IL Fixed Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="4"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="7"/>
+  </conditions>
+  <exec message="HP IL BDR Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ 
+ 
+  <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="4"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="9"/>
+  </conditions>
+  <exec message="HP Appendix A Reassignment" target="HEADER" type="formattext"/>
+ </exec>
+ 
+  <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="4"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="10"/>
+  </conditions>
+  <exec message="HP IL Adhoc Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ 
+ 
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="12"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="7"/>
+  </conditions>
+  <exec message="UPL IL BDR Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ 
+  <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="12"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="10"/>
+  </conditions>
+  <exec message="UPL IL Adhoc Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ 
+
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="8"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="5"/>
+  </conditions>
+  <exec message="MG IL Float Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="8"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="6"/>
+  </conditions>
+  <exec message="MG IL Fixed Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ 
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="8"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="7"/>
+  </conditions>
+  <exec message="MG IL BDR Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ 
+
+ 
+ 
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="8"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="9"/>
+  </conditions>
+  <exec message="MG Appendix A Reassignment" target="HEADER" type="formattext"/>
+ </exec>
+
+
+  <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="8"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="10"/>
+  </conditions>
+  <exec message="MG IL Adhoc Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="14"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="5"/>
+  </conditions>
+  <exec message="OD IL Float Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="14"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="6"/>
+  </conditions>
+  <exec message="OD IL Fixed Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="14"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="7"/>
+  </conditions>
+  <exec message="OD IL BDR Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="14"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="9"/>
+  </conditions>
+  <exec message="OD Appendix A Reassignment" target="HEADER" type="formattext"/>
+ </exec>
+ 
+ 
+  <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY_ID" operator="=" rhsvalue="14"/>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="10"/>
+  </conditions>
+  <exec message="OD IL Adhoc Visual Work List  Evaluation" target="HEADER" type="formattext"/>
+ </exec>
+ 
+</event>

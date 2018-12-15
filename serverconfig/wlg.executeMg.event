@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getDataDate" type="select"/>
+ <exec ceiling="false" endmonth="false" from="DATA_DATE" nextweekday="false" startmonth="true" to="FIRST_OF_PREVIOUS_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec statement="selectTreeRunId" type="select"/>
+ <exec from="RUN_ID" to="TREE_RUN_ID" type="copy"/>
+ <exec to="USER_ID" type="user"/>
+ <exec type="transaction">
+  <exec statement="insertWorklistRunHistory" type="insert"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_CUSTOMER_LEVEL" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec allocationsize="100" group="CUSTOMER_ID" statement="getWlgMgCustomerAccountsForAssignment" threadcount="10" type="stream">
+   <exec to="CUSTOMER_DATA" type="copy"/>
+   <exec data="CUSTOMER_DATA" document="DOCUMENT_ID" identifier="ACCOUNT_ID" key="WORK_LIST_ID" type="executedecisiontree"/>
+   <exec from="TYPE_ID" key="TYPE_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="CURRENT_DATE" key="ASSIGNMENT_DATE" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="CURRENT_DATE" key="CURRENT_DATE" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="UI_EXECUTION" key="UI_EXECUTION" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="USER_ID" key="USER_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec event="wlg.updateAccountAssignment" ignoreresult="true" type="raise"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_CUSTOMER_LEVEL" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec allocationsize="100" group="ACCOUNT_ID" statement="getWlgMgCustomerAccountsForAssignment" threadcount="10" type="stream">
+   <exec to="CUSTOMER_DATA" type="copy"/>
+   <exec data="CUSTOMER_DATA" document="DOCUMENT_ID" identifier="ACCOUNT_ID" key="WORK_LIST_ID" type="executedecisiontree"/>
+   <exec from="TYPE_ID" key="TYPE_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="CURRENT_DATE" key="ASSIGNMENT_DATE" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="CURRENT_DATE" key="CURRENT_DATE" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="UI_EXECUTION" key="UI_EXECUTION" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec from="USER_ID" key="USER_ID" to="CUSTOMER_DATA" type="copyintolist"/>
+   <exec event="wlg.updateAccountAssignment" ignoreresult="true" type="raise"/>
+  </exec>
+ </exec>
+</event>

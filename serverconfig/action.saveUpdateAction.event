@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec from="STATUS_ID" key="STATUS_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="REMARKS" key="REMARKS" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="ADDITIONAL_DETAILS" key="ADDITIONAL_DETAILS" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="EXPENSES" key="EXPENSES" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec from="CURRENT_TIME" key="CURRENT_TIME" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="LOGON_USER" key="LOGON_USER" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="ACTION_ID" key="ACTION_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="LAWYER_REFERENCE_NO" key="LAWYER_REFERENCE_NO" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="CASE_NUMBER" key="CASE_NUMBER" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="INSTRUCTION_PROCESS__ID" key="INSTRUCTION_PROCESS__ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="INSTITUTION_LEVEL_ID" key="INSTITUTION_LEVEL_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="AUCTION_STATUS_ID" key="AUCTION_STATUS_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="CONTESTED_STATUS_ID" key="CONTESTED_STATUS_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec from="DISBURSEMENT_AMOUNT" key="DISBURSEMENT_AMOUNT" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec argument="ACCOUNT_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PROCESS_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec recordcount="" statement="updateAction" type="update"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PROCESS_ID" operator="is empty" rhsvalue=""/>
+   </conditions>
+   <exec statement="insertAction" type="insert"/>
+   <exec from="ID" to="PROCESS_ID" type="copy"/>
+   <exec recordcount="" statement="updateAssignmentLastAction" type="update"/>
+   <exec recordcount="" statement="updateInstructionLatestAction" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15007"/>
+    </conditions>
+    <exec statement="monitorInProgressAction" type="insert"/>
+   </exec>
+   <exec event="action.lastLegalActionUpdate" ignoreresult="true" type="raise"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="REMARKS" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec statement="insertLegalActionRemarks" type="insert"/>
+  </exec>
+  <exec text="expenses" type="comment"/>
+  <exec event="action.saveAdditionalDetails" ignoreresult="true" type="raise"/>
+  <exec event="action.saveExpenses" ignoreresult="true" type="raise"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="STATUS_ID" operator="&lt;&gt;" rhsvalue="15007"/>
+   </conditions>
+   <exec recordcount="" statement="updateAssignmentOnSuccessUpdate" type="update"/>
+   <exec event="action.evaluateCommission" ignoreresult="true" type="raise"/>
+   <exec event="action.terminateInstruction" ignoreresult="true" type="raise"/>
+   <exec statement="clearInProgressAction" type="delete"/>
+  </exec>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec message="Done!!!" target="MESSAGE" type="formattext"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+</event>

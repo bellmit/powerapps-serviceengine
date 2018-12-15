@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED_DATA" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="STAGE_ID" key="STAGE_ID" to="SELECTED_DATA" type="copyintolist"/>
+  <exec from="TYPE_ID" key="TYPE_ID" to="SELECTED_DATA" type="copyintolist"/>
+  <exec message="Updated" target="MESSAGE" type="formattext"/>
+  <exec argument="SELECTED_DATA" type="loop">
+   <exec statement="insertTurnaroundStageAction" type="insert"/>
+  </exec>
+ </exec>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+</event>

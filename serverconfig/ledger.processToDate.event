@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec code="EFFECTIVE_DATE required for ledger processing" type="error"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="LEDGER_ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec code="LEDGER_ID required for ledger processing" type="error"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROCESSED_TO_DATE" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec statement="getLedgerProcessedToDate" type="select"/>
+ </exec>
+ <exec statement="getZeroToTen" type="select"/>
+ <exec adddays="ONE" ceiling="false" endmonth="false" from="PROCESSED_TO_DATE" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec end="EFFECTIVE_DATE" start="PROCESSED_TO_DATE" step="Day" to="PROCESSING_LIST" type="timesteplist"/>
+ <exec from="LEDGER_ID" key="LEDGER_ID" to="PROCESSING_LIST" type="copyintolist"/>
+ <exec list="PROCESSING_LIST" to="COUNT" type="countlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+  </conditions>
+  <exec identifier="LEDGER_ID" settype="Loan" type="financialaccountset">
+   <exec argument="PROCESSING_LIST" type="loop">
+    <exec from="PROCESSED_TO_DATE" to="EFFECTIVE_DATE" type="copy"/>
+    <exec argument="PAYMENT_LIST" query="getPaymentsForAccountLedgerByPostingDate" type="query"/>
+    <exec from="LEDGER_ID" key="LEDGER_ID" to="PAYMENT_LIST" type="copyintolist"/>
+    <exec argument="PAYMENT_LIST" type="loop">
+     <exec action="P" amount="AMOUNT" effectiveDate="POSTING_DATE" generalAccountCode="500" paymentDate="POSTING_DATE" transactionId="TRANSACTION_ID" type="loanpayment"/>
+     <exec statement="insertPaymentLedgerTransactionLink" type="insert"/>
+    </exec>
+    <exec argument="CHARGE_LIST" query="getChargesForAccountLedgerByPostingDate" type="query"/>
+    <exec argument="CHARGE_LIST" type="loop">
+     <exec count="1" to="SPLIT_LIST" type="createlist"/>
+     <exec from="AMOUNT" key="AMOUNT" to="SPLIT_LIST" type="copyintolist"/>
+     <exec message="P" target="P" type="formattext"/>
+     <exec message="300" target="300" type="formattext"/>
+     <exec from="300" key="SPLIT_TYPE" to="SPLIT_LIST" type="copyintolist"/>
+     <exec action="P" effectivedate="POSTING_DATE" general="300" splitamount="AMOUNT" splitlist="SPLIT_LIST" splittype="SPLIT_TYPE" transactionid="TRANSACTION_ID" type="financialtransaction"/>
+     <exec statement="insertChargeLedgerTransactionLink" type="insert"/>
+    </exec>
+    <exec effectiveDate="EFFECTIVE_DATE" type="loanpenaltyaccrue"/>
+    <exec effectiveDate="EFFECTIVE_DATE" type="loaninterestaccrue"/>
+    <exec effectiveDate="EFFECTIVE_DATE" type="loanprincipal"/>
+   </exec>
+   <exec recordcount="" statement="updateLedgerProcessedToDate" type="update"/>
+  </exec>
+ </exec>
+</event>

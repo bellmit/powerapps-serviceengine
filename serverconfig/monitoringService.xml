@@ -1,0 +1,1806 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="monitoringService">
+
+	<sql id="legalWorklistLockFragment">
+		INNER JOIN PTRACCOUNT_LEGAL_WORKLIST_ASSIGNMENT WA ON WA.ACCOUNT_ID=A.ID 
+		<isNotNull property="WORKLIST_ID"> and WA.WORKLIST_ID=#WORKLIST_ID# </isNotNull>
+		INNER JOIN PTRLEGAL_USER_WL_ASSIGN UW ON UW.WORKLIST_ID=WA.WORKLIST_ID 
+		AND ((UW.USER_ID =#LOGON_USER# and UW.DEFAULT_USER = <include refid="true"/>) or 
+		(UW.USER_ID =#LOGON_USER# and UW.RELIEF = <include refid="true"/> and UW.RELIEF_FROM &lt;=#CURRENT_DATE# and UW.RELIEF_TO &gt;=#CURRENT_DATE#))
+	</sql>
+	<sql id="excludeSpecialAction">
+		AND AG.ID NOT IN(SELECT SA.AGENCY_ASSIGNMENT_ID FROM PTRLEGAL_IN_PROGRESS_SPECIAL_ACTION SA WHERE SA.AGENCY_ASSIGNMENT_ID=AG.ID)
+	</sql>
+	
+	<select id="getAbortReasonsForSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect"/> 
+		FROM ptrlegal_abort_reason_ref WHERE SUBTYPE_ID = #ID#
+	</select>
+	
+	<select id="getProcessTypeForMonitoring" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM PTRTREATMENT_TYPE_REF WHERE ID IN(50,51,52)
+	</select>
+	<select id="getProcessTypeForMonitoringKpi" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM PTRTREATMENT_SUBTYPE_REF WHERE TYPE_ID IN(50,51,52)
+	</select>
+	<select id="getLegalKpi" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM PTRLEGAL_STAGE_REF WHERE SUBTYPE_ID= #ID#
+	</select>
+	<select id="getProcessTypeForMonitoringECA" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM PTRTREATMENT_TYPE_REF WHERE ID = 19
+	</select>
+	<select id="getProcessTypeForCreateAssignment" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM ptrtreatment_subtype_ref WHERE TYPE_ID = #PROCESS_TYPE_ID#
+	</select>
+	<select id="getProcessSubtypeForSearchFilter" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM ptrtreatment_subtype_ref WHERE TYPE_ID = #ID#
+	</select>
+	<select id="getStatusForAbort" resultMap="global.ref">
+		<include refid="pleaseSelectRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRTREATMENT_STATUS_REF
+		WHERE ID IN (15004,15005,15001)
+	</select>
+		
+	<select id="getProcessSubtypeForclosureSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM ptrtreatment_subtype_ref WHERE TYPE_ID = #ID#
+	</select>
+	<select id="getAbortReasonSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRLEGAL_ABORT_REASON_REF WHERE SUBTYPE_ID = #ID#
+	</select>
+	<select id="getFollowUpSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRLEGAL_ACTION_REF WHERE SUBTYPE_ID = #ID# AND TYPE_ID=5
+	</select>
+	<select id="getInProgressActionSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRLEGAL_ACTION_REF WHERE SUBTYPE_ID = #ID# AND TYPE_ID=2
+	</select>
+	<select id="getInProgressSpecialActionSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRLEGAL_ACTION_REF WHERE SUBTYPE_ID = #ID# AND TYPE_ID=3
+	</select>
+	<select id="getInstructionSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRLEGAL_ACTION_REF WHERE SUBTYPE_ID = #ID# AND TYPE_ID=1
+	</select>
+	<select id="getRemedialSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRLEGAL_ACTION_REF WHERE SUBTYPE_ID = #ID# AND TYPE_ID=4
+	</select>
+	<select id="getProductCategoriesForMonitoring" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRPRODUCT_TYPE_CATEGORY_REF WHERE CODE IN('IH','PF','PFI','AF') and disable=false
+	</select>
+	<select id="getECAProductCategoriesForMonitoring" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM PTRPRODUCT_TYPE_CATEGORY_REF
+	</select>
+
+	<select id="getProductCategoriesForECAKPI" resultMap="global.ref">
+		select *
+		from (SELECT NULL as ID,
+					 NULL    as CODE,
+					 ' All ' as DESCRIPTION,
+					 false   as DISABLE,
+					 -1      as SORT_PRIORITY
+			  UNION
+			  SELECT ID, CODE, DESCRIPTION, DISABLE, SORT_PRIORITY
+			  FROM PTRPRODUCT_TYPE_CATEGORY_REF
+			  WHERE CODE IN ('IH', 'PF', 'PFI', 'AF')
+				and disable = false) a
+		order by SORT_PRIORITY
+	</select>
+
+
+
+	<select id="getProductCategoriesForForeclosureMonitoring" resultMap="global.ref">
+		<include refid="refselect" /> 
+		FROM PTRPRODUCT_TYPE_CATEGORY_REF WHERE CODE ='PF'
+	</select>
+	<select id="getUserLegalWorklistForMonitoring" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		select w.id,w.code,w.description,w.disable,w.sort_priority from ptrlegal_worklist w 
+		inner join ptrlegal_user_wl_assign u on w.id=u.worklist_id
+		where (u.user_id=#LOGON_USER# and u.default_user = true) or (u.user_id=#LOGON_USER# and u.relief = true and u.relief_from &lt;=#CURRENT_DATE# and u.relief_to &gt;= #CURRENT_DATE#)
+	</select>
+
+	<select id="getAbortReasonForMonitoring" resultMap="global.ref">
+		<include refid="pleaseSelectRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM ptrlegal_abort_reason_ref WHERE SUBTYPE_ID = #SUBTYPE_ID#
+	</select>
+	<select id="getLegalFirmForAssignment" resultMap="global.ref">
+		<include refid="pleaseSelectRef"/>
+		union
+		SELECT DISTINCT G.ID,G.CODE,G.DESCRIPTION,G.DISABLE,G.SORT_PRIORITY FROM PTRAGENCY G
+		INNER JOIN PTRAGENCY_CONTRACT_REL R ON R.AGENCY_ID=G.ID
+		INNER JOIN PTRAGENCY_CONTRACT C ON C.ID=R.CONTRACT_ID 
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF S ON S.ID=C.SUBTYPE_ID AND S.TYPE_ID=#PROCESS_TYPE_ID#
+	</select>
+	<select id="getLegalFirmForSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		SELECT DISTINCT G.ID,G.CODE,G.DESCRIPTION,G.DISABLE,G.SORT_PRIORITY FROM PTRAGENCY G
+		INNER JOIN PTRAGENCY_CONTRACT_REL R ON R.AGENCY_ID=G.ID
+		INNER JOIN PTRAGENCY_CONTRACT C ON C.ID=R.CONTRACT_ID 
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF S ON S.ID=C.SUBTYPE_ID AND S.TYPE_ID=#ID#
+	</select>
+	<select id="getKivReasonForSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		SELECT G.ID,G.CODE,G.DESCRIPTION,G.DISABLE,G.SORT_PRIORITY FROM PTRLEGAL_KIV_REASON_REF G
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF S ON S.ID=G.SUBTYPE_ID 
+		WHERE S.ID=#ID#
+	</select>
+	<select id="getEcaAgencies" resultMap="global.ref">
+		<include refid="selectAllRef"/>
+		union
+		SELECT DISTINCT G.ID,G.CODE,G.DESCRIPTION,G.DISABLE,G.SORT_PRIORITY FROM PTRAGENCY G
+		INNER JOIN PTRAGENCY_CONTRACT_REL R ON R.AGENCY_ID=G.ID
+		INNER JOIN PTRAGENCY_CONTRACT C ON C.ID=R.CONTRACT_ID 
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF S ON S.ID=C.SUBTYPE_ID AND S.TYPE_ID=19
+	</select>
+	<select id="getEcaManageAgencies" resultMap="global.ref">
+	<include refid="pleaseSelectRef"/><include refid="fromdual"/>
+	union
+		SELECT DISTINCT G.ID,G.CODE,G.DESCRIPTION,G.DISABLE,G.SORT_PRIORITY FROM PTRAGENCY G
+		INNER JOIN PTRAGENCY_CONTRACT_REL R ON R.AGENCY_ID=G.ID
+		INNER JOIN PTRAGENCY_CONTRACT C ON C.ID=R.CONTRACT_ID 
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF S ON S.ID=C.SUBTYPE_ID AND S.TYPE_ID=19
+		WHERE NOT G.ID=#AGENCY_ID#
+	</select>
+	<select id="getLegalFirmContractForAssignment" resultMap="global.ref">
+		<include refid="pleaseSelectRef"/>
+		union
+		select c.id,c.code,c.description,c.disable,c.sort_priority 
+		from  ptragency_contract c
+		inner join ptragency_contract_rel r on r.contract_id=c.id
+		where r.agency_id=#AGENCY_ID#
+	</select>
+	<select id="getMonitoringStatusForSearchFilter" resultMap="global.ref">
+		<include refid="selectAllRef" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		from PTRINSTRUCTED_ACTION_REF
+	</select>
+	<sql id="unassignedAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		<isNotEqual property="USER_TYPE_ID" compareValue="2">
+		<isNotEqual property="MODE" compareValue="ECA">
+			<include refid="legalWorklistLockFragment"/>
+		</isNotEqual>
+		</isNotEqual>
+		WHERE 
+		NOT EXISTS(
+		SELECT 1 FROM PTRACCOUNT_AGENCY_ASSIGNMENT AG 
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON SR.ID=AG.SUBTYPE_ID
+		WHERE AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007 and SR.TYPE_ID=#PROCESS_TYPE_ID#)
+		AND NOT EXISTS(
+		SELECT 1 FROM ptraccount_rejected_assignment rj 
+		inner join ptrtreatment_subtype_ref sub on sub.id=rj.subtype_id and sub.type_id=#PROCESS_TYPE_ID#
+		where rj.account_id=a.id)
+		and not exists(select 1 from ptragency_kiv_assignment kiv
+		inner join ptraccount_agency_assignment ass on ass.id=kiv.agency_assignment_id
+		inner join ptraccount acc on acc.id=ass.account_id
+		where ass.subtype_id=#SUBTYPE_ID#  and acc.id=a.id)
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="MIA_FROM"> and A.MONTHS_IN_ARREARS &gt;= #MIA_FROM#</isNotEmpty>	
+		<isNotEmpty property="MIA_TO"> and A.MONTHS_IN_ARREARS &lt;= #MIA_TO#</isNotEmpty>	
+		<isNotEmpty property="ACCOUNT_NUMBERS"> and a.account_no in(<iterate property="ACCOUNT_NUMBERS" conjunction=",">#ACCOUNT_NUMBERS[]#</iterate>)</isNotEmpty>
+		
+	</sql>
+	<sql id="kivAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT ASS ON ASS.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_KIV_ASSIGNMENT KIV ON KIV.AGENCY_ASSIGNMENT_ID=ASS.ID
+		<isNotEqual property="USER_TYPE_ID" compareValue="2">
+		<isNotEqual property="MODE" compareValue="ECA">
+			<include refid="legalWorklistLockFragment"/>
+		</isNotEqual>
+		</isNotEqual>
+		WHERE NOT EXISTS(SELECT 1 FROM PTRACCOUNT_AGENCY_ASSIGNMENT AG INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON SR.ID=AG.SUBTYPE_ID
+		WHERE AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007 and SR.TYPE_ID=#PROCESS_TYPE_ID#)
+		AND NOT EXISTS(SELECT 1 FROM ptraccount_rejected_assignment rj inner join ptrtreatment_subtype_ref sub on sub.id=rj.subtype_id and sub.type_id=#PROCESS_TYPE_ID#
+		where rj.account_id=a.id)
+		<isNotNull property="KIV_REASON_ID"> and ASS.KIV_REASON_ID=#KIV_REASON_ID# </isNotNull>
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="MIA_FROM"> and A.MONTHS_IN_ARREARS &gt;= #MIA_FROM#</isNotEmpty>	
+		<isNotEmpty property="MIA_TO"> and A.MONTHS_IN_ARREARS &lt;= #MIA_TO#</isNotEmpty>	
+		<isNotEmpty property="ACCOUNT_NUMBERS"> and a.account_no in(<iterate property="ACCOUNT_NUMBERS" conjunction=",">#ACCOUNT_NUMBERS[]#</iterate>)</isNotEmpty>
+		
+	</sql>
+	<sql id="pendingApprovalAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_APPROVAL AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		<isNotEqual property="USER_TYPE_ID" compareValue="2">
+		<isNotEqual property="MODE" compareValue="ECA">
+		INNER JOIN PTRACCOUNT_LEGAL_WORKLIST_ASSIGNMENT WA ON WA.ACCOUNT_ID=A.ID 
+		<isNotNull property="WORKLIST_ID"> and WA.WORKLIST_ID=#WORKLIST_ID# </isNotNull>
+		INNER JOIN PTRLEGAL_USER_WL_ASSIGN UW ON UW.WORKLIST_ID=WA.WORKLIST_ID AND UW.USER_ID =#LOGON_USER#
+		</isNotEqual>
+		</isNotEqual>
+		WHERE SR.TYPE_ID=#PROCESS_TYPE_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotNull property="AGENCY_ID"> and AG.AGENCY_ID=#AGENCY_ID# </isNotNull>
+		<isNotNull property="SUBTYPE_ID"> and SR.ID=#SUBTYPE_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>		
+	</sql>
+	<sql id="pendingAcknowledgementAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_ACKNOWLEDGEMENT AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		<isNotEqual property="USER_TYPE_ID" compareValue="2">
+		<isNotEqual property="MODE" compareValue="ECA">
+		INNER JOIN PTRACCOUNT_LEGAL_WORKLIST_ASSIGNMENT WA ON WA.ACCOUNT_ID=A.ID 
+		<isNotNull property="WORKLIST_ID"> and WA.WORKLIST_ID=#WORKLIST_ID# </isNotNull>
+		INNER JOIN PTRLEGAL_USER_WL_ASSIGN UW ON UW.WORKLIST_ID=WA.WORKLIST_ID AND UW.USER_ID =#LOGON_USER#
+		</isNotEqual>
+		</isNotEqual>
+		WHERE SR.TYPE_ID=#PROCESS_TYPE_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotNull property="AGENCY_ID"> and AG.AGENCY_ID=#AGENCY_ID# </isNotNull>
+		<isNotNull property="SUBTYPE_ID"> and SR.ID=#SUBTYPE_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>		
+	</sql>	
+
+
+	<sql id="followUpAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,FU.PROCESS_ID,LA.ACTION_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_MONITORED_ASSIGNMENT AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRLEGAL_ACTION_FOLLOW_UP FU ON FU.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRLEGAL_ACTION_PROCESS LA ON LA.ID=FU.PROCESS_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		<isNotEqual property="USER_TYPE_ID" compareValue="2">
+		<isNotEqual property="MODE" compareValue="ECA">
+		INNER JOIN PTRACCOUNT_LEGAL_WORKLIST_ASSIGNMENT WA ON WA.ACCOUNT_ID=A.ID 
+		<isNotNull property="WORKLIST_ID"> and WA.WORKLIST_ID=#WORKLIST_ID# </isNotNull>
+		INNER JOIN PTRLEGAL_USER_WL_ASSIGN UW ON UW.WORKLIST_ID=WA.WORKLIST_ID AND UW.USER_ID =#LOGON_USER#
+		</isNotEqual>
+		</isNotEqual>
+		WHERE SR.TYPE_ID=#PROCESS_TYPE_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotNull property="AGENCY_ID"> and AG.AGENCY_ID=#AGENCY_ID# </isNotNull>
+		<isNotNull property="SUBTYPE_ID"> and SR.ID=#SUBTYPE_ID# </isNotNull>
+		<isNotNull property="FOLLOW_UP_ID"> and LA.ACTION_ID=#FOLLOW_UP_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>	
+		<isNotNull property="INSTRUCTION_ID"> and LA.ACTION_ID=#INSTRUCTION_ID# </isNotNull>	
+	</sql>		
+	<sql id="pendingRecommendationAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_RECOMMENDATION AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		<isNotEqual property="USER_TYPE_ID" compareValue="2">
+		<isNotEqual property="MODE" compareValue="ECA">
+		INNER JOIN PTRACCOUNT_LEGAL_WORKLIST_ASSIGNMENT WA ON WA.ACCOUNT_ID=A.ID 
+		<isNotNull property="WORKLIST_ID"> and WA.WORKLIST_ID=#WORKLIST_ID# </isNotNull>
+		INNER JOIN PTRLEGAL_USER_WL_ASSIGN UW ON UW.WORKLIST_ID=WA.WORKLIST_ID AND UW.USER_ID =#LOGON_USER#
+		</isNotEqual>
+		</isNotEqual>
+		WHERE SR.TYPE_ID=#PROCESS_TYPE_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotNull property="AGENCY_ID"> and AG.AGENCY_ID=#AGENCY_ID# </isNotNull>
+		<isNotNull property="SUBTYPE_ID"> and SR.ID=#SUBTYPE_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>		
+	</sql>	
+	<sql id="assignmentPortfolioAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_MONITORED_ASSIGNMENT AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		WHERE SR.TYPE_ID=#PROCESS_TYPE_ID# AND AG.APPROVED_DATE is not null
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotNull property="AGENCY_ID"> and AG.AGENCY_ID=#AGENCY_ID# </isNotNull>
+		<isNotNull property="SUBTYPE_ID"> and SR.ID=#SUBTYPE_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>		
+	</sql>					
+	<resultMap id="getUnassignedAccountTotalCount" class="hmap">
+		<result property="TOTAL_RECORD" javaType="long" />
+		<result property="TOTAL_PAGE" javaType="long" />
+	</resultMap>
+	<select id="getUnassignedAccountTotalCount" resultMap="getUnassignedAccountTotalCount">
+		SELECT 
+		COUNT(A.ACCOUNT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="unassignedAccountIdFragments"/>
+		) A 
+	</select>
+	<resultMap id="getKivAccountTotalCount" class="hmap">
+		<result property="TOTAL_RECORD" javaType="long" />
+		<result property="TOTAL_PAGE" javaType="long" />
+	</resultMap>
+	<select id="getKivAccountTotalCount" resultMap="getKivAccountTotalCount">
+		SELECT 
+		COUNT(A.ACCOUNT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="kivAccountIdFragments"/>
+		) A 
+	</select>
+	<select id="getPendingApprovalAccountTotalCount" resultMap="getUnassignedAccountTotalCount">
+		SELECT 
+		COUNT(A.AGENCY_ASSIGNMENT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="pendingApprovalAccountIdFragments"/>
+		) A 
+	</select>
+	<select id="getPendingRecommendationAccountTotalCount" resultMap="getUnassignedAccountTotalCount">
+		SELECT 
+		COUNT(A.AGENCY_ASSIGNMENT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="pendingRecommendationAccountIdFragments"/>
+		) A 
+	</select>
+	<select id="getPendingAcknowledgementAccountTotalCount" resultMap="getUnassignedAccountTotalCount">
+		SELECT 
+		COUNT(A.AGENCY_ASSIGNMENT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="pendingAcknowledgementAccountIdFragments"/>
+		) A 
+	</select>	
+	
+
+
+
+
+	<select id="getAssignmentPortfolioAccountTotalCount" resultMap="getUnassignedAccountTotalCount">
+		SELECT 
+		COUNT(A.AGENCY_ASSIGNMENT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="assignmentPortfolioAccountIdFragments"/>
+		) A 
+	</select>
+	
+	<resultMap id="getActionMonitor" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="PROCESS_ID" javaType="long" />
+		<result property="ACTION_ID" javaType="long" />
+		<result property="RNUM" javaType="long" />
+	</resultMap>
+	<select id="getFollowUpAccountIds" resultMap="getActionMonitor">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID,A.PROCESS_ID,A.ACTION_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="followUpAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>	
+	<resultMap id="getUnassignedAccountIds" class="hmap">
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="RNUM" javaType="long" />
+	</resultMap>
+	<select id="getUnassignedAccountIds" resultMap="getUnassignedAccountIds">
+		SELECT A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="unassignedAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>
+	<resultMap id="getKivAccountIds" class="hmap">
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="RNUM" javaType="long" />
+	</resultMap>
+	<select id="getKivAccountIds" resultMap="getKivAccountIds">
+		SELECT A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="kivAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>
+	<select id="getUnassignedImportedAccountIds" resultMap="getUnassignedAccountIds">
+		SELECT A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="unassignedAccountIdFragments"/>
+		) A 
+	</select>	
+	<resultMap id="getPendingApprovalAccountIds" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="RNUM" javaType="long" />
+	</resultMap>
+	<select id="getPendingApprovalAccountIds" resultMap="getPendingApprovalAccountIds">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="pendingApprovalAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>
+	<select id="getPendingRecommendationAccountIds" resultMap="getPendingApprovalAccountIds">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="pendingRecommendationAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>
+	
+	<select id="getPendingAcknowledgementAccountIds" resultMap="getPendingApprovalAccountIds">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="pendingAcknowledgementAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>
+
+
+	
+
+	
+
+	<select id="getAssignmentPortfolioAccountIds" resultMap="getPendingApprovalAccountIds">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="assignmentPortfolioAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>	
+<!-- NEW INSTRUCTION -->	
+
+<!-- IN PROGRESS INSTRUCTION -->	
+
+
+<!-- IN PROGRESS ACTION -->
+
+
+<!-- ACTIVE INSTRUCTION -->	
+
+<!-- IN PROGRESS SPECIAL ACTION -->
+	<sql id="inProgressSpecialAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,FU.PROCESS_ID,LA.ACTION_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_MONITORED_ASSIGNMENT AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRLEGAL_IN_PROGRESS_SPECIAL_ACTION FU ON FU.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRLEGAL_ACTION_PROCESS LA ON LA.ID=FU.PROCESS_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		<isNotEqual property="USER_TYPE_ID" compareValue="2">
+		INNER JOIN PTRACCOUNT_LEGAL_WORKLIST_ASSIGNMENT WA ON WA.ACCOUNT_ID=A.ID 
+		<isNotNull property="WORKLIST_ID"> and WA.WORKLIST_ID=#WORKLIST_ID# </isNotNull>
+		INNER JOIN PTRLEGAL_USER_WL_ASSIGN UW ON UW.WORKLIST_ID=WA.WORKLIST_ID AND UW.USER_ID =#LOGON_USER#
+		</isNotEqual>
+		WHERE SR.TYPE_ID=#PROCESS_TYPE_ID# 
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotNull property="AGENCY_ID"> and AG.AGENCY_ID=#AGENCY_ID# </isNotNull>
+		<isNotNull property="SUBTYPE_ID"> and SR.ID=#SUBTYPE_ID# </isNotNull>
+		<isNotNull property="IN_PROGRESS_SPECIAL_ACTION_ID"> and LA.ACTION_ID=#IN_PROGRESS_SPECIAL_ACTION_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>	
+		<isNotNull property="INSTRUCTION_ID"> and LA.ACTION_ID=#INSTRUCTION_ID# </isNotNull>	
+	</sql>
+	<select id="getInProgressSpecialAccountTotalCount" resultMap="getUnassignedAccountTotalCount">
+		SELECT 
+		COUNT(A.PROCESS_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.PROCESS_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="inProgressSpecialAccountIdFragments"/>
+		) A 
+	</select>
+	
+		
+	<resultMap id="getInProgressSpecialActionAccountIds" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="PROCESS_ID" javaType="long" />
+		<result property="ACTION_ID" javaType="long" />
+		<result property="RNUM" javaType="long" />
+	</resultMap>
+	<select id="getInProgressSpecialActionAccountIds" resultMap="getInProgressSpecialActionAccountIds">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID,A.PROCESS_ID,A.ACTION_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="inProgressSpecialAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>		
+<!-- IN PROGRESS REMDEDIAL ACTION -->
+
+	
+	<resultMap class="hmap" id="getAssignmentAccountResults">
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="ACCOUNT_NUMBER" javaType="string" />
+		<result property="CUSTOMER_ID" javaType="string" />
+		<result property="CUSTOMER_NAME" javaType="string" />
+		<result property="CUSTOMER_NUMBER" javaType="string" />
+		<result property="PRODUCT_TYPE" javaType="string" />
+	</resultMap>
+	<select id="getAssignmentAccountResults" resultMap="getAssignmentAccountResults">
+		select A.ID,A.ACCOUNT_NO,C.ID,C.CUSTOMER_NAME,C.CUSTOMER_NO,R.DESCRIPTION as PRODUCT_TYPE 
+		from PTRACCOUNT A
+		INNER JOIN PTRCUSTOMER C ON cast(a.customer_id as bigint)=c.id
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		<isNotEmpty property="ACCOUNTS">
+			where A.ID in(<iterate property="ACCOUNTS" conjunction=",">#ACCOUNTS[]#</iterate>)
+		</isNotEmpty>
+		<isEmpty property="ACCOUNTS">
+			where 1 = 0
+		</isEmpty>
+	</select>
+
+	<resultMap id="getAgencyAssignmentAcountStatusColor" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="ABORT_REASON" javaType="string" />
+		<result property="COLOR" javaType="string" />
+	</resultMap>
+	<select id="getAgencyAssignmentAcountStatusColor" resultMap="getAgencyAssignmentAcountStatusColor">
+		SELECT
+		AG.ID,
+        b.description as ABORT_REASON,
+		CASE 
+		 WHEN ag.instruct_eca_id is not null then 'FF0000'
+            WHEN DATE(AG.EXPECTED_END_DATE) &lt; cast(#CURRENT_DATE# as date) then 'FF0000'
+            WHEN abs.agency_assignment_id is not null then 'FF0000'
+            WHEN AG.RETAIN_REQUESTED =<include refid="true"/> then '0094EE'
+            WHEN DATE(AG.EXPECTED_END_DATE) &lt;= cast(#CURRENT_DATE# as date) + interval '20 days' then 'F3FA12'   
+        end as COLOR
+        FROM PTRACCOUNT_AGENCY_ASSIGNMENT AG
+        left join ptragency_abort_recommendation abs on abs.agency_assignment_id=ag.id
+        left join PTRLEGAL_ABORT_REASON_REF b on abs.recommended_abort_reason_id = b.id
+        WHERE
+		<isNotEmpty property="ASSIGNMENTS">
+		AG.ID IN (<iterate property="ASSIGNMENTS" conjunction=",">#ASSIGNMENTS[]#</iterate>,0)
+		</isNotEmpty>
+		<isEmpty property="ASSIGNMENTS">
+		1=2
+		</isEmpty>
+	</select>		
+	<resultMap id="getAssignmentAbortDetails" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="ABORTED_DATE" javaType="date" />
+		<result property="ABORTED_BY" javaType="string" />
+		<result property="ABORT_REASON" javaType="string" />
+		<result property="AGENCY_NAME" javaType="string" />
+		<result property="ABORT_STATUS" javaType="string" />
+		<result property="CONTRACT_NAME" javaType="string" />
+	</resultMap>
+	<select id="getAssignmentAbortDetails" resultMap="getAssignmentAbortDetails">
+		SELECT
+		A.AGENCY_ASSIGNMENT_ID,AG.ABORTED_DATE,
+		AG.ABORTED_BY,R.DESCRIPTION,G.DESCRIPTION,
+		SR.DESCRIPTION,C.DESCRIPTION
+		FROM PTRAGENCY_ABORTED_ASSIGNMENT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ID=A.AGENCY_ASSIGNMENT_ID
+		INNER JOIN PTRLEGAL_ABORT_REASON_REF R ON R.ID=AG.ABORT_REASON_ID
+		INNER JOIN PTRTREATMENT_STATUS_REF SR ON SR.ID=AG.STATUS_ID
+		LEFT JOIN PTRAGENCY G ON G.ID=AG.AGENCY_ID
+		LEFT JOIN PTRAGENCY_CONTRACT C ON C.ID=AG.CONTRACT_ID
+		WHERE AG.ID IN (<iterate property="ASSIGNMENTS" conjunction=",">#ASSIGNMENTS[]#</iterate>)
+	</select>
+	
+	<resultMap id="getInProgressActionDetails" class="hmap">
+		<result property="PROCESS_ID" javaType="long" />
+		<result property="ACTION" javaType="string" />
+	</resultMap>
+	<select id="getInProgressActionDetails" resultMap="getInProgressActionDetails">
+		SELECT p.ID,R.DESCRIPTION 
+		FROM PTRLEGAL_ACTION_PROCESS P
+		INNER JOIN PTRLEGAL_ACTION_REF R ON R.ID=P.ACTION_ID
+		WHERE P.ID IN (<iterate property="PROCESSES" conjunction=",">#PROCESSES[]#</iterate>)
+	</select>
+	<resultMap id="getAssignmentInstructionDetails" class="hmap">
+		<result property="INSTRUCTION_PROCESS_ID" javaType="long" />
+		<result property="INSTRUCTION" javaType="string" />
+		<result property="INSTRUCTION_BY" javaType="string" />
+		<result property="INSTRUCTION_DATE" javaType="date" />
+		<result property="LAST_ACTION_INSTRUCTION" javaType="string" />
+		<result property="LAST_DATE_INSTRUCTION" javaType="date" />
+		<result property="LAST_STATUS_INSTRUCTION" javaType="string" />
+	</resultMap>
+	<select id="getAssignmentInstructionDetails" resultMap="getAssignmentInstructionDetails">
+		SELECT
+		I.PROCESS_ID AS INSTRUCTION_PROCESS_ID,
+		R.DESCRIPTION AS INSTRUCTION,
+		P.CREATED_BY AS INSTRUCTION_BY,
+		P.CREATED_TIME AS INSTRUCTION_DATE,
+		R_LAST.DESCRIPTION AS LAST_ACTION_INSTRUCTION,
+		P_LAST.CREATED_TIME AS LAST_DATE_INSTRUCTION,
+		P_REF.DESCRIPTION AS LAST_STATUS_INSTRUCTION
+		FROM PTRLEGAL_ACTION_INSTRUCTION I
+		INNER JOIN PTRLEGAL_ACTION_PROCESS P ON P.ID=I.PROCESS_ID
+		INNER JOIN PTRLEGAL_ACTION_REF R ON R.ID=P.ACTION_ID
+		LEFT JOIN PTRLEGAL_ACTION_PROCESS P_LAST ON P_LAST.ID = I.LATEST_ACTION_PROCESS_ID
+		LEFT JOIN PTRLEGAL_ACTION_REF R_LAST ON R_LAST.ID = P_LAST.ACTION_ID
+		LEFT JOIN PTRTREATMENT_STATUS_REF P_REF ON P_LAST.STATUS_ID = P_REF.ID
+		WHERE I.PROCESS_ID IN (<iterate property="INSTRUCTIONS" conjunction=",">#INSTRUCTIONS[]#</iterate>)
+	</select>
+	<insert id="createAssignment">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRACCOUNT_AGENCY_ASSIGNMENT_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		INSERT INTO PTRACCOUNT_AGENCY_ASSIGNMENT(ID,ACCOUNT_ID,STATUS_ID,SUBTYPE_ID,AGENCY_ID,CONTRACT_ID,EXPECTED_END_DATE,CREATED_TIME,CREATED_BY,SOURCE,REMARKS)
+		VALUES(#ID#,#ACCOUNT_ID#,15007,#SUBTYPE_ID#,#AGENCY_ID#,#CONTRACT_ID#,#EXPECTED_END_TIME#,#CURRENT_TIME#,#LOGON_USER#,'CA',#REMARKS#)
+	</insert>
+	<insert id="createLegalAssignment">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRACCOUNT_AGENCY_ASSIGNMENT_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		INSERT INTO PTRACCOUNT_AGENCY_ASSIGNMENT(ID,ACCOUNT_ID,STATUS_ID,SUBTYPE_ID,AGENCY_ID,CONTRACT_ID,EXPECTED_END_DATE,CREATED_TIME,CREATED_BY,SOURCE,REMARKS,APPROVED_DATE,APPROVED_BY)
+		VALUES(#ID#,#ACCOUNT_ID#,15007,#SUBTYPE_ID#,#AGENCY_ID#,#CONTRACT_ID#,#EXPECTED_END_TIME#,#CURRENT_TIME#,#LOGON_USER#,'CA',#REMARKS#,#CURRENT_TIME#,#LOGON_USER#)
+	</insert>
+	<insert id="createAssignmentViaVerification">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRACCOUNT_AGENCY_ASSIGNMENT_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		INSERT INTO PTRACCOUNT_AGENCY_ASSIGNMENT(ID,ACCOUNT_ID,STATUS_ID,SUBTYPE_ID,AGENCY_ID,CONTRACT_ID,EXPECTED_END_DATE,CREATED_TIME,CREATED_BY,SOURCE,REMARKS)
+		VALUES(#ID#,#ACCOUNT_ID#,15007,#SUBTYPE_ID#,#AGENCY_ID#,#CONTRACT_ID#,#EXPECTED_END_TIME#,#CURRENT_TIME#,#LOGON_USER#,'VR',#REMARKS#)
+	</insert>
+	
+	<update id="updateAccountLastLegalAction">
+		update ptraccount_last_legal_action set agency_assignment_id =#AGENCY_ASSIGNMENT_ID#,process_id=#PROCESS_ID#, action_id = #ACTION_ID#
+		where account_id=#ACCOUNT_ID#	
+	</update>
+	<insert id="insertAccountLastLegalAction">
+		insert into ptraccount_last_legal_action(account_id,agency_assignment_id,process_id,action_id)
+		values(#ACCOUNT_ID#,#AGENCY_ASSIGNMENT_ID#,#PROCESS_ID#,#ACTION_ID#)
+	</insert>
+		
+	<update id="updateAccountLastAssignmentSummary">	
+		update ptraccount_last_assignment_summary set agency_assignment_id=#ID#,assignment_date=#CURRENT_TIME#
+		where account_id=#ACCOUNT_ID# and subtype_id=#SUBTYPE_ID#
+	</update>
+	<update id="updateAccountLastAssignmentOnAbortSummary">	
+		update ptraccount_last_assignment_summary set last_aborted_assignment_id=#AGENCY_ASSIGNMENT_ID#,last_aborted_date=#CURRENT_TIME#
+		where account_id=#ACCOUNT_ID# and subtype_id=#SUBTYPE_ID#
+	</update>
+	<insert id="insertAccountLastAssignmentSummary">	
+		insert into ptraccount_last_assignment_summary(account_id,agency_assignment_id,assignment_date,subtype_id)
+		values(#ACCOUNT_ID#,#ID#,#CURRENT_TIME#,#SUBTYPE_ID#)
+	</insert>
+	<insert id="submitApproval">
+		INSERT INTO PTRAGENCY_ASSIGNMENT_APPROVAL(AGENCY_ASSIGNMENT_ID)	VALUES(#AGENCY_ASSIGNMENT_ID#)
+	</insert>
+	<insert id="submitRecommendation">
+		INSERT INTO PTRAGENCY_ASSIGNMENT_RECOMMENDATION(AGENCY_ASSIGNMENT_ID)	VALUES(#ID#)
+	</insert>
+	<insert id="monitorAssignment">
+		INSERT INTO PTRAGENCY_MONITORED_ASSIGNMENT(AGENCY_ASSIGNMENT_ID)	VALUES(#AGENCY_ASSIGNMENT_ID#)
+	</insert>
+	<insert id="effectiveAssignment">
+		INSERT INTO PTRAGENCY_EFFECTIVE_ASSIGNMENT(AGENCY_ASSIGNMENT_ID,EFFECTIVE_DATE)	VALUES(#AGENCY_ASSIGNMENT_ID#,#CURRENT_TIME#)
+	</insert>
+	<delete id="clearApproval">
+		delete from PTRAGENCY_ASSIGNMENT_APPROVAL WHERE AGENCY_ASSIGNMENT_ID = #AGENCY_ASSIGNMENT_ID#
+	</delete>
+	<delete id="clearRecommendation">
+		delete from PTRAGENCY_ASSIGNMENT_RECOMMENDATION WHERE AGENCY_ASSIGNMENT_ID = #AGENCY_ASSIGNMENT_ID#
+	</delete>
+	<delete id="clearMonitoring">
+		delete from PTRAGENCY_MONITORED_ASSIGNMENT WHERE AGENCY_ASSIGNMENT_ID = #AGENCY_ASSIGNMENT_ID#
+	</delete>
+	<delete id="clearAcknowledgement">
+		delete from PTRAGENCY_ASSIGNMENT_ACKNOWLEDGEMENT WHERE AGENCY_ASSIGNMENT_ID = #AGENCY_ASSIGNMENT_ID#
+	</delete>
+	<insert id="pendingAcknowledgement">
+		INSERT INTO PTRAGENCY_ASSIGNMENT_ACKNOWLEDGEMENT(AGENCY_ASSIGNMENT_ID)	VALUES(#AGENCY_ASSIGNMENT_ID#)
+	</insert>
+	<update id="updateApprovalAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET APPROVED_DATE =#CURRENT_TIME#, APPROVED_BY = #LOGON_USER#,
+		UPDATED_TIME = #CURRENT_TIME#, UPDATED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updateRecommendAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET RECOMMENDED_DATE =#CURRENT_TIME#, RECOMMENDED_BY = #LOGON_USER#,
+		UPDATED_TIME = #CURRENT_TIME#, UPDATED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updateAcknowledgeAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET ACKNOWLEDGED_DATE =#CURRENT_TIME#, ACKNOWLEDGED_BY = #LOGON_USER#,
+		UPDATED_TIME = #CURRENT_TIME#, UPDATED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updateCancelAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET STATUS_ID = 15005,ABORTED_DATE =#CURRENT_TIME#, ABORTED_BY = #LOGON_USER#,
+		ABORT_REASON_ID = #ABORT_REASON_ID#,UPDATED_TIME = #CURRENT_TIME#, UPDATED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updateRejectAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET STATUS_ID = 15005,ABORTED_DATE =#CURRENT_TIME#, ABORTED_BY = #LOGON_USER#,
+		ABORT_REASON_ID = #ABORT_REASON_ID#,UPDATED_TIME = #CURRENT_TIME#, UPDATED_BY = #LOGON_USER#,REJECTED_DATE = #CURRENT_TIME#, REJECTED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updateRetainAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET 
+		EXPECTED_END_DATE =#EXPECTED_END_DATE#, 
+		RETAINED_DATE = #CURRENT_TIME#,
+		RETAINED_BY = #LOGON_USER#,
+		RETAIN_REQUESTED = <include refid="false"/>,
+		UPDATED_TIME = #CURRENT_TIME#, 
+		UPDATED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updateAgencyRetainAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET 
+		RETAIN_REQUESTED_BY = #LOGON_USER#,
+		RETAIN_REQUESTED = <include refid="true"/>,
+		UPDATED_TIME = #CURRENT_TIME#, 
+		UPDATED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updateAbortAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET STATUS_ID = #STATUS_ID#,ABORTED_DATE =#CURRENT_TIME#, ABORTED_BY = #LOGON_USER#,
+		ABORT_REASON_ID = #ABORT_REASON_ID#,UPDATED_TIME = #CURRENT_TIME#, UPDATED_BY = #LOGON_USER#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<update id="updatedAccountRejectedAssignment">
+		update ptraccount_rejected_assignment set agency_assignment_id=#AGENCY_ASSIGNMENT_ID#
+		WHERE account_id=#ACCOUNT_ID# and subtype_id=#SUBTYPE_ID#	
+	</update>
+	<update id="updatedAccountQueueAssignment">
+		update ptraccount_queue_assignment set agency_assignment_id=#AGENCY_ASSIGNMENT_ID#,queued_by =#LOGON_USER#,queued_date=#CURRENT_TIME#
+		WHERE account_id=#ACCOUNT_ID# and subtype_id=#SUBTYPE_ID#	
+	</update>
+	<insert id="insertAccountQueueAssignment">
+		INSERT INTO ptraccount_queue_assignment (AGENCY_ASSIGNMENT_ID,SUBTYPE_ID,ACCOUNT_ID,queued_by,queued_date)
+		VALUES(#AGENCY_ASSIGNMENT_ID#,#SUBTYPE_ID#,#ACCOUNT_ID#,#LOGON_USER#,#CURRENT_TIME#)
+	</insert>
+	<insert id="insertAccountRejectedAssignment">
+		INSERT INTO ptraccount_rejected_assignment (AGENCY_ASSIGNMENT_ID,SUBTYPE_ID,ACCOUNT_ID)
+		VALUES(#AGENCY_ASSIGNMENT_ID#,#SUBTYPE_ID#,#ACCOUNT_ID#)
+	</insert>
+	<insert id="abortAssignment">
+		INSERT INTO PTRAGENCY_ABORTED_ASSIGNMENT(AGENCY_ASSIGNMENT_ID)	VALUES(#AGENCY_ASSIGNMENT_ID#)
+	</insert>
+	
+	<select id="getInstructedActionAccountStatus" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		from PTRINSTRUCTED_ACTION_REF
+	</select>
+
+	<resultMap id="getLegalActionForEditor"  extends="global.ref" class="hmap">
+		<result property="TYPE_ID" javaType="long" />
+	</resultMap>
+		
+	<select id="getLegalActionForEditor" resultMap="getLegalActionForEditor">
+		<include refid="pleaseSelectRef"/>,null as TYPE_ID
+		union
+		<include refid="refselect" />,TYPE_ID 
+		FROM PTRLEGAL_ACTION_REF
+		WHERE SUBTYPE_ID =#SUBTYPE_ID#
+		<isEqual property="ACTION_TYPE" compareValue="FOLLOW_UP">
+			AND TYPE_ID = 5
+		</isEqual>
+		<isEqual property="ACTION_TYPE" compareValue="INSTRUCTION">
+			AND TYPE_ID = 1
+		</isEqual>
+		<isEqual property="ACTION_TYPE" compareValue="ACTION">
+			AND TYPE_ID = 2 AND INSTRUCTION_ID IS NULL
+		</isEqual>
+		<isEqual property="ACTION_TYPE" compareValue="SPECIAL_ACTION">
+			AND TYPE_ID = 3
+		</isEqual>
+		<isEqual property="ACTION_TYPE" compareValue="REMEDIAL">
+			AND TYPE_ID = 4
+		</isEqual>
+	</select>
+	
+	<select id="getLegalUpdateActionForEditor" resultMap="getLegalActionForEditor">
+		<include refid="pleaseSelectRef"/>,null as TYPE_ID
+		union
+		SELECT r.id,r.code,r.description,r.disable,r.sort_priority,r.type_id FROM PTRLEGAL_ACTION_INSTRUCTION I 
+		INNER JOIN PTRLEGAL_ACTION_PROCESS P ON P.ID=I.PROCESS_ID
+		INNER JOIN PTRLEGAL_ACTION_REF R ON R.INSTRUCTION_ID=P.ACTION_ID
+		WHERE I.PROCESS_ID=#INSTRUCTION_PROCESS_ID# AND NOT EXISTS(SELECT IP.ID FROM PTRLEGAL_ACTION_PROCESS IP 
+		WHERE IP.INSTRUCTION_PROCESS_ID=I.PROCESS_ID AND R.ID=IP.ACTION_ID AND IP.STATUS_ID IN(15007,15004))
+	</select>
+	
+
+
+
+	
+	<resultMap class="hmap" id="getEcaPreNpf2MiaNewPendingRecommendation">
+	<result property="AGENCY_ID" javaType="long"/>
+	<result property="AGENCY_NAME" javaType="string"/>
+	<result property="C1_NEW_TOTAL_CASE" javaType="long"/>
+	<result property="C1_NEW_GROSS_BALANCE" javaType="$"/>
+	<result property="C1_EXISTING_TOTAL_CASE" javaType="long"/>
+	<result property="C1_EXISTING_GROSS_BALANCE" javaType="$"/>
+	</resultMap>
+	
+	<select id="getEcaPreNpf2MiaNewPendingRecommendation" resultMap="getEcaPreNpf2MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_RECOMMENDATION AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 2
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaNpfC1MiaNewPendingRecommendation" resultMap="getEcaPreNpf2MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_RECOMMENDATION AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears between 4 and 12
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaNpfC1MiaNewPendingApproval" resultMap="getEcaPreNpf2MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN ptragency_assignment_approval AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears between 4 and 12
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaPreNpfC1MiaNewPendingApproval" resultMap="getEcaPreNpf2MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN ptragency_assignment_approval AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 2
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<resultMap class="hmap" id="getEcaPreNpf2MiaExistingPendingRecommendation">
+	<result property="AGENCY_ID" javaType="long"/>
+	<result property="AGENCY_NAME" javaType="string"/>
+	<result property="C1_EXISTING_TOTAL_CASE" javaType="long"/>
+	<result property="CI_EXISTING_GROSS_BALANCE" javaType="$"/>
+	</resultMap>
+	
+	<select id="getEcaPreNpf2MiaExistingPendingRecommendation" resultMap="getEcaPreNpf2MiaExistingPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007  and ag.recommended_date is not null
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 2
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaPreNpfC1ExistingPendingAproval" resultMap="getEcaPreNpf2MiaExistingPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007  and ag.approved_date is not null
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 2
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaNpfC1MiaExistingPendingRecommendation" resultMap="getEcaPreNpf2MiaExistingPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007  and ag.recommended_date is not null
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears between 4 and 12
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<resultMap class="hmap" id="getEcaPreNpf3MiaNewPendingRecommendation">
+	<result property="AGENCY_ID" javaType="long"/>
+	<result property="AGENCY_NAME" javaType="string"/>
+	<result property="C2_NEW_TOTAL_CASE" javaType="long"/>
+	<result property="C2_NEW_GROSS_BALANCE" javaType="$"/>
+	<result property="C2_EXISTING_TOTAL_CASE" javaType="long"/>
+	<result property="C2_EXISTING_GROSS_BALANCE" javaType="$"/>
+	</resultMap>
+	
+	<select id="getEcaPreNpf3MiaNewPendingRecommendation" resultMap="getEcaPreNpf3MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_RECOMMENDATION AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 3
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaPreNpfC2MiaNewPendingApproval" resultMap="getEcaPreNpf3MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN ptragency_assignment_approval AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 3
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaNpfC2MiaNewPendingRecommendation" resultMap="getEcaPreNpf3MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_RECOMMENDATION AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears &gt;12
+		group by G.ID,G.DESCRIPTION
+	</select>	
+	<select id="getEcaNpfC2MiaNewPendingAproval" resultMap="getEcaPreNpf3MiaNewPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE,
+		0,0
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN ptragency_assignment_approval AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears &gt;12
+		group by G.ID,G.DESCRIPTION
+	</select>	
+	<resultMap class="hmap" id="getEcaPreNpf3MiaExistingPendingRecommendation">
+	<result property="AGENCY_ID" javaType="long"/>
+	<result property="AGENCY_NAME" javaType="string"/>
+	<result property="C2_EXISTING_TOTAL_CASE" javaType="long"/>
+	<result property="C2_EXISTING_GROSS_BALANCE" javaType="$"/>
+	</resultMap>
+	
+	<select id="getEcaPreNpf3MiaExistingPendingRecommendation" resultMap="getEcaPreNpf3MiaExistingPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007  and ag.recommended_date is not null
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19 
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 3
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaPreNpfC2MiaExistingPendingApproval" resultMap="getEcaPreNpf3MiaExistingPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007  and ag.recommended_date is not null
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19 
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears = 3
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<select id="getEcaNpfC2MiaExistingPendingRecommendation" resultMap="getEcaPreNpf3MiaExistingPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007  and ag.recommended_date is not null
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19 
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears &gt;12
+		group by G.ID,G.DESCRIPTION
+	</select>	
+	<select id="getEcaNpfC2MiaExistingPendingApproval" resultMap="getEcaPreNpf3MiaExistingPendingRecommendation">
+		SELECT G.ID,G.DESCRIPTION,count(A.ID) as C1_NEW_TOTAL_CASE,
+		sum(coalesce(a.outstanding_balance,0) - (coalesce(a.interest_rebate_amount,0) + coalesce(a.write_off_amount,0))) as CI_NEW_GROSS_BALANCE
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007  and ag.approved_date is not null
+		INNER JOIN ptragency G ON G.ID=AG.AGENCY_ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID AND SR.TYPE_ID=19 
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID
+		WHERE A.months_in_arrears &gt;12
+		group by G.ID,G.DESCRIPTION
+	</select>	
+	<sql id="ecapendingRecommendationAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN PTRAGENCY_ASSIGNMENT_RECOMMENDATION AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		WHERE SR.TYPE_ID=19 AND AG.AGENCY_ID=#AGENCY_ID#
+	</sql>	
+	
+	<resultMap id="getEcaPendingRecommendationAccountIds" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="ACCOUNT_ID" javaType="long" />
+	</resultMap>
+	<select id="getEcaPendingRecommendationAccountIds" resultMap="getEcaPendingRecommendationAccountIds">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID FROM
+		(
+		<include refid="ecapendingRecommendationAccountIdFragments"/>
+		) A 
+	</select>
+	
+	<sql id="ecapendingApprovalAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,AG.ID AS AGENCY_ASSIGNMENT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRACCOUNT_AGENCY_ASSIGNMENT AG ON AG.ACCOUNT_ID=A.ID
+		INNER JOIN ptragency_assignment_approval AP ON AP.AGENCY_ASSIGNMENT_ID=AG.ID
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON AG.SUBTYPE_ID=SR.ID
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID  <isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID#</isNotNull>
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		WHERE SR.TYPE_ID=19 AND AG.AGENCY_ID=#AGENCY_ID#
+		<isEqual property="TYPE_CODE" compareValue="PRE_NPL">
+			AND A.MONTH_IN_ARREARS IN(3,2)
+		</isEqual>		
+		<isEqual property="TYPE_CODE" compareValue="NPL">
+			AND A.MONTH_IN_ARREARS &gt; 3
+		</isEqual>
+	</sql>	
+	
+	<resultMap id="getEcaPendingAprovalAccountIds" class="hmap">
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long" />
+		<result property="ACCOUNT_ID" javaType="long" />
+	</resultMap>
+	<select id="getEcaPendingAprovalAccountIds" resultMap="getEcaPendingAprovalAccountIds">
+		SELECT A.AGENCY_ASSIGNMENT_ID,A.ACCOUNT_ID FROM
+		(
+		<include refid="ecapendingApprovalAccountIdFragments"/>
+		) A 
+	</select>
+	
+	<sql id="rejectedEcaAccountIdFragments">
+		SELECT A.ID AS ACCOUNT_ID,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		FROM PTRACCOUNT A
+		INNER JOIN PTRPRODUCT_TYPE_REF R ON R.ID=A.PRODUCT_TYPE_ID
+		INNER JOIN PTRPRODUCT_TYPE_CATEGORY_REF PR ON R.CATEGORY_ID=PR.ID 
+		INNER JOIN PTRCUSTOMER C ON CAST(A.CUSTOMER_ID as BIGINT)= C.ID 
+		inner join ptraccount_queue_assignment queue on queue.account_id=a.id
+		left join ptraccount_rejected_assignment rj on rj.account_id=a.id
+		inner join ptrtreatment_subtype_ref sub on sub.id=queue.subtype_id and sub.type_id=#PROCESS_TYPE_ID#
+		WHERE NOT EXISTS(SELECT 1 FROM PTRACCOUNT_AGENCY_ASSIGNMENT AG INNER JOIN PTRTREATMENT_SUBTYPE_REF SR ON SR.ID=AG.SUBTYPE_ID
+		WHERE AG.ACCOUNT_ID=A.ID AND AG.STATUS_ID=15007 and SR.TYPE_ID=#PROCESS_TYPE_ID#)
+		<isNotNull property="PRODUCT_CATEGORY_ID"> and PR.ID=#PRODUCT_CATEGORY_ID# </isNotNull>
+		<isNotEmpty property="ACCOUNT_NUMBER">and UPPER(A.ACCOUNT_NO) LIKE '%'||UPPER(#ACCOUNT_NUMBER#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NAME"> and UPPER(C.CUSTOMER_NAME) LIKE '%'||UPPER(#CUSTOMER_NAME#)||'%'</isNotEmpty>
+		<isNotEmpty property="CUSTOMER_NUMBER"> and UPPER(C.CUSTOMER_ID_NO) LIKE '%'||UPPER(#CUSTOMER_NUMBER#)||'%'</isNotEmpty>		
+	</sql>	
+	
+	<select id="getRejectedEcaAccountTotalCount" resultMap="getUnassignedAccountTotalCount">
+		SELECT 
+		COUNT(A.ACCOUNT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="rejectedEcaAccountIdFragments"/>
+		) A 
+	</select>
+		<select id="getRejectedAccountIds" resultMap="getUnassignedAccountIds">
+		SELECT A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		(
+		<include refid="rejectedEcaAccountIdFragments"/>
+		) A 
+		WHERE A.ROW_NUMBER BETWEEN (((#CURRENT_PAGE# - 1) * #LIMIT_BY#)+1) AND  (#CURRENT_PAGE# * #LIMIT_BY#)
+	</select>
+	<delete id="clearRejectedOnCreateAction">
+		delete from ptraccount_rejected_assignment where account_id=#ACCOUNT_ID# and subtype_id=#SUBTYPE_ID#
+	</delete>
+	<delete id="clearQueueOnCreateAction">
+		delete from ptraccount_rejected_assignment where account_id=#ACCOUNT_ID# and subtype_id=#SUBTYPE_ID#
+	</delete>
+	
+	
+	
+	
+	
+	<update id="updateAgencyAssignmentMonitoringStatusToNull">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET MONITORING_STATUS_ID=null
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+
+
+<!-- temp -->
+	<resultMap id="getProtoWorklistData" class="hmap">
+		<result property="NAME" javaType="string" />
+		<result property="DESCRIPTION" javaType="string"/>
+		<result property="COUNT" javaType="long"/>
+	</resultMap>
+	
+	<select id="getProtoWorklistData" resultMap="getProtoWorklistData">	
+		select  w.work_list_name,w.work_list_desc,count(wa.account_id)
+		from ptrwork_list_group_ref wg
+		inner join ptrwork_list w on w.work_list_group=wg.id
+		left join ptraccount_work_list_assignment wa on wa.work_list_id=w.work_list_id
+		where wg.code= #CATEGORY_CODE#
+		group by  w.work_list_name,w.work_list_desc
+		order by w.work_list_name asc
+	</select>
+	<resultMap id="getProtoImportedAccountsData" class="hmap">
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="WORK_LIST_ID" javaType="long" />
+		<result property="ACCOUNT_NUMBER" javaType="string" />
+		<result property="PRODUCT_TYPE" javaType="string" />
+		<result property="PRODUCT_CATEGORY" javaType="string" />
+		<result property="MIA" javaType="long" />
+		<result property="WL_CODE" javaType="string"/>
+		<result property="WL_DESCRIPTION" javaType="string"/>
+	</resultMap>
+	
+	<select id="getProtoImportedAccountsData" resultMap="getProtoImportedAccountsData">	
+		select a.id,w.work_list_id,a.account_no,p.description,pt.description,coalesce(a.months_in_arrears,0),
+		w.work_list_name,w.work_list_desc 
+		from ptrworklist_account_temp t
+		inner join ptraccount a on a.account_no=t.account_number
+		inner join ptrproduct_type_ref p on p.id=a.product_type_id
+		inner join ptrproduct_type_category_ref pt on pt.id=p.category_id
+		inner join ptrwork_list w on w.work_list_name=t.worklist_code
+		where  not exists(select 1 from ptraccount_work_list_assignment wa where wa.account_id=a.id and wa.work_list_id is not null)
+		order by a.account_no,pt.description
+	</select>
+	<resultMap id="getProtoProcessData" class="hmap">
+		<result property="ACCOUNT_ID" javaType="long" />
+		<result property="WORK_LIST_ID" javaType="long" />
+		<result property="ASSIGNMENT_DATE" javaType="date" />
+	</resultMap>
+	
+	<select id="getProtoProcessData" resultMap="getProtoProcessData">	
+		select a.id,w.work_list_id,cast(#ASSIGNMENT_DATE# as DATE)
+		from ptrworklist_account_temp t
+		inner join ptraccount a on a.account_no=t.account_number
+		inner join ptrwork_list w on w.work_list_name=t.worklist_code
+		where not exists(select 1 from ptraccount_work_list_assignment wa where wa.account_id=a.id and wa.work_list_id is not null)
+	</select>
+	<update id="updateProtoCurrentAssignment">
+	update ptraccount_work_list_assignment set work_list_id = #WORK_LIST_ID#,
+	assignment_date = #ASSIGNMENT_DATE# where account_id = #ACCOUNT_ID#
+	</update>
+	<update id="updateProtoRecentAssignment">
+	update PTRACC_WL_RECENT_ASSIGN set work_list_id = #WORK_LIST_ID#
+	where assignment_date = #ASSIGNMENT_DATE# and account_id = #ACCOUNT_ID#
+	</update>
+	<resultMap id="getProtoDataCheck" class="hmap">
+		<result property="ASSIGNMENT_DATE" javaType="date" />
+		<result property="COUNT" javaType="long"/>
+		<result property="ASSIGNED_COUNT" javaType="long"/>
+	</resultMap>
+	
+	<select id="getPtrAccountWorklistAssignment" resultMap="getProtoDataCheck">	
+		select wa.assignment_date,count(a.id),count(wa.work_list_id)
+		from ptraccount_work_list_assignment wa
+		inner join ptraccount a on a.id=wa.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrproduct_type_category_ref c on c.id=t.category_id
+		where c.code = #CATEGORY_CODE#
+		group by wa.assignment_date		
+	</select>
+	<select id="getPtrAccWlRecentAssign" resultMap="getProtoDataCheck">	
+		select wa.assignment_date,count(a.id),count(wa.work_list_id)
+		from PTRACC_WL_RECENT_ASSIGN wa
+		inner join ptraccount a on a.id=wa.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrproduct_type_category_ref c on c.id=t.category_id
+		where c.code = #CATEGORY_CODE#
+		group by wa.assignment_date		
+	</select>
+	<select id="getPtrAccWlAssignHistory" resultMap="getProtoDataCheck">	
+		select wa.assignment_date,count(a.id),count(wa.work_list_id)
+		from PTRACC_WL_ASSIGN_HISTORY wa
+		inner join ptraccount a on a.id=wa.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrproduct_type_category_ref c on c.id=t.category_id
+		where c.code = #CATEGORY_CODE#
+		group by wa.assignment_date		
+	</select>	
+	<delete id="deleteTemp">
+		delete from ptrworklist_account_temp
+	</delete>
+	<insert id="insertTemp">
+		insert into ptrworklist_account_temp(account_number,worklist_code)
+		values(ltrim(#ACCOUNT_NUMBER#,'0'),#WL_CODE#)
+	</insert>
+
+	<resultMap id="getTempProceed" class="hmap">
+		<result property="PROCEED" javaType="boolean" />
+	</resultMap>
+	<select id="getTempProceed" resultMap="getTempProceed">
+		select distinct case when
+		work_list_id is null then false end as CONTINUE
+		from
+		ptrworklist_account_temp temp
+		left JOIN ptrwork_list w on
+		temp.worklist_code =w.work_list_name
+		where w.work_list_name is null
+	</select>
+	<insert id="insertTempCurrent">
+		insert into
+		ptraccount_work_list_assignment(account_id,work_list_id,assignment_date)
+		select distinct a.id as ACCOUNT_ID,w.work_list_id,current_date as
+		assignment_date
+		from ptrworklist_account_temp temp
+		inner join ptraccount
+		a on a.account_no=temp.account_number
+		inner JOIN ptrwork_list w on
+		temp.worklist_code =w.work_list_name
+		left join
+		ptraccount_work_list_assignment wa on wa.account_id=a.id
+		where
+		wa.work_list_id is null
+	</insert>
+	<insert id="insertTempRecent">
+		insert into
+		PTRACC_WL_RECENT_ASSIGN(account_id,work_list_id,assignment_date)
+		select distinct a.id as ACCOUNT_ID,w.work_list_id,current_date as
+		assignment_date
+		from ptrworklist_account_temp temp
+		inner join ptraccount
+		a on a.account_no=temp.account_number
+		inner JOIN ptrwork_list w on
+		temp.worklist_code =w.work_list_name
+		left join
+		ptraccount_work_list_assignment wa on wa.account_id=a.id
+		where
+		wa.work_list_id is null
+	</insert>
+	<insert id="insertTempHist">
+		insert into
+		PTRACC_WL_ASSIGN_HISTORY(account_id,work_list_id,assignment_date)
+		select distinct a.id as ACCOUNT_ID,w.work_list_id,current_date as
+		assignment_date
+		from ptrworklist_account_temp temp
+		inner join ptraccount
+		a on a.account_no=temp.account_number
+		inner JOIN ptrwork_list w on
+		temp.worklist_code =w.work_list_name
+		left join
+		ptraccount_work_list_assignment wa on wa.account_id=a.id
+		where
+		wa.work_list_id is null
+	</insert>
+	<update id="resetProtoAssignment">
+		update ptraccount_work_list_assignment set work_list_id = null 
+		from ptrwork_list_group_ref 
+		inner join ptrwork_list  on ptrwork_list.work_list_group=ptrwork_list_group_ref.id 
+		where ptrwork_list_group_ref.code =#CATEGORY_CODE# 
+		and ptrwork_list.work_list_id = ptraccount_work_list_assignment.work_list_id	
+	</update>
+	<resultMap id="protoAccountSnapshot" class="java.util.HashMap">
+		<result property="ASSIGNMENT_DATE" javaType="date"/>
+		<result property="ACCOUNT_ID"  javaType="long"/>
+		<result property="NPL_FLAG"  javaType="long"/>
+		<result property="NPL_STATUS"  javaType="long"/>
+		<result property="OUTSTANDING_AMT"  javaType="$"/>
+		<result property="OUTSTANDING_BALANCE"  javaType="$"/>
+		<result property="TOTAL_GROSS_BALANCE"  javaType="$"/>	
+		<result property="MONTHS_IN_ARREARS"  javaType="long"/>
+		<result property="DAYS_PAST_DUE"  javaType="long"/>
+		<result property="INSTALLMENT_AMOUNT_IN_ARREARS"  javaType="$"/>
+		<result property="INTEREST_DUE_DATE" javaType="date"/>
+		<result property="PAYMENT_DUE_DATE" javaType="date"/>
+		<result property="SELF_CURE"  javaType="long"/>	
+		<result property="RELEASE_DATE" javaType="date"/>
+		<result property="FULL_RELEASE_DATE" javaType="date"/>
+		<result property="IS_UPDATE"  javaType="boolean"/>
+	</resultMap>
+<select id="protoAccountSnapshot" resultMap="protoAccountSnapshot">
+		SELECT distinct 
+		cast(#ASSIGNMENT_DATE# as date) as ASSIGNMENT_DATE, 
+		a.ID as ACCOUNT_ID,
+		case when A.NPL_FLAG = 'Y' then 1 else 0 end as NPL_FLAG,
+		A.NPL_STATUS_ID as NPL_STATUS,
+		a.outstanding_balance as OUTSTANDING_AMT,
+		a.outstanding_balance as OUTSTANDING_BALANCE,
+		a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount) as TOTAL_GROSS_BALANCE,
+		a.months_in_arrears, 
+		a.MONTHS_IN_ARREARS * 30 AS DAYS_PAST_DUE,
+		a.installment_amount_in_arrears,
+		A.next_interest_payment_due_date as INTEREST_DUE_DATE,
+		a.NEXT_PAYMENT_DUE_DATE as PAYMENT_DUE_DATE,
+		case when cure.status = true then 1 else 0 end as self_cure,
+		a.first_release_date as RELEASE_DATE, 
+		a.FULL_RELEASE_DATE as FULL_RELEASE_DATE,
+		case 
+		when wlassign.account_id = a.id then <include refid="true"/> else <include refid="false"/> end as IS_UPDATE
+		from ptraccount a
+		left join ptraccount_work_list_assignment wlassign on a.id = wlassign.account_id
+		left join PTRACC_SELF_CURE_STATUS cure on a.id = cure.account_id
+		inner join ptrproduct_type_ref pr on (a.product_type_id = pr.id)
+		inner join ptrproduct_type_category_ref cat on (pr.category_id = cat.id)
+</select>
+
+	<!-- end -->
+	<insert id="insertProcessAdditionalDetails">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRLEGAL_ACTION_PROCESS_ADDITIONAL_DETAILS_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>
+		INSERT INTO
+		PTRLEGAL_ACTION_PROCESS_ADDITIONAL_DETAILS(ID,DETAIL_ID,PROCESS_ID,CALENDAR,TEXT,
+		PERCENTAGE,AMOUNT,NUMBER,CHECKBOX) values
+		(#ID#,#DETAIL_ID#,#PROCESS_ID#,#CALENDAR#,#TEXT#,#PERCENTAGE#,#AMOUNT#,#NUMBER#,#CHECKBOX#)
+	</insert>
+	<update id="updateProcessAdditionalDetails">
+		update PTRLEGAL_ACTION_PROCESS_ADDITIONAL_DETAILS
+		set
+		CALENDAR =#CALENDAR#,
+		TEXT =#TEXT#,
+		PERCENTAGE = #PERCENTAGE#,
+		AMOUNT =
+		#AMOUNT#,
+		NUMBER = #NUMBER#,
+		CHECKBOX = #CHECKBOX#
+		WHERE ID =#ID#
+	</update>
+
+	<resultMap id="getEcaAssignmentVerification" class="java.util.HashMap">
+		<result property="AGENCY_ID"  javaType="long"/>
+		<result property="AGENCY_NAME"  javaType="string"/>
+	</resultMap>
+		
+	<select id="getEcaAssignmentVerification" resultMap="getEcaAssignmentVerification">
+		SELECT DISTINCT G.ID,G.DESCRIPTION 
+		FROM PTRAGENCY G
+		INNER JOIN PTRAGENCY_CONTRACT_REL R ON R.AGENCY_ID=G.ID
+		INNER JOIN PTRAGENCY_CONTRACT C ON C.ID=R.CONTRACT_ID 
+		INNER JOIN PTRTREATMENT_SUBTYPE_REF S ON S.ID=C.SUBTYPE_ID AND S.TYPE_ID=19
+		group by G.ID,G.DESCRIPTION
+	</select>
+	<resultMap id="getEcaNewAssignmentVerification" class="java.util.HashMap">
+		<result property="AGENCY_ID"  javaType="long"/>
+		<result property="NEW_ACCOUNT"  javaType="long"/>
+		<result property="NEW_GROSS"  javaType="$"/>
+		<result property="ASSIGNED_ACCOUNT"  javaType="long"/>
+		<result property="ASSIGNED_GROSS"  javaType="$"/>
+	</resultMap>
+		
+	<select id="getEcaNewAssignmentVerification" resultMap="getEcaNewAssignmentVerification">
+		select v.agency_id,count(v.account_id) ,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance ,0,0
+		from ptraccount_agency_assignment_verification v
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrtreatment_subtype_ref s on s.id=v.subtype_id 
+		where s.type_id=19 
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		<isNotNull property="SEARCH_AGENCY_ID">and v.agency_id=#SEARCH_AGENCY_ID#</isNotNull>
+		group by agency_id
+	</select>
+	<select id="getEcaNewAssignmentForRecommendation" resultMap="getEcaNewAssignmentVerification">
+		select v.agency_id,count(v.account_id) ,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance ,0,0
+		from ptraccount_agency_assignment v
+		inner join PTRAGENCY_ASSIGNMENT_RECOMMENDATION r on r.agency_assignment_id=v.id
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrtreatment_subtype_ref s on s.id=v.subtype_id 
+		where s.type_id=19 
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		<isNotNull property="SEARCH_AGENCY_ID">and v.agency_id=#SEARCH_AGENCY_ID#</isNotNull>
+		group by agency_id
+	</select>	
+	<select id="getEcaNewAssignmentForApproval" resultMap="getEcaNewAssignmentVerification">
+		select v.agency_id,count(v.account_id) ,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance ,0,0
+		from ptraccount_agency_assignment v
+		inner join PTRAGENCY_ASSIGNMENT_APPROVAL r on r.agency_assignment_id=v.id
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrtreatment_subtype_ref s on s.id=v.subtype_id 
+		where s.type_id=19 
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		<isNotNull property="SEARCH_AGENCY_ID">and v.agency_id=#SEARCH_AGENCY_ID#</isNotNull>
+		group by agency_id
+	</select>
+	<resultMap id="getEcaAssignedSummaryAssignmentVerification" class="java.util.HashMap">
+		<result property="AGENCY_ID"  javaType="long"/>
+		<result property="ASSIGNED_ACCOUNT"  javaType="long"/>
+		<result property="ASSIGNED_GROSS"  javaType="$"/>
+	</resultMap>
+		
+	<select id="getEcaAssignedSummaryAssignmentVerification" resultMap="getEcaAssignedSummaryAssignmentVerification">
+		select ag.agency_id,count(a.id) as ASSIGNED_ACCOUNT,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance 
+		from ptraccount a
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptraccount_agency_assignment ag on ag.account_id=a.id and ag.status_id = 15007 and ag.approved_date is not null
+		inner join ptrtreatment_subtype_ref s on s.id=ag.subtype_id
+		where s.type_id=19 
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		<isNotNull property="SEARCH_AGENCY_ID">and ag.agency_id=#SEARCH_AGENCY_ID#</isNotNull>
+		group by ag.agency_id
+	</select>	
+	<insert id="insertAssignmentVerification">
+		insert into ptraccount_agency_assignment_verification(account_id,agency_id,contract_id,subtype_id,expected_end_date,evaluation_date,executed_by,tree_id)
+		values(#ACCOUNT_ID#,#AGENCY_ID#,#CONTRACT_ID#,#SUBTYPE_ID#,#EXPECTED_END_TIME#,#CURRENT_TIME#,#LOGON_USER#,#TREE_ID#)
+	</insert>
+	
+	<delete id="clearAssignmentVerification">
+		delete from ptraccount_agency_assignment_verification v
+		using PTRLEGAL_ASSIGNMENT_TREE t 
+		inner join ptrproduct_type_category_ref c on c.id=t.product_category_id 
+		where t.id= v.tree_id and c.code =#PRODUCT_CODE# and t.subtype_id = #SUBTYPE_ID#	
+	</delete>
+	
+	<resultMap id="getEcaNewAssignmentVerificationBreakdown" class="java.util.HashMap">
+		<result property="AGENCY_ID"  javaType="long"/>
+		<result property="NEW_ACCOUNT"  javaType="long"/>
+		<result property="NEW_GROSS"  javaType="$"/>
+		<result property="ASSIGNED_ACCOUNT"  javaType="long"/>
+		<result property="ASSIGNED_GROSS"  javaType="$"/>
+		<result property="MONTHS_IN_ARREARS"  javaType="long"/>
+		<result property="KEY"  javaType="string"/>
+	</resultMap>
+		
+	<select id="getEcaNewAssignmentVerificationBreakdown" resultMap="getEcaNewAssignmentVerificationBreakdown">
+		select v.agency_id,count(v.account_id) ,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance ,0,0,coalesce(a.months_in_arrears,0),v.agency_id||'-'||coalesce(a.months_in_arrears,0)
+		from ptraccount_agency_assignment_verification v
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrtreatment_subtype_ref s on s.id=v.subtype_id 
+		where s.type_id=19 and v.agency_id=#AGENCY_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		group by v.agency_id,coalesce(a.months_in_arrears,0)
+	</select>
+	<select id="getEcaRecommendedAssignmentVerificationBreakdown" resultMap="getEcaNewAssignmentVerificationBreakdown">
+		select v.agency_id,count(v.account_id) ,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance ,0,0,coalesce(a.months_in_arrears,0),v.agency_id||'-'||coalesce(a.months_in_arrears,0)
+		from ptraccount_agency_assignment v
+		inner join PTRAGENCY_ASSIGNMENT_RECOMMENDATION r on r.agency_assignment_id=v.id
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrtreatment_subtype_ref s on s.id=v.subtype_id 
+		where s.type_id=19 and v.agency_id=#AGENCY_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		group by v.agency_id,coalesce(a.months_in_arrears,0)
+	</select>
+	<select id="getEcaApprovalAssignmentVerificationBreakdown" resultMap="getEcaNewAssignmentVerificationBreakdown">
+		select v.agency_id,count(v.account_id) ,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance ,0,0,coalesce(a.months_in_arrears,0),v.agency_id||'-'||coalesce(a.months_in_arrears,0)
+		from ptraccount_agency_assignment v
+		inner join PTRAGENCY_ASSIGNMENT_APPROVAL r on r.agency_assignment_id=v.id
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrtreatment_subtype_ref s on s.id=v.subtype_id 
+		where s.type_id=19 and v.agency_id=#AGENCY_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		group by v.agency_id,coalesce(a.months_in_arrears,0)
+	</select>
+	<resultMap id="getEcaAssignedSummaryAssignmentVerificationBreakdown" class="java.util.HashMap">
+		<result property="AGENCY_ID"  javaType="long"/>
+		<result property="ASSIGNED_ACCOUNT"  javaType="long"/>
+		<result property="ASSIGNED_GROSS"  javaType="$"/>
+		<result property="KEY"  javaType="string"/>
+	</resultMap>
+		
+	<select id="getEcaAssignedSummaryAssignmentVerificationBreakdown" resultMap="getEcaAssignedSummaryAssignmentVerificationBreakdown">
+		select ag.agency_id,count(a.id) as ASSIGNED_ACCOUNT,sum(a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount)) as gross_balance,ag.agency_id||'-'||coalesce(a.months_in_arrears,0)
+		from ptraccount a
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptraccount_agency_assignment ag on ag.account_id=a.id and ag.status_id = 15007 and ag.approved_date is not null
+		inner join ptrtreatment_subtype_ref s on s.id=ag.subtype_id
+		where s.type_id=19 and ag.agency_id=#AGENCY_ID#
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+		group by ag.agency_id,coalesce(a.months_in_arrears,0)
+	</select>	
+
+	<resultMap id="streamVerificationDataForCreateAssignment" class="java.util.HashMap">
+		<result property="VERIFICATION_ID"  javaType="long"/>
+		<result property="AGENCY_ID"  javaType="long"/>
+		<result property="ACCOUNT_ID"  javaType="long"/>
+		<result property="CONTRACT_ID"  javaType="long"/>
+		<result property="SUBTYPE_ID"  javaType="long"/>
+		<result property="PROCESS_TYPE_ID"  javaType="long"/>
+		<result property="EXPECTED_END_TIME"  javaType="date"/>
+	</resultMap>
+		
+	<select id="streamVerificationDataForCreateAssignment" resultMap="streamVerificationDataForCreateAssignment">
+		select v.id,v.agency_id,v.account_id,v.contract_id,v.subtype_id,
+		s.type_id as process_type_id,v.expected_end_date
+		from ptraccount_agency_assignment_verification v
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrproduct_type_ref t on t.id=a.product_type_id
+		inner join ptrtreatment_subtype_ref s on s.id=v.subtype_id 
+		where s.type_id=19 and v.agency_id in(<iterate property="AGENCIES" conjunction=",">#AGENCIES[]#</iterate>,0)
+		<isNotNull property="PRODUCT_CATEGORY_ID">and t.category_id=#PRODUCT_CATEGORY_ID#</isNotNull> 
+	</select>
+	<delete id="deleteVerificationById">
+		delete from ptraccount_agency_assignment_verification where id=#VERIFICATION_ID#
+	</delete>
+	
+	<resultMap id="getEcaSubtype" class="java.util.HashMap">
+		<result property="SUBTYPE_ID"  javaType="long"/>
+		<result property="PROCESS_TYPE_ID" javaType="long"/>
+	</resultMap>
+		
+	<select id="getEcaSubtype" resultMap="getEcaSubtype">
+		select id, type_id from ptrtreatment_subtype_ref where code='ECA'
+	</select>
+	
+	
+	
+	
+	
+	
+	<sql id="getEcaVerificationAccountFragments">
+		select a.id as account_id ,ROW_NUMBER()OVER ()  as ROW_NUMBER
+		from ptraccount_agency_assignment_verification v
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrtreatment_subtype_ref sb on sb.id=v.subtype_id
+		inner join ptrproduct_type_ref pro on pro.id=a.product_type_id
+		inner join ptrproduct_type_category_ref cat on cat.id=pro.category_id
+		where v.AGENCY_ID=#AGENCY_ID# and sb.type_id=19 
+		<isNull property="MONTHS_IN_ARREARS">
+		and coalesce(a.months_in_arrears,0)=0
+		</isNull>
+		<isNotNull property="MONTHS_IN_ARREARS">
+		and a.months_in_arrears=#MONTHS_IN_ARREARS#
+		</isNotNull>
+		<isNotNull property="PRODUCT_CATEGORY_ID">
+		and cat.id=#PRODUCT_CATEGORY_ID#
+		</isNotNull>
+	</sql>
+	
+	<sql id="getEcaManageRecommendationAccountFragments">
+		select a.id as account_id , v.id, ROW_NUMBER()OVER ()  as ROW_NUMBER
+		from ptraccount_agency_assignment v
+        inner join ptragency_assignment_recommendation r on r.agency_assignment_id=v.id
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrtreatment_subtype_ref sb on sb.id=v.subtype_id
+		inner join ptrproduct_type_ref pro on pro.id=a.product_type_id
+		inner join ptrproduct_type_category_ref cat on cat.id=pro.category_id
+		where v.AGENCY_ID=#AGENCY_ID# and sb.type_id=19 
+	 <isNull property="MONTHS_IN_ARREARS">
+		and coalesce(a.months_in_arrears,0)=0
+		</isNull>
+		<isNotNull property="MONTHS_IN_ARREARS">
+		and coalesce(a.months_in_arrears,0)=#MONTHS_IN_ARREARS#
+		</isNotNull> 
+		<isNotNull property="PRODUCT_CATEGORY_ID">
+		and cat.id=#PRODUCT_CATEGORY_ID#
+		</isNotNull>
+	</sql>
+	
+	<sql id="getEcaManageApprovalAccountFragments">
+		select a.id as account_id , v.id, ROW_NUMBER()OVER ()  as ROW_NUMBER
+		from ptraccount_agency_assignment v
+        inner join ptragency_assignment_approval r on r.agency_assignment_id=v.id
+		inner join ptraccount a on a.id=v.account_id
+		inner join ptrtreatment_subtype_ref sb on sb.id=v.subtype_id
+		inner join ptrproduct_type_ref pro on pro.id=a.product_type_id
+		inner join ptrproduct_type_category_ref cat on cat.id=pro.category_id
+		where v.AGENCY_ID=#AGENCY_ID# and sb.type_id=19 
+		<isNull property="MONTHS_IN_ARREARS">
+		and coalesce(a.months_in_arrears,0)=0
+		</isNull>
+		<isNotNull property="MONTHS_IN_ARREARS">
+		and coalesce(a.months_in_arrears,0)=#MONTHS_IN_ARREARS#
+		</isNotNull>
+		<isNotNull property="PRODUCT_CATEGORY_ID">
+		and cat.id=#PRODUCT_CATEGORY_ID#
+		</isNotNull>
+	</sql>
+	
+	<select id="getEcaVerificationTotalCount" resultMap="global.totalPage">
+		SELECT 
+		COUNT(A.ACCOUNT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="getEcaVerificationAccountFragments"/>
+		) A 
+	</select>
+	<select id="getEcaManageRecommendationTotalCount" resultMap="global.totalPage">
+		SELECT 
+		COUNT(A.ACCOUNT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="getEcaManageRecommendationAccountFragments"/>
+		) A 
+	</select>
+	<select id="getEcaManageApprovalTotalCount" resultMap="global.totalPage">
+		SELECT 
+		COUNT(A.ACCOUNT_ID) as TOTAL_RECORD,
+		CEIL(COUNT(A.ACCOUNT_ID)/CAST(#LIMIT_BY# AS DECIMAL)) AS TOTAL_PAGE
+		FROM
+		(
+		<include refid="getEcaManageApprovalAccountFragments"/>
+		) A 
+	</select>
+	
+	<resultMap class="hmap" id="getEcaVerificationManageAccounts">
+		<result javaType="long" property="ACCOUNT_ID"/>
+		<result javaType="long" property="RNUM"/>
+	</resultMap>
+	<select id="getEcaVerificationManageAccounts" resultMap="getEcaVerificationManageAccounts">
+	<!-- 	SELECT A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		( -->
+		<include refid="getEcaVerificationAccountFragments"/>
+		<!-- ) A 
+		<include refid="pageFragment"/> -->
+	</select>
+	<resultMap class="hmap" id="getEcaManageRecommendationAccounts">
+		<result javaType="long" property="ACCOUNT_ID"/>
+		<result property="AGENCY_ASSIGNMENT_ID" javaType="long"/>
+		<result javaType="long" property="RNUM"/>
+	</resultMap>
+	<select id="getEcaManageRecommendationAccounts" resultMap="getEcaManageRecommendationAccounts">
+	<!-- 	SELECT A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		( -->
+		<include refid="getEcaManageRecommendationAccountFragments"/>
+		<!-- ) A 
+		<include refid="pageFragment"/> -->
+	</select>
+	<select id="getEcaManageApprovalAccounts" resultMap="getEcaManageRecommendationAccounts">
+	<!-- 	SELECT A.ACCOUNT_ID,A.ROW_NUMBER FROM
+		( -->
+		<include refid="getEcaManageApprovalAccountFragments"/>
+		<!-- ) A 
+		<include refid="pageFragment"/> -->
+	</select>
+	
+	<update id="transferEcaVerificationAccounts" parameterClass="map">
+	update ptraccount_agency_assignment_verification set AGENCY_ID=#NEW_AGENCY_ID#, CONTRACT_ID=#CONTRACT_ID# where ACCOUNT_ID=#ACCOUNT_ID#
+	</update>
+	<delete id="removeEcaVerificationAccounts" parameterClass="map">
+	delete from ptraccount_agency_assignment_verification where AGENCY_ID=#AGENCY_ID# and ACCOUNT_ID=#ACCOUNT_ID# 
+	</delete>
+	
+	<update id="updateEcaRecommendationAccounts" parameterClass="map">
+	update ptraccount_agency_assignment set 
+	agency_id=#NEW_AGENCY_ID#,
+	contract_id=#CONTRACT_ID#,
+	updated_time=#CURRENT_TIME#, 
+	updated_by=#LOGON_USER# where ID=#AGENCY_ASSIGNMENT_ID#
+	</update>
+	
+	<select id="getKivReasonForMonitoring" resultMap="global.ref">
+		<include refid="pleaseSelectRef"/>
+		union
+		<include refid="refselect" /> 
+		FROM ptrlegal_kiv_reason_ref WHERE SUBTYPE_ID = #SUBTYPE_ID#
+	</select>
+	
+	<insert id="kivAssignment">
+		INSERT INTO PTRAGENCY_KIV_ASSIGNMENT(AGENCY_ASSIGNMENT_ID)	VALUES(#AGENCY_ASSIGNMENT_ID#)
+	</insert>
+	<update id="updateKivAssignment">
+		UPDATE PTRACCOUNT_AGENCY_ASSIGNMENT SET STATUS_ID = #STATUS_ID#,ABORTED_DATE =#CURRENT_TIME#, ABORTED_BY = #LOGON_USER#,
+		ABORT_REASON_ID = #ABORT_REASON_ID#,UPDATED_TIME = #CURRENT_TIME#, UPDATED_BY = #LOGON_USER#, KIV_REASON_ID = #KIV_REASON_ID#
+		WHERE ID = #AGENCY_ASSIGNMENT_ID#
+	</update>
+	<delete id="clearKivAssignment">
+	delete from ptragency_kiv_assignment kiv where agency_assignment_id=#AGENCY_ASSIGNMENT_ID#
+	</delete>
+	
+</sqlMap>

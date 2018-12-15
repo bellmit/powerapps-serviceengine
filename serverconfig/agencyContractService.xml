@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="agencyContractService">
+
+	<resultMap id="getContractList" class="hmap">
+		<result property="ID" javaType="long" />
+		<result property="CODE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+		<result property="REMARKS" javaType="string" />
+		<result property="CREATED_TIME" javaType="ts" />
+		<result property="UPDATED_TIME" javaType="ts" />
+		<result property="CREATED_BY" javaType="string" />
+		<result property="UPDATED_BY" javaType="string" />
+	</resultMap>
+	<select id="getContractList" resultMap="getContractList">
+		SELECT R.ID,R.CODE,R.DESCRIPTION,R.DISABLE,R.REMARKS,
+		R.CREATED_TIME,R.UPDATED_TIME,R.CREATED_BY,R.UPDATED_BY 
+		FROM PTRAGENCY_CONTRACT R
+		WHERE R.SUBTYPE_ID = #SUBTYPE_ID#
+		<isNotEqual property="SHOW_ALL" compareValue="true">
+			AND R.DISABLE = <include refid="false"/>
+		</isNotEqual> 	
+	</select>
+	
+	<resultMap id="getContractForEditing" class="hmap">
+		<result property="CODE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+	</resultMap>
+	<select id="getContractForEditing" resultMap="getContractForEditing">
+		SELECT CODE,DESCRIPTION,DISABLE FROM PTRAGENCY_CONTRACT
+		WHERE ID=#ID#	
+	</select>
+	<insert id="insertContract">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRAGENCY_CONTRACT_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		INSERT INTO PTRAGENCY_CONTRACT(ID,CODE,DESCRIPTION,SUBTYPE_ID,REMARKS,SORT_PRIORITY,CREATED_TIME,CREATED_BY)
+		VALUES(#ID#,#CODE#,#DESCRIPTION#,#SUBTYPE_ID#,#REMARKS#,#ID#,#CURRENT_TIME#,#LOGON_USER#)	
+	</insert>
+	<update id="updateContract">
+		UPDATE PTRAGENCY_CONTRACT SET
+		CODE = #CODE#,
+		DESCRIPTION = #DESCRIPTION#,
+		REMARKS = #REMARKS#,
+		DISABLE = #DISABLE#,
+		UPDATED_BY = #LOGON_USER#,
+		UPDATED_TIME =#CURRENT_TIME#
+		WHERE ID=#ID#
+	</update>
+	
+	<resultMap id="getContractAgencies" class="hmap">
+		<result property="ID" javaType="long" />
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="CODE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+	</resultMap>
+	<select id="getContractAgencies" resultMap="getContractAgencies">
+		SELECT R.ID,A.ID as AGENCY_ID,A.CODE,A.DESCRIPTION 
+		FROM PTRAGENCY_CONTRACT_REL R
+		INNER JOIN PTRAGENCY A ON A.ID=R.AGENCY_ID
+		WHERE R.CONTRACT_ID=#ID#
+	</select>
+	
+	<resultMap id="getContractAvailableAgencies" class="hmap">
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="CODE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+	</resultMap>
+	<select id="getContractAvailableAgencies" resultMap="getContractAvailableAgencies">
+		select A.ID,A.CODE,A.DESCRIPTION from PTRAGENCY A
+		INNER JOIN PTRAGENCY_TYPE_REF T ON T.ID=A.TYPE_ID and T.CODE='LGL'
+		WHERE NOT EXISTS(
+		SELECT 1 FROM PTRAGENCY_CONTRACT_REL R WHERE R.AGENCY_ID=A.ID and R.CONTRACT_ID=#ID#
+		)
+	</select>
+	<insert id="insertContractAgencyRel">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRAGENCY_CONTRACT_REL_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>	
+		INSERT INTO PTRAGENCY_CONTRACT_REL(ID,AGENCY_ID,CONTRACT_ID,ASSIGNED_DATE,ASSIGNED_BY)
+		VALUES(#ID#,#AGENCY_ID#,#CONTRACT_ID#,#CURRENT_TIME#,#LOGON_USER#)	
+	</insert>
+	
+	<insert id="insertContractAgencyRelHistory">	
+		INSERT INTO PTRAGENCY_CONTRACT_REL_HISTORY(ID,AGENCY_ID,CONTRACT_ID,ASSIGNED_DATE,ASSIGNED_BY)
+		VALUES(#ID#,#AGENCY_ID#,#CONTRACT_ID#,#CURRENT_TIME#,#LOGON_USER#)	
+	</insert>
+	
+</sqlMap>

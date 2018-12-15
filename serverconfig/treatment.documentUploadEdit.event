@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="SELECTED_ATTACHMENT_DOCUMENT_ID" key="SELECTED_ATTACHMENT_DOCUMENT_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SELECTED_ATTACHMENT_DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec statement="getTreatmentUploadedDocumentsEdit" type="select"/>
+  </exec>
+ </exec>
+</event>

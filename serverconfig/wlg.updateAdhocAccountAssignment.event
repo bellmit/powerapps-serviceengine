@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="CUSTOMER_DATA" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WORK_LIST_ID" operator="exists" rhsvalue=""/>
+    <condition lhsfield="WORK_LIST_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec recordcount="" statement="updateWlgAccountForAssignment" type="update"/>
+  </exec>
+ </exec>
+</event>

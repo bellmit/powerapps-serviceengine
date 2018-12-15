@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" from="FROM_DATE" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec ceiling="true" endmonth="false" from="TO_DATE" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec query="getAccountRecoveryHistory" type="query"/>
+ <exec argument="CALL_LIST" query="getAccountRecoveryHistoryCall" type="query"/>
+ <exec from="CALL_LIST" key="TREATMENT_ID" type="merge"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="48"/>
+   </conditions>
+   <exec from="JS_PHONE_NO" to="PHONE_NO" type="copy"/>
+   <exec from="JS_PTP_DATE" to="PTP_DATE" type="copy"/>
+   <exec from="JS_PTP_AMOUNT" to="PTP_AMOUNT" type="copy"/>
+  </exec>
+ </exec>
+</event>

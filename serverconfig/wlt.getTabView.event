@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" to="RESULT_LIST" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="UPL"/>
+  </conditions>
+  <exec event="wlt.getViewUpl" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="HP"/>
+  </conditions>
+  <exec event="wlt.getViewHp" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="MG"/>
+  </conditions>
+  <exec event="wlt.getViewMg" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+  </conditions>
+  <exec event="wlt.getViewRnR" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="agencyWorkListTabs"/>
+  </conditions>
+ </exec>
+ <exec from="RESULT_LIST" type="copy"/>
+</event>

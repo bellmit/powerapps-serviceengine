@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="camHistoryService">
+
+<!-- ## RECOVERY HISTORY ## -->
+	
+	<resultMap class="hmap" id="getAccountRecoveryHistory">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="CREATED_DATE" javaType="ts"/>
+	<result property="CREATED_TIME" javaType="ts"/>
+	<result property="NOTES" javaType="string"/>
+	<result property="ACTION_CODE" javaType="string"/>
+	
+	<result property="STATUS" javaType="string"/>
+	<result property="TEMPLATE" javaType="string"/>
+	<result property="USER_ID" javaType="string"/>
+	<result property="PHONE_NO" javaType="string"/>
+	<result property="NAME" javaType="string"/>
+	
+	<result property="SCHEDULE_TIME" javaType="ts"/>
+	<result property="PTP_DATE" javaType="date"/>
+	<result property="PTP_AMOUNT" javaType="$"/>
+	<result property="TREATMENT_ID" javaType="long"/>
+	<result property="TYPE_STATUS" javaType="string"/>
+	
+	<result property="TYPE_ID" javaType="long"/>
+	<result property="JS_PHONE_NO" javaType="string"/>
+	<result property="JS_PTP_DATE" javaType="date"/>
+	<result property="JS_PTP_AMOUNT" javaType="$"/>
+	</resultMap>
+	
+	<select id="getAccountRecoveryHistory" resultMap="getAccountRecoveryHistory">
+	
+select 
+a.ID, t.CREATED_TIME, t.CREATED_TIME, n.note_text, ty.code,
+s.description, tp.description, t.created_user_id, null, coalesce(e.first_name,'')||' '||coalesce(e.middle_name,'')||' '||coalesce(e.last_name,''),
+null, ptp.due_time, ptp.amount, t.ID as TREATMENT_ID, tsr.description as TYPE_STATUS,
+t.TYPE_ID, js.PHONE_NO, js.PTP_DATE, js.PTP_AMOUNT
+from PTRACCOUNT a
+inner join PTRTREATMENT t on t.ACCOUNT_ID=a.ID
+inner join ptrtreatment_type_ref ty on ty.id=t.type_id
+inner join ptrtreatment_status_ref s on s.id=t.status_id
+inner join ptruser us on us.user_id=t.created_user_id
+inner join ptremployee e on e.id=us.employee_id
+left join ptrtreatment_eca_jobsheet js on js.treatment_id=t.id
+left join ptrtreatment_ptp ptp on ptp.treatment_id=t.id
+left join ptrtemplate tp on tp.id=t.template_id
+left join ptrtreatment_note n on n.treatment_id=t.id
+left join ptrtreatment_type_status_ref tsr on tsr.id=t.type_status_id
+where a.ID=#ACCOUNT_ID#
+<isNotNull property="TYPE_ID">
+and t.TYPE_ID=#TYPE_ID#
+</isNotNull>
+<isNotNull property="FROM_DATE">
+<isNotNull property="TO_DATE">
+and t.CREATED_TIME between #FROM_DATE# and #TO_DATE#
+</isNotNull>
+</isNotNull>
+order by t.CREATED_TIME desc
+	</select>
+	
+	<resultMap class="hmap" id="getAccountRecoveryHistoryCall">
+	<result property="TREATMENT_ID" javaType="long"/>
+	<result property="SCHEDULE_TIME" javaType="ts"/>
+	<result property="PHONE_NO" javaType="string"/>
+	</resultMap>
+	
+	<select id="getAccountRecoveryHistoryCall" resultMap="getAccountRecoveryHistoryCall">
+	select
+t.ID as TREATMENT_ID,
+p.appointment_time,
+p.contact_no
+from ptrtreatment t
+inner join ptrtreatment_place_a_call p on p.treatment_id=t.id
+	where t.ACCOUNT_ID=#ACCOUNT_ID#
+	<include refid="fromdual"/>
+	<isNotNull property="TYPE_ID">
+	and t.type_id=#TYPE_ID#
+	</isNotNull>
+	<isNotEmpty property="TO_DATE">
+	and t.created_time &lt;=#TO_DATE#
+	</isNotEmpty>
+	<isNotEmpty property="FROM_DATE">
+	and t.created_time &gt;=#FROM_DATE#
+	</isNotEmpty>
+	</select>
+	
+	<!-- ## ELECTRONIC DIARY ## -->
+	
+	<resultMap class="hmap" id="getCamElectronicDiary">
+	<result property="DATE" javaType="ts"/>
+	<result property="TIME" javaType="ts"/>
+	<result property="USER_ID" javaType="string"/>
+	<result property="SOURCE_OF_LOG" javaType="string"/>
+	<result property="CONTACT_NUMBER" javaType="string"/>
+	<result property="PERSON_QUOTED" javaType="string"/>
+	<result property="EFFECTIVE_DATE" javaType="date"/>
+	<result property="TRANSACTION_AMOUNT" javaType="$"/>
+	<result property="DETAILS_OF_TRANSACTION" javaType="string"/>
+	<result property="CURRENT_BALANCE" javaType="$"/>
+	<result property="UNEARNED_INCOME" javaType="$"/>
+	<result property="COMPENSATION_CHARGES" javaType="$"/>
+	<result property="MISC_CHARGES" javaType="$"/>
+	<result property="REPO_COSTS" javaType="$"/>
+	<result property="EARLY_SETTLEMENT_DATE" javaType="date"/>
+	<result property="PROFIT_REBATE" javaType="$"/>
+	<result property="PAYOFF_ACC_AMT" javaType="$"/>
+	<result property="AC_COMPENSATION_CHARGE" javaType="$"/>
+	<result property="AGENT_ID" javaType="string"/>
+	<result property="AGENT_NAME" javaType="string"/>
+	<result property="NOTICE_START_DATE" javaType="date"/>
+	<result property="NOTICE_END_DATE" javaType="date"/>
+	<result property="NOTICE_TYPE" javaType="string"/>
+	<result property="PRINTING_DATE" javaType="date"/>
+	<result property="HISTORY_REMARKS" javaType="string"/>
+	<result property="AMT_IN_ARREARS" javaType="$"/>
+	</resultMap>
+	
+	<select id="getCamElectronicDiary" resultMap="getCamElectronicDiary">
+			select
+t.date_logged as DATE, 
+t.time_logged as TIME, 
+t.user_id as USER_ID, 
+t.source_of_log as SOURCE_OF_LOG, 
+NULL as CONTACT_NUMBER,
+NULL as PERSON_QUOTED,
+t.effective_date as EFFECTIVE_DATE, 
+0 as TRANSACTION_AMOUNT,
+'' as DETAILS_OF_TRANSACTION,
+t.current_balance as CURRENT_BALANCE,
+NULL as UNEARNED_INCOME,
+t.late_charge_amount as COMPENSATION_CHARGES,
+t.miscellaneous_cost as MISC_CHARGES,
+t.repossession_cost as REPO_COSTS,
+NULL as EARLY_SETTLEMENT_DATE,
+NULL as PROFIT_REBATE,
+t.payoff_amount as PAYOFF_ACC_AMT,
+t.late_charge_due_amount as AC_COMPENSATION_CHARGE,
+t.agent_id as AGENT_ID, 
+t.agent_id as AGENT_NAME,
+NULL as NOTICE_START_DATE,
+NULL as NOTICE_END_DATE,
+nt.code as NOTICE_TYPE,
+NULL as PRINTING_DATE,
+NULL as HISTORY_REMARKS,
+t.amount_in_arrears as AMT_IN_ARREARS
+from ptrhost_electronic_diary t
+inner join ptraccount a on a.id=t.account_id
+left join ptrnotice_type_ref nt on nt.id=t.notice_type_id
+	where t.ACCOUNT_ID=#ACCOUNT_ID#
+	<include refid="fromdual"/>
+	<isNotNull property="TYPE_ID">
+	and nt.id=#TYPE_ID#
+	</isNotNull>
+	<isNotEmpty property="TO_DATE">
+	and t.date_logged &lt;=#TO_DATE#
+	</isNotEmpty>
+	<isNotEmpty property="FROM_DATE">
+	and t.date_logged &gt;=#FROM_DATE#
+	</isNotEmpty>
+	order by t.date_logged desc
+	</select>
+	
+	
+</sqlMap>

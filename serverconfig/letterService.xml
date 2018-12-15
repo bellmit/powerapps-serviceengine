@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="letterService">
+
+<resultMap class="hmap" id="getTreatmentCustomers">
+<result property="CUSTOMER_ID" javaType="string"/>
+<result property="CUSTOMER_NAME" javaType="string"/>
+</resultMap>
+
+<select id="getTreatmentCustomers" resultMap="getTreatmentCustomers">
+select c.customer_no, c.customer_name from ptraccount a
+<!-- inner join ptrcustomer_account_rel rel on rel.account_id=a.id -->
+inner join ptrcustomer c on c.id=a.customer_id
+where a.id=#ACCOUNT_ID#
+</select>
+
+<insert id="insertTreatmentLetter" parameterClass="map">
+insert into PTRTREATMENT_LETTER(TREATMENT_ID,ACCOUNT_ID,TYPE_STATUS_ID,SUBTYPE_ID,CONTACT_ID,
+SEND_TO_ID,TEMPLATE_VERSION_ID)
+values
+(#ID#,#ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#CONTACT_ID#,
+#SEND_TO_ID#,#TEMPLATE_VERSION_ID#)
+</insert>
+
+<update id="updateTreatmentLetter" parameterClass="map">
+update PTRTREATMENT_LETTER set
+TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+SUBTYPE_ID=#SUBTYPE_ID#,
+CONTACT_ID=#CONTACT_ID#,
+SEND_TO_ID=#SEND_TO_ID#,
+TEMPLATE_VERSION_ID=#TEMPLATE_VERSION_ID#
+where TREATMENT_ID=#ID#
+</update>
+
+
+<resultMap class="hmap" id="getLetterAddressCorrespondence">
+<result property="ID" javaType="long"/>
+<result property="TYPE" javaType="string"/>
+<result property="LINE_1" javaType="string"/>
+<result property="LINE_2" javaType="string"/>
+<result property="LINE_3" javaType="string"/>
+<result property="LINE_4" javaType="string"/>
+<result property="STATE" javaType="string"/>
+<result property="AREA" javaType="string"/>
+<result property="REMARKS" javaType="string"/>
+<result property="CITY" javaType="string"/>
+<result property="COUNTRY" javaType="string"/>
+<result property="POSTCODE" javaType="string"/>
+</resultMap>
+
+<select id="getLetterAddressCorrespondence" resultMap="getLetterAddressCorrespondence">
+select 
+a.id, ad.code || '- ' ||ad.description, a.line_1, a.line_2, a.line_3, a.line_4, state.description, a.city,
+a.remarks, a.city, co.description, a.postcode
+from ptraddress a
+left join ptrstate_ref state on state.id=a.state_id
+left join ptrcontact_source_ref source on source.id=a.contact_source_id
+left join ptrcountry_ref co on co.id=a.country_id
+left join PTRADDRESS_TYPE_REF ad on ad.ID=a.ADDRESS_TYPE_ID
+where a.customer_id=#CUSTOMER_ID#
+union
+select 
+a.id, ad.code || '- ' ||ad.description, a.line_1, a.line_2, a.line_3, a.line_4, state.description, a.city,
+null as remarks, a.city, co.description, a.postal_code
+from ptrhost_address a
+left join ptrstate_ref state on state.id=a.state_id
+left join ptrcountry_ref co on co.id=a.country_id
+left join PTRHOST_ADDRESS_TYPE_REF ad on ad.ID=a.HOST_ADDRESS_TYPE_ID
+where a.customer_id=#CUSTOMER_ID#
+</select>
+
+
+<resultMap class="hmap" id="getTreatmentLetter">
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="CONTACT_ID" javaType="long"/>
+<result property="SEND_TO_ID" javaType="long"/>
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+<result property="LINE_1" javaType="string"/>
+<result property="LINE_2" javaType="string"/>
+<result property="LINE_3" javaType="string"/>
+<result property="LINE_4" javaType="string"/>
+<result property="STATE" javaType="string"/>
+<result property="AREA" javaType="string"/>
+<result property="REMARKS" javaType="string"/>
+<result property="CITY" javaType="string"/>
+<result property="COUNTRY" javaType="string"/>
+<result property="POSTCODE" javaType="string"/>
+</resultMap>
+
+<select id="getTreatmentLetter" resultMap="getTreatmentLetter">
+<!-- select l.TYPE_STATUS_ID, l.SUBTYPE_ID, l.CONTACT_ID, -->
+<!-- l.SEND_TO_ID, l.TEMPLATE_VERSION_ID, a.line_1, a.line_2, a.line_3, a.line_4, state.description, a.city, -->
+<!-- a.remarks, a.city, co.description, a.postcode  -->
+<!-- from PTRTREATMENT_LETTER l  -->
+<!-- inner join ptrhost_address a on a.id=l.contact_id -->
+<!-- left join ptrstate_ref state on state.id=a.state_id -->
+<!-- left join ptrcontact_source_ref source on source.id=a.contact_source_id -->
+<!-- left join ptrcountry_ref co on co.id=a.country_id -->
+<!-- where l.TREATMENT_ID=#ID# -->
+
+select l.TYPE_STATUS_ID, l.SUBTYPE_ID, l.CONTACT_ID,
+l.SEND_TO_ID, l.TEMPLATE_VERSION_ID, a.line_1, a.line_2, a.line_3, a.line_4, state.description, a.city,
+a.remarks, a.city, co.description, a.postcode 
+from PTRTREATMENT_LETTER l 
+inner join ptraddress a on a.id=l.contact_id
+left join ptrstate_ref state on state.id=a.state_id
+left join ptrcontact_source_ref source on source.id=a.contact_source_id
+left join ptrcountry_ref co on co.id=a.country_id
+where l.TREATMENT_ID=#ID#
+union
+select l.TYPE_STATUS_ID, l.SUBTYPE_ID, l.CONTACT_ID,
+l.SEND_TO_ID, l.TEMPLATE_VERSION_ID, a.line_1, a.line_2, a.line_3, a.line_4, state.description, a.city,
+null as remarks, a.city, co.description, a.postal_code 
+from PTRTREATMENT_LETTER l 
+inner join ptrhost_address a on a.id=l.contact_id
+left join ptrstate_ref state on state.id=a.state_id
+left join ptrcountry_ref co on co.id=a.country_id
+where l.TREATMENT_ID=#ID#
+</select>
+
+
+
+
+
+
+
+
+
+<resultMap class="hmap" id="getDefaultLetterInProgress">
+<result javaType="long" property="ID"/>
+<result javaType="long" property="ACCOUNT_ID"/>
+<result javaType="long" property="SUBTYPE_ID"/>
+<result javaType="string" property="SEND_TO_ID"/>
+<result javaType="long" property="CONTACT_ID"/>
+
+<result javaType="long" property="CONTACT_ID"/>
+<result javaType="long" property="TEMPLATE_VERSION_ID"/>
+<result javaType="long" property="PROCESS_TYPE_ID"/>
+<result javaType="boolean" property="TRUE"/>
+<result javaType="boolean" property="FALSE"/>
+
+<result javaType="long" property="TYPE_STATUS_ID"/>
+<result javaType="long" property="STATUS_ID"/>
+<result javaType="long" property="TREATMENT_SOURCE_ID"/>
+<result javaType="string" property="CREATED_USER_ID"/>
+<result javaType="ts" property="CREATED_TIME"/>
+
+<result javaType="long" property="TEMPLATE_ID"/>
+<result javaType="string" property="NOTE_TEXT"/>
+<result property="DOCUMENT_ID" javaType="long"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+	</resultMap>
+<select id="getDefaultLetterInProgress" resultMap="getDefaultLetterInProgress">
+select 
+let.treatment_id, let.account_id, let.subtype_id, let.send_to_id, let.contact_id,
+let.contact_id, let.template_version_id, ts.type_id, <include refid="true"/>, <include refid="false"/>, 
+tsr.id, tsr.status_id, t.treatment_source_id, t.created_user_id, t.created_time, 
+v.template_id, tn.note_text, v.document_id, a.account_no
+from ptrtreatment_letter let
+inner join ptraccount a on a.id=let.account_id
+inner join ptrtreatment t on t.id=let.treatment_id
+inner join ptrtreatment_type_status_ref ts on ts.id=let.type_status_id
+inner join ptrtreatment_type_status_ref tsr on tsr.type_id=ts.type_id and tsr.status_id=15004
+inner join ptrtemplate_version v on v.id=let.template_version_id
+left join ptrtreatment_note tn on tn.treatment_id=t.id
+where ts.status_id=15007
+order by let.account_id
+	</select>
+	
+	
+	<resultMap class="hmap" id="getTreatmentLetterDetails">
+<result javaType="long" property="ACCOUNT_NUM"/>
+<result javaType="string" property="CUSTOMER_NAME"/>
+<result javaType="$" property="FIXED_DEPOSIT"/>
+<result javaType="$" property="ARREAS_AMOUNT"/>
+<result javaType="$" property="LOAN_AMOUNT"/>
+<result javaType="string" property="MATURITY_DATE"/>
+<result javaType="string" property="APPROVAL_DATE"/>
+<result javaType="string" property="NPF_DATE"/>
+<result javaType="long" property="MIA"/>
+<result javaType="string" property="VEHICLE_NUMBER"/>
+<result javaType="string" property="MODEL"/>
+<result javaType="long" property="MANUFACTURED_YEAR"/>
+<result javaType="$" property="PROFIT"/>
+<result javaType="$" property="TAWIDH"/>
+<result javaType="$" property="MISC_CHARGES_AMOUNT"/>
+<result javaType="$" property="ADD_TAWIDH_MISC"/>
+<result javaType="$" property="ADVANCE_PAYMENT_AMOUNT"/>
+<result javaType="$" property="OTHER_CHARGES_AMOUNT"/>
+<result javaType="$" property="OS_BALANCE"/>
+<result javaType="string" property="EMPLOYER_NAME"/>
+<result javaType="string" property="DATE_OF_DISBURSEMENT"/>
+<result javaType="string" property="IC_NO"/>
+<result javaType="string" property="LAST_PAYMENT_DATE"/>
+<result javaType="string" property="CURRENT_DATE_STRING"/>
+<result javaType="$" property="REPOSSESSION_FEE_PAID"/>
+<result javaType="$" property="ESTIMATE_VALUE"/>
+<result javaType="$" property="PAYMENT_RECEIVE_SYS"/>
+<result javaType="$" property="PAYMENT_RECEIVE_MIC"/>
+</resultMap>
+<select id="getTreatmentLetterDetails" resultMap="getTreatmentLetterDetails">
+SELECT account_no as ACCOUNT_NUM,
+c.customer_name as CUSTOMER_NAME,
+0 as FIXED_DEPOSIT,
+a.installment_amount_in_arrears as ARREAS_AMOUNT,
+coalesce(a.released_amount,0) as LOAN_AMOUNT,
+to_char(a.maturity_date,'dd/MM/yyyy'),
+to_char(av.approval_date,'dd/MM/yyyy'),
+to_char(a.NPL_DATE,'dd/MM/yyyy'),
+coalesce(a.months_in_arrears,0),
+col.registration_no,
+col.model_no,
+col.year_of_manufacture,
+coalesce(a.accrued_interest,0),
+a.tawidh_amount as TAWIDH,
+coalesce(a.miscellaneous_charge,0),
+(coalesce(A.assessed_late_charge,0) - coalesce(A.paid_late_charge,0))+coalesce(a.miscellaneous_charge,0),
+coalesce(a.advance_payment_amount,0),
+coalesce(a.OTHER_CHARGE,0),
+coalesce(a.current_balance,0),
+em.employer_name,
+to_char(a.first_release_date,'dd/MM/yyyy'),
+c.customer_id_no,
+to_char(a.last_payment_date,'dd/MM/yyyy'),
+to_char(current_date,'dd/MM/yyyy'),
+coalesce(repo.repossession_cost,0),
+coalesce(repo.estimate_sales_value,0),
+0 as PAYMENT_RECEIVE_SYS,
+0 as PAYMENT_RECEIVE_MIC
+FROM ptraccount a
+inner join ptrcustomer c on a.customer_id=c.id
+left join ptrtreatment_account_review av on a.id=av.account_id
+left join ptraccount_collateral_rel rel on a.id=rel.account_id
+left join ptrcollateral col on rel.collateral_id=col.id
+left join ptrhost_employment_history em on c.id=em.customer_id
+left join ptrhost_repossession_order repo on a.id=repo.account_id
+where a.id=#ACCOUNT_ID#
+</select>
+
+
+	<resultMap class="hmap" id="getTreatmentLetterGuarantorDetails">
+
+<result javaType="string" property="G_NAME"/>
+
+</resultMap>
+
+<select id="getTreatmentLetterGuarantorDetails" resultMap="getTreatmentLetterGuarantorDetails">
+
+select  c.customer_name
+	from ptrcustomer_account_rel r 
+	inner join ptrcustomer_account_relation_type_ref tr on tr.id=r.type_id and tr.code !='P'
+	inner join ptrcustomer c on r.customer_id=c.id
+	where r.account_id=#ACCOUNT_ID#
+	
+</select>
+
+	
+</sqlMap>

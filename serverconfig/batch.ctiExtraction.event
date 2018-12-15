@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="NCO" target="MODULE_NAME" type="formattext"/>
+ <exec message="CTI_EXTRACTION" target="FUNCTIONALITY" type="formattext"/>
+ <exec message="Y" target="TAB_FOLLOW_UP" type="formattext"/>
+ <exec message="true" target="IS_CTI_EXTRACTION" type="formattext"/>
+ <exec ceiling="false" endmonth="false" from="EFFECTIVE_DATE" nextweekday="false" startmonth="false" to="CURRENT_DATE" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="true" to="FIRST_OF_CURRENT_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec statement="getCtiNegativeOne" type="select"/>
+ <exec addmonths="NEGATIVE_ONE" ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="false" to="FIRST_OF_PREVIOUS_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" from="FIRST_OF_PREVIOUS_MONTH" nextweekday="false" startmonth="true" to="FIRST_OF_PREVIOUS_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EXTRACTION_TIME" truncate="false" type="date"/>
+ <exec argument="CTI_EXTRACTION_PATH" property="batchprocessservice.ctiextraction.path" type="serverproperty"/>
+ <exec argument="CTI_EXTRACTION_PATH2" property="batchprocessservice.ctiextraction.path2" type="serverproperty"/>
+ <exec text="Fetch Data" type="comment">
+  <exec argument="CTI_EXTRACTION_LIST" query="getCustomerAccountDetailsForCTIExtraction" type="query"/>
+  <exec argument="MOBILE_LIST_1" query="getMobileNumber1" type="query"/>
+  <exec argument="MOBILE_LIST_2" query="getMobileNumber2" type="query"/>
+  <exec argument="OFFICE_LIST_1" query="getOfficeNumber1" type="query"/>
+  <exec argument="OFFICE_LIST_2" query="getOfficeNumber2" type="query"/>
+  <exec argument="HOME_LIST_1" query="getHomeNumber1" type="query"/>
+  <exec argument="HOME_LIST_2" query="getHomeNumber2" type="query"/>
+  <exec argument="ACCOUNT_LAST_PAYMENT_METHOD_LIST" query="getLastPaymentMethod-CTI" type="query"/>
+  <exec argument="EMPLOYER_AND_FACILITY_LIST" query="getEmployerAndFacilityType-CTI" type="query"/>
+  <exec argument="PAID_LIST" query="getPaidData-CTI" type="query"/>
+  <exec argument="PTP_LIST" query="getPtpInProgressAccountData-CTI" type="query"/>
+  <exec argument="BROKEN_PROMISE_LIST" query="getBrokenPtpAccountData-CTI" type="query"/>
+  <exec argument="WIP_LIST" query="getInProgressAccountData" type="query"/>
+ </exec>
+ <exec text="Merge result" type="comment">
+  <exec from="TAB_FOLLOW_UP" key="TAB_FOLLOW_UP" to="WIP_LIST" type="copyintolist"/>
+  <exec from="MOBILE_LIST_1" key="CUSTOMER_ID" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="MOBILE_LIST_2" key="CUSTOMER_ID" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="OFFICE_LIST_1" key="CUSTOMER_ID" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="OFFICE_LIST_2" key="CUSTOMER_ID" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="HOME_LIST_1" key="CUSTOMER_ID" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="HOME_LIST_2" key="CUSTOMER_ID" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="ACCOUNT_LAST_PAYMENT_METHOD_LIST" key="ACCOUNT_ID_MERGE" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="EMPLOYER_AND_FACILITY_LIST" key="ACCOUNT_ID_MERGE" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="PAID_LIST" key="ACCOUNT_ID_MERGE" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="PTP_LIST" key="ACCOUNT_ID_MERGE" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="BROKEN_PROMISE_LIST" key="ACCOUNT_ID_MERGE" to="CTI_EXTRACTION_LIST" type="merge"/>
+  <exec from="WIP_LIST" key="ACCOUNT_ID_MERGE" to="CTI_EXTRACTION_LIST" type="merge"/>
+ </exec>
+ <exec argument="CTI_EXTRACTION_LIST" type="loop">
+  <exec statement="getWltMovementType" type="select"/>
+ </exec>
+ <exec list="CTI_EXTRACTION_LIST" to="COUNT_CTI_LIST" type="countlist"/>
+ <exec statement="getCTIExtractionEmptyContent" type="select"/>
+ <exec message="{0}" target="EMPTY_CONTENT" type="formattext">
+  <key value="EMPTY_CONTENT"/>
+ </exec>
+ <exec from="EMPTY_CONTENT" regex="null" replacement="" to="EMPTY_CONTENT" type="regexreplace"/>
+ <exec from="FIRST_OF_CURRENT_MONTH" key="FIRST_OF_CURRENT_MONTH" to="CTI_EXTRACTION_LIST" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="CURRENT_DATE" to="CTI_EXTRACTION_LIST" type="copyintolist"/>
+ <exec from="MODULE_NAME" key="MODULE_NAME" to="CTI_EXTRACTION_LIST" type="copyintolist"/>
+ <exec from="IS_CTI_EXTRACTION" key="IS_CTI_EXTRACTION" to="CTI_EXTRACTION_LIST" type="copyintolist"/>
+ <exec event="ctiextraction.generateFileFormat" ignoreresult="true" type="raise"/>
+ <exec event="ctiextraction.generateFileName" ignoreresult="true" type="raise"/>
+</event>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="auctionSetupService">
+
+<select id="getAuctionSetupAgencyTypes" resultMap="global.ref">
+<include refid="selectAllRef"/>
+union
+select id, code, description, disable, sort_priority from ptragency_type_ref where code in ('AUC')
+</select>
+
+<resultMap class="hmap" id="getAuctionSetupAgencies">
+<result property="AGENCY_ID" javaType="long"/>
+<result property="AGENCY_TYPE" javaType="string"/>
+<result property="AGENCY_NAME" javaType="string"/>
+<result property="REGION" javaType="string"/>
+<result property="CREATED_DATE" javaType="date"/>
+<result property="CREATED_USER_ID" javaType="string"/>
+<result property="UPDATED_DATE" javaType="date"/>
+<result property="UPDATED_USER_ID" javaType="string"/>
+</resultMap>
+
+<select id="getAuctionSetupAgencies" resultMap="getAuctionSetupAgencies">
+
+select 
+a.id, ty.description, a.description, null as region, a.created_time, 
+a.created_by, a.updated_time, a.updated_by
+from ptragency a
+inner join ptragency_type_ref ty on ty.id=a.type_id
+where ty.code in ('AUC')
+<isNotNull property="AGENCY_TYPE_ID">
+and a.type_id=#AGENCY_TYPE_ID#
+</isNotNull>
+
+</select>
+
+
+<resultMap class="hmap" id="getAuctionSetupDates">
+<result property="ID" javaType="long"/>
+<result property="DATE" javaType="ts"/>
+<result property="TIME" javaType="ts"/>
+<result property="AGENCY_NAME" javaType="string"/>
+<result property="DISABLE" javaType="boolean"/>
+</resultMap>
+
+<select id="getAuctionSetupDates" resultMap="getAuctionSetupDates">
+
+select 
+a.id, a.auction_time, a.auction_time, ag.description, a.disable
+from ptrauction_date_setup a
+inner join ptragency ag on ag.id=a.agency_id
+<isNotNull property="AGENCY_ID">
+where ag.id=#AGENCY_ID#
+</isNotNull>
+and a.disable=false
+order by a.auction_time asc
+</select>
+
+<insert id="insertAuctionSetupDate">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix"/>
+			PTRAUCTION_DATE_SETUP_ID
+			<include refid="sequenceSuffix"/>
+		</selectKey>
+		insert into PTRAUCTION_DATE_SETUP (ID, AUCTION_TIME, AGENCY_ID,
+		CREATED_TIME, CREATED_USER_ID)
+		values (#ID#, #AUCTION_DATE#, #AGENCY_ID#,
+		#CURRENT_TIME#, #LOGON_USER#)
+	</insert>
+	
+	<update id="updateAuctionSetupDate" parameterClass="map">
+	update PTRAUCTION_DATE_SETUP set AUCTION_TIME=#AUCTION_DATE#,
+	UPDATED_USER_ID=#LOGON_USER#, UPDATED_TIME=#CURRENT_TIME#, DISABLE=#DISABLE#
+	 where ID=#ID# and AGENCY_ID=#AGENCY_ID#
+	</update>
+	
+		<update id="deleteAuctionSetupDate" parameterClass="map">
+	update PTRAUCTION_DATE_SETUP set 
+	UPDATED_USER_ID=#LOGON_USER#, UPDATED_TIME=#CURRENT_TIME#, DISABLE=true
+	 where ID=#DATE_ID# and AGENCY_ID=#AGENCY_ID#
+	</update>
+
+
+<resultMap class="hmap" id="getAuctionSetupDateForEditing">
+<result property="ID" javaType="long"/>
+<result property="AUCTION_DATE" javaType="ts"/>
+<result property="DISABLE" javaType="boolean"/>
+</resultMap>
+
+<select id="getAuctionSetupDateForEditing" resultMap="getAuctionSetupDateForEditing">
+select ID, AUCTION_TIME, DISABLE from PTRAUCTION_DATE_SETUP where ID=#ID# and AGENCY_ID=#AGENCY_ID#
+</select>
+
+</sqlMap>

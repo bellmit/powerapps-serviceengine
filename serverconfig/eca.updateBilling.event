@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="REMARKS" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec message="Billing created" target="REMARKS" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="INVOICE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec recordcount="" statement="updateEcaBilling" type="update"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="INVOICE_STAGE_ID" operator="=" rhsvalue="5"/>
+   </conditions>
+   <exec recordcount="" statement="updateEcaBillingAppealFromAgencyToNull" type="update"/>
+  </exec>
+  <exec message="Billing updated" target="MESSAGE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="INVOICE_ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="createEcaInvoice" type="insert"/>
+  <exec message="Billing created" target="MESSAGE" type="formattext"/>
+ </exec>
+ <exec statement="insertEcaBillingHistory" type="insert"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+</event>

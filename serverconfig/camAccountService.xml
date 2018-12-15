@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="camAccountService">
+<!-- 
+Financial Information - cam-account.frm
+
+cam-financials.frm
+- cam-generalInformation.frm
+    - cam.loadGeneralInformation
+- cam-financialOthers.frm - cam-contentFinancialOthers.frm
+    - cam.loadOthersFinancialInformation
+- cam-standingInstruction.frm
+    - cam.loadStandingInstruction
+    
+Finance Inquiry - cam-loaninquiry.frm
+	- cam.loadLoanInquiry
+
+cam-accountrelationship.frm
+	- cam.loadAccountRelationship
+	- cam.loadAccountRelationshipDetails
+- 
+
+cam-rateandstatuschange.frm
+	- cam.loadRateAndStatusChangeHistory
+
+cam-accountRestructure.frm
+	- 
+
+cam-chargeoff.frm
+	- cam.loadChargeOff 
+
+cam-accountreview.frm
+	- cam.loadAccountReview
+
+-->
+	
+	<resultMap id="getGeneralInformation" class="hmap">
+		<result property="PROFIT_RATE" javaType="$"/>
+		<result property="CREDIT_APPLICATION_NUMBER" javaType="string"/>
+		<result property="DATE_OF_FUNDING" javaType="date" />
+		<result property="FINANCING_TERM" javaType="long" />
+		<result property="MATURITY_DATE" javaType="date" />
+		
+		<result property="PROFIT_REBATE" javaType="$" />
+		<result property="BRANCH_NUMBER" javaType="string" />
+		<result property="ACCRUAL_PROFIT" javaType="$" />
+		<result property="ACCRUED_COMPENSATION_CHARGE" javaType="$" />
+		<result property="LAST_PAYMENT_DATE" javaType="date" />
+		
+		<result property="LAST_PAYMENT_AMOUNT" javaType="$" />
+		<result property="NEXT_PAYMENT_DUE_DATE" javaType="date" />
+		<result property="AMOUNT_PARTIALY_PAID" javaType="$" />
+		<result property="ADVANCE_PAY" javaType="$" />
+		<result property="PAYOFF_AMOUNT" javaType="$" />
+		
+		<result property="NPF_FLAG" javaType="string" />
+		<result property="NPF_STATUS" javaType="string" />
+		<result property="FIRST_NPF_DATE" javaType="date" />
+		<result property="DATE_OF_ACCOUNT_TURNING_NPF" javaType="date" />
+		<result property="TOTAL_PROFIT_IN_SUSP" javaType="$" />
+		
+		<result property="TOTAL_CC_IN_SUSPENSE" javaType="$" />
+		<result property="TOTAL_INSTALMENT_PAID" javaType="$" />
+		<result property="CURRENT_BALANCE" javaType="$" />
+		<result property="OTHER_CHARGES" javaType="$" />
+		<result property="MISC_CHARGES" javaType="$" />
+		
+		<result property="BILLED_PROFIT_DUE" javaType="$" />
+		<result property="UNEARNED_PROFIT" javaType="$" />
+		<result property="NEXT_SCH_PYMT_DUE_DATE" javaType="date" />
+		<result property="NEXT_SCH_PROFIT_DUE_DATE" javaType="date" />
+		<result property="MEMO_TAWIDH" javaType="$" />
+		
+		<result property="SEC_ACC_PROFIT" javaType="$" />
+		<result property="ORIGINAL_FINANCING_DATE" javaType="date" />
+		<result property="FIRST_RELEASE_DATE" javaType="date" />
+		<result property="FULL_RELEASE_DATE" javaType="date" />
+		<result property="FIRST_PAYMENT_DATE" javaType="date" />
+		
+		<result property="DIA" javaType="long" />
+		<result property="TAWIDH" javaType="$"/>
+		<result property="OUTSTANDING_BALANCE" javaType="$"/>
+		<result property="WRITTEN_OFF_AMOUNT" javaType="$"/>
+		<result property="GROSS_BALANCE" javaType="$"/>
+		
+		<result property="DATE_OF_DISBURSEMENT" javaType="date"/>
+		<result property="FINANCING_TYPE" javaType="string"/>
+		<result property="FACILITY_TYPE" javaType="string"/>
+		<result property="OLD_ACCOUNT_NUMBER" javaType="string"/>
+		<result property="ORIGINAL_LIMIT" javaType="$"/>
+		
+		<result property="ORIGINAL_TENURE" javaType="long"/>
+		<result property="SERVED_TENURE" javaType="long"/>
+		<result property="REMAINING_TENURE" javaType="long"/>
+		<result property="PDPA" javaType="string"/>
+		<result property="RESTRUCTURE_PROFIT_RATE" javaType="$"/>
+		
+		<result property="DATE_OPENED" javaType="date"/>
+		<result property="SETTLEMENT_DATE" javaType="date"/>
+		<result property="ORIGINAL_INSTALLMENT" javaType="$"/>
+		<result property="FINAL_INSTALMENT_AMOUNT" javaType="$"/>
+		<result property="SECURITY_DEPOSIT_MONTH" javaType="$"/>
+		<result property="SECURITY_DEPOSIT_SHORTFALL" javaType="$"/>
+		
+		<result property="EIR_APR" javaType="long"/>
+		<result property="MEMO_COMPENSATION_CHARGES" javaType="$"/>
+		<result property="MEMO_POST_AMOUNT" javaType="$"/>
+		<result property="MIA" javaType="long"/>
+		<result property="NUMBER_OF_PAYMENT_DUE" javaType="long"/>
+		
+		<result property="NUMBER_OF_INSTALLMENT_PAID" javaType="long"/>
+		<result property="ACCRUAL_TAWIDH" javaType="$"/>
+		<result property="MATURED_MIA" javaType="long"/>
+		<result property="SELLING_PRICE" javaType="$"/>
+		<result property="NPL_FLAG" javaType="string"/>
+		
+		<result property="1ST_NPF_DATE" javaType="date"/>
+		<result property="DATE_OF_NPL" javaType="date"/>
+		<result property="PROFIT_IN_SUSPENSE" javaType="$"/>
+		<result property="TOTAL_INSTALMENT_PAID" javaType="$"/>
+		<result property="COURT_ORDER_FLAG" javaType="string"/>
+		
+		<result property="PROMOTION" javaType="string"/>
+		<result property="TAKAFUL" javaType="string"/>
+		<result property="AMOUNT_FINANCED" javaType="$"/>
+		<result property="ORIGINAL_MATURITY_DATE" javaType="date"/>
+		<result property="ACCOUNT_ID" javaType="long"/>
+		
+		<result property="NUMBER_OF_INSTALLMENT_IN_ARREARS" javaType="long"/>
+		<result property="AFT_STATUS" javaType="string"/>
+		<result property="CUSTOMER_NUMBER" javaType="$" />
+		<result property="1ST_DISBURSEMENT_DATE" javaType="date" />
+		<result property="LAST_DISBURSEMENT_DATE" javaType="date" />
+		
+		<result property="NO_PROFIT_IN_ARREARS" javaType="long" />
+		<result property="TAKAFUL_OPERATOR_NAME" javaType="string" />
+		<result property="PROFIT_FLOOR" javaType="$"/>
+		<result property="PROFIT_CEILING" javaType="$"/>
+		<result property="BILLED_PRINCIPAL_DUE" javaType="$"/>
+		
+		<result property="AGREEMENT_DATE" javaType="date" />
+		<result property="DAY_IN_ARREARS" javaType="long" />
+		<result property="MARKETING_OFFICER" javaType="string" />
+	</resultMap>
+	
+	<select id="getGeneralInformation" resultMap="getGeneralInformation">
+		SELECT
+		(A.INTEREST_RATE / 10) as PROFIT_RATE,
+		la.CREDIT_APPLICATION_NUMBER as CREDIT_APPLICATION_NUMBER,
+		A.first_release_date AS DATE_OF_FUNDING,
+		A.LOAN_TERM as FINANCING_TERM,
+		A.MATURITY_DATE as MATURITY_DATE,
+		
+		A.INTEREST_REBATE_AMOUNT as PROFIT_REBATE,
+		ltrim(B.CODE, '0') as BRANCH_NUMBER,
+		A.ACCRUED_INTEREST as ACCRUAL_PROFIT,
+		A.ACCRUED_PENALTY_INTEREST as ACCRUED_COMPENSATION_CHARGE,
+		A.LAST_PAYMENT_DATE as LAST_PAYMENT_DATE,
+		
+		A.LAST_PAYMENT_AMOUNT as LAST_PAYMENT_AMOUNT,
+		A.NEXT_PAYMENT_DUE_DATE as NEXT_PAYMENT_DUE_DATE,
+		A.PARTIAL_PAYMENT_AMOUNT as AMOUNT_PARTIALY_PAID,
+		A.ADVANCE_PAYMENT_AMOUNT as ADVANCE_PAY,
+		A.PAYOFF_AMOUNT as PAYOFF_AMOUNT,
+		
+		A.NPL_FLAG as NPF_FLAG,
+		NPL.DESCRIPTION AS NPF_STATUS,
+		A.NPL_DATE as FIRST_NPF_DATE,
+		A.DATE_ENTERED as DATE_OF_ACCOUNT_TURNING_NPF,
+		A.TOTAL_INTEREST_IN_SUSPENSE as TOTAL_PROFIT_IN_SUSP,
+		
+		A.TOTAL_LATE_CHARGE_IN_SUSPENSE as TOTAL_CC_IN_SUSPENSE,
+		A.TOTAL_INSTALLMENT_PAID_CASH_PRICE_RATIO as TOTAL_INSTALMENT_PAID,
+		A.CURRENT_BALANCE as CURRENT_BALANCE,
+		A.OTHER_CHARGE as OTHER_CHARGES,
+		A.MISCELLANEOUS_CHARGE as MISC_CHARGES,
+		
+		A.INTEREST_DUE_AMOUNT as BILLED_PROFIT_DUE,
+		A.UNCLAIM_AMOUNT as UNEARNED_PROFIT,
+		A.NEXT_SCHEDULED_PAYMENT_DATE as NEXT_SCH_PYMT_DUE_DATE,
+		A.next_scheduled_interest_payment_date as NEXT_SCH_PROFIT_DUE_DATE,
+		coalesce(a.assessed_late_charge,0) - coalesce(a.paid_late_charge) as MEMO_TAWIDH,
+		
+		A.SECONDARY_ACCRUED_INTEREST as SEC_ACC_PROFIT,
+		A.ORIGINAL_LOAN_DATE as ORIGINAL_FINANCING_DATE,
+		A.FIRST_RELEASE_DATE as FIRST_RELEASE_DATE,
+		A.FULL_RELEASE_DATE as FULL_RELEASE_DATE,
+		A.FIRST_PAYMENT_DATE as FIRST_PAYMENT_DATE,
+		
+		a.MONTHS_IN_ARREARS * 30 as DIA,
+		a.tawidh_amount as TAWIDH,
+		A.OUTSTANDING_BALANCE as OUTSTANDING_BALANCE,
+		a.write_off_amount,
+		a.outstanding_balance - (a.interest_rebate_amount + a.write_off_amount) as GROSS_BALANCE,
+		
+		a.first_release_date as DATE_OF_DISBURSEMENT,
+		pro.description as FINANCING_TYPE,
+		fa.code ||' '|| fa.description as FACILITY_TYPE,
+		a.OLD_ACCOUNT_NO,
+		ORIGINAL_BALANCE as ORIGINAL_LIMIT,
+		
+		LOAN_TERM as ORIGINAL_TENURE,
+		extract(year from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.first_payment_date))*12 + extract(month from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.first_payment_date)) as SERVED_TENURE,
+  		a.loan_term - (extract(year from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.first_payment_date))*12 + extract(month from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.first_payment_date))) as remaining_tenure,
+		a.loan_term|| ' / ' || extract(year from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.first_payment_date))*12 + extract(month from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.first_payment_date))  ||' / '||
+        a.INSTALLMENT_PAID_COUNT ||' / '|| extract(year from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.NEXT_PAYMENT_DUE_DATE))*12 + extract(month from age(a.NEXT_SCHEDULED_PAYMENT_DATE, a.NEXT_PAYMENT_DUE_DATE)) 
+        as PDPA,
+        
+		null as RESTRUCTURE_PROFIT_RATE,
+		
+		a.open_date as DATE_OPENED,
+		null as SETTLEMENT_DATE,
+		a.payment_amount as ORIGINAL_INSTALLMENT,
+		a.final_payment_amount as FINAL_INSTALMENT_AMOUNT,
+		a.security_deposit_amount as SECURITY_DEPOSIT_MONTH,
+		0 as SECURITY_DEPOSIT_SHORTFALL,
+		
+		a.EFFECTIVE_RATE as EIR_APR,
+		a.memo_late_charge as MEMO_COMPENSATION_CHARGES,
+		a.memo_post_amount,
+		coalesce(A.MONTHS_IN_ARREARS,0) as MIA,
+		a.INSTALLMENT_AMOUNT_IN_ARREARS as NUMBER_OF_PAYMENT_DUE,
+		
+		a.INSTALLMENT_PAID_COUNT as NUMBER_OF_INSTALLMENT_PAID,
+		coalesce(ACCRUED_PENALTY_INTEREST , (a.assessed_late_charge - a.paid_late_charge)) as ACCRUAL_TAWIDH,
+		a.months_in_arrears as MATURED_MIA,
+		isl.sptf_selling_price_amount as SELLING_PRICE,
+		a.npl_flag as NPL_FLAG,
+		
+		a.NPL_DATE as FIRST_NPL_DATE,
+		null as DATE_OF_NPL,
+		a.total_interest_in_suspense as PROFIT_IN_SUSPENSE,
+		a.TOTAL_INSTALLMENT_PAID_CASH_PRICE_RATIO as TOTAL_INSTALLMENT_PAID,
+		null as COURT_ORDER_FLAG,
+		
+		null as PROMOTION,
+		case when ic.code is not null then 'Y' else 'N' end as TAKAFUL,
+		null as AMOUNT_FINANCED,
+		a.original_maturity_date as ORIGINAL_MATURITY_DATE,
+		a.ID as ACCOUNT_ID,
+		
+		a.months_in_arrears as NUMBER_OF_INSTALLMENT_IN_ARREARS,
+		case when stnd.account_id=stnd.account_id then 'Y' else 'N' end as AFT_STATUS,
+		c.customer_no,
+		a.first_release_date,
+		a.full_release_date,
+		
+		a.INTEREST_DUE_COUNT,
+		ic.description as TAKAFUL_OPERATOR_NAME,
+		a.prime_rate_floor,
+		a.prime_rate_ceiling,
+		A.PRINCIPLE_DUE_AMOUNT AS BILLED_PRINCIPAL_DUE,	
+		
+		A.first_release_date,
+		0 as DAY_IN_ARREARS,
+		a.officer_code
+		
+		FROM PTRACCOUNT A
+		inner join ptrcustomer c on C.ID=CAST(A.CUSTOMER_ID AS BIGINT)
+		left join ptraccount_islamic_det isl on isl.account_id=a.id
+		left JOIN ptrbank_branch_ref B ON A.BANK_BRANCH_ID=B.ID
+		LEFT JOIN PTRNPL_STATUS_REF NPL ON NPL.ID=A.NPL_STATUS_ID
+		left join ptrproduct_type_ref pro on pro.id=a.product_type_id
+		left join ptraccount_collateral_rel rel on a.id=rel.account_id
+		left join ptrcollateral col on col.id=rel.collateral_id
+		left join ptrhost_collateral_insurance i on i.collateral_id = col.id
+		left join ptrinsurance_company_ref ic on i.insurance_company_id = ic.id
+		left join ptrfacility_code_ref fa on fa.id=a.facility_code_id
+		left join ptrhost_standing_instruction stnd on a.id=stnd.account_id
+		left join ptraccount_loan_application_rel lar on a.id = lar.account_id and a.facility_code_id = lar.facility_code_id
+		left join ptrloan_application la on lar.loan_application_id = la.id and lar.sequence_number = la.sequence_number and lar.facility_code_id = la.facility_code_id
+		INNER JOIN PTRPRODUCT_TYPE_REF PR ON A.PRODUCT_TYPE_ID = PR.ID
+		left join PTRDATA_DATE DD on 1=1
+		WHERE 
+		<!-- pr.CATEGORY_ID IN (8,4,12) AND (a.full_RELEase_date is not null OR a.FIRST_PAYMENT_DATE IS NOT NULL) and -->
+		A.ID=#ACCOUNT_ID#
+	</select>
+	
+	<resultMap class="hmap" id="getMonthlyInstallmentAccount">
+		<result property="EFFECTIVE_DATE" javaType="date"/>
+		<result property="INSTALLMENT_AMOUNT" javaType="$"/>
+		<result property="PROFIT_RATE" javaType="double"/>
+	</resultMap>
+	
+	<select id="getMonthlyInstallmentAccount" resultMap="getMonthlyInstallmentAccount">
+	select pac.payment_effective_date,pac.new_payment_amount,null as PROFIT_RATE
+	from ptrpayments_amount_change pac
+	inner join ptraccount a on a.id=pac.account_id
+	where a.id=#ACCOUNT_ID#
+	order by pac.payment_effective_date desc
+	</select>
+	
+	<resultMap class="hmap" id="getAccountLatestCollateral">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="TAKAFUL" javaType="string"/>
+	<result property="REGISTRATION_NUMBER" javaType="string"/>
+	<result property="SECURITY_DEPOSIT" javaType="$"/>
+	</resultMap>
+	
+	<select id="getAccountLatestCollateral" resultMap="getAccountLatestCollateral">
+	select a.id, c.insurance_flag, c.registration_no, c.deposit_amount
+from ptrcollateral c
+inner join ptraccount_collateral_rel rel on rel.collateral_id=c.id 
+inner join ptraccount a on a.id=rel.account_id
+inner join ptrcustomer cus on a.customer_id = cus.id
+where a.id=#ACCOUNT_ID#
+and cus.customer_no = ltrim(registered_owner_cif_no, '0')
+order by id desc
+limit 1
+	</select>
+	
+	
+	<!-- ## Others  ## -->
+	
+	<resultMap id="getAccountOtherChargesSummary" class="hmap">
+		<result property="CHARGE_TYPE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="AMOUNT" javaType="$" />
+	</resultMap>
+	<select id="getAccountOtherChargesSummary" resultMap="getAccountOtherChargesSummary">
+		SELECT R.CODE,R.DESCRIPTION,CHARGE.OTHER_CHARGES
+		FROM PTRACCOUNT_CHARGE_DETAILS CHARGE
+		INNER JOIN PTRCHARGE_TYPE_REF R ON
+		CHARGE.TYPE_ID=R.ID
+		WHERE CHARGE.ACCOUNT_ID =#ACCOUNT_ID# AND
+		CHARGE.DISABLE =
+		<include refid="false" />
+		AND CHARGE.OTHER_CHARGES &gt; 0
+	</select>
+	
+	<resultMap id="getAccountMiscChargesSummary" class="hmap">
+		<result property="CHARGE_TYPE" javaType="string" />
+		<result property="DESCRIPTION" javaType="string" />
+		<result property="AMOUNT" javaType="$" />
+	</resultMap>
+	<select id="getAccountMiscChargesSummary" resultMap="getAccountMiscChargesSummary">
+		SELECT R.CODE,R.DESCRIPTION,CHARGE.MISC_CHARGES
+		FROM PTRACCOUNT_CHARGE_DETAILS CHARGE
+		INNER JOIN PTRCHARGE_TYPE_REF R ON
+		CHARGE.TYPE_ID=R.ID
+		WHERE CHARGE.ACCOUNT_ID =#ACCOUNT_ID# AND
+		CHARGE.DISABLE =
+		<include refid="false" />
+		AND CHARGE.MISC_CHARGES &gt; 0
+	</select>
+	
+	<resultMap id="getConductOfAccount" class="hmap">
+		<result property="CATEGORY" javaType="string" />
+		<result property="YTD" javaType="long" />
+		<result property="PRE" javaType="long" />
+		<result property="FTD" javaType="long" />
+	</resultMap>
+	<select id="getConductOfAccount" resultMap="getConductOfAccount">
+	select n.label as CATEGORY,
+	coalesce(
+	case when n.id = 1 then a.past_due_xdays_count
+	when n.id = 2 then a.past_due_30days_count 
+	when n.id = 3 then a.past_due_60days_count
+	when n.id = 4 then a.past_due_90days_count 
+	end,0) as YTD,
+	coalesce(
+	case when n.id = 1 then a.past_due_xdays_count
+	when n.id = 2 then a.past_due_30days_count 
+	when n.id = 3 then a.past_due_60days_count
+	when n.id = 4 then a.past_due_90days_count 
+	end,0) as PRE,
+	coalesce(
+	case when n.id = 1 then a.past_due_xdays_count
+	when n.id = 2 then a.past_due_30days_count 
+	when n.id = 3 then a.past_due_60days_count
+	when n.id = 4 then a.past_due_90days_count 
+	end,0) as LTD	
+	from ptraccount a,
+	(values
+	(1,'Times Past Due 10-29'),
+	(2,'Times Past Due 30-59'),
+	(3,'Times Past Due 60-89'),
+	(4,'Times Past Due > 90')
+	) as n(id,label)
+	where a.id=#ACCOUNT_ID#
+	order by n.id asc
+	</select>
+	
+	
+	<resultMap id="getAccountPaymentTrend" class="hmap">
+		<result property="COLUMN" javaType="string" />
+		<result property="VALUE" javaType="$" />
+	</resultMap>
+	<select id="getAccountPaymentTrend" resultMap="getAccountPaymentTrend">
+	select to_char(cast(#START_DATE# as DATE),'MM/YYYY'),0
+	</select>	
+	
+	<select id="getAccountPaymentTrendDetails" resultMap="getAccountPaymentTrend">
+	select to_char(posting_date,'MM/YYYY'),sum(amount) 
+	from PTRPAYMENT_TRANSACTION p
+	inner join ptrtransaction_type_ref tt on p.transaction_type_id = tt.id
+	where  account_id=#ACCOUNT_ID# and posting_date >= cast(#START_DATE# as date)
+	and tt.code != '905'
+	GROUP BY to_char(posting_date,'MM/YYYY')
+	</select>
+	
+	<!-- ## Standing Instructions ## -->
+	
+	<resultMap class="hmap" id="getAccountStandingInstructions">
+	<result property="DEBIT_ACCOUNT_NUMBER" javaType="string"/>
+	<result property="FIRST_TRANSFER_DATE" javaType="date"/>
+	<result property="NEXT_TRANSFER_DATE" javaType="date"/>
+	<result property="EXPIRATION_DATE" javaType="date"/>
+	<result property="LAST_TRANSFER_DATE" javaType="date"/>
+	<result property="TRANSFER_AMOUNT" javaType="$"/>
+	<result property="TRANSFERRED_TO_DATE" javaType="$"/>
+	<result property="DAYS_OF_MONTH_FOR_TRANSFER" javaType="long"/>
+	<result property="SEQUENCE" javaType="long"/>
+	<result property="CREDIT_ACCOUNT_NUMBER" javaType="string"/>
+	<result property="ACCOUNT_BALANCE" javaType="$"/>
+	<result property="DATE_OF_LAST_MAINTENANCE" javaType="date"/>
+	<result property="TRANSFER_FREQUENCY" javaType="long"/>
+	<result property="GRACE_DAYS_FOR_NSF" javaType="long"/>
+	<result property="USE_OF_AFT_AMOUNT_FOR_TRANSFER" javaType="$"/>
+	
+	
+	</resultMap>
+	
+	
+	<select id="getAccountStandingInstructions" resultMap="getAccountStandingInstructions">
+	select
+	debit_account_number as DEBIT_ACCOUNT_NUMBER,
+	origination_date as FIRST_TRANSFER_DATE,
+	next_transfer_date as NEXT_TRANSFER_DATE,
+	expiry_date as EXPIRATION_DATE,
+	last_transfer_date as LAST_TRANSFER_DATE,
+	transfer_amount as TRANSFER_AMOUNT,
+	next_transfer_date as TRANSFERRED_TO_DATE,
+	transfer_day_of_month as DAYS_OF_MONTH_FOR_TRANSFER,
+	debit_sequence_number as SEQUENCE,
+	account_id as CREDIT_ACCOUNT_NUMBER,
+	NULL as ACCOUNT_BALANCE,
+	last_maintenance_date as DATE_OF_LAST_MAINTENANCE,
+	frequency as TRANSFER_FREQUENCY,
+	try_days_if_nsf as GRACE_DAYS_FOR_NSF,
+	use_aft_amount_flag as USE_OF_AFT_AMOUNT_FOR_TRANSFER
+	from ptrhost_standing_instruction where account_id=#ACCOUNT_ID#
+	</select>
+	
+	<resultMap class="hmap" id="getLoanInquiry">
+		<result property="WAIVE_COMMITMENT_FEES" javaType="string"/>
+		<result property="COMMITMENT_FEE_RATE_NUMBER" javaType="long"/>
+		<result property="COMMITMENT_FEE_RATE" javaType="$"/>
+		<result property="BNM_EXEMPT" javaType="string"/>
+		<result property="GROUP_STAFF" javaType="string"/>
+		
+		<result property="HIBAH" javaType="$"/>
+		<result property="BANK_DISCOUNT" javaType="$"/>
+		<result property="HOLD_MAIL" javaType="string"/>
+		<result property="CLOSE_ON_ZERO_BALANCE" javaType="string"/>
+		<result property="WAIVE_TAWIDH" javaType="string"/>
+		
+		<result property="TAWIDH_CODE" javaType="string"/>
+		<result property="TAWIDH_RATE " javaType="long"/>
+		<result property="INTRODUCER_CODE" javaType="string"/>
+		<result property="OFFICER_CODE" javaType="string"/>
+		<result property="PAST_DUE_NOTICE_FLAG" javaType="string"/>
+		
+		<result property="SEND_PAST_DUE_NOTICE" javaType="string"/>
+		<result property="CALCULATE_SPECIFIC_PROVISION" javaType="string"/>
+		<result property="CHARGE_OFF_DATE" javaType="date"/>
+
+	</resultMap>
+	
+	<select id="getLoanInquiry" resultMap="getLoanInquiry">
+		select 
+		waive_commitment_fee_flag,
+		commitment_rate_no as COMMITMENT_FEE_RATE_NUMBER,
+		commitment_rate as COMMITMENT_FEE_RATE,
+		bnm_exempt_flag,
+		group_staff_flag,	
+		interest_rate as HIBAH,	
+		bank_discount_amount,
+		h.description as HOLD_MAIL,
+		close_on_zero_balance_code_flag,
+		waive_late_charge_flag,		
+		late_charge_type_id,
+		late_charge_rate,
+		introducer_code,
+		officer_code,
+		past_due_notice_code_flag,		
+		send_past_due_notice_flag,
+		NULL as CALCULATE_SPECIFIC_PROVISION,
+		charge_off_date as CHARGE_OFF_DATE		
+		from ptraccount a
+		left join ptrhold_mail_code_ref h on a.hold_mail_code_id = h.id
+		where a.id=#ACCOUNT_ID#
+		<include refid="fromdual"/>
+	</select>
+	
+	<resultMap class="hmap" id="getLoanInquiryStatisticalInformation">
+	<result property="ID" javaType="long"/>
+	<result property="STATISTICAL_INFORMATION" javaType="string"/>
+	<result property="MTD" javaType="$"/>
+	<result property="YTD" javaType="$"/>
+	<result property="FTD" javaType="$"/>
+	</resultMap>
+	
+	<select id="getLoanInquiryStatisticalInformation" resultMap="getLoanInquiryStatisticalInformation">
+select n.id,
+case 
+when sptf.IS_ISLAMIC = true and n.id=2 then 'Disbursement'
+when sptf.IS_ISLAMIC = true and n.id=3 then 'Accued Profit Debit'
+when sptf.IS_ISLAMIC = true and n.id=4 then 'Tawidh Debit' 
+when sptf.IS_ISLAMIC = true and n.id=9 then 'Profit Paid / Earned' 
+when sptf.IS_ISLAMIC = true and n.id=10 then 'Tawidh Paid'
+else n.label end as STATISTICAL_INFORMATION,
+coalesce(case 
+when n.id = 1 then a.mtd_payment_received_amount 
+when n.id = 2 then a.mtd_release_amount 
+when n.id = 3 then a.mtd_accrued_interest_debit_amount 
+when n.id = 4 then a.mtd_late_charge_debit_amount
+when n.id = 5 then a.mtd_miscellaneous_charge_debit_amount
+when n.id = 6 then a.mtd_other_charge_debit_amount 
+when n.id = 7 then a.mtd_redemption_amount 
+when n.id = 8 then a.mtd_principal_paid_amount 
+when n.id = 9 then a.mtd_interest_paid_amount 
+when n.id = 10 then a.mtd_late_charge_paid_amount  
+when n.id = 11 then a.mtd_miscellaneous_charge_paid_amount
+when n.id = 12 then a.mtd_other_charge_paid_amount 
+end,0) as MTD,
+coalesce(case 
+when n.id = 1 then a.ytd_payment_received_amount 
+when n.id = 2 then a.ytd_release_amount 
+when n.id = 3 then a.ytd_accrued_interest_debit_amount 
+when n.id = 4 then a.ytd_late_charge_debit_amount
+when n.id = 5 then a.ytd_miscellaneous_charge_debit_amount 
+when n.id = 6 then a.ytd_other_charge_debit_amount
+when n.id = 7 then a.ytd_redemption_amount 
+when n.id = 8 then a.ytd_principal_paid_amount 
+when n.id = 9 then a.ytd_interest_paid_amount 
+when n.id = 10 then a.ytd_late_charge_paid_amount 
+when n.id = 11 then a.ytd_miscellaneous_charge_paid_amount
+when n.id = 12 then a.ytd_other_charge_paid_amount 
+end,0) as YTD,
+coalesce(case 
+when n.id = 1 then a.ltd_payment_received_amount 
+when n.id = 2 then a.released_amount
+when n.id = 3 then a.ltd_accrued_interest_debit_amount 
+when n.id = 4 then a.ltd_late_charge_debit_amount 
+when n.id = 5 then a.ltd_miscellaneous_charge_debit_amount 
+when n.id = 6 then a.ltd_other_charge_debit_amount 
+when n.id = 7 then a.ltd_redemption_amount
+when n.id = 8 then a.ltd_principal_paid_amount 
+when n.id = 9 then a.ltd_interest_paid_amount 
+when n.id = 10 then ltd_tadwidh.ltd_tadwith_paid_amount
+when n.id = 11 then a.ltd_miscellaneous_charge_paid
+when n.id = 12 then a.ltd_other_charge_paid_amount  
+end,0) as LTD,
+sptf.id
+from ptraccount a
+left join ptrsptf_type_ref sptf on sptf.id=a.sptf_type_id
+left join(
+select account_id,   sum(amount) ltd_tadwith_paid_amount
+from ptrtransaction t
+inner join ptrtransaction_type_ref ref on t.transaction_type_id = ref.id
+where account_id = #ACCOUNT_ID#
+and ref.code in ( '926', '043')
+group by account_id 
+) ltd_tadwidh on a.id = ltd_tadwidh.account_id,
+(values
+(1,'Payment Received'),
+(2,'Release'),
+(3,'Accrued Interest Debit'),
+(4,'Late Charge'),
+(5,'Misc Charge Debit'),
+(6,'Other Charge Debit'),
+(7,'Redemption'),
+(8,'Principal Paid'),
+(9,'Interest Paid / Earned'),
+(10,'Late Charge Paid'),
+(11,'Misc Charge Paid'),
+(12,'Other Charge Paid')
+) as n(id,label)
+where a.id = #ACCOUNT_ID#
+order by n.id asc
+ </select>
+	
+	
+	
+	<resultMap class="hmap" id="getAccountRelationshipCurrentFinancialInformation">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="RELATIONSHIPS" javaType="string"/>
+	<result property="ACCOUNT_NUMBER" javaType="string"/>
+	<result property="OUTSTANDING_BALANCE" javaType="$"/>
+	<result property="NEXT_PAYMENT_DUE_DATE" javaType="date"/>
+	<result property="INSTALLMENT_IN_ARREARS" javaType="$"/>
+	<result property="MIA" javaType="long"/>
+	<result property="LAST_PAYMENT_DATE" javaType="date"/>
+	<result property="LAST_PAYMENT_METHOD" javaType="string"/>
+	</resultMap>
+	
+	<select id="getAccountRelationshipCurrentFinancialInformation" resultMap="getAccountRelationshipCurrentFinancialInformation">
+	select
+	rel.account_id as ACCOUNT_ID,
+	type.description as RELATIONSHIPS,
+	a.account_no as ACCOUNT_NUMBER,
+	a.outstanding_balance as OUTSTANDING_BALANCE,
+	a.next_payment_due_date as NEXT_PAYMENT_DUE_DATE,
+	a.installment_amount_in_arrears as INSTALLMENT_IN_ARREARS,
+	a.months_in_arrears as MIA,
+	a.last_payment_date as LAST_PAYMENT_DATE,
+	NULL as LAST_PAYMENT_METHOD
+from ptrcustomer_account_rel rel
+inner join ptraccount a on a.id=rel.account_id
+inner join PTRCUSTOMER_ACCOUNT_RELATION_TYPE_REF TYPE ON TYPE.ID=rel.TYPE_ID
+where rel.customer_id=#CUSTOMER_ID#
+	</select>
+	
+	<resultMap class="hmap" id="get24MonthsProfile">
+	<result property="DATE" javaType="date"/>
+	<result property="MIA" javaType="int"/>
+	<result property="SELF_CURE" javaType="string"/>
+	<result property="CATEGORY" javaType="string"/>
+	<result property="CATEGORY_POINT" javaType="string"/>
+	</resultMap>
+	
+	<sql id="get24MonthsProfileData">
+	select
+    	mp.PROFILE_DATE,
+    	mp.MIA as MIA,
+    	case when mp.SELF_CURE=<include refid="true"/> then 'Yes'
+            when mp.SELF_CURE=<include refid="false"/> then 'No'
+            else ' ' end as SELF_CURE,
+	NULL as CATEGORY,
+	NULL as CATEGORY_POINT       
+	from PTR24MONTH_PROFILE mp     
+	</sql>
+	
+	<select id="get24MonthsProfile" resultMap="get24MonthsProfile">
+	<include refid="get24MonthsProfileData"/> where mp.ACCOUNT_ID=#ACCOUNT_ID#
+	order by mp.PROFILE_DATE desc  
+	limit 24
+	</select>
+	
+	
+	<resultMap class="hmap" id="getAccountRateStatusChangeHistory">
+	<result property="DESCRIPTION" javaType="string"/>
+	<result property="OLD" javaType="string"/>
+	<result property="NEW" javaType="string"/>
+	<result property="POSTED" javaType="date"/>
+	<result property="EFFECTIVE" javaType="date"/>
+	<result property="TERM_CONDITION" javaType="string"/>
+	<result property="OLD_STATUS" javaType="string"/>
+	<result property="NEW_STATUS" javaType="string"/>
+	<result property="OLD_RATE" javaType="$"/>
+	<result property="NEW_RATE" javaType="$"/>
+	<result property="STEP_UP" javaType="string"/>
+	<result property="ALT_RATE_Y_TO_N" javaType="string"/>
+	<result property="CHANGE_CODE" javaType="string"/>
+	
+	</resultMap>
+	
+	<select id="getAccountRateStatusChangeHistory" resultMap="getAccountRateStatusChangeHistory">
+	select 
+	null as DESCRIPTION,
+	trans.old_status as OLD,
+	trans.new_status as NEW,
+	trans.posting_date as POSTED,
+	trans.effective_date as EFFECTIVE,
+	transref.code as TERM_CONDITION,
+	trans.old_status as OLD_STATUS,
+	trans.new_status as NEW_STATUS,
+	trans.old_rate as OLD_RATE,
+	trans.new_rate as NEW_RATE,
+	null as STEP_UP,
+	null as ALT_RATE_Y_TO_N,
+	null as CHANGE_CODE
+	from ptrtransaction trans
+inner join ptrtransaction_type_ref transref on trans.transaction_type_id =transref.id
+where transref.CODE in ('889','891') and trans.ACCOUNT_ID=#ACCOUNT_ID#
+	order by trans.posting_date desc
+	</select>
+	
+	<resultMap class="hmap" id="getAccountChargeOff">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="ACCOUNT_STATUS" javaType="string"/>
+<result property="APPROVED_BY" javaType="string"/>
+<result property="APPROVED_DATE" javaType="$"/>
+<result property="POSTED_BY" javaType="string"/>
+<result property="POSTED_DATE" javaType="date"/>
+<result property="CURRENT_BALANCE" javaType="$"/>
+<result property="ACCRUED_PROFIT" javaType="$"/>
+<result property="ACCRUED_LC" javaType="$"/>
+<result property="LC_DUE" javaType="$"/>
+<result property="OTHER_CHARGES" javaType="$"/>
+<result property="MISC_CHARGES" javaType="$"/>
+<result property="DISPO_LEASE_ASSETS" javaType="$"/>
+<result property="OUTSTANDING_BALANCE" javaType="$"/>
+<result property="INTEREST_REBATE" javaType="$"/>
+<result property="PREPAID_RENTAL" javaType="$"/>
+<result property="NET_LOSS" javaType="$"/>
+<result property="ACCRUED_COMMISSION_FEE" javaType="$"/>
+<result property="REMARKS" javaType="$"/>
+<result property="CHARGE_OFF_DATE" javaType="date"/>
+<result property="SECURITY_DEPARTMENT" javaType="$"/>
+<result property="PRE_HANDLING_FEE" javaType="$"/>
+<result property="OUTSTANDING_LPI" javaType="$"/>
+<result property="OUTSTANDING_PIS" javaType="$"/>
+<result property="OUTSTANDING_SP" javaType="$"/>
+<result property="WRITE_OFF_LPI" javaType="$"/>
+<result property="WRITE_OFF_PIS" javaType="$"/>
+<result property="WRITE_OFF_SP" javaType="$"/>
+<result property="BAD_DEBT" javaType="$"/>
+<result property="WRITE_BACK_LPI" javaType="$"/>
+<result property="WRITE_BACK_PIS" javaType="$"/>
+<result property="WRITE_BACK_SP" javaType="$"/>
+	</resultMap>
+	
+	<select id="getAccountChargeOff" resultMap="getAccountChargeOff">
+	select
+	null as ACCOUNT_ID,
+	null as ACCOUNT_STATUS,
+		null as APPROVED_BY,
+		null as APPROVED_DATE,
+		null as POSTED_BY,
+		null as POSTED_DATE,
+		null as CURRENT_BALANCE,
+		null as ACCRUED_PROFIT,
+		null as ACCRUED_LC,
+		null as LC_DUE,
+		null as OTHER_CHARGES,
+		null as MISC_CHARGES,
+		null as DISPO_LEASE_ASSETS,
+		a.outstanding_balance as OUTSTANDING_BALANCE,
+		null as INTEREST_REBATE,
+		null as PREPAID_RENTAL,
+		null as NET_LOSS,
+		null as ACCRUED_COMMISSION_FEE,
+		null as REMARKS,
+		a.charge_off_date as CHARGE_OFF_DATE,
+		null as SECURITY_DEPARTMENT,
+		null as PRE_HANDLING_FEE,
+		null as OUTSTANDING_LPI,
+		null as OUTSTANDING_PIS,
+		null as OUTSTANDING_SP,
+		null as WRITE_OFF_LPI,
+		null as WRITE_OFF_PIS,
+		null as WRITE_OFF_SP,
+		null as BAD_DEBT,
+		null as WRITE_BACK_LPI,
+		null as WRITE_BACK_PIS,
+		null as WRITE_BACK_SP
+      from ptraccount a
+      where a.ID=#ACCOUNT_ID#
+	</select>
+	
+	<resultMap class="hmap" id="getAccountReview">
+	<result property="CUSTOMER_NAME" javaType="string"/>
+<result property="RELATIONSHIP" javaType="string"/>
+<result property="JUDGEMENT_BALANCE" javaType="$"/>
+<result property="FILE_REVIEW_DATE" javaType="date"/>
+<result property="CONCLUSION" javaType="string"/>
+<result property="REVIEW_STATUS" javaType="string"/>
+<result property="APPROVAL_DATE" javaType="date"/>
+<result property="NEXT_REVIEW_DUE_DATE" javaType="date"/>
+<result property="APPROVAL_EXPIRY_DATE" javaType="date"/>
+<result property="TERMS_OF_APPROVAL" javaType="string"/>
+<result property="NOTIFY_LEGAL_OPERATION_DATE" javaType="date"/>
+<result property="RECOVERABLE_STATUS" javaType="string"/>
+<result property="SHORTFALL_STATUS" javaType="string"/>
+<result property="REPOSSESSION_ORDER_ISSUED_DATE" javaType="date"/>
+<result property="REVIEW_WITH_REPOSSESSOR" javaType="string"/>
+<result property="NOTES" javaType="string"/>
+<result property="CREATED_DATE" javaType="date"/>
+	</resultMap>
+	
+	<select id="getAccountReview" resultMap="getAccountReview">
+	select  
+        c.customer_name as CUSTOMER_NAME,
+		type.description as RELATIONSHIP,
+		r.judgement_bal as JUDGEMENT_BALANCE,
+		r.file_review_date as FILE_REVIEW_DATE,
+		rev.description as CONCLUSION,
+		ty.description as REVIEW_STATUS,
+		r.approval_date as APPROVAL_DATE,
+		r.next_review_due_date as NEXT_REVIEW_DUE_DATE,
+		r.approval_expiry_date as APPROVAL_EXPIRY_DATE,
+		sub.description as TERMS_OF_APPROVAL,
+		r.notify_legal_ops_date as NOTIFY_LEGAL_OPERATION_DATE,
+		rec.description as RECOVERABLE_STATUS,
+		null as SHORTFALL_STATUS,
+		r.repo_order_issued_date as REPOSSESSION_ORDER_ISSUED_DATE,
+		case when r.repossessor_review_id=1 then 'Yes' when r.repossessor_review_id=0 then 'No' end as REVIEW_WITH_REPOSSESSOR,
+		note.note_text as NOTES,
+		t.created_time as CREATED_DATE from
+		ptraccount a
+        inner join ptrtreatment_account_review r on r.account_id=a.id
+inner join ptrtreatment t on t.id=r.treatment_id
+inner join ptrcustomer c on c.id=r.customer_id
+inner join ptrcustomer_account_rel rel on rel.customer_id=r.customer_id
+inner join ptrcustomer_account_relation_type_ref type on type.id=rel.type_id
+inner join ptrtreatment_type_status_ref ty on ty.id=r.type_status_id
+left join PTRACCOUNT_REVIEW_DEFAULT_REASON_REF def on def.id=r.default_reason_id
+left join ptrtreatment_subtype_ref sub on sub.id=r.subtype_id
+left join ptrtreatment_note note on note.treatment_id=r.treatment_id
+left join PTRACCOUNT_REVIEW_RECOVERABLE_STATUS_REF rec on rec.id=r.recoverable_status_id
+left join PTRACCOUNT_REVIEW_STATUS_REF rev on rev.id=r.conclusion_id
+where a.ID=#ACCOUNT_ID# order by t.created_time desc
+	</select>
+
+<resultMap id="getCamPaymentDetails" class="java.util.HashMap">
+ <result property="DATE" javaType="date"/>
+ <result property="INSTALLMENT_AMOUNT" javaType="$"/>
+ <result property="DUE_DATE" javaType="date"/>
+ <result property="PAYMENT_BEROFE_DUE_DATE" javaType="$"/>
+ <result property="PAYMENT_AFTER_DUE_DATE" javaType="$"/>
+</resultMap>
+<select id="getCamPaymentDetails" resultMap="getCamPaymentDetails">
+<![CDATA[
+select posting_date,amount,payment_due_date,
+ case when before is not null then sum(before)over(partition by to_char(posting_date,'YYYYMM') order by posting_date asc) else 0 end as before,
+ case when after is not null then sum(after)over(partition by to_char(posting_date,'YYYYMM') order by posting_date asc) else 0 end as after
+from
+ ((select account_id,payment_due_date,posting_date,amount,
+    case when posting_date <= payment_due_date  then amount  
+         when posting_date > payment_due_date and extract(day from posting_date)<=14 then amount end as BEFORE,
+    case when posting_date > payment_due_date and extract(day from posting_date)>=14 then amount 
+         when posting_date > payment_due_date and  extract(day from posting_date)>14 then amount  end as AFTER
+   from
+    (select account_id,payment_due_date,posting_date, sum(amount) as amount
+     from ptrpayment_transaction p 
+      inner join ptrtransaction_type_ref tt on p.transaction_type_id = tt.id
+     where payment_due_date is not null 
+       and account_id= #ACCOUNT_ID#
+       and posting_date >=#START_DATE#
+       and tt.code != '905'
+     group by account_id,payment_due_date,posting_date order by posting_date asc
+    ) a
+   order by posting_date asc
+  ))a 
+order by posting_date asc
+]]>
+</select>	
+
+<resultMap class="hmap" id="get24MonthsAgencyProfile">
+<result property="DATE" javaType="string"/>
+<result property="AGENCY" javaType="string"/>
+</resultMap>
+
+<select id="get24MonthsAgencyProfile" resultMap="get24MonthsAgencyProfile">
+<![CDATA[
+select to_char(a.start_of_month,'Mon-YYYY'), a.description from(
+select 
+ass.id,
+a.start_of_month::date, 
+g.description,
+row_number() over(partition by a.start_of_month order by ass.id desc) as rnum
+from
+(
+SELECT date_trunc('month',month)::date as start_of_month, date_trunc('month',month)::date + interval '1 month - 1 day' as end_of_month
+FROM  generate_series(
+                      current_date - interval '24 months'
+                     , current_date
+                     , interval  '1 month') month
+)a
+inner join ptraccount_agency_assignment ass on 1=1 
+inner join ptragency g on g.id=ass.agency_id
+where ass.account_id=#ACCOUNT_ID#
+and ass.created_time::date <= a.end_of_month::date 
+and coalesce(ass.aborted_date::date,a.start_of_month::date) >= a.start_of_month::date 
+order by a.start_of_month::date desc
+)a where a.rnum=1
+]]>
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</sqlMap>

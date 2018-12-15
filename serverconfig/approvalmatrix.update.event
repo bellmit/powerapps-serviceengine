@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DATA" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="APPROVAL_TYPE_ID" key="APPROVAL_TYPE_ID" to="DATA" type="copyintolist"/>
+  <exec from="SUBTYPE_ID" key="SUBTYPE_ID" to="DATA" type="copyintolist"/>
+  <exec argument="DATA" type="loop">
+   <exec recordcount="COUNT" statement="updateApprovalMatrix" type="update"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="COUNT" operator="=" rhsvalue="0"/>
+    </conditions>
+    <exec statement="insertApprovalMatrix" type="insert"/>
+   </exec>
+  </exec>
+  <exec count="1" type="createlist"/>
+  <exec message="Updated" target="MESSAGE" type="formattext"/>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ </exec>
+</event>

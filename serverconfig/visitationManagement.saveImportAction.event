@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec statement="getVmsVisitationProcessTypeId" type="select"/>
+ <exec statement="getVmsVisitationInstructTypeStatus" type="select"/>
+ <exec key="VALID" minuend="SPREADSHEET_LIST" subtrahend="FALSE" to="SPREADSHEET_LIST" type="remove"/>
+ <exec from="PROCESS_TYPE_ID" key="PROCESS_TYPE_ID" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="LOGON_USER" key="UPDATED_USER_ID" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="LOGON_USER" key="CREATED_USER_ID" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="UPDATED_TIME" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="CREATED_TIME" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="TYPE_STATUS_ID" key="TYPE_STATUS_ID" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec from="STATUS_ID" key="STATUS_ID" to="SPREADSHEET_LIST" type="copyintolist"/>
+ <exec argument="SPREADSHEET_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NEW_ADDRESS_LINE1" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="STATE_ID" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="COUNTRY_ID" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="ADDRESS_TYPE_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec statement="insertNewVisitationAddress" type="insert"/>
+   <exec from="ID" to="CONTACT_ID" type="copy"/>
+   <exec type="nullify">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CONTACT_TYPE_ID" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="NEW_CONTACT_NUMBER" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="NEW_CONTACT_NUMBER" to="NO" type="copy"/>
+   <exec statement="insertNewVisitationContactNumber" type="insert"/>
+   <exec type="nullify">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EMAIL_TYPE_ID" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="NEW_EMAIL" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="EMAIL_TYPE_ID" to="CONTACT_TYPE_ID" type="copy"/>
+   <exec from="NEW_EMAIL" to="NO" type="copy"/>
+   <exec statement="insertNewVisitationContactNumber" type="insert"/>
+   <exec type="nullify">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec from="CUSTOMER_ID" to="VISITATION_TO_ID" type="copy"/>
+  <exec event="treatment.save" ignoreresult="true" type="raisewith"/>
+ </exec>
+ <exec message="Save Successful" target="MESSAGE" type="formattext"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+</event>

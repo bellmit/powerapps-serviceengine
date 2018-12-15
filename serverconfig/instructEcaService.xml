@@ -1,0 +1,70 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="instructEcaService">
+
+<resultMap class="hmap" id="getInstructEcaAgencyAssignmentId">
+<result property="AGENCY_ASSIGNMENT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getInstructEcaAgencyAssignmentId" resultMap="getInstructEcaAgencyAssignmentId">
+select id from ptraccount_agency_assignment 
+where status_id=15007 and 
+agency_id is not null and
+subtype_id=(select id from ptrtreatment_subtype_ref where type_id=19) and
+account_id=#ACCOUNT_ID#
+</select>
+
+
+	<insert id="insertTreatmentInstructEca">
+		insert into ptrtreatment_instruct_eca
+		(TREATMENT_ID,ACCOUNT_ID,TYPE_STATUS_ID,SUBTYPE_ID,AGENCY_ASSIGNMENT_ID,INSTRUCTION_ID)
+		values
+		(#ID#, #ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#AGENCY_ASSIGNMENT_ID#,#INSTRUCTION_ID#)
+	</insert>
+	
+	<update id="updateTreatmentInstructEca">
+	update ptrtreatment_instruct_eca set TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+	INSTRUCTION_ID=#INSTRUCTION_ID#
+	SUBTYPE_ID = #SUBTYPE_ID#,AGENCY_ASSIGNMENT_ID=#AGENCY_ASSIGNMENT_ID#,#INSTRUCTION_ID#
+	where TREATMENT_ID=#ID#
+	</update>
+	
+	<update id="updateAgencyInstructEca">
+	update PTRACCOUNT_AGENCY_ASSIGNMENT set INSTRUCT_ECA_ID = #INSTRUCTION_ID# where ID=#AGENCY_ASSIGNMENT_ID#
+	</update>
+	
+	<resultMap id="getTreatmentInstructEca" class="hmap">
+		<result property="TYPE_STATUS_ID" javaType="long" />
+		<result property="SUBTYPE_ID" javaType="long" />
+		<result property="INSTRUCTION_ID" javaType="long"/>
+	</resultMap>	
+	
+	<select id="getTreatmentInstructEca" resultMap="getTreatmentInstructEca">		
+		SELECT TYPE_STATUS_ID,SUBTYPE_ID,INSTRUCTION_ID
+ 	FROM ptrtreatment_instruct_eca
+		WHERE TREATMENT_ID=#ID#
+	</select>	
+
+	
+		<select id="getTreatmentInstructEcaInstructions" resultMap="global.ref">
+	<include refid="pleaseSelectRef" />
+	union
+	<include refid="refselect" />
+	from ptrinstruct_eca_ref
+</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</sqlMap>

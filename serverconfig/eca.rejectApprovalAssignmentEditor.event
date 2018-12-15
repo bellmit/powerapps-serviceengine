@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBTYPE_ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="getEcaSubtype" type="select"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED_DATA" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="PRODUCT_CATEGORY_ID" key="PRODUCT_CATEGORY_ID" to="SELECTED_DATA" type="copyintolist"/>
+  <exec from="TYPE_CODE" key="TYPE_CODE" to="SELECTED_DATA" type="copyintolist"/>
+ </exec>
+ <exec argument="SELECTED_DATA" type="loop">
+  <exec argument="DATA" query="getEcaPendingRecommendationAccountIds" type="query"/>
+ </exec>
+ <exec from="SELECTED_DATA" key="DATA" to="DATA" type="extract"/>
+ <exec size="500" source="DATA" target="DIVIDED_DATA" type="dividelist"/>
+ <exec argument="DIVIDED_DATA" type="loop">
+  <exec from="DATA" key="AGENCY_ASSIGNMENT_ID" to="ASSIGNMENTS" type="extract"/>
+  <exec from="DATA" key="ACCOUNT_ID" to="ACCOUNTS" type="extract"/>
+  <exec type="parallelquery">
+   <query value="getLegalWorklistSearchAccountResults"/>
+   <query value="getAgencyAssignmentDetails"/>
+   <target value="RESULT_LIST"/>
+   <target value="ASSIGNMENT_DETAILS"/>
+  </exec>
+  <exec from="RESULT_LIST" key="ACCOUNT_ID" to="DATA" type="merge"/>
+  <exec from="ASSIGNMENT_DETAILS" key="AGENCY_ASSIGNMENT_ID" to="DATA" type="merge"/>
+ </exec>
+ <exec from="DIVIDED_DATA" key="DATA" to="DATA" type="extract"/>
+ <exec from="DATA" key="ACCOUNT_LIST" type="copyintolist"/>
+ <exec argument="ABORT_REASONS" query="getAbortReasonForMonitoring" type="query"/>
+ <exec from="ABORT_REASONS" key="ABORT_REASONS" type="copyintolist"/>
+</event>

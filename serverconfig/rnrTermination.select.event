@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getTreatmentRnrTermination" type="select"/>
+ <exec type="parallelquery">
+  <query value="getRnrTerminationReason"/>
+  <target value="TERMINATION_REASON_LIST"/>
+ </exec>
+</event>

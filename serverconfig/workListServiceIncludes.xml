@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="workListServiceIncludes.xml">
+
+<!-- worklistservice.nlb -->
+
+<sql id="worklistservice.nlb">
+<!-- 'ELAT', 'ELRHP', 'ELHN', 'ELAN' -->
+case when a.product_type_id in (8970,8971,8972,8973)
+then
+
+(
+coalesce(a.outstanding_amt,0)  
++ coalesce(a.other_charges,0)
++ coalesce(a.misc_charges,0)
++ coalesce(a.accumulated_interest,0)
+- coalesce(a.interest_rebate,0)
+) 
+
+else
+
+(
+coalesce(a.outstanding_amt,0) 
++ coalesce(a.ass_late_charges,0) 
+- coalesce(a.paid_late_charges,0) 
++ coalesce(a.other_charges,0) 
++ coalesce(a.misc_charges,0) 
++ coalesce(a.accumulated_interest,0)
++ coalesce(a.accrued_late_charges,0)
+- coalesce(a.interest_rebate,0)
+) end as nlb
+</sql>
+
+
+<!-- worklistservice.osbalanceUpl -->
+
+<sql id="worklistservice.osbalanceHpUpl">
+coalesce(a.OUTSTANDING_AMT,0) 
++ (coalesce(a.ASS_LATE_CHARGES,0) - coalesce(a.PAID_LATE_CHARGES,0)) 
++ coalesce(a.MISC_CHARGES,0) 
++ coalesce(a.OTHER_CHARGES,0)
+</sql>
+
+
+<sql id="worklistservice.osbalanceUpl">
+<include refid="worklistservice.osbalanceHpUpl" /> as OUTSTANDING_BALANCE
+</sql>
+
+<!-- worklistservice.osbalanceMg -->
+<sql id="worklistservice.osbalanceMg">            
+case when ptc.product_type_category_code = 'OD' then 
+        a.OUTSTANDING_AMT
+      else 
+        CASE WHEN current date = a.SCHEDULED_PAYMENT_DUE_DATE THEN              
+              coalesce(a.OUTSTANDING_AMT,0) + 
+              (coalesce(a.ASS_LATE_CHARGES,0) - coalesce(a.PAID_LATE_CHARGES,0)) + 
+              coalesce(a.OTHER_CHARGES,0) + 
+              coalesce(a.MISC_CHARGES,0) + coalesce(a.BILLED_INTEREST_AMOUNT,0)
+        ELSE 
+              coalesce(a.OUTSTANDING_AMT,0) + 
+              (coalesce(a.ASS_LATE_CHARGES,0) - coalesce(a.PAID_LATE_CHARGES,0)) + 
+              coalesce(a.OTHER_CHARGES,0) + 
+              coalesce(a.MISC_CHARGES,0) + coalesce(a.BILLED_INTEREST_AMOUNT_OD,0)
+        END
+      end
+</sql>
+
+<sql id="worklistservice.osAmountMg">
+ <include refid="worklistservice.osbalanceMg"/>
+</sql>
+
+<sql id="getOverDueAmountFragment">
+case when pr.product_type_group = 'OD'
+      then a.total_amount_due
+      else
+      coalesce(a.INSTALLMENT_AMOUNT_IN_ARREARS,0) + coalesce(a.INTEREST_DUE_AMOUNT,0) + 
+      (coalesce(a.ASS_LATE_CHARGES,0) - coalesce(a.PAID_LATE_CHARGES,0)) + coalesce(a.MISC_CHARGES,0) + 
+      coalesce(a.OTHER_CHARGES,0) + coalesce(a.principle_due_amount,0) end as OVERDUE_AMOUNT
+</sql>
+
+
+<sql id="worklistservice.mia">    
+    coalesce(case when a.months_in_arrears = 0 then 0
+    when a.months_in_arrears is null then 0
+    when day(dd.data_date + 1 day) > day(a.oldest_overdue_date) then
+    case when ((((year(dd.data_date + 1 DAY) - year(a.oldest_overdue_date))*12 ) + (month(dd.data_date + 1 day) - month(a.oldest_overdue_date))) + 1 &lt; 0) then 0
+    else (((year(dd.data_date + 1 DAY) - year(a.oldest_overdue_date))*12 ) + (month(dd.data_date + 1 day) - month(a.oldest_overdue_date))) + 1 end
+    else
+    case when ((((year(dd.data_date + 1 DAY) - year(a.oldest_overdue_date))*12 ) + (month(dd.data_date + 1 day) - month(a.oldest_overdue_date)))  &lt; 0) then 0
+    else (((year(dd.data_date + 1 DAY) - year(a.oldest_overdue_date))*12 ) + (month(dd.data_date + 1 day) - month(a.oldest_overdue_date))) end end,0) as MONTHS_IN_ARREARS
+</sql>
+
+
+
+<sql id="worklistservice.miaOd">
+coalesce(
+  case 
+    when ptc.product_type_category_code IN ('TL', 'MG') then 
+      case 
+        when a.payment_due_date is not null then
+          case
+            when a.interest_due_date is null then
+                        coalesce(
+                        (year(dd.DATA_DATE) - year(a.payment_due_date))*12 + (month(dd.DATA_DATE) - month(a.payment_due_date)) + 1,0
+                        )
+            else 
+              case 
+                when a.payment_due_date &lt;= a.interest_due_date then
+                  coalesce(
+                  (year(dd.DATA_DATE) - year(a.payment_due_date))*12 + (month(dd.DATA_DATE) - month(a.payment_due_date)) + 1,0
+                  )
+                else
+                  coalesce(
+                  (year(dd.DATA_DATE) - year(a.interest_due_date))*12 + (month(dd.DATA_DATE) - month(a.interest_due_date)) + 1,0
+                  )
+              end
+          end
+        else
+        coalesce(
+        (year(dd.DATA_DATE) - year(a.interest_due_date))*12 + (month(dd.DATA_DATE) - month(a.interest_due_date)) + 1,0
+        )
+           end
+        when ptc.product_type_category_code = 'OD' then
+      case 
+        when (coalesce(a.outstanding_amt,0) - coalesce(a.hold_amount, 0) - coalesce(a.available_amount,0) + coalesce(a.drawing_limit,0)) &lt; 0 then
+                coalesce((year(dd.DATA_DATE + 1 DAYS) - year(a.excess_date))*12 + (month(dd.DATA_DATE + 1 DAYS) - month(a.excess_date)),0)             
+      end
+    else 0
+  end, 0
+) as MONTHS_IN_ARREARS
+</sql>
+
+
+
+<sql id="worklistservice.closingMia">
+coalesce(     
+case 
+        when a.payment_due_date is not null then
+          case
+            when a.interest_due_date is null then
+                        coalesce(
+                        (year(dd.DATA_DATE) - year(a.payment_due_date))*12 + (month(dd.DATA_DATE) - month(a.payment_due_date)) + 1,0
+                        )
+            else 
+              case 
+                when a.payment_due_date &lt;= a.interest_due_date then
+                  coalesce(
+                  (year(dd.DATA_DATE) - year(a.payment_due_date))*12 + (month(dd.DATA_DATE) - month(a.payment_due_date)) + 1,0
+                  )
+                else
+                  coalesce(
+                  (year(dd.DATA_DATE) - year(a.interest_due_date))*12 + (month(dd.DATA_DATE) - month(a.interest_due_date)) + 1,0
+                  )
+              end
+          end
+        else
+        coalesce(
+        (year(dd.DATA_DATE) - year(a.interest_due_date))*12 + (month(dd.DATA_DATE) - month(a.interest_due_date)) + 1,0
+        )
+ 
+  end, 0
+)
+</sql>
+
+
+
+</sqlMap>

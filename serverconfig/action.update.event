@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ACTION_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec recordcount="" statement="updateActionRef" type="update"/>
+  <exec message="Action updated" target="MESSAGE" type="formattext"/>
+  <exec statement="deleteActionDetailRel" type="delete"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ACTION_ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="insertActionRef" type="insert"/>
+  <exec message="New action added" target="MESSAGE" type="formattext"/>
+  <exec from="ID" to="ACTION_ID" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ADDITIONAL_DETAILS" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="ACTION_ID" key="ACTION_ID" to="ADDITIONAL_DETAILS" type="copyintolist"/>
+  <exec argument="ADDITIONAL_DETAILS" type="loop">
+   <exec statement="insertActionDetailRel" type="insert"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EXPENSES" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="ACTION_ID" key="ACTION_ID" to="EXPENSES" type="copyintolist"/>
+  <exec argument="EXPENSES" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec recordcount="EXPENSES" statement="updateExpensesRef" type="update"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="is empty" rhsvalue=""/>
+    </conditions>
+    <exec statement="insertExpensesRef" type="insert"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+</event>

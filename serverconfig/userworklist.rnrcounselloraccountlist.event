@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec event="userworklist.rnrcounselloraccountids" ignoreresult="true" type="raise"/>
+ <exec from="COUNSELLOR_ACCOUNT_LIST" to="ACCOUNT_LIST" type="copy"/>
+ <exec event="userworklist.rnrgetinfo" ignoreresult="true" type="raise"/>
+</event>

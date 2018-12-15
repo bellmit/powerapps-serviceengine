@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WIP_TYPE_DESCRIPTION" operator="=" rhsvalue="All"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="All"/>
+   </conditions>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="Agency"/>
+   </conditions>
+   <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLAGENCY_FILTER" operator="=" rhsvalue="1"/>
+     </conditions>
+     <exec from="TRUE" to="KEEP" type="copy"/>
+    </exec>
+   </exec>
+   <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="Contacts"/>
+   </conditions>
+   <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLCONTACT_FILTER" operator="=" rhsvalue="1"/>
+     </conditions>
+     <exec from="TRUE" to="KEEP" type="copy"/>
+    </exec>
+   </exec>
+   <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="Earmark"/>
+   </conditions>
+   <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLEARMARK_FILTER" operator="=" rhsvalue="1"/>
+     </conditions>
+     <exec from="TRUE" to="KEEP" type="copy"/>
+    </exec>
+   </exec>
+   <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="Visitation"/>
+   </conditions>
+   <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLVISITATION_FILTER" operator="=" rhsvalue="1"/>
+     </conditions>
+     <exec from="TRUE" to="KEEP" type="copy"/>
+    </exec>
+   </exec>
+   <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="Legal"/>
+   </conditions>
+   <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLLEGAL_FILTER" operator="=" rhsvalue="1"/>
+     </conditions>
+     <exec from="TRUE" to="KEEP" type="copy"/>
+    </exec>
+   </exec>
+   <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="Management Approval"/>
+   </conditions>
+   <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLMGMTAPPROVAL_FILTER" operator="=" rhsvalue="1"/>
+     </conditions>
+     <exec from="TRUE" to="KEEP" type="copy"/>
+    </exec>
+   </exec>
+   <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WIP_SUB_TYPE_DESCRIPTION" operator="=" rhsvalue="NPP"/>
+   </conditions>
+   <exec from="TRUE" key="TRUE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="FALSE" key="KEEP" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLNPP_FILTER" operator="=" rhsvalue="1"/>
+     </conditions>
+     <exec from="TRUE" to="KEEP" type="copy"/>
+    </exec>
+   </exec>
+   <exec key="KEEP" minuend="ACCOUNT_LIST" subtrahend="FALSE" to="ACCOUNT_LIST" type="remove"/>
+  </exec>
+ </exec>
+</event>

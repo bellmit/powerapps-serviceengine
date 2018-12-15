@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec from="HIDE" key="_HEADER" type="copyintolist"/>
+ <exec from="HIDE" key="_MAIN" type="copyintolist"/>
+ <exec from="SHOW" key="_MANAGE_ACCOUNTS" type="copyintolist"/>
+ <exec from="TRUE" key="LOAD_ACCOUNT" type="copyintolist"/>
+ <exec from="TRUE" key="CLOSE_SIDEBAR" type="copyintolist"/>
+</event>

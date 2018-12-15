@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec key="TOTAL_GROSS_BALANCE" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="TOTAL_GROSS_BALANCE" type="sumlist"/>
+ <exec key="PUSH_BACK" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="PUSH_BACK" type="sumlist"/>
+ <exec key="IMPROVED" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="IMPROVED" type="sumlist"/>
+ <exec key="STAY_OVER" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="STAY_OVER" type="sumlist"/>
+ <exec key="UNPAID" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="UNPAID" type="sumlist"/>
+ <exec key="AMOUNT_COLLECTED" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="AMOUNT_COLLECTED" type="sumlist"/>
+ <exec key="TOTAL_BROKEN_PTP" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="TOTAL_BROKEN_PTP" type="sumlist"/>
+ <exec key="TOTAL_PTP_KEPT" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="TOTAL_PTP_KEPT" type="sumlist"/>
+ <exec key="TOTAL_PTP" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="TOTAL_PTP" type="sumlist"/>
+ <exec key="TOTAL_CALLS" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="TOTAL_CALLS" type="sumlist"/>
+ <exec key="BEGIN_OUTSTANDING" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="BEGIN_OUTSTANDING" type="sumlist"/>
+ <exec key="TOTAL_PAID" list="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" to="TOTAL_PAID" type="sumlist"/>
+ <exec count="1" to="TOTAL" type="createlist"/>
+ <exec from="PUSH_BACK" key="PUSH_BACK" to="TOTAL" type="copyintolist"/>
+ <exec from="IMPROVED" key="IMPROVED" to="TOTAL" type="copyintolist"/>
+ <exec from="STAY_OVER" key="STAY_OVER" to="TOTAL" type="copyintolist"/>
+ <exec from="AMOUNT_COLLECTED" key="AMOUNT_COLLECTED" to="TOTAL" type="copyintolist"/>
+ <exec from="TOTAL_BROKEN_PTP" key="TOTAL_BROKEN_PTP" to="TOTAL" type="copyintolist"/>
+ <exec from="TOTAL_PTP_KEPT" key="TOTAL_PTP_KEPT" to="TOTAL" type="copyintolist"/>
+ <exec from="TOTAL_PTP" key="TOTAL_PTP" to="TOTAL" type="copyintolist"/>
+ <exec from="TOTAL_CALLS" key="TOTAL_CALLS" to="TOTAL" type="copyintolist"/>
+ <exec from="TOTAL_PAID" key="TOTAL_PAID" to="TOTAL" type="copyintolist"/>
+ <exec message="EAEAEA" target="COLOR" type="formattext"/>
+ <exec message="Total" target="TOTAL_LBL" type="formattext"/>
+ <exec from="TOTAL_LBL" key="DATE" to="TOTAL" type="copyintolist"/>
+ <exec from="COLOR" key="COLOR" to="TOTAL" type="copyintolist"/>
+ <exec from="TOTAL" to="PREVIOUS_MONTH_TO_DATE_CALL_PERFORMANCE" type="append"/>
+</event>

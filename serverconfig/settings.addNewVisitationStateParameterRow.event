@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" to="NEW_ROW" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getVisitationStateRef"/>
+  <query value="getVisitationStaffRef"/>
+  <target value="STATES"/>
+  <target value="VISITATION_STAFF_LIST"/>
+ </exec>
+ <exec argument="VISITATION_STAFF_LIST" type="loop">
+  <exec from="ID" to="VISITATION_STAFF_ID" type="copy"/>
+  <exec from="ID" to="SUPERVISOR_ID" type="copy"/>
+ </exec>
+ <exec argument="STATES" type="loop">
+  <exec from="ID" to="STATE_ID" type="copy"/>
+ </exec>
+ <exec from="VISITATION_STAFF_LIST" key="VISITATION_STAFF_LIST" to="NEW_ROW" type="copyintolist"/>
+ <exec from="VISITATION_STAFF_LIST" key="SUPERVISOR_LIST" to="NEW_ROW" type="copyintolist"/>
+ <exec from="STATES" key="STATES" to="NEW_ROW" type="copyintolist"/>
+ <exec from="TRUE" key="ALLOW_DELETE" to="NEW_ROW" type="copyintolist"/>
+ <exec from="NEW_ROW" to="REFERENCE" type="append"/>
+ <exec from="REFERENCE" type="copy"/>
+</event>

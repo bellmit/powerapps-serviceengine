@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec from="HIDE" key="HIDE" type="copyintolist"/>
+ <exec from="SHOW" key="SHOW" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FILE" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="FILE_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FIS" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="FIS_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CTOS" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="CTOS_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="JPJ" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="JPJ_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ROC" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="ROC_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROPERTY" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="PROPERTY_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FIS" operator="=" rhsvalue="false"/>
+  </conditions>
+  <exec from="HIDE" to="FIS_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="JPJ" operator="=" rhsvalue="false"/>
+  </conditions>
+  <exec from="HIDE" to="JPJ_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FILE" operator="=" rhsvalue="false"/>
+  </conditions>
+  <exec from="HIDE" to="FILE_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CTOS" operator="=" rhsvalue="false"/>
+  </conditions>
+  <exec from="HIDE" to="CTOS_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ROC" operator="=" rhsvalue="false"/>
+  </conditions>
+  <exec from="HIDE" to="ROC_TABLE" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROPERTY" operator="=" rhsvalue="false"/>
+  </conditions>
+  <exec from="HIDE" to="PROPERTY_TABLE" type="copy"/>
+ </exec>
+ <exec from="FIS_TABLE" key="FIS_TABLE" type="copyintolist"/>
+ <exec from="CTOS_TABLE" key="CTOS_TABLE" type="copyintolist"/>
+ <exec from="FILE_TABLE" key="FILE_TABLE" type="copyintolist"/>
+ <exec from="JPJ_TABLE" key="JPJ_TABLE" type="copyintolist"/>
+ <exec from="ROC_TABLE" key="ROC_TABLE" type="copyintolist"/>
+ <exec from="PROPERTY_TABLE" key="PROPERTY_TABLE" type="copyintolist"/>
+</event>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROCESS_TYPE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec text="For Dialer CTI" type="comment">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="FROM_CTI" operator="=" rhsvalue="true"/>
+    </conditions>
+    <exec statement="castCustomerIdToInt" type="select"/>
+   </exec>
+  </exec>
+  <exec count="1" type="createlist"/>
+  <exec count="1" to="PLEASE_SELECT" type="createlist"/>
+  <exec argument="PLEASE_SELECT" type="loop">
+   <exec message=" Please Select" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec statement="getZeroToTen" type="select"/>
+  <exec statement="getTreatmentAccountDetails" type="select"/>
+  <exec event="twp.showMandatoryFields" ignoreresult="true" type="raisewith"/>
+  <exec type="parallelquery">
+   <query value="getTreatmentPacStatusType"/>
+   <query value="getDefaultTreatmentSubType"/>
+   <query value="getTreatmentPacRightParty"/>
+   <query value="getTreatmentPacReasonOfDefault"/>
+   <query value="getTreatmentPacRequestZakat"/>
+   <target value="TYPE_STATUS_LIST"/>
+   <target value="SUBTYPE_LIST"/>
+   <target value="RIGHT_PARTY_LIST"/>
+   <target value="REASON_DEFAULT_LIST"/>
+   <target value="CUSTOMER_ZAKAT_LIST"/>
+  </exec>
+  <exec type="parallelquery">
+   <query value="getTreatmentCallContactNumbers"/>
+   <query value="getContactRelationshipTypeRef"/>
+   <query value="getCallReason"/>
+   <target value="CONTACT_LIST"/>
+   <target value="RELATIONSHIP_TYPE_LIST"/>
+   <target value="REASON_CALL_LIST"/>
+  </exec>
+  <exec text="For dialer CTI" type="comment">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="FROM_CTI" operator="=" rhsvalue="true"/>
+    </conditions>
+    <exec argument="TYPE_STATUS_LIST" query="getTreatmentPacStatusType-cti" type="query"/>
+   </exec>
+  </exec>
+  <exec from="TRUE" key="TRUE" to="TYPE_STATUS_LIST" type="copyintolist"/>
+  <exec from="FALSE" key="APPOINTMENT_TIME_REQUIRED" to="TYPE_STATUS_LIST" type="copyintolist"/>
+  <exec argument="SUBTYPE_LIST" type="loop">
+   <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+  </exec>
+  <exec from="TYPE_STATUS_LIST" key="SUBTYPE_ID" target="TYPE_STATUS_LIST" to="SUBTYPE_LIST" type="groupedmerge"/>
+  <exec from="PLEASE_SELECT" key="PLEASE_SELECT" to="SUBTYPE_LIST" type="copyintolist"/>
+  <exec argument="SUBTYPE_LIST" type="loop">
+   <exec from="PLEASE_SELECT" to="TYPE_STATUS_LIST" type="append"/>
+  </exec>
+  <exec argument="TYPE_STATUS_LIST" type="loop">
+   <exec message="SHOW" target="hidePTP" type="formattext"/>
+   <exec message="SHOW" target="hideScheduleCall" type="formattext"/>
+   <exec message="HIDE" target="showPTP" type="formattext"/>
+   <exec message="HIDE" target="showScheduleCall" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CODE" operator="=" rhsvalue="PAC_25"/>
+    </conditions>
+    <exec from="TRUE" to="APPOINTMENT_TIME_REQUIRED" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CODE" operator="=" rhsvalue="PAC_PTP"/>
+    </conditions>
+    <exec message="SHOW" target="showPTP" type="formattext"/>
+    <exec message="HIDE" target="hidePTP" type="formattext"/>
+    <exec from="TRUE" to="CTI_PROMISE" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CODE" operator="=" rhsvalue="PAC_SC"/>
+    </conditions>
+    <exec message="SHOW" target="showScheduleCall" type="formattext"/>
+    <exec message="HIDE" target="hideScheduleCall" type="formattext"/>
+   </exec>
+   <exec from="ID" to="TYPE_STATUS_ID" type="copy"/>
+  </exec>
+  <exec from="REASON_CALL_LIST" key="TYPE_STATUS_ID" target="REASON_CALL_LIST" to="TYPE_STATUS_LIST" type="groupedmerge"/>
+  <exec from="PLEASE_SELECT" key="PLEASE_SELECT" to="TYPE_STATUS_LIST" type="copyintolist"/>
+  <exec argument="TYPE_STATUS_LIST" type="loop">
+   <exec from="PLEASE_SELECT" to="REASON_CALL_LIST" type="append"/>
+  </exec>
+  <exec from="TYPE_STATUS_LIST" key="TYPE_STATUS_LIST" type="copyintolist"/>
+  <exec from="SUBTYPE_LIST" key="SUBTYPE_LIST" type="copyintolist"/>
+  <exec from="RIGHT_PARTY_LIST" key="RIGHT_PARTY_LIST" type="copyintolist"/>
+  <exec from="CUSTOMER_ZAKAT_LIST" key="CUSTOMER_ZAKAT_LIST" type="copyintolist"/>
+  <exec from="CONTACT_LIST" key="CONTACT_LIST" type="copyintolist"/>
+  <exec from="RELATIONSHIP_TYPE_LIST" key="RELATIONSHIP_TYPE_LIST" type="copyintolist"/>
+  <exec from="ONE" key="ONE" type="copyintolist"/>
+  <exec from="TWO" key="TWO" type="copyintolist"/>
+  <exec from="THREE" key="THREE" type="copyintolist"/>
+  <exec from="FOUR" key="FOUR" type="copyintolist"/>
+  <exec from="FIVE" key="FIVE" type="copyintolist"/>
+  <exec from="SIX" key="SIX" type="copyintolist"/>
+  <exec from="SEVEN" key="SEVEN" type="copyintolist"/>
+  <exec from="INSTALLMENT_AMOUNT" key="INSTALLMENT_AMOUNT" type="copyintolist"/>
+  <exec from="REASON_DEFAULT_LIST" key="REASON_DEFAULT_LIST" type="copyintolist"/>
+  <exec from="ReasonOfDefaults" key="ReasonOfDefaults" type="copyintolist"/>
+  <exec from="ReasonOfDefaults_" key="ReasonOfDefaults_" type="copyintolist"/>
+ </exec>
+</event>

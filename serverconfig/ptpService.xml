@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ptpService">
+
+<resultMap class="hmap" id="getTreatmentAccountDetails">
+<result property="OUTSTANDING_AMOUNT" javaType="$"/>
+<result property="INSTALLMENT_AMOUNT" javaType="$"/>
+</resultMap>
+
+<select id="getTreatmentAccountDetails" resultMap="getTreatmentAccountDetails">
+select 0, payment_amount 
+from PTRACCOUNT 
+where ID=#ACCOUNT_ID#
+</select>
+
+<resultMap class="hmap" id="getTreatmentAccountProductCategory">
+<result property="PRODUCT_CATEGORY_CODE" javaType="string"/>
+</resultMap>
+
+<select id="getTreatmentAccountProductCategory" resultMap="getTreatmentAccountProductCategory">
+select cat.code 
+from ptraccount a
+inner join ptrproduct_type_ref pro on pro.id=a.product_type_id
+inner join ptrproduct_type_category_ref cat on cat.id=pro.category_id
+where a.ID=cast(#ACCOUNT_ID# as numeric)
+</select>
+
+<insert id="insertTreatmentPtp" parameterClass="map">
+insert into PTRTREATMENT_PTP(TREATMENT_ID,ACCOUNT_ID,TYPE_STATUS_ID,SUBTYPE_ID,AMOUNT,
+DUE_TIME,PTP_PERSON,INSTALLMENT_AMOUNT)
+values
+(#ID#,#ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#PTP_AMOUNT#,
+#PTP_DATE#,#PTP_PERSON#,#INSTALLMENT_AMOUNT#)
+</insert>
+
+<update id="updateTreatmentPtp" parameterClass="map">
+update PTRTREATMENT_PTP set
+TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+IS_KEPT=#IS_KEPT#,
+END_DATE=#END_DATE#
+WHERE 
+TREATMENT_ID=#ID#
+</update>
+
+<resultMap class="hmap" id="getTreatmentPtpInProgress">
+<result property="IN_PROGRESS_TREATMENT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getTreatmentPtpInProgress" resultMap="getTreatmentPtpInProgress">
+select ID from PTRTREATMENT where ACCOUNT_ID=#ACCOUNT_ID# and STATUS_ID=15007
+</select>
+
+<update id="updateTreatmentPtpToCancel" parameterClass="map">
+update ptrtreatment_ptp set
+type_status_id=(select id from ptrtreatment_type_status_ref where type_id=2 and code='PTP_CNL'),
+end_date=#UPDATED_TIME#
+where treatment_id=#IN_PROGRESS_TREATMENT_ID# and account_id=#ACCOUNT_ID#
+</update>
+<update id="updateTreatmentProcessPtpToCancel" parameterClass="map">
+update ptrtreatment set
+status_id=15005,
+updated_user_id=#UPDATED_USER_ID#,
+updated_time=#UPDATED_TIME#
+where id=#IN_PROGRESS_TREATMENT_ID# and account_id=#ACCOUNT_ID#
+</update>
+
+<resultMap class="hmap" id="getTreatmentPtp">
+<result property="INSTALLMENT_AMOUNT" javaType="$"/>
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="PTP_AMOUNT" javaType="$"/>
+<result property="PTP_DATE" javaType="ts"/>
+<result property="PTP_PERSON" javaType="string"/>
+</resultMap>
+
+<select id="getTreatmentPtp" resultMap="getTreatmentPtp">
+select INSTALLMENT_AMOUNT, TYPE_STATUS_ID, SUBTYPE_ID, AMOUNT, DUE_TIME,
+PTP_PERSON from PTRTREATMENT_PTP where TREATMENT_ID=#ID#
+</select>
+
+	
+</sqlMap>

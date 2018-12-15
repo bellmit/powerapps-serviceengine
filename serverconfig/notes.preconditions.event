@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="STATUS_ID" operator="&lt;&gt;" rhsvalue="15004"/>
+  </conditions>
+  <exec statement="getSuccessfulTreatmentStatus" type="select"/>
+ </exec>
+ <exec statement="getTreatmentDefaultTypeStatusNotes" type="select"/>
+</event>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec message="CAM_TAB" target="VALUE_CODE" type="formattext"/>
+ <exec statement="deleteUserSetting" type="delete"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CUSTOMER" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="CUSTOMER" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ACCOUNT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="ACCOUNT" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="COLLATERAL" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="COLLATERAL" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="HISTORY" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="HISTORY" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PARTIES" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="PARTIES" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="OUTLOOK" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="OUTLOOK" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PDC" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="PDC" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="FINANCE_INQUIRY" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="FINANCE_INQUIRY" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DMS" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="DMS" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="LEDGER" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="LEDGER" target="VALUE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="RNR" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="RNR" target="VALUE" type="formattext"/>
+ </exec>
+ <exec statement="insertUserSettings" type="insert"/>
+</event>

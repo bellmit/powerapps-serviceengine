@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="camLedgerService">
+
+	<resultMap id="getAccountStatement" class="hmap">
+		<result property="TRANSACTION_DATE" javaType="date" />
+		<result property="EFFECTIVE_DATE" javaType="date" />
+		<result property="AUX_CODE" javaType="string" />
+		<result property="TRANSACTION_CODE" javaType="string" />
+		<result property="TRANSACTION_DESCRIPTION" javaType="string" />
+		<result property="SOURCE" javaType="string" />
+		<result property="AMOUNT" javaType="$" />
+		<result property="DEBIT_AMOUNT" javaType="$" />
+		<result property="CREDIT_AMOUNT" javaType="$" />
+		<result property="CHARGE_TYPE" javaType="string" />
+		<result property="OS_BALANCE" javaType="$" />		
+	</resultMap>
+	<select id="getAccountStatement" resultMap="getAccountStatement"
+		parameterClass="map">
+		SELECT T.TRANSACTION_DATE,T.EFFECTIVE_DATE,T.AUX_CODE,
+		T.TRANSACTION_CODE,T.TRANSACTION_DESCRIPTION,T.SOURCE,T.AMOUNT,T.DEBIT_AMOUNT,T.CREDIT_AMOUNT,T.CHARGE_TYPE,
+		T.running_balance AS OS_BALANCE
+		FROM
+		(SELECT ROW_NUMBER() OVER(ORDER BY TR.POSTING_DATE
+		DESC,TR.POSTING_ORDER
+		DESC) AS ROW_NUM,
+		TR.POSTING_DATE AS
+		TRANSACTION_DATE,
+		TR.EFFECTIVE_DATE,
+		TR.POSTING_ORDER,
+		TR.AUXILARY_TRANSACTION_CODE AUX_CODE,
+		TTR.DESCRIPTION AS
+		TRANSACTION_DESCRIPTION,
+		TTR.CODE AS TRANSACTION_CODE,
+		TR.INPUT_SOURCE
+		AS SOURCE,
+		TR.AMOUNT,
+		TR.AFFECTS_CODE,
+		CASE WHEN TR.DEBIT_CREDIT_FLAG
+		='D' THEN TR.AMOUNT ELSE NULL END AS
+		DEBIT_AMOUNT,
+		CASE WHEN
+		TR.DEBIT_CREDIT_FLAG ='C' THEN -(TR.AMOUNT) ELSE NULL END AS
+		CREDIT_AMOUNT,
+		CHG.CODE||' - '||CHG.DESCRIPTION AS CHARGE_TYPE,
+		tr.running_balance
+		FROM PTRTRANSACTION TR
+		INNER JOIN PTRTRANSACTION_TYPE_REF TTR ON TTR.ID=TR.TRANSACTION_TYPE_ID and tr.loan_or_overdraft_flag = ttr.loan_or_overdraft_flag
+		LEFT JOIN PTRCHARGE_TYPE_REF CHG ON CHG.ID=TR.CHARGE_TYPE_ID
+		WHERE TR.ACCOUNT_ID=#ACCOUNT_ID#
+		AND TR.input_source != 'G'
+		ORDER BY TR.POSTING_DATE,TR.POSTING_ORDER
+		)
+		T ORDER BY ROW_NUM ASC
+	</select>
+  
+  
+<sql id="paymentMethodLedger-fragment">
+case 
+when ttr.code = '001' and tr.input_source = 'Z' then 1 
+when ttr.code = '002' and tr.input_source = 'Z' then 2 
+when ttr.code = '010' and tr.input_source = 'W' then 3
+when ttr.code = '041' and tr.input_source = 'Z' then 4 
+when ttr.code = '045' and tr.input_source = 'Z' then 5 
+when ttr.code = '149' and tr.input_source = 'Z' then 6 
+when ttr.code = '905' and tr.input_source = 'G' then 7 
+
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code in ('144005','144018') ) then 8
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code = '141117' ) then 9
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code in ('141119','141907','144013') ) then 10
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code = '141101' ) then 11
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code in ('141103','144017')) then 12
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code in ('141204','144016') ) then 13
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code in ('141202','144006') ) then 14
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code = '144025' ) then 15
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code = '144026' ) then 16
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code = '141358' ) then 17
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code = '141914' ) then 18
+when (ttr.code = '010' and tr.input_source = 'Z' and tr.gl_code = '211509' ) then 19
+when (ttr.code = '010' and tr.input_source = 'Z' and ( tr.gl_code not in
+(
+'144005',
+'144018',
+'141117',
+'141119',
+'141907',
+'144013',
+'141101',
+'141103',
+'144017',
+'141204',
+'144016',
+'141202',
+'144006',
+'144025',
+'144026',
+'141358',
+'141914',
+'211509'
+) or tr.gl_code is null )
+) then 20 
+when (ttr.code = '166' and tr.input_source = 'Z' and tr.gl_code = '6000370934' ) then 21
+else 0 end as payment_method_id
+</sql>  
+  
+  
+  
+  
+
+<resultMap id="getAccountLedger" class="hmap">
+<result property="TRANSACTION_DATE" javaType="date" />
+<result property="EFFECTIVE_DATE" javaType="date" />
+<result property="AUX_CODE" javaType="string" />
+<result property="TRANSACTION_TYPE" javaType="string" />
+<result property="TRANSACTION_DESCRIPTION" javaType="string" />
+<result property="INPUT_SOURCE" javaType="string" />
+<result property="AMOUNT" javaType="$" />
+<result property="DEBIT_AMOUNT" javaType="$" />
+<result property="CREDIT_AMOUNT" javaType="$" />
+<result property="OS_BALANCE" javaType="$" />
+<result property="MONTHS_IN_ARREARS" javaType="long" />
+<result property="CHARGE_TYPE" javaType="string" />
+<result property="REMARKS" javaType="string" />
+<result property="DUE_DATE" javaType="date" />
+<result property="CHEQUE_NUMBER" javaType="string" />
+<result property="USER_ID" javaType="string" />
+<result property="GL_CODE" javaType="string" />
+<result property="TRANSACTION_TIME" javaType="ts" />
+<result property="PAYMENT_METHOD" javaType="string" />
+</resultMap>
+<select id="getAccountLedger" resultMap="getAccountLedger"
+parameterClass="map">
+select 
+t.transaction_date,
+t.effective_date,
+t.aux_code,
+t.transaction_code,
+t.transaction_description,
+t.input_source,
+t.amount,
+t.debit_amount,
+t.credit_amount,
+t.running_balance as os_balance,
+null as months_in_arrears,
+t.charge_type,
+t.remarks,
+t.due_date,
+t.cheque_number,
+t.user_id,
+t.gl_code,
+t.transaction_time,
+ref.description as payment_method
+from
+(
+select 
+row_number() over(order by tr.posting_date desc,tr.posting_order desc) as row_num,
+tr.posting_date as transaction_date,
+tr.effective_date,
+tr.posting_order,
+tr.auxilary_transaction_code as aux_code,
+ttr.description as transaction_description,
+tr.amount,
+tr.affects_code,
+case when tr.debit_credit_flag ='D' then tr.amount else null end as
+debit_amount,
+case when tr.debit_credit_flag ='C' then -(tr.amount) else null end as
+credit_amount,
+tr.running_balance,
+null as months_in_arrears,
+chg.code||' - '||chg.description as charge_type,
+tr.additional_information as remarks,
+tr.payment_due_date as due_date,
+tr.cheque_number,
+ttr.code as transaction_code,
+tr.input_source as input_source,
+tr.user_id,
+tr.gl_code,
+tr.transaction_time,
+<include refid="paymentMethodLedger-fragment"/>
+from ptrtransaction tr
+inner join ptraccount a on a.id=tr.account_id
+inner join ptrtransaction_type_ref ttr on ttr.id=tr.transaction_type_id and tr.loan_or_overdraft_flag = ttr.loan_or_overdraft_flag
+left join ptrcharge_type_ref chg on chg.id=tr.charge_type_id
+where tr.account_id = #ACCOUNT_ID#
+order by tr.posting_date,tr.posting_order
+)
+t 
+left join ptrpayment_method_ref ref on t.payment_method_id = ref.id
+
+order by row_num asc
+</select>
+
+<resultMap class="hmap" id="getAccountTransactionSummary">
+<result property="SUM_OF_INSTALLMENT_PAID" javaType="$"/>
+<result property="NO_OF_INSTALLMENT_PAID" javaType="long"/>
+<result property="NO_OF_BALANCE_INSTALLMENTS" javaType="long"/>
+<result property="CURRENT_PAYMENT_NUMBER" javaType="long"/>
+<result property="SUM_OF_MISC_PAID" javaType="$"/>
+<result property="SUM_OF_MISC_OUTSTANDING" javaType="$"/>
+<result property="SUM_OF_COMPENSATION_CHARGE_PAID" javaType="$"/>
+<result property="SUM_OF_COMPENSATION_CHARGE_OUTSTANDING" javaType="$"/>
+<result property="OS_BALANCE" javaType="$"/>
+</resultMap>
+
+<select id="getAccountTransactionSummary" resultMap="getAccountTransactionSummary">
+select
+(ltd_interest_paid_amount + ltd_principal_paid_amount) as SUM_OF_INSTALLMENT_PAID,
+INSTALLMENT_PAID_COUNT as NO_OF_INSTALLMENT_PAID,
+loan_term - (extract(year from age(NEXT_SCHEDULED_PAYMENT_DATE, first_payment_date))*12 + extract(month from age(NEXT_SCHEDULED_PAYMENT_DATE, first_payment_date))) as NO_OF_BALANCE_INSTALLMENTS,
+NULL as CURRENT_PAYMENT_NUMBER,
+ltd_miscellaneous_charge_paid as SUM_OF_MISC_PAID,
+MISCELLANEOUS_CHARGE as SUM_OF_MISC_OUTSTANDING,
+paid_late_charge as SUM_OF_COMPENSATION_CHARGE_PAID,
+TAWIDH_AMOUNT as SUM_OF_COMPENSATION_CHARGE_OUTSTANDING,
+OUTSTANDING_BALANCE as OS_BALANCE
+from PTRACCOUNT where ID=#ACCOUNT_ID#
+</select>
+
+
+	<resultMap id="getLtdTadwidhPaidAmount" class="hmap">
+		<result property="SUM_OF_COMPENSATION_CHARGE_PAID" javaType="$"/>
+	</resultMap>
+	<select id="getLtdTadwidhPaidAmount" resultMap="getLtdTadwidhPaidAmount">
+		select   sum(amount) ltd_tadwith_paid_amount, account_id
+        from ptrtransaction t
+        inner join ptrtransaction_type_ref ref on t.transaction_type_id = ref.id
+        where account_id = #ACCOUNT_ID#
+        and ref.code in ( '926', '043')
+        group by account_id 
+	</select>
+
+
+</sqlMap>

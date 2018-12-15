@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getRoleTypesForEditing"/>
+  <target value="ROLE_TYPES"/>
+ </exec>
+ <exec statement="getRoleForEditing" type="select"/>
+ <exec count="1" type="createlist"/>
+ <exec from="ROLE_TYPES" key="ROLE_TYPES" type="copyintolist"/>
+ <exec from="ROLE_TYPE_ID" key="ROLE_TYPE_ID" type="copyintolist"/>
+ <exec from="ROLE_NAME" key="ROLE_NAME" type="copyintolist"/>
+ <exec from="ROLE_DESCRIPTION" key="ROLE_DESCRIPTION" type="copyintolist"/>
+ <exec from="EXPIRY_DATE" key="EXPIRY_DATE" type="copyintolist"/>
+ <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+</event>

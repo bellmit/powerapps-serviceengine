@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBREPORT" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SUBREPORT" to="SUBREPORT_LIST" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTENT" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec content="CONTENT" documentid="DOCUMENT_ID" documenttype="3" type="storetemplate"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONTENT" operator="is empty" rhsvalue=""/>
+   <condition lhsfield="CURRENT_DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="CURRENT_DOCUMENT_ID" to="DOCUMENT_ID" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="REPORT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec recordcount="" statement="updateReport" type="update"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="REPORT_ID" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="insertReport" type="insert"/>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+</event>

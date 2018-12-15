@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="&lt;&gt;" rhsvalue="RNR"/>
+  </conditions>
+  <exec event="wlm.getUserType" ignoreresult="true" type="raise"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec argument="WORK_LIST" query="getWlmWorkLists" type="query"/>
+   <exec argument="WORK_LIST" type="loop">
+    <exec statement="getWlmDefaultUser" type="select"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="agencyuser"/>
+   </conditions>
+   <exec argument="WORK_LIST" query="getAgencyWLMWorklist" type="query"/>
+   <exec argument="ACCOUNT_COUNT_LIST" query="getWLMWorklistCountAgency" type="query"/>
+   <exec from="ACCOUNT_COUNT_LIST" key="WORK_LIST_ID" to="WORK_LIST" type="merge"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+  </conditions>
+  <exec argument="WORK_LIST" query="getRnRWorkLists" type="query"/>
+ </exec>
+ <exec count="1" to="RESULT_LIST" type="createlist"/>
+ <exec from="WLM_TYPE_DESC" key="WLM_TYPE_DESC" to="WORK_LIST" type="copyintolist"/>
+ <exec from="WORK_LIST" key="WORK_LIST" to="RESULT_LIST" type="copyintolist"/>
+ <exec from="RESULT_LIST" type="copy"/>
+</event>

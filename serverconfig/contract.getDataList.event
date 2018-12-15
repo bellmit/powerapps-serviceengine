@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="DATA_LIST" query="getContractList" type="query"/>
+ <exec count="1" type="createlist"/>
+ <exec from="DATA_LIST" key="DATA_LIST" type="copyintolist"/>
+ <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+</event>

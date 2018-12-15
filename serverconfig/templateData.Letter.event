@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec statement="selectOne" type="select"/>
+ <exec statement="getTreatmentLetterDetails" type="select"/>
+ <exec statement="getTreatmentLetterGuarantorDetails" type="select"/>
+ <exec from="ACCOUNT_NUM" key="ACCOUNT_NUM" type="copyintolist"/>
+ <exec from="CUSTOMER_NAME" key="CUSTOMER_NAME" type="copyintolist"/>
+ <exec from="CURRENT_DATE" key="CURRENT_DATE" type="copyintolist"/>
+ <exec from="LOAN_AMOUNT" key="LOAN_AMOUNT" type="copyintolist"/>
+ <exec from="ADDRESS_VALUE" key="ADDRESS_LIST" type="copyintolist"/>
+ <exec from="APPROVAL_DATE" key="APPROVAL_DATE" type="copyintolist"/>
+ <exec from="MATURITY_DATE" key="MATURITY_DATE" type="copyintolist"/>
+ <exec from="NPF_DATE" key="NPF_DATE" type="copyintolist"/>
+ <exec from="MIA" key="MIA" type="copyintolist"/>
+ <exec from="VEHICLE_NUMBER" key="VEHICLE_NUMBER" type="copyintolist"/>
+ <exec from="MODEL" key="MODEL" type="copyintolist"/>
+ <exec from="MANUFACTURED_YEAR" key="MANUFACTURED_YEAR" type="copyintolist"/>
+ <exec from="PROFIT" key="PROFIT" type="copyintolist"/>
+ <exec from="TAWIDH" key="TAWIDH" type="copyintolist"/>
+ <exec from="MISC_CHARGES_AMOUNT" key="MISC_CHARGES_AMOUNT" type="copyintolist"/>
+ <exec from="ADD_TAWIDH_MISC" key="ADD_TAWIDH_MISC" type="copyintolist"/>
+ <exec from="ADVANCE_PAYMENT_AMOUNT" key="ADVANCE_PAYMENT_AMOUNT" type="copyintolist"/>
+ <exec from="OTHER_CHARGES_AMOUNT" key="OTHER_CHARGES_AMOUNT" type="copyintolist"/>
+ <exec from="OS_BALANCE" key="OS_BALANCE" type="copyintolist"/>
+ <exec from="EMPLOYER_NAME" key="EMPLOYER_NAME" type="copyintolist"/>
+ <exec from="DATE_OF_DISBURSEMENT" key="DATE_OF_DISBURSEMENT" type="copyintolist"/>
+ <exec from="G_NAME" key="G_NAME" type="copyintolist"/>
+ <exec from="IC_NO" key="IC_NO" type="copyintolist"/>
+ <exec from="LAST_PAYMENT_DATE" key="LAST_PAYMENT_DATE" type="copyintolist"/>
+ <exec from="CURRENT_DATE_STRING" key="CURRENT_DATE_STRING" type="copyintolist"/>
+ <exec from="REPOSSESSION_FEE_PAID" key="REPOSSESSION_FEE_PAID" type="copyintolist"/>
+ <exec from="ESTIMATE_VALUE" key="ESTIMATE_VALUE" type="copyintolist"/>
+ <exec from="PAYMENT_RECEIVE_SYS" key="PAYMENT_RECEIVE_SYS" type="copyintolist"/>
+ <exec from="PAYMENT_RECEIVE_MIC" key="PAYMENT_RECEIVE_MIC" type="copyintolist"/>
+ <exec lhs="PAYMENT_RECEIVE_SYS" rhs="NEGATIVE_ONE" target="PAYMENT_RECEIVE_SYS" type="multiply"/>
+ <exec lhs="PAYMENT_RECEIVE_MIC" rhs="NEGATIVE_ONE" target="PAYMENT_RECEIVE_MIC" type="multiply"/>
+ <exec lhs="LOAN_AMOUNT" rhs="PROFIT" target="SELLING_PRICE" type="add"/>
+ <exec from="SELLING_PRICE" key="SELLING_PRICE" type="copyintolist"/>
+ <exec lhs="SELLING_PRICE" rhs="PAYMENT_RECEIVE_SYS" target="SELL_PRICE_SYS" type="add"/>
+ <exec lhs="SELL_PRICE_SYS" rhs="PAYMENT_RECEIVE_MIC" target="TOTAL_ONE" type="add"/>
+ <exec from="TOTAL_ONE" key="TOTAL_ONE" type="copyintolist"/>
+ <exec lhs="TOTAL_ONE" rhs="MISC_CHARGES_AMOUNT" target="TOTAL_MISC" type="add"/>
+ <exec lhs="TOTAL_MISC" rhs="TAWIDH" target="ADD_TAWIDH_MISC" type="add"/>
+ <exec from="ADD_TAWIDH_MISC" key="ADD_TAWIDH_MISC" type="copyintolist"/>
+ <exec lhs="ADD_TAWIDH_MISC" rhs="REPOSSESSION_FEE_PAID" target="TOTAL_TWO" type="add"/>
+ <exec from="TOTAL_TWO" key="TOTAL_TWO" type="copyintolist"/>
+ <exec lhs="ESTIMATE_VALUE" rhs="NEGATIVE_ONE" target="ESTIMATE_VALUE" type="multiply"/>
+ <exec lhs="TOTAL_TWO" rhs="ESTIMATE_VALUE" target="TOTAL_THREE" type="add"/>
+ <exec from="TOTAL_THREE" key="TOTAL_THREE" type="copyintolist"/>
+</event>

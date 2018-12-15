@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+   <exec count="1" type="createlist"/>
+   <exec type="parallelquery">
+      <query value="getAdhocAgencyTypes"/>
+      <query value="getEcaInvoiceStage"/>
+      <query value="getProductCategoriesForMonitoring"/>
+      <target value="AGENCY_TYPES"/>
+      <target value="INVOICE_STAGES"/>
+      <target value="PRODUCT_CATEGORIES"/>
+   </exec>
+   <exec argument="AGENCY_TYPES" type="loop">
+      <exec type="guard">
+         <conditions>
+            <condition lhsfield="CODE" operator="&lt;&gt;" rhsvalue="ADHOC"/>
+         </conditions>
+         <exec argument="AGENCIES" query="getAgencyByCode" type="query"/>
+      </exec>
+      <exec type="guard">
+         <conditions>
+            <condition lhsfield="CODE" operator="=" rhsvalue="ADHOC"/>
+         </conditions>
+         <exec argument="AGENCIES" query="getAdhocAgencies" type="query"/>
+      </exec>
+   </exec>
+   <exec from="AGENCY_TYPES" key="AGENCY_TYPES" type="copyintolist"/>
+   <exec from="INVOICE_STAGES" key="INVOICE_STAGES" type="copyintolist"/>
+   <exec from="PRODUCT_CATEGORIES" key="PRODUCT_CATEGORIES" type="copyintolist"/>
+</event>

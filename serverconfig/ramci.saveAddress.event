@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ADDRESS_TYPE_1" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="ADDRESS_LINE_1_1" to="LINE_1" type="copy"/>
+  <exec from="ADDRESS_LINE_2_1" to="LINE_2" type="copy"/>
+  <exec from="ADDRESS_LINE_3_1" to="LINE_3" type="copy"/>
+  <exec from="ADDRESS_LINE_4_1" to="LINE_4" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CITY_1" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="CITY_1" to="CITY" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="STATE_1" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="STATE_1" to="STATE" type="copy"/>
+   <exec statement="getRamciStateId" type="select"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="COUNTRY_1" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="COUNTRY_1" to="COUNTRY" type="copy"/>
+   <exec statement="getRamciCountryId" type="select"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_TYPE_1" operator="=" rhsvalue="HOME"/>
+   </conditions>
+   <exec from="ONE" to="ADDRESS_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_TYPE_1" operator="=" rhsvalue="OFFICE"/>
+   </conditions>
+   <exec from="TWO" to="ADDRESS_TYPE_ID" type="copy"/>
+  </exec>
+  <exec statement="insertRamciAddress" type="insert"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ADDRESS_TYPE_2" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="ADDRESS_LINE_1_2" to="LINE_1" type="copy"/>
+  <exec from="ADDRESS_LINE_2_2" to="LINE_2" type="copy"/>
+  <exec from="ADDRESS_LINE_3_2" to="LINE_3" type="copy"/>
+  <exec from="ADDRESS_LINE_4_2" to="LINE_4" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CITY_2" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="CITY_2" to="CITY" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="STATE_2" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="STATE_2" to="STATE" type="copy"/>
+   <exec statement="getRamciStateId" type="select"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="COUNTRY_2" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="COUNTRY_2" to="COUNTRY" type="copy"/>
+   <exec statement="getRamciCountryId" type="select"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_TYPE_2" operator="=" rhsvalue="HOME"/>
+   </conditions>
+   <exec from="ONE" to="ADDRESS_TYPE_ID" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADDRESS_TYPE_2" operator="=" rhsvalue="OFFICE"/>
+   </conditions>
+   <exec from="TWO" to="ADDRESS_TYPE_ID" type="copy"/>
+  </exec>
+  <exec statement="insertRamciAddress" type="insert"/>
+ </exec>
+</event>

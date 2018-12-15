@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="SUBTYPES" query="getSubtypeForSetup" type="query"/>
+ <exec from="TRUE" key="LOAD_DATA" to="SUBTYPES" type="copyintolist"/>
+ <exec from="SUBTYPES" key="SUBTYPES" type="copyintolist"/>
+ <exec count="2" to="TYPES" type="createlist"/>
+ <exec argument="TYPES" index="ID" type="loop">
+  <exec from="ID" to="SORT_PRIORITY" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec message="Legal Stage" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec message="Billing Stage" target="DESCRIPTION" type="formattext"/>
+  </exec>
+ </exec>
+ <exec from="TRUE" key="LOAD_DATA" to="TYPES" type="copyintolist"/>
+ <exec from="TYPES" key="TYPES" type="copyintolist"/>
+</event>

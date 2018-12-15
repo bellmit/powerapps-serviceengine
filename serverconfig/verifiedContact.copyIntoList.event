@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="VERIFIED_DATE_FROM" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" from="VERIFIED_DATE_FROM" nextweekday="false" startmonth="false" to="VERIFIED_DATE_FROM" truncate="true" type="date"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="VERIFIED_DATE_TO" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="true" endmonth="false" from="VERIFIED_DATE_TO" nextweekday="false" startmonth="false" to="VERIFIED_DATE_TO" truncate="false" type="date"/>
+ </exec>
+ <exec from="SEARCH" key="SEARCH" to="RESULT" type="copyintolist"/>
+ <exec from="PREVIOUS" key="PREVIOUS" to="RESULT" type="copyintolist"/>
+ <exec from="NEXT" key="NEXT" to="RESULT" type="copyintolist"/>
+ <exec from="PAGE_NUMBER" key="PAGE_NUMBER" to="RESULT" type="copyintolist"/>
+ <exec from="LIMIT_RESULT" key="LIMIT_RESULT" to="RESULT" type="copyintolist"/>
+ <exec from="VERIFIED_DATE_FROM" key="VERIFIED_DATE_FROM" to="RESULT" type="copyintolist"/>
+ <exec from="SOURCE_ID" key="SOURCE_ID" to="RESULT" type="copyintolist"/>
+ <exec from="VERIFIED_DATE_TO" key="VERIFIED_DATE_TO" to="RESULT" type="copyintolist"/>
+ <exec from="VERIFIED_BY" key="VERIFIED_BY" to="RESULT" type="copyintolist"/>
+ <exec from="STATUS_ID" key="STATUS_ID" to="RESULT" type="copyintolist"/>
+ <exec from="TYPE_ID" key="TYPE_ID" to="RESULT" type="copyintolist"/>
+</event>

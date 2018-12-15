@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec query="getTreatmentForEditing" type="query"/>
+ <exec type="loop">
+  <exec from="TYPE_ID" to="PROCESS_TYPE_ID" type="copy"/>
+  <exec argument="TYPE_STATUS_LIST" query="getDefaultTreatmentStatusType" type="query"/>
+  <exec argument="SUBTYPE_LIST" query="getDefaultTreatmentSubType" type="query"/>
+  <exec argument="TEMPLATE_LIST" query="getTreatmentTemplate" type="query"/>
+  <exec event="twp.showMandatoryFields" ignoreresult="true" type="raisewith"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec event="ptp.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="8"/>
+   </conditions>
+   <exec event="pac.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="9"/>
+   </conditions>
+   <exec event="escalation.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="13"/>
+   </conditions>
+   <exec event="sms.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="14"/>
+   </conditions>
+   <exec event="letter.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="23"/>
+   </conditions>
+   <exec event="repo.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="27"/>
+   </conditions>
+   <exec event="meeting.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="28"/>
+   </conditions>
+   <exec event="ccris.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="32"/>
+   </conditions>
+   <exec event="email.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="34"/>
+   </conditions>
+   <exec event="tps.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="35"/>
+   </conditions>
+   <exec event="accountClassification.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="33"/>
+   </conditions>
+   <exec event="pdc.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="36"/>
+   </conditions>
+   <exec event="shortfallNotice.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="37"/>
+   </conditions>
+   <exec event="instruction.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="38"/>
+   </conditions>
+   <exec event="employmentMaintenance.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="39"/>
+   </conditions>
+   <exec event="accountReview.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="40"/>
+   </conditions>
+   <exec event="managementApproval.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="42"/>
+   </conditions>
+   <exec event="outlook.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="43"/>
+   </conditions>
+   <exec event="auctionDetails.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="44"/>
+   </conditions>
+   <exec event="redemptionStatement.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="45"/>
+   </conditions>
+   <exec event="instructEca.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="15"/>
+   </conditions>
+   <exec event="visitation.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="41"/>
+   </conditions>
+   <exec event="earmarkSetoff.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="46"/>
+   </conditions>
+   <exec event="instructLegal.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="47"/>
+   </conditions>
+   <exec event="initiateRnr.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="48"/>
+   </conditions>
+   <exec event="ecaJobSheet.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="49"/>
+   </conditions>
+   <exec event="rnr.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="53"/>
+   </conditions>
+   <exec event="rnrTermination.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="54"/>
+   </conditions>
+   <exec event="rnrRequest.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="55"/>
+   </conditions>
+   <exec event="notice14Days.select" ignoreresult="true" type="raisewith"/>
+  </exec>
+ </exec>
+</event>

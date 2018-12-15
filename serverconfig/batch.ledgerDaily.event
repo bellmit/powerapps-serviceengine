@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="selectNegativeOne" type="select"/>
+ <exec statement="getLedgerBatchStreamThreads" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="false" type="date"/>
+ </exec>
+ <exec adddays="NEGATIVE_ONE" ceiling="false" endmonth="false" from="EFFECTIVE_DATE" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec event="batch.ledgerGeneralInit" ignoreresult="true" type="raise"/>
+ <exec allocationsize="1" statement="getLedgersForDailyBatch" threadcount="THREAD_COUNT" type="stream">
+  <exec from="EFFECTIVE_DATE" key="EFFECTIVE_DATE" type="copyintolist"/>
+  <exec type="loop">
+   <exec from="ID" to="LEDGER_ID" type="copy"/>
+   <exec event="ledger.processToDate" ignoreresult="true" type="raise"/>
+  </exec>
+ </exec>
+</event>

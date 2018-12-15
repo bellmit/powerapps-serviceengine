@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="true" nextweekday="false" startmonth="false" to="END_OF_MONTH" truncate="true" type="date"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ACCOUNT_LIST" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec argument="MANUAL_PDC_DATE_LIST" query="getManualChkDateForWorkList" type="query"/>
+  <exec argument="HOST_PDC_LIST" query="getChkDateForWorkListMg" type="query"/>
+  <exec argument="REMARKS_LIST" query="getRemarksForWorkList" type="query"/>
+  <exec argument="RISK_LEVEL_LIST" query="getRiskLevelForWorkList" type="query"/>
+  <exec argument="UTILIZATION_LIST" query="getUtilization" type="query"/>
+  <exec argument="OVER_TIER_LIST" query="getOverTier" type="query"/>
+  <exec argument="INFO_SI_DATE_LIST" query="getSIDateForWorklist" type="query"/>
+  <exec argument="INFO_INSTRUCTION_LIST" query="getInstructionstatForWorkList" type="query"/>
+  <exec argument="INFO_SPECIAL_LIST" query="getSpecialStatusForWorkList" type="query"/>
+  <exec argument="INFO_LAST_ACTION_LIST" query="getlatestLastActionDateForWorkList" type="query"/>
+  <exec argument="SI_ACCOUNTS_STATUS" query="getSIAccountStatusIdforWorklist" type="query"/>
+  <exec argument="LAST_PAYMENT_AMOUNT_LIST" query="getlatestPaymentAmtForWorkList" type="query"/>
+  <exec argument="WLM_LEGAL_STATUS_LIST" query="getWlmLegalStatusAndStatusDate" type="query"/>
+  <exec argument="SUPERVISOR_REVIEW_DATE_LIST" query="getSupervisorAccountReviewDate" type="query"/>
+  <exec argument="SEGMENTATION_CATEGORY_LIST" query="getSegmentationCategoryForWorkList" type="query"/>
+  <exec argument="PAC_LIMIT_LIST" query="getWltPacWeeklyAndMonthlyCount" type="query"/>
+  <exec from="SI_ACCOUNTS_STATUS" key="ACCOUNT_ID" to="SI_ACCOUNTS_STATUS" type="extract"/>
+  <exec text="Merge results" type="comment">
+   <exec from="MANUAL_PDC_DATE_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="RISK_LEVEL_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="REMARKS_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="UTILIZATION_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="OVER_TIER_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="INFO_SI_DATE_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="HOST_PDC_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="INFO_INSTRUCTION_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="INFO_SPECIAL_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="INFO_LAST_ACTION_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="LAST_PAYMENT_AMOUNT_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="WLM_LEGAL_STATUS_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="SUPERVISOR_REVIEW_DATE_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="SEGMENTATION_CATEGORY_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="PAC_LIMIT_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="&lt;&gt;" rhsvalue="mgsitevisitation"/>
+   </conditions>
+   <exec argument="INFO_INFO_LIST" query="getAccountInfoForWorkListMg" type="query"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_CODE" operator="=" rhsvalue="mgsitevisitation"/>
+   </conditions>
+   <exec argument="INFO_INFO_LIST" query="getAccountInfoForWorkListMgVisitaton" type="query"/>
+  </exec>
+  <exec from="INFO_INFO_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+  <exec argument="ACCOUNT_LIST" type="loop">
+   <exec from="MONTHS_IN_ARREARS" to="CLOSING_MIA" type="copy"/>
+   <exec event="legal.getLegalStatus" ignoreresult="true" type="raise"/>
+  </exec>
+  <exec argument="TOTAL_PAYMENT_LIST" query="getMonthlyTotalPayment" type="query"/>
+  <exec from="TOTAL_PAYMENT_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+  <exec argument="CALL_STATUS_LIST" query="getWorkListCallStatus" type="query"/>
+  <exec from="CALL_STATUS_LIST" key="CALL_TYPE_STATUS_ID" to="ACCOUNT_LIST" type="merge"/>
+  <exec statement="getWlmDefaultUser" type="select"/>
+  <exec from="DEFAULT_USER_NAME" key="DEFAULT_USER_NAME" to="ACCOUNT_LIST" type="copyintolist"/>
+  <exec event="wlt.colourCoding" ignoreresult="true" type="raise"/>
+ </exec>
+</event>

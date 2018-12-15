@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="deleteTreatmentAccountTaggingRel" type="delete"/>
+ <exec argument="ACCOUNT_TAGGING_LIST" query="getTreatmentAccountTagging" type="query"/>
+ <exec argument="ACCOUNT_TAGGING_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AKPK_FLAG" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="akpk_flag" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="BLD" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="bld" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="REFUND_OA_DEPOSIT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="refund_oa_deposit" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="DEBT_SALES" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="debt_sales" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NEW_DISBURSEMENT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="new_disbursement" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="BANKRUPT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="bankrupt" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SHORTFALL" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="shortfall" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PENDING_BPP" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="pending_bpp" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AUCTION" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="auction" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AUCTION_RECEIVED_DEPOSIT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="auction_received_deposit" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AUCTION_RECEIVED_BALANCE" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="auction_received_balance" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EX_STAFF" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="ex_staff" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="DIBS" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="dibs" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="UNDER_CONSTRUCTION" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="under_construction" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EXTERNAL_COLLECTION_AGENCIES" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="external_collection_agencies" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="RNR" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="rnr" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WRITE_OFF" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="write_off" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="FRAUD" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="fraud" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SETTLEMENT_PROPOSAL" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="settlement_proposal" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SECURITY_DEPOSIT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="security_deposit" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ECA_MONITORING" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="eca_monitoring" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="LEGAL_MONITORING" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="legal_monitoring" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ADMIN_MONITORING" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="admin_monitoring" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="MORATORIUM" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="moratorium" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="REDEMPTION_STATEMENT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="redemption_statement" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="REPO" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="repo" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="REPO_REDEEM" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="repo_redeem" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ABANDONED" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="abandoned" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="EPF_WITHDRAWAL" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="epf_withdrawal" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="REFUND_COURT_DEPOSIT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="refund_court_deposit" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TPD" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="tpd" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TPD_REJECTED" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="tpd_rejected" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="DECEASED" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="deceased" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="INVALID_CONTACT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec message="invalid_contact" target="CODE" type="formattext"/>
+   <exec statement="getAccountTaggingId" type="select"/>
+   <exec statement="insertTreatmentAccountTaggingRel" type="insert"/>
+  </exec>
+ </exec>
+</event>

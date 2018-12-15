@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Settings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Monitoring&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_2_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Billings&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_3_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;General Setup&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_4_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Additional Details&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_5_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Stages&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_6_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Instructions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_7_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_8_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Special Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_9_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Remedial Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_10_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Follow Up Actions&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_11_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Turnaround Setup&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_12_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Approval Matrix&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_13_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Exclusion Evaluation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_14_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Assignment Evaluation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_15_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Abort Evaluation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_16_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Contracts&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_17_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Legal Worklist&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_18_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Worklist Management&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_19_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Visual Distribution&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_20_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Overall Summary&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_21_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Current Assignment&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_22_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Unassigned Accounts&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_23_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Approval&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_24_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Acknowledgement&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_25_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Retain Requested&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_26_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Aborted/Closed Assignment&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_27_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Abort&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_28_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Follow Up&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_29_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;New Instruction&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_30_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;In Progress Instruction&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_31_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Closed Instruction&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_32_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Recommendation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_33_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Active Instruction&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_34_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;In Progress Action&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_35_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;In Progress Special Action&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_36_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Remedial Recommendation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_37_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Assignment Portfolio&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_38_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Unbilled&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_39_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Billing&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_40_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Recommendation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_41_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Verification&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_42_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending LAD / CAD Approval&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_43_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending HOD Approval&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_44_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Approved&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_45_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Accepted&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_46_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Rejected&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_47_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Pending Payment Release&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_48_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Payment Acknowledged&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_49_TITLE" type="formattext"/>
+</event>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="reportManagementService">
+<insert id="insertUploadDocument">
+<isNotNull property="ID">
+insert into PTRTREATMENT_DOCUMENT_UPLOAD
+(DOCUMENT_ID, DESCRIPTION, UPLOAD_DOCUMENT_TYPE_ID, FILE_NAME, NOTES, NUM_DOC_DOWN, NUM_OF_PAGE, USER_ID, COLLATERAL_ID,
+ TREATMENT_ID, ACCOUNT_ID)
+values
+(#DOCUMENT_ID#, #DESCRIPTION#, #UPLOAD_DOCUMENT_TYPE_ID#, #FILE_NAME#, #NOTES#, #NUM_DOC_DOWN#, #NUM_OF_PAGE#, #USER_ID#, #COLLATERAL_ID#,
+ #ID#, (select ACCOUNT_ID from PTRTREATMENT where ID = #ID#))
+ </isNotNull>
+<isNull property="ID">
+insert into PTRTEMPORARY_DOCUMENT_UPLOAD
+(DOCUMENT_ID)
+values
+(#DOCUMENT_ID#)
+ </isNull>
+</insert>
+	<insert id="insertAccountDmsDocument">
+		insert into PTRACCOUNT_UPLOADED_DOCUMENT(ACCOUNT_ID,DOCUMENT_ID,TYPE_ID,DMS_AGENCY,DOCUMENT_NAME,REMARKS,CREATED_TIME,CREATED_BY)
+		values(#ACCOUNT_ID#,#DOCUMENT_ID#,#TYPE_ID#,#DMS_AGENCY#,#DOCUMENT_NAME#,#REMARKS#,#CURRENT_TIME#,#LOGON_USER#)
+	</insert>
+	
+  <resultMap id="getDocument-map" class="hmap">
+    <result property="ID" column="ID" javaType="long"/>
+    <result property="DOCUMENT_TYPE_ID" javaType="long"/>
+    <result property="DESCRIPTION" javaType="string"/>
+    <result property="CREATED_DATE" javaType="date"/>
+    <result property="MODIFIED_DATE" javaType="date"/>
+    <result property="IS_ENCODED" javaType="boolean"/>
+    <result property="IS_ARCHIVED" javaType="boolean"/>
+  </resultMap>
+  
+  <select id="getDocument" resultMap="getDocument-map" parameterClass="long"> 
+    select ID, DOCUMENT_TYPE_ID, DESCRIPTION, CREATED_DATE, MODIFIED_DATE, IS_ENCODED, IS_ARCHIVED
+    from PTRDOCUMENT 
+    where ID = #value#
+  </select>
+    
+  <parameterMap id="updateDocument-map" class="map">
+    <parameter property="DOCUMENT_TYPE_ID"/>
+    <parameter property="DESCRIPTION"/>
+    <parameter property="MODIFIED_DATE"/>
+    <parameter property="IS_ENCODED"/>
+    <parameter property="ID" />
+  </parameterMap>
+  
+  <update id="updateDocument" parameterMap="updateDocument-map"> 
+    update PTRDOCUMENT
+    set DOCUMENT_TYPE_ID = ?, DESCRIPTION = coalesce(?, 'n/a'), MODIFIED_DATE = ?, IS_ENCODED = ?, IS_ARCHIVED = false
+    where ID = ?
+  </update>
+
+  <insert id="insertDocument" parameterClass="map">
+    <selectKey resultClass="long" keyProperty="ID">
+      <include refid="sequencePrefix"/>PTRDOCUMENT_ID<include refid="sequenceSuffix"/>
+    </selectKey>
+    insert into PTRDOCUMENT
+    (DOCUMENT_TYPE_ID, DESCRIPTION, CREATED_DATE, MODIFIED_DATE, IS_ENCODED, IS_ARCHIVED, ID)
+    values
+    (#DOCUMENT_TYPE_ID#, coalesce(#DESCRIPTION#, 'n/a'), #CREATED_DATE#, null, #IS_ENCODED#, false, #ID#)
+  </insert>
+  <select id="getDocumentFragmentCount" resultClass="long" parameterClass="map"> 
+    select MAX(FRAGMENT_SEQUENCE)
+    from PTRDOCUMENT_FRAGMENT 
+    where DOCUMENT_ID = #DOCUMENT_ID#
+  </select>
+  <resultMap id="getDocumentFragments-map" class="hmap">
+    <result property="ID" column="ID" javaType="long"/>
+    <result property="DOCUMENT_ID" column="DOCUMENT_ID" javaType="long"/>
+    <result property="FRAGMENT_TEXT" column="FRAGMENT_TEXT" javaType="string"/>
+    <result property="FRAGMENT_SEQUENCE" column="FRAGMENT_SEQUENCE" javaType="long"/>
+  </resultMap>
+  
+  <select id="getDocumentFragments" resultMap="getDocumentFragments-map" parameterClass="long"> 
+    select ID, DOCUMENT_ID, FRAGMENT_TEXT, FRAGMENT_SEQUENCE
+    from PTRDOCUMENT_FRAGMENT where DOCUMENT_ID = #value#
+    order by FRAGMENT_SEQUENCE
+  </select>
+  
+  <delete id="deleteDocumentFragments" parameterClass="long"> 
+    delete from PTRDOCUMENT_FRAGMENT 
+    where DOCUMENT_ID = #value#
+  </delete>
+
+  <parameterMap id="updateDocumentFragment-map" class="map">
+    <parameter property="DOCUMENT_ID"/>
+    <parameter property="FRAGMENT_TEXT"/>
+    <parameter property="FRAGMENT_SEQUENCE"/>
+    <parameter property="ID" />
+  </parameterMap>
+  
+  <insert id="insertDocumentFragment" parameterMap="updateDocumentFragment-map"> 
+        <selectKey resultClass="long" keyProperty="ID">
+        <include refid="sequencePrefix"/>PTRDOCUMENT_FRAGMENT_ID<include refid="sequenceSuffix"/>
+    </selectKey>
+    insert into PTRDOCUMENT_FRAGMENT
+    (DOCUMENT_ID, FRAGMENT_TEXT, FRAGMENT_SEQUENCE, ID)
+    values
+    (?, ?, ?, ?)
+  </insert>
+  
+  <delete id="deleteDocument" parameterClass="long"> 
+    delete from PTRDOCUMENT where ID = #value#
+  </delete>
+  
+  <resultMap id="getDocumentFragmentsBetween" class="hmap">
+    <result property="FRAGMENT_TEXT" javaType="string"/>
+    <result property="FRAGMENT_SEQUENCE" javaType="long"/>
+  </resultMap>
+
+  <select id="getDocumentFragmentsBetween" resultMap="getDocumentFragmentsBetween" parameterClass="map"> 
+    select FRAGMENT_TEXT, FRAGMENT_SEQUENCE
+    from PTRDOCUMENT_FRAGMENT 
+    where DOCUMENT_ID = #DOCUMENT_ID#
+    and FRAGMENT_SEQUENCE >= #START_SEQUENCE_ID# and #END_SEQUENCE_ID# >= FRAGMENT_SEQUENCE
+  </select>  
+  
+  
+        <update id="updateDocumentToArchived" parameterClass="long">
+  update ptrdocument set 
+  is_archived = 1, 
+  IS_ENCODED = (select f.IS_ENCODED from PTRDOCUMENT f where
+   f.ID = #value# and rownum = 1) 
+  where id = #value#
+</update>
+
+
+  <delete id="deleteArchivedDocumentFragments" parameterClass="long">
+  delete from ptrdocument_fragment 
+  where document_id = (select id 
+                       from ptrdocument 
+                       where is_archived = 1 and id = #value#)
+</delete> 
+  
+  <sql id="treatmentDocuments">
+from PTRTREATMENT_DOCUMENT_UPLOAD u
+ inner join PTRUPLOAD_DOCUMENT_TYPE_REF t on u.UPLOAD_DOCUMENT_TYPE_ID = t.id
+ inner join PTRDOCUMENT d on d.ID = u.DOCUMENT_ID
+where u.TREATMENT_ID = #ID#
+</sql>
+  <resultMap id="getTreatmentUploadedDocuments" class="hmap">
+ <result property="DOCUMENT_ID" javaType="long"/>
+ <result property="ACCOUNT_ID" javaType="long"/>
+ <result property="DESCRIPTION" javaType="string"/>
+ <result property="FILE_NAME" javaType="string"/>
+ <result property="NOTES" javaType="string"/>
+ <result property="NUM_DOC_DOWN" javaType="long"/>
+ <result property="NUM_OF_PAGE" javaType="long"/>
+ <result property="TREATMENT_PROCESS_ID" javaType="long"/>
+ <result property="USER_ID" javaType="string"/>
+ <result property="DOCUMENT_TYPE" javaType="string"/>
+ <result property="CREATED_DATE" javaType="date"/>
+ <result property="UPLOAD_DOCUMENT_TYPE_ID" javaType="long"/>
+ <result property="BROWSE_FILE" javaType="string"/>
+</resultMap>
+<select id="getTreatmentUploadedDocuments" resultMap="getTreatmentUploadedDocuments"> 
+select u.DOCUMENT_ID, u.ACCOUNT_ID, u.DESCRIPTION, u.FILE_NAME, u.NOTES, u.NUM_DOC_DOWN, u.NUM_OF_PAGE,
+ u.TREATMENT_ID, u.USER_ID, t.description, d.CREATED_DATE,u.UPLOAD_DOCUMENT_TYPE_ID,u.FILE_NAME
+<include refid="treatmentDocuments"/>
+order by u.DOCUMENT_ID
+</select>
+
+<resultMap id="getTreatmentUploadedDocumentsForSelection" class="hmap">
+ <result property="ID" javaType="long"/>
+ <result property="DESCRIPTION" javaType="string"/>
+ <result property="TYPE" javaType="string"/>
+ <result property="SORT_PRIORITY" javaType="long"/>
+</resultMap>
+<select id="getTreatmentUploadedDocumentsForSelection" resultMap="getTreatmentUploadedDocumentsForSelection">
+select null as DOCUMENT_ID, <include refid="pleaseSelectText"/>, ' ', 0 as SORT_PRIORITY <include refid="fromdual"/>
+ union
+select u.DOCUMENT_ID, u.DESCRIPTION, t.description, 1 as SORT_PRIORITY
+<include refid="treatmentDocuments"/>
+order by SORT_PRIORITY, DOCUMENT_ID
+</select>
+
+<select id="getUploadDocumentType" resultMap="global.ref" parameterClass="map">
+<include refid="refselect"/>
+FROM PTRUPLOAD_DOCUMENT_TYPE_REF
+ union
+<include refid="pleaseSelectRef"/>
+ORDER BY SORT_PRIORITY ASC
+</select>
+
+
+<select id="getTreatmentUploadedDocumentsEdit" resultMap="getTreatmentUploadedDocuments"> 
+select u.DOCUMENT_ID, u.ACCOUNT_ID, u.DESCRIPTION, u.FILE_NAME, u.NOTES, u.NUM_DOC_DOWN, u.NUM_OF_PAGE,
+ u.TREATMENT_ID, u.USER_ID, t.description, d.CREATED_DATE,u.UPLOAD_DOCUMENT_TYPE_ID,u.FILE_NAME
+from PTRTREATMENT_DOCUMENT_UPLOAD u
+ inner join PTRUPLOAD_DOCUMENT_TYPE_REF t on u.UPLOAD_DOCUMENT_TYPE_ID = t.id
+ inner join PTRDOCUMENT d on d.ID = u.DOCUMENT_ID
+where u.DOCUMENT_ID = #SELECTED_ATTACHMENT_DOCUMENT_ID#
+order by u.DOCUMENT_ID
+</select>
+  
+</sqlMap>

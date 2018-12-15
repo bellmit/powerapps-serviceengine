@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec inProgress="IN_PROGRESS" recent="RECENT" summary="SUMMARY" type="sqlperf"/>
+ <exec from="RECENT_NAME" key="TYPE" to="RECENT" type="copyintolist"/>
+ <exec from="IN_PROGRESS_NAME" key="TYPE" to="IN_PROGRESS" type="copyintolist"/>
+ <exec from="SUMMARY_NAME" key="TYPE" to="SUMMARY" type="copyintolist"/>
+ <exec query="selectOne" type="query"/>
+ <exec from="SUMMARY" to="IN_PROGRESS" type="append"/>
+ <exec from="RECENT" to="IN_PROGRESS" type="append"/>
+ <exec from="IN_PROGRESS" key="SUMMARY" type="copyintolist"/>
+</event>

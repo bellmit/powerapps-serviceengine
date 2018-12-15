@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec statement="getContractAgencySubType" type="select"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="REMOVE_LIST" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec from="LOGON_USER" key="LOGON_USER" to="REMOVE_LIST" type="copyintolist"/>
+   <exec from="CURRENT_TIME" key="CURRENT_TIME" to="REMOVE_LIST" type="copyintolist"/>
+   <exec argument="REMOVE_LIST" type="loop">
+    <exec recordcount="" statement="deleteAgencyContract" type="update"/>
+    <exec recordcount="" statement="updateContractRelHistory" type="update"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SUBTYPE" operator="=" rhsvalue="ECA"/>
+    </conditions>
+    <exec message="Agency removed" target="MESSAGE" type="formattext"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SUBTYPE" operator="&lt;&gt;" rhsvalue="ECA"/>
+    </conditions>
+    <exec message="Legal firm removed" target="MESSAGE" type="formattext"/>
+   </exec>
+  </exec>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ </exec>
+ <exec from="TRUE" key="INIT" type="copyintolist"/>
+ <exec from="TRUE" key="LOAD_DATA" type="copyintolist"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+</event>

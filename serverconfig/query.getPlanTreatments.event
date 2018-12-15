@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="USER_ID" type="user"/>
+ <exec statement="getLogonUserType" type="select"/>
+ <exec query="getPlanTreatments" type="query"/>
+</event>

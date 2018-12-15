@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="TREATMENT_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="FROM_CTI" operator="=" rhsvalue="true"/>
+    <condition lhsfield="PROCESS_TYPE_ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec message="PTP Created From Dialer" target="NOTE_TEXT" type="formattext"/>
+  </exec>
+ </exec>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="UPDATED_TIME" truncate="false" type="date"/>
+ <exec to="USER_ID" type="user"/>
+ <exec from="UPDATED_TIME" key="UPDATED_TIME" to="TREATMENT_LIST" type="copyintolist"/>
+ <exec from="USER_ID" key="UPDATED_USER_ID" to="TREATMENT_LIST" type="copyintolist"/>
+ <exec statement="booleanvalues" type="select"/>
+ <exec statement="getLogonUserType" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SOURCE" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec message="TWP" target="SOURCE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="USER_TYPE_ID" operator="=" rhsvalue="2"/>
+  </conditions>
+  <exec statement="getTreatmentAgencyAssignmentId" type="select"/>
+  <exec from="AGENCY_ASSIGNMENT_ID" key="AGENCY_ASSIGNMENT_ID" to="TREATMENT_LIST" type="copyintolist"/>
+  <exec from="AGENCY_ID" key="AGENCY_ID" to="TREATMENT_LIST" type="copyintolist"/>
+ </exec>
+ <exec from="SOURCE" key="SOURCE" to="TREATMENT_LIST" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" to="TREATMENT_LIST" type="copyintolist"/>
+ <exec from="FALSE" key="FALSE" to="TREATMENT_LIST" type="copyintolist"/>
+ <exec type="transaction">
+  <exec argument="TREATMENT_LIST" type="loop">
+   <exec message="1" target="TREATMENT_SOURCE_ID" type="formattext"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SOURCE" operator="=" rhsvalue="TWP"/>
+    </conditions>
+    <exec event="treatment.save" ignoreresult="true" type="raise"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

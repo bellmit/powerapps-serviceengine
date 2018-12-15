@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+   <exec message="agencyInvoiceGeneration" target="PROCESS_NAME" type="formattext"/>
+   <exec type="guard">
+      <conditions>
+         <condition lhsfield="EFFECTIVE_DATE" operator="not present" rhsvalue=""/>
+      </conditions>
+      <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true"
+            to="EFFECTIVE_DATE"
+            truncate="true"
+            type="date"/>
+   </exec>
+   <exec type="guard">
+      <conditions>
+         <condition lhsfield="MAXIMUM_LOAD_EXECUTION_ID" operator="not present" rhsvalue=""/>
+      </conditions>
+      <exec statement="getGenerateAgencyInvoiceMaximumLoadExecution" type="select"/>
+   </exec>
+   <exec event="batch.beforeLoadProcessing" ignoreresult="true" type="raise"/>
+   <exec statement="selectOne" type="select"/>
+   <exec ceiling="false" endmonth="false" from="EFFECTIVE_DATE" nextweekday="false"
+         startmonth="true"
+         to="NEXT_MONTH"
+         truncate="true"
+         type="date"/>
+   <exec adddays="NEGATIVE_ONE" ceiling="false" endmonth="false" from="NEXT_MONTH"
+         nextweekday="false"
+         startmonth="false"
+         to="END_OF_MONTH"
+         truncate="true"
+         type="date"/>
+   <exec ceiling="false" endmonth="false" from="END_OF_MONTH" nextweekday="false"
+         startmonth="true"
+         to="START_OF_MONTH"
+         truncate="true"
+         type="date"/>
+   <exec from="END_OF_MONTH" to="INVOICE_DATE" type="copy"/>
+   <exec argument="AGENCY_LIST" query="getAgenciesForInvoiceGeneration" type="query"/>
+   <exec type="guard">
+      <conditions>
+         <condition lhsfield="AGENCY_LIST" operator="is not empty" rhsvalue=""/>
+      </conditions>
+      <exec from="EFFECTIVE_DATE" key="EFFECTIVE_DATE" to="AGENCY_LIST" type="copyintolist"/>
+      <exec from="END_OF_MONTH" key="END_DATE" to="AGENCY_LIST" type="copyintolist"/>
+      <exec from="START_OF_MONTH" key="START_DATE" to="AGENCY_LIST" type="copyintolist"/>
+      <exec from="INVOICE_DATE" key="INVOICE_DATE" to="AGENCY_LIST" type="copyintolist"/>
+      <exec argument="AGENCY_LIST" type="loop">
+         <exec type="transaction">
+            <exec event="agencyInvoice.generate" ignoreresult="true" type="raise"/>
+         </exec>
+      </exec>
+   </exec>
+   <exec argument="AGENCY_LIST_ISLAMIC" query="getAgenciesForInvoiceGenerationIslamic"
+         type="query"/>
+   <exec type="guard">
+      <conditions>
+         <condition lhsfield="AGENCY_LIST_ISLAMIC" operator="is not empty" rhsvalue=""/>
+      </conditions>
+      <exec from="END_OF_MONTH" key="END_DATE" to="AGENCY_LIST_ISLAMIC" type="copyintolist"/>
+      <exec from="EFFECTIVE_DATE" key="EFFECTIVE_DATE" to="AGENCY_LIST_ISLAMIC"
+            type="copyintolist"/>
+      <exec from="START_OF_MONTH" key="START_DATE" to="AGENCY_LIST_ISLAMIC"
+            type="copyintolist"/>
+      <exec from="INVOICE_DATE" key="INVOICE_DATE" to="AGENCY_LIST_ISLAMIC"
+            type="copyintolist"/>
+      <exec argument="AGENCY_LIST_ISLAMIC" type="loop">
+         <exec type="transaction">
+            <exec event="agencyInvoice.generate" ignoreresult="true" type="raise"/>
+         </exec>
+      </exec>
+   </exec>
+   <exec event="batch.afterLoadProcessing" ignoreresult="true" type="raise"/>
+</event>

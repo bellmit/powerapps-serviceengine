@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_DATE" truncate="true" type="date"/>
+ <exec argument="MG_SCHEDULE_ACCOUNT_LIST" query="getScheduledAccountForWorkList" type="query"/>
+ <exec argument="MG_SCHEDULE_COLOUR_ACCOUNT_LIST" query="getScheduledAccountForWorkList_colour" type="query"/>
+ <exec from="MG_SCHEDULE_COLOUR_ACCOUNT_LIST" key="ACCOUNT_ID" to="MG_SCHEDULE_ACCOUNT_LIST" type="merge"/>
+ <exec from="MG_SCHEDULE_ACCOUNT_LIST" to="ACCOUNT_LIST" type="copy"/>
+ <exec event="userworklist.mggetinfo" ignoreresult="true" type="raise"/>
+</event>

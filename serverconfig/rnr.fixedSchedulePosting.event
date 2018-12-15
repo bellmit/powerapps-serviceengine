@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="GENERATED_SCHEDULE" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="SETTLEMENT_TYPE_ID" operator="=" rhsvalue="1"/>
+  </conditions>
+  <exec key="INSTALLMENT_AMOUNT" list="GENERATED_SCHEDULE" to="GENERATED_SCHEDULE" type="unique"/>
+  <exec text="fixed schedule" type="comment">
+   <exec text="COPY INTO 110_LIST" type="comment">
+    <exec from="GENERATED_SCHEDULE" to="110_LIST" type="copy"/>
+   </exec>
+   <exec text="COPY INTO 200_LIST" type="comment">
+    <exec from="GENERATED_SCHEDULE" to="200_LIST" type="copy"/>
+    <exec from="INTEREST_RATE" key="INTEREST_RATE" to="200_LIST" type="copyintolist"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="LPI" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec from="GENERATED_SCHEDULE" to="400_LIST" type="copy"/>
+    <exec text="COPY INTO 400_LIST" type="comment">
+     <exec from="LPI" key="LPI" to="400_LIST" type="copyintolist"/>
+     <exec from="POST" key="POST" to="400_LIST" type="copyintolist"/>
+    </exec>
+    <exec from="LPI" key="LPI" to="400_LIST" type="copyintolist"/>
+    <exec argument="400_LIST" type="loop">
+     <exec from="INSTALLMENT_START_DATE" to="DATE" type="copy"/>
+     <exec from="LPI" to="RATE" type="copy"/>
+     <exec message="P" target="POST" type="formattext"/>
+     <exec argument="400_SCHEDULE_LIST" query="getDecimalConversion" type="query"/>
+    </exec>
+    <exec from="400_LIST" key="400_SCHEDULE_LIST" to="400_SCHEDULE_LIST" type="extract"/>
+   </exec>
+   <exec from="INSTALLMENT_DUE_DAY" key="BILLING_CYCLE" to="110_LIST" type="copyintolist"/>
+   <exec from="INSTALLMENT_DUE_DAY" key="BILLING_CYCLE" to="200_LIST" type="copyintolist"/>
+   <exec argument="110_LIST" type="loop">
+    <exec from="INSTALLMENT_START_DATE" to="DATE" type="copy"/>
+    <exec from="INSTALLMENT_AMOUNT" to="RATE" type="copy"/>
+    <exec message="P" target="POST" type="formattext"/>
+    <exec argument="110_SCHEDULE_LIST" query="getDecimalConversion" type="query"/>
+   </exec>
+   <exec argument="200_LIST" type="loop">
+    <exec from="INSTALLMENT_START_DATE" to="DATE" type="copy"/>
+    <exec from="INTEREST_RATE" to="RATE" type="copy"/>
+    <exec message="P" target="POST" type="formattext"/>
+    <exec argument="200_SCHEDULE_LIST" query="getDecimalConversion" type="query"/>
+   </exec>
+   <exec from="110_LIST" key="110_SCHEDULE_LIST" to="110_SCHEDULE_LIST" type="extract"/>
+   <exec from="200_LIST" key="200_SCHEDULE_LIST" to="200_SCHEDULE_LIST" type="extract"/>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Verify that argument values required are present, values like TRUE are required to ensure extra DB round-trips are avoided in bulk updates." type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PROCESS_TYPE_ID" operator="not present" rhsvalue=""/>
+   </conditions>
+   <exec code="TREATMENT_SAVE_MISSING_PARAMETER" type="error"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="UPDATED_TIME" operator="not present" rhsvalue=""/>
+   </conditions>
+   <exec code="TREATMENT_SAVE_MISSING_PARAMETER" type="error"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TRUE" operator="not present" rhsvalue=""/>
+   </conditions>
+   <exec code="TREATMENT_SAVE_MISSING_PARAMETER" type="error"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="UPDATED_USER_ID" operator="not present" rhsvalue=""/>
+   </conditions>
+   <exec code="TREATMENT_SAVE_MISSING_PARAMETER" type="error"/>
+  </exec>
+ </exec>
+ <exec from="PROCESS_TYPE_ID" to="TYPE_ID" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TREATMENT_SOURCE_ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec message="2" target="TREATMENT_SOURCE_ID" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SUBTYPE_ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec statement="getTreatmentSubtypeNotPresent" type="select"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" to="IS_NEW_TREATMENT" type="copy"/>
+ </exec>
+ <exec text="Execute precondition checks by treatment type, named XXX.preconditions." type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="5"/>
+   </conditions>
+   <exec event="notes.preconditions" ignoreresult="true" type="raise"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec event="treatment.edit" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_NEW_TREATMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec statement="getTreatmentPtpInProgress" type="select"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="IN_PROGRESS_TREATMENT_ID" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec recordcount="" statement="updateTreatmentPtpToCancel" type="update"/>
+    <exec recordcount="" statement="updateTreatmentProcessPtpToCancel" type="update"/>
+   </exec>
+  </exec>
+  <exec event="treatment.new" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="NOTE_TEXT" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec statement="insertTreatmentNote" type="insert"/>
+ </exec>
+ <exec from="UPDATED_TIME" to="CREATED_TIME" type="copy"/>
+ <exec from="UPDATED_USER_ID" to="CREATED_USER_ID" type="copy"/>
+ <exec statement="insertTreatmentHistory" type="insert"/>
+ <exec event="wlt.updateForTreatment" ignoreresult="true" type="raise"/>
+</event>

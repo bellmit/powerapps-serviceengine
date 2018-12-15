@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="7" to="DAYS_OF_WEEK" type="createlist"/>
+ <exec argument="DAYS_OF_WEEK" index="ID" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec message="Sunday" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec message="Monday" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="3"/>
+   </conditions>
+   <exec message="Tuesday" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="4"/>
+   </conditions>
+   <exec message="Wednesday" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="5"/>
+   </conditions>
+   <exec message="Thursday" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="6"/>
+   </conditions>
+   <exec message="Friday" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="7"/>
+   </conditions>
+   <exec message="Saturday" target="DESCRIPTION" type="formattext"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="8"/>
+   </conditions>
+   <exec message="Everyday" target="DESCRIPTION" type="formattext"/>
+   <exec type="nullify">
+    <key value="ID"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

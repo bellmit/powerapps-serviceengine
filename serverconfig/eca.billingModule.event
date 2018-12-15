@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_23" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_23" type="copy"/>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+  <exec message="images/1001.png" target="ICON" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_24" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_24" type="copy"/>
+  <exec message="{0}Unbilled{1}" target="MODULE_24_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Unbilled" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_25" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_25" type="copy"/>
+  <exec message="{0}New Invoice{1}" target="MODULE_25_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; New Invoice" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_26" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_26" type="copy"/>
+  <exec message="{0}In Progress Invoice{1}" target="MODULE_26_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; In Progress Invoice" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_27" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_27" type="copy"/>
+  <exec message="{0}Recommended Invoice{1}" target="MODULE_27_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Recommended Invoice" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_28" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_28" type="copy"/>
+  <exec message="{0}Verified Invoice{1}" target="MODULE_28_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Verified Invoice" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_29" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_29" type="copy"/>
+  <exec message="{0}Pending Invoice{1}" target="MODULE_29_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Pending Invoice" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_30" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_30" type="copy"/>
+  <exec message="{0}Acknowledged Invoice{1}" target="MODULE_30_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Acknowledged Invoice" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_31" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_31" type="copy"/>
+  <exec message="{0}HOD Approval{1}" target="MODULE_31_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; HOD Approval" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_32" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_32" type="copy"/>
+  <exec message="{0}CEO Approval{1}" target="MODULE_32_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; CEO Approval" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_33" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_33" type="copy"/>
+  <exec message="{0}Approved Invoice{1}" target="MODULE_33_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Approved Invoice" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_34" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_34" type="copy"/>
+  <exec message="{0}Pending Payment Release{1}" target="MODULE_34_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Pending Payment Release" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_35" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_35" type="copy"/>
+  <exec message="{0}Payment Receipt{1}" target="MODULE_35_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="{0}Billing{1}" target="MODULE_23_TITLE" type="formattext">
+   <key value="prefix"/>
+   <key value="suffix"/>
+  </exec>
+  <exec message="ECA Management &gt; Billing &gt; Payment Receipt" target="HEADER_TITLE" type="formattext"/>
+  <exec from="SHOW" to="_SUBMODULE_3" type="copy"/>
+ </exec>
+</event>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="CODE" to="APPROVAL_CODE" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_AKPK"/>
+  </conditions>
+  <exec from="87479" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_BILLING"/>
+  </conditions>
+  <exec from="87480" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_DEBT_SALE"/>
+  </conditions>
+  <exec from="87481" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_ECU"/>
+  </conditions>
+  <exec from="87482" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_LITIGATION"/>
+  </conditions>
+  <exec from="87483" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_MIS"/>
+  </conditions>
+  <exec from="87484" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_PRODUCT_OWNER"/>
+  </conditions>
+  <exec from="87485" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+  <exec message="ENABLE" target="SHARED_DATA" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="APPROVAL_CODE" operator="=" rhsvalue="AT_TAKAFUL"/>
+  </conditions>
+  <exec from="87486" type="authorized">
+   <exec message="ALLOW" target="ALLOW_APPROVE" type="formattext"/>
+  </exec>
+  <exec message="ENABLE" target="SHARED_DATA" type="formattext"/>
+ </exec>
+</event>

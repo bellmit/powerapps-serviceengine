@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="false" type="date"/>
+ <exec adddays="NEGATIVE_SEVEN" ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="false" to="SEVEN_DAYS_AGO" truncate="true" type="date"/>
+ <exec addmonths="NEGATIVE_ONE" ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="false" to="A_MONTH_AGO" truncate="true" type="date"/>
+ <exec addmonths="NEGATIVE_TWELVE" ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="false" to="A_YEAR_AGO" truncate="true" type="date"/>
+ <exec query="getGeneratedReports" type="query"/>
+</event>

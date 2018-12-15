@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="AVAILABLE_DETAILS" query="getAvailableAdditionalDetails" type="query"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ADDITIONAL_DETAILS" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec minuend="AVAILABLE_DETAILS" subtrahend="ADDITIONAL_DETAILS" to="AVAILABLE_DETAILS" type="remove"/>
+ </exec>
+ <exec from="AVAILABLE_DETAILS" key="AVAILABLE_DETAILS" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_DETAIL_EDITOR" type="copyintolist"/>
+</event>

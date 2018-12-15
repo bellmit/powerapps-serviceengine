@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec statement="getLoginUserType" type="select"/>
+ <exec statement="getInProgressSpecialAccountTotalCount" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TOTAL_RECORD" operator="greater than value of" rhsvalue="ZERO"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CURRENT_PAGE" operator="is empty" rhsvalue=""/>
+   </conditions>
+   <exec from="ONE" to="CURRENT_PAGE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CURRENT_PAGE" operator="=" rhsvalue="0"/>
+   </conditions>
+   <exec from="ONE" to="CURRENT_PAGE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NEXT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec lhs="CURRENT_PAGE" rhs="ONE" target="CURRENT_PAGE" type="add"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PREV" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec lhs="CURRENT_PAGE" rhs="NEGATIVE_ONE" target="CURRENT_PAGE" type="add"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CURRENT_PAGE" operator="&lt;&gt;" rhsvalue="1"/>
+   </conditions>
+   <exec from="TRUE" to="ENABLE_PREV" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CURRENT_PAGE" operator="not equal to value of" rhsvalue="TOTAL_PAGE"/>
+   </conditions>
+   <exec from="TRUE" to="ENABLE_NEXT" type="copy"/>
+  </exec>
+  <exec argument="ACCOUNTS" query="getInProgressSpecialActionAccountIds" type="query"/>
+  <exec size="500" source="ACCOUNTS" target="DIVIDED_ACCOUNTS" type="dividelist"/>
+  <exec argument="DIVIDED_ACCOUNTS" type="loop">
+   <exec from="ACCOUNTS" to="ACCOUNT_LIST" type="copy"/>
+   <exec from="ACCOUNTS" key="AGENCY_ASSIGNMENT_ID" to="ASSIGNMENTS" type="extract"/>
+   <exec from="ACCOUNTS" key="PROCESS_ID" to="PROCESSES" type="extract"/>
+   <exec from="ACCOUNTS" key="ACCOUNT_ID" to="ACCOUNTS" type="extract"/>
+   <exec type="parallelquery">
+    <query value="getLegalWorklistSearchAccountResults"/>
+    <query value="getAgencyAssignmentDetails"/>
+    <query value="getInProgressActionDetails"/>
+    <target value="RESULT_LIST"/>
+    <target value="ASSIGNMENT_DETAILS"/>
+    <target value="ACTION_DETAILS"/>
+   </exec>
+   <exec from="RESULT_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="ASSIGNMENT_DETAILS" key="AGENCY_ASSIGNMENT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="ACTION_DETAILS" key="PROCESS_ID" to="ACCOUNT_LIST" type="merge"/>
+  </exec>
+  <exec from="DIVIDED_ACCOUNTS" key="ACCOUNT_LIST" to="ACCOUNT_LIST" type="extract"/>
+  <exec count="1" type="createlist"/>
+  <exec from="ACCOUNT_LIST" key="ACCOUNT_LIST" type="copyintolist"/>
+  <exec from="CURRENT_PAGE" key="CURRENT_PAGE" type="copyintolist"/>
+  <exec from="TOTAL_PAGE" key="TOTAL_PAGE" type="copyintolist"/>
+  <exec from="TOTAL_RECORD" key="TOTAL_RECORD" type="copyintolist"/>
+  <exec from="ENABLE_PREV" key="ENABLE_PREV" type="copyintolist"/>
+  <exec from="ENABLE_NEXT" key="ENABLE_NEXT" type="copyintolist"/>
+  <exec from="TRUE" key="INIT" type="copyintolist"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TOTAL_RECORD" operator="=" rhsvalue="0"/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec from="ZERO" key="TOTAL_PAGE" type="copyintolist"/>
+  <exec from="ZERO" key="TOTAL_RECORD" type="copyintolist"/>
+  <exec from="ZERO" key="CURRENT_PAGE" type="copyintolist"/>
+  <exec message="No record found!!!" target="MESSAGE" type="formattext"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ </exec>
+</event>

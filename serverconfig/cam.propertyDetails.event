@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="COLLATERAL_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec from="COLLATERAL_ID" key="COLLATERAL_ID" type="copyintolist"/>
+  <exec type="loop">
+   <exec statement="getPropertyInformationDetail" type="select"/>
+  </exec>
+ </exec>
+</event>

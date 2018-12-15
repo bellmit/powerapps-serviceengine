@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec to="LOGON_USER" type="user"/>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="true" type="date"/>
+  <exec from="CURRENT_TIME" key="CURRENT_TIME" to="SELECTED_ACCOUNTS" type="copyintolist"/>
+  <exec from="LOGON_USER" key="LOGON_USER" to="SELECTED_ACCOUNTS" type="copyintolist"/>
+  <exec argument="SELECTED_ACCOUNTS" type="loop">
+   <exec statement="deleteAccountFromWorklist" type="delete"/>
+   <exec recordcount="" statement="updateAccountWorklistHistory" type="update"/>
+  </exec>
+  <exec count="1" type="createlist"/>
+  <exec message="Account(s) removed" target="MESSAGE" type="formattext"/>
+  <exec from="TRUE" key="LOAD_ACCOUNT" type="copyintolist"/>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="INIT_RELOAD" type="copyintolist"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ </exec>
+</event>

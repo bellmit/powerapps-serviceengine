@@ -1,0 +1,263 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="paymentService.xml">
+
+
+<resultMap class="hmap" id="getCurrentMonthTotalPayment">
+<result property="CURRENT_MONTH_TOTAL_PAYMENT"  javaType="$"/>
+<result property="ACCOUNT_ID"  javaType="long"/>
+<result property="NET_PAYMENT_AMOUNT"  javaType="$"/>
+<result property="PAYMENT_STATUS_ID"  javaType="long"/>
+</resultMap>
+
+<select id="getCurrentMonthTotalPayment" resultMap="getCurrentMonthTotalPayment" parameterClass="map">
+select n.current_month_total_payment,
+n.account_id,
+n.payment_amount - n.current_month_total_payment as net_payment_amount,
+case 
+when (n.payment_amount - n.current_month_total_payment) &gt; 0 then 1
+when (n.payment_amount - n.current_month_total_payment) = 0 then 2
+when (n.payment_amount - n.current_month_total_payment) &lt; 0 then 3 else 0 end as PAYMENT_STATUS_ID
+from
+(
+select 
+sum(tran.amount) as current_month_total_payment, tran.account_id, a.payment_amount
+from ptrpayment_transaction tran 
+inner join ptraccount a on tran.account_id = a.id
+where tran.posting_date &gt;= #FIRST_OF_MONTH#
+group by tran.account_id, a.payment_amount
+) n
+</select>
+
+
+<insert id="insertCurrentMonthTotalPayment">
+insert into ptraccount_payment 
+(account_id,current_month_total_payment, net_payment_amount,payment_status_id) 
+values 
+(#ACCOUNT_ID#,#CURRENT_MONTH_TOTAL_PAYMENT#,#NET_PAYMENT_AMOUNT#,#PAYMENT_STATUS_ID#)
+</insert>
+
+<update id="updateCurrentMonthTotalPayment">
+update ptraccount_payment
+set 
+current_month_total_payment = #CURRENT_MONTH_TOTAL_PAYMENT#,
+net_payment_amount = #NET_PAYMENT_AMOUNT#,
+payment_status_id = #PAYMENT_STATUS_ID#
+where account_id = #ACCOUNT_ID#
+</update>
+
+
+<update id="refreshAccountLastPaymentMethod">
+refresh materialized view ptrvw_account_last_payment_method
+</update>
+
+<update id="refreshCurrentMonthTotalPayment">
+refresh materialized view ptrvw_current_month_total_payment
+</update>
+
+<resultMap class="hmap" id="getLastPaymentMethod">
+<result property="ACCOUNT_ID"  javaType="long"/>
+<result property="LAST_PAYMENT_METHOD"  javaType="string"/>
+<result property="PRIORITY_PAYMENT"  javaType="string"/>
+<result property="LAST_PAYMENT_BRANCH" javaType="string" />
+</resultMap>
+
+<sql id="paymentMethod-fragment">
+select 
+payment.account_id, 
+ref.description as last_payment_method, 
+case when ref.code in ('AG','BIROIT','BIROREJECTED','SOSD','SD') then ref.description else null end as priority_payment,
+branch.description
+from ptrvw_account_last_payment_method payment
+inner join ptrpayment_method_ref ref on payment.last_payment_method_id = ref.id
+left join ptrbank_branch_ref branch on substr(payment.user_id, length(payment.user_id) - 2, 3) = substr(branch.code, length(branch.code) - 2, 3)
+</sql>
+
+<select id="getLastPaymentMethod" resultMap="getLastPaymentMethod" parameterClass="map">
+<include refid="paymentMethod-fragment"/>
+where payment.account_id = #ACCOUNT_ID#
+</select>
+
+<select id="getLastPaymentMethodWlm" resultMap="getLastPaymentMethod" parameterClass="map">
+<include refid="paymentMethod-fragment"/>
+inner join ptraccount_work_list_assignment assign on payment.account_id = assign.account_id
+where assign.work_list_id = #WORK_LIST_ID#
+</select>
+
+
+<resultMap class="hmap" id="getTotalCurrentMonth">
+<result property="ACCOUNT_ID"  javaType="long"/>
+<result property="PAYMENT_STATUS"  javaType="string"/>
+<result property="CURRENT_MONTH_TOTAL_PAYMENT"  javaType="$"/>
+<result property="MINIMUM_PAYMENT"  javaType="$"/>
+</resultMap>
+
+<sql id="TotalCurrentMonth-fragment">
+select
+currmth.account_id, 
+status.description as PAYMENT_STATUS,
+currmth.current_month_total_payment as CURRENT_MONTH_TOTAL_PAYMENT,
+case 
+when a.months_in_arrears = 3 
+then (a.installment_amount_in_arrears - currmth.current_month_total_payment) -  (a.payment_amount * (a.months_in_arrears - 1)) end as MINIMUM_PAYMENT
+from ptrvw_current_month_total_payment currmth
+inner join ptraccount a on currmth.account_id = a.id
+inner join ptrpayment_status_ref status on currmth.payment_status_id = status.id
+</sql>
+
+<select id="getTotalCurrentMonth" resultMap="getTotalCurrentMonth" parameterClass="map">
+<include refid="TotalCurrentMonth-fragment"/>
+where currmth.account_id = #ACCOUNT_ID#
+</select>
+
+<select id="getTotalCurrentMonthWlm" resultMap="getTotalCurrentMonth" parameterClass="map">
+<include refid="TotalCurrentMonth-fragment"/>
+<isEqual property="USER_TYPE_CODE" compareValue="agencyuser">
+inner join ptragency_work_list_assignment assign on currmth.account_id = assign.account_id
+</isEqual>
+<isNotEqual property="USER_TYPE_CODE" compareValue="agencyuser">
+inner join ptraccount_work_list_assignment assign on currmth.account_id = assign.account_id
+</isNotEqual>
+where assign.work_list_id = #WORK_LIST_ID#
+</select>
+
+
+<resultMap class="hmap" id="getAccountShortPayment">
+<result property="ACCOUNT_ID"  javaType="long"/>
+<result property="SHORT_PAYMENT"  javaType="$"/>
+</resultMap>
+
+<select id="getAccountShortPayment" resultMap="getAccountShortPayment">
+select a.id as account_id, 
+case when 
+(a.payment_amount - a.last_payment_amount) &gt; 0 then (a.payment_amount - a.last_payment_amount) else null end  as short_payment
+from ptraccount a
+where a.id = #ACCOUNT_ID#
+</select>
+
+
+<select id="getAccountShortPaymentWlm" resultMap="getAccountShortPayment">
+select a.id as account_id, 
+case when 
+(a.payment_amount - a.last_payment_amount) &gt; 0 then (a.payment_amount - a.last_payment_amount) else null end  as short_payment
+from ptraccount a
+inner join ptraccount_work_list_assignment assign on a.id = assign.account_id
+where assign.work_list_id = #WORK_LIST_ID#
+</select>
+
+
+<resultMap id="getPaymentsForAccountLedgerByPostingDate" class="hmap">
+ <result property="PAYMENT_ID" javaType="long"/>
+ <result property="POSTING_DATE" javaType="date"/>
+ <result property="AMOUNT" javaType="$"/>
+ <result property="LEDGER_ID" javaType="long"/>
+</resultMap>
+<select id="getPaymentsForAccountLedgerByPostingDate" resultMap="getPaymentsForAccountLedgerByPostingDate">
+select t.transaction_id, t.POSTING_DATE, t.AMOUNT, ledger.ID
+from ptrpayment_transaction t
+inner join ptrtransaction tran on t.transaction_id=tran.id
+ INNER JOIN ptrtransaction_type_ref trf on (tran.transaction_type_id = trf.ID) and trf.RNR_PAYMENT=true
+ inner join PTRACCOUNT_LEDGER ledger on t.ACCOUNT_ID = ledger.ACCOUNT_ID
+where t.POSTING_DATE = #EFFECTIVE_DATE#
+  and ledger.ID = #LEDGER_ID#
+  and not exists (select * from ptrledger_payment_transaction lp where lp.transaction_id = t.transaction_id and lp.LEDGER_ID = ledger.ID)
+order by ledger.ID, t.POSTING_ORDER
+</select>
+
+<insert id="insertPaymentLedgerTransactionLink">
+INSERT INTO PTRLEDGER_PAYMENT_TRANSACTION
+(TRANSACTION_ID, LEDGER_ID)
+values
+(#TRANSACTION_ID#, #LEDGER_ID#)
+</insert>
+
+<sql id="excludedCharges">
+(values
+('C', '022', '*CR ACC LATE CHG',               'Y','Y','Y','Y'),
+('C', '053', 'DR LATE CHG PD',                 'Y', 'N', 'Y', 'N'),
+('C', '054', 'DR MISC COST',                   'Y', 'N', 'Y', 'N'),
+('C', '055', 'DR OTH CHGS',                    'Y', 'N', 'Y', 'N'),
+('C', '059', 'DR LATE CHG',                    'Y','Y','Y','Y'),
+('C', '065', 'DR MISC COST',                   'Y', 'N', 'Y', 'N'),
+('C', '068', 'DR DEALER REBATE',               'Y','Y','Y','Y'),
+('C', '073', 'RTD CHEQ-LATE CHARGE',           'Y', 'N', 'Y', 'N'),
+('C', '074', 'RTD CHEQ-MISC COST',             'Y', 'N', 'Y', 'N'),
+('C', '075', 'RTD CHEQ-OTHER CHARGES',         'Y', 'N', 'Y', 'N'),
+('C', '083', 'RVSL LATE CHG PAID',             'Y', 'N', 'Y', 'N'),
+('C', '084', 'RVSL MISC COST',                 'Y', 'N', 'Y', 'N'),
+('C', '085', 'RVSL OTHER CHARGES',             'Y', 'N', 'Y', 'N'),
+('C', '089', 'RVSL CR LATE CHARGE',            'Y', 'N', 'Y', 'N'),
+('C', '098', 'DR LATE CHG',                    'Y', 'N', 'Y', 'N'),
+('C', '188', 'MISC COST (Auto)',               'Y', 'N', 'Y', 'N'),
+('C', '311', '*CR ACC LC (CAP)',               'Y','Y','Y','Y'),
+('C', '312', '*DR LATE CHG',                   'Y','Y','Y','Y'),
+('C', '623', '*CR PROVISION',                  'Y','Y','Y','Y'),
+('C', '624', '*DR PROVISION WRITEBACK',        'Y','Y','Y','Y'),
+('C', '625', '*CR PROVISION WRITEOFF',         'Y','Y','Y','Y'),
+('C', '630', '*CR SELLING PRICE',              'Y','Y','Y','Y'),
+('C', '631', '*DR SELLING PRICE',              'Y','Y','Y','Y'),
+('C', '632', '*DR BUYING',                     'Y','Y','Y','Y'),
+('C', '633', '*CR BUYING',                     'Y','Y','Y','Y'),
+('C', '780', '*DR MISC FEE(A)',                'Y', 'N', 'Y', 'N'),
+('C', '781', '*DR OTHER CHARGES(A)',           'Y', 'N', 'Y', 'N'),
+('C', '788', '*CR LC ACCR ADJ',                'Y','Y','Y','Y'),
+('C', '789', '*DR LC ACCR ADJ',                'Y','Y','Y','Y'),
+('C', '824', 'EARNINGS CREDIT ON DEALER DISC', 'Y','Y','Y','Y'),
+('C', '830', 'EARNING DEBIT ON DISCOUNT',      'Y','Y','Y','Y'),
+('C', '834', 'EARNINGS DEBIT ON DEALER DISCO', 'Y','Y','Y','Y'),
+('C', '885', 'A/C Decls PL',                   'Y','Y','Y','Y'),
+('C', '886', 'A/C Cls NPL',                    'Y','Y','Y','Y'),
+('C', '914', '*PRINCIPAL PAID(A)',             'Y','Y','Y','Y'),
+('C', '930', '*DR MISC CHARGE(A)',             'Y', 'N', 'Y', 'N'),
+('C', '940', 'DR ADVANCE PAYMENT',             'Y', 'N', 'Y', 'N')
+) nonCharged (FLAG, CODE, DESCRIPTION,
+    HP_EXCLUDE_WITH_JUDGEMENT, HP_EXCLUDE_WITHOUT_JUDGEMENT,
+    MG_EXCLUDE_WITH_JUDGEMENT, MG_EXCLUDE_WITHOUT_JUDGEMENT)
+</sql>
+
+<resultMap id="getChargesForAccountLedgerByPostingDate" class="hmap">
+ <result property="HOST_TRANSACTION_ID" javaType="long"/>
+ <result property="POSTING_DATE" javaType="date"/>
+ <result property="AMOUNT" javaType="$"/>
+ <result property="LEDGER_ID" javaType="long"/>
+</resultMap>
+<select id="getChargesForAccountLedgerByPostingDate" resultMap="getChargesForAccountLedgerByPostingDate">
+select t.ID, t.POSTING_DATE, t.AMOUNT * cast(t.DEBIT_CREDIT_FLAG as numeric), ledger.ID
+from ptrtransaction t
+ inner join PTRTRANSACTION_TYPE_REF transactionType on t.transaction_type_id = transactionType.ID
+ inner join PTRACCOUNT_LEDGER ledger on t.ACCOUNT_ID = ledger.ACCOUNT_ID
+ inner join PTRACCOUNT a on a.ACCOUNT_ID = ledger.ACCOUNT_ID
+ inner join ptrproduct_type_ref pr on a.product_type_id = pr.id
+ inner join ptrproduct_type_category_ref ptc on pr.category_id = ptc.id
+where t.POSTING_DATE = current_date
+  and ledger.ID = 1
+  and not exists (select * from PTRPAYMENT_TRANSACTION p where p.TRANSACTION_ID = t.ID)
+  and not exists (select * from PTRLEDGER_CHARGE_TRANSACTION charge where charge.HOST_TRANSACTION_ID = t.ID and charge.LEDGER_ID = ledger.ID)
+  and not exists (
+    select nonCharged.CODE
+    from <include refid="excludedCharges"/>
+where nonCharged.CODE = transactionType.CODE
+      and 
+((ptc.code in ('PF') and MG_EXCLUDE_WITH_JUDGEMENT = 'Y') or (not (ptc.code in ('PF') and HP_EXCLUDE_WITH_JUDGEMENT = 'Y'))))
+order by ledger.ID, t.POSTING_ORDER
+</select>
+
+<insert id="insertChargeLedgerTransactionLink">
+INSERT INTO PTRLEDGER_CHARGE_TRANSACTION
+(HOST_TRANSACTION_ID, FIN_TRANSACTION_ID, LEDGER_ID)
+values
+(#HOST_TRANSACTION_ID#, #TRANSACTION_ID#, #LEDGER_ID#)
+</insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</sqlMap>

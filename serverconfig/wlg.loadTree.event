@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="TREE_ID" key="TREE_ID" type="copyintolist"/>
+ <exec from="TREE_TYPE_FILTER" key="TYPE_ID" type="copyintolist"/>
+ <exec from="TREE_TYPE_FILTER_CODE" to="TREE_TYPE_CODE" type="copy"/>
+ <exec from="PRODUCT_TYPE_FILTER" key="PRODUCT_CATEGORY_ID" type="copyintolist"/>
+ <exec from="TREE_TYPE_CODE" key="TREE_TYPE_CODE" type="copyintolist"/>
+ <exec from="WLG_TYPE_CODE" key="WLG_TYPE_CODE" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TREE_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec statement="getWlTreeDocumentId" type="select"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec content="CONTENT" documentid="DOCUMENT_ID" documenttype="9" type="fetchdecisiontree"/>
+    <exec document="DOCUMENT_ID" result="RESULT" type="decisiontreesummary"/>
+    <exec key="VALUE" list="RESULT" to="RESULT" type="unique"/>
+    <exec from="RESULT" key="VALUE" to="ASSIGNED_WORK_LIST" type="extract"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="DOCUMENT_ID" operator="is empty" rhsvalue=""/>
+    </conditions>
+    <exec message="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&lt;node&gt;&lt;/node&gt;" target="CONTENT" type="formattext">
+     <key value="KEY"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ASSIGNED_WORK_LIST" operator="not present" rhsvalue=""/>
+    </conditions>
+    <exec count="1" to="RESULT" type="createlist"/>
+    <exec from="RESULT" key="VALUE" to="ASSIGNED_WORK_LIST" type="extract"/>
+   </exec>
+   <exec argument="_100_" query="getWlgTreeOptions" type="query"/>
+   <exec argument="_200_" query="getWlgBuckets" type="query"/>
+   <exec type="parallelquery">
+    <query value="getWlgTreeOptions"/>
+    <query value="getWlgBuckets"/>
+    <query value="getWlgTreeAssignedUsers"/>
+    <query value="getWlgBucketsForUserAssignments"/>
+    <target value="WLG_OPTIONS"/>
+    <target value="BUCKETS"/>
+    <target value="ASSIGNED_USER_TEMPLATES"/>
+    <target value="ASSIGNED_BUCKETS"/>
+   </exec>
+   <exec from="TRUE" key="TRUE" to="BUCKETS" type="copyintolist"/>
+   <exec from="TREE_ID" key="TREE_ID" to="BUCKETS" type="copyintolist"/>
+   <exec from="PRODUCT_CATEGORY_ID" key="PRODUCT_CATEGORY_ID" to="BUCKETS" type="copyintolist"/>
+   <exec from="WLG_TYPE_CODE" key="WLG_TYPE_CODE" to="BUCKETS" type="copyintolist"/>
+   <exec from="TYPE_ID" key="TYPE_ID" to="BUCKETS" type="copyintolist"/>
+   <exec from="ASSIGNED_USER_TEMPLATES" key="WORK_LIST_ID" target="USER_LIST" to="BUCKETS" type="groupedmerge"/>
+   <exec argument="ASSIGNED_USER_TEMPLATES" type="loop">
+    <exec from="USER_ID" to="USER_NAME" type="copy"/>
+   </exec>
+   <exec from="ASSIGNED_USER_TEMPLATES" key="WORK_LIST_ID" target="USER_LIST" to="ASSIGNED_BUCKETS" type="groupedmerge"/>
+   <exec argument="BUCKETS" type="loop">
+    <exec from="DESCRIPTION" to="WORK_LIST_NAME" type="copy"/>
+    <exec from="USER_LIST" key="USER_ID" to="USERNAME" type="extract"/>
+    <exec from="USER_LIST" key="USER_ID" to="USER_ID" type="extract"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="USERNAME" operator="is not empty" rhsvalue=""/>
+     </conditions>
+     <exec message="{0} - ({1})" target="DESCRIPTION" type="formattext">
+      <key value="DESCRIPTION"/>
+      <key value="USERNAME"/>
+     </exec>
+    </exec>
+   </exec>
+   <exec argument="ASSIGNED_BUCKETS" type="loop">
+    <exec from="DESCRIPTION" to="WORK_LIST_NAME" type="copy"/>
+    <exec from="USER_LIST" key="USER_ID" to="USERNAME" type="extract"/>
+    <exec from="USER_LIST" key="USER_ID" to="USER_ID" type="extract"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="USERNAME" operator="is not empty" rhsvalue=""/>
+     </conditions>
+     <exec message="{0} - ({1})" target="DESCRIPTION" type="formattext">
+      <key value="DESCRIPTION"/>
+      <key value="USERNAME"/>
+     </exec>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+</event>

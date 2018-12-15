@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="outlookService">
+
+	<resultMap id="getOutlookAccountDetails" class="hmap">
+	<result property="ACCOUNT_ID" javaType="long"/>
+	<result property="ACCOUNT_TYPE" javaType="string"/>
+	<result property="ACCOUNT_TYPE_ID" javaType="long"/>
+	<result property="OUTSTANDING_AMT" javaType="$"/>
+	<result property="ZERO" javaType="$"/>
+	<result property="CURRENT_NLB" javaType="$" />
+	<result property="OPENING_NLB" javaType="$" />
+	</resultMap>
+
+
+	<select id="getOutlookAccountDetails" resultMap="getOutlookAccountDetails">
+	select
+	a.ID,
+	case when npl.code='1' then 'NPF' when st.code='8' then 'BDR' else 'NIL' end as ACCOUNT_TYPE,
+	case when npl.code='1' then 1 when st.code='8' then 2 else NULL end as ACCOUNT_TYPE_ID,
+	a.current_balance OS_BALANCE,
+	0 as ZERO,
+	0 as GLOBAL_NLB,
+	coalesce(wla.NLB,0) as OPENING_NLB
+	FROM PTRACCOUNT a
+	left join PTRACCOUNT_WORK_LIST_ASSIGNMENT wla on wla.ACCOUNT_ID=a.ID and wla.WORK_LIST_ID is not null
+	left join ptrnpl_status_ref npl on npl.id=a.npl_status_id
+    left join ptraccount_status_ref st on st.id=a.status_id
+	<!-- left join PTRWORK_LIST wl on wl.WORK_LIST_ID=wla.WORK_LIST_ID
+	left join PTRWORK_LIST_GROUP_REF wlr on wlr.ID=wl.WORK_LIST_GROUP -->
+	where a.ID=#ACCOUNT_ID#		
+	</select>
+
+	<select id="getOutlookPaymentType" resultMap="global.ref">
+	<include refid="pleaseSelectRef" />
+	union
+	<include refid="refselect" /> from PTRDECLASS_TYPE_REF
+	</select>
+
+	<select id="getOutlookPaymentReason" resultMap="global.ref">
+	<include refid="pleaseSelectRef" />
+	union
+	<include refid="refselect" /> from PTRPAYMENT_REASON_REF
+	</select>
+		
+	<select id="getOutlookContactSource" resultMap="global.ref">
+	<include refid="pleaseSelectRef" />
+	union
+	<include refid="refselect" /> from PTROUTLOOK_CONTACT_SOURCE_REF
+	</select>		
+
+	<select id="getOutlookConfidenceLevelNpf" resultMap="global.ref">
+	<include refid="pleaseSelectRef" />
+	union
+	<include refid="refselect" /> from PTRCONFIDENCE_LEVEL_NPF_REF
+	</select>
+	
+	<select id="getOutlookConfidenceLevelBdr" resultMap="global.ref">
+	<include refid="refselect"/> from PTRCONFIDENCE_LEVEL_BDR_REF
+	</select>
+	
+	<resultMap id="getEmptyConfidenceLevel" class="hmap">
+	<result property="IS_NOT_IL_BDR" javaType="long" />
+	</resultMap>
+	
+	<select id="getEmptyConfidenceLevel" resultMap="getEmptyConfidenceLevel">
+	select 1 AS IS_NOT_IL_BDR <include refid="fromdual"/>
+	</select>
+
+	<insert id="insertTreatmentOutlook" parameterClass="map">
+	insert into PTRTREATMENT_OUTLOOK
+	(ACCOUNT_TYPE_ID,DECLARED_DATE, CONFIDENCE_LEVEL_ID, DECLARED_BDR_ID, 
+	DECLASS_PAYMENT_TYPE_ID, REVISED_AMOUNT, REASON_OF_PAYMENT_ID, SOURCE_OF_CONTACT_ID, OTHERS, 
+	TREATMENT_ID,ACCOUNT_ID,ACCOUNT_TYPE,TYPE_STATUS_ID,SUBTYPE_ID) 
+	values 
+	(#ACCOUNT_TYPE_ID#,#DECLARED_DATE#, #CONFIDENCE_LEVEL_ID#,#DECLARED_BDR_ID#, 
+	#DECLASS_PAYMENT_TYPE_ID#, #REVISED_AMOUNT#,#REASON_OF_PAYMENT_ID#,#SOURCE_OF_CONTACT_ID#, #OTHERS#, 
+	#ID#,#ACCOUNT_ID#,#ACCOUNT_TYPE#,#TYPE_STATUS_ID#,#SUBTYPE_ID#)
+	</insert>
+
+	<update id="updateTreatmentOutlook" parameterClass="map">
+	update PTRTREATMENT_OUTLOOK
+	set
+	ACCOUNT_TYPE_ID = #ACCOUNT_TYPE_ID#,
+	DECLARED_DATE = #DECLARED_DATE#, 
+	CONFIDENCE_LEVEL_ID = #CONFIDENCE_LEVEL_ID#, 
+	DECLARED_BDR_ID = #DECLARED_BDR_ID#, 
+	DECLASS_PAYMENT_TYPE_ID = #DECLASS_PAYMENT_TYPE_ID#,
+	REVISED_AMOUNT = #REVISED_AMOUNT#,
+	REASON_OF_PAYMENT_ID = #REASON_OF_PAYMENT_ID#,
+	SOURCE_OF_CONTACT_ID = #SOURCE_OF_CONTACT_ID#,
+	ACCOUNT_TYPE = #ACCOUNT_TYPE#,
+	ACCOUNT_ID = #ACCOUNT_ID#,
+	TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+	SUBTYPE_ID=#SUBTYPE_ID#		
+	where TREATMENT_ID = #ID#
+  	</update>	
+  	
+  	<resultMap class="hmap" id="getTreatmentOutlook">
+	<result property="TREATMENT_ID" javaType="long" />
+	<result property="ACCOUNT_TYPE" javaType="string" />
+	<result property="ACCOUNT_TYPE_ID" javaType="long" />
+	<result property="DECLARED_DATE" javaType="date" />
+	<result property="CONFIDENCE_LEVEL_ID" javaType="long" />
+	<result property="DECLARED_BDR_ID" javaType="java.lang.Long"/>
+	<result property="DECLASS_PAYMENT_TYPE_ID" javaType="long" />
+	<result property="REVISED_AMOUNT" javaType="double" />
+	<result property="REASON_OF_PAYMENT_ID" javaType="long" />
+	<result property="SOURCE_OF_CONTACT_ID" javaType="long" />
+	<result property="OTHERS" javaType="string" />
+	<result property="SAVED_REVISED_AMOUNT" javaType="$"/>
+	</resultMap>
+
+	<select id="getTreatmentOutlook" resultMap="getTreatmentOutlook">
+	select
+	TREATMENT_ID,
+    ACCOUNT_TYPE, 
+	ACCOUNT_TYPE_ID,
+	DECLARED_DATE, 
+	CONFIDENCE_LEVEL_ID, 
+	DECLARED_BDR_ID, 
+	DECLASS_PAYMENT_TYPE_ID, 
+	REVISED_AMOUNT,  
+	REASON_OF_PAYMENT_ID, 
+	SOURCE_OF_CONTACT_ID, 
+	OTHERS,
+	REVISED_AMOUNT
+	from PTRTREATMENT_OUTLOOK
+	where TREATMENT_ID=#ID#
+
+ 	</select>
+	
+	<insert id="insertTreatmentOutlookSummary" parameterClass="map">
+	insert into PTRTREATMENT_OUTLOOK_SUMMARY
+	(ACCOUNT_TYPE_ID,DECLARED_DATE, CONFIDENCE_LEVEL_ID, DECLARED_BDR_ID, 
+	DECLASS_PAYMENT_TYPE_ID, REVISED_AMOUNT, REASON_OF_PAYMENT_ID, SOURCE_OF_CONTACT_ID, OTHERS, 
+	TREATMENT_ID,ACCOUNT_ID,ACCOUNT_TYPE,TYPE_STATUS_ID,SUBTYPE_ID, NOTE_TEXT,UPDATED_TIME) 
+	values 
+	(#ACCOUNT_TYPE_ID#,#DECLARED_DATE#, #CONFIDENCE_LEVEL_ID#,#DECLARED_BDR_ID#, 
+	#DECLASS_PAYMENT_TYPE_ID#, #REVISED_AMOUNT#,#REASON_OF_PAYMENT_ID#,#SOURCE_OF_CONTACT_ID#, #OTHERS#, 
+	#ID#,#ACCOUNT_ID#,#ACCOUNT_TYPE#,#TYPE_STATUS_ID#,#SUBTYPE_ID#, #NOTE_TEXT#,#UPDATED_TIME#)
+	</insert>
+	
+	<update id="updateTreatmentOutlookSummary" parameterClass="map">
+	update PTRTREATMENT_OUTLOOK_SUMMARY
+	set
+	ACCOUNT_TYPE_ID = #ACCOUNT_TYPE_ID#,
+	DECLARED_DATE = #DECLARED_DATE#, 
+	CONFIDENCE_LEVEL_ID = #CONFIDENCE_LEVEL_ID#, 
+	DECLARED_BDR_ID = #DECLARED_BDR_ID#, 
+	DECLASS_PAYMENT_TYPE_ID = #DECLASS_PAYMENT_TYPE_ID#,
+	REVISED_AMOUNT = #REVISED_AMOUNT#,
+	REASON_OF_PAYMENT_ID = #REASON_OF_PAYMENT_ID#,
+	SOURCE_OF_CONTACT_ID = #SOURCE_OF_CONTACT_ID#,
+	ACCOUNT_TYPE = #ACCOUNT_TYPE#,
+	TYPE_STATUS_ID=#TYPE_STATUS_ID#,
+	SUBTYPE_ID=#SUBTYPE_ID#,
+	NOTE_TEXT=#NOTE_TEXT#,
+	TREATMENT_ID=#ID#,
+	UPDATED_TIME=#UPDATED_TIME#
+	where ACCOUNT_ID = #ACCOUNT_ID#
+  	</update>
+
+	
+	<resultMap class="hmap" id="getOutlookMtd">
+	<result property="MTD_PAYMENT" javaType="$"/>
+	<result property="OPENING_NLB" javaType="$"/>
+	<result property="CLOSING_NLB" javaType="$"/>
+	</resultMap>
+	
+	<select id="getOutlookMtd" resultMap="getOutlookMtd">
+	SELECT 
+	0 as MTD_PAYMENT,
+	coalesce(wla.NLB,0) ,
+	null as GLOBAL_NLB
+	FROM PTRACCOUNT a
+	left join PTRACCOUNT_WORK_LIST_ASSIGNMENT wla on wla.ACCOUNT_ID=a.ID		
+	where a.ID=#ACCOUNT_ID#	
+	</select>
+		
+	<resultMap class="hmap" id="getCamOutlookDetails">
+	<result property="ACCOUNT_TYPE" javaType="string"/>
+	<result property="NPL_STATUS" javaType="string"/>
+	<result property="ZERO" javaType="$"/>
+	<result property="NEGATIVE_ONE" javaType="$"/>
+	<result property="OPENING_OS" javaType="$"/>
+	<result property="ACTUAL_DECLASS_PAYMENT" javaType="$"/>
+	<result property="NET_AMOUNT" javaType="$"/>
+	<result property="OUTLOOK" javaType="$"/>
+	<result property="OPENING_NLB" javaType="$"/>
+	<result property="PRODUCT_TYPE" javaType="string"/>
+	<result property="PRODUCT_TYPE_CATEGORY_CODE" javaType="string"/>
+	<result property="GLOBAL_NLB" javaType="$"/>
+	<result property="CONFIDENCE_LEVEL" javaType="string" />
+	<result property="DECLARED_BDR" javaType="string"/>
+	<result property="DECLARED_DATE" javaType="date" />
+	<result property="DECLASS_PAYMENT_TYPE" javaType="string" />
+	<result property="REVISED_AMOUNT" javaType="$" />
+	<result property="PAYMENT_REASON" javaType="string" />
+	<result property="SOURCE_OF_CONTACT" javaType="string" />
+	<result property="OTHERS" javaType="string"/>
+	<result property="PERCENTAGE_90" javaType="$" />
+	<result property="PERCENTAGE_50" javaType="$" />
+	<result property="CONFIDENCE_NET_AMOUNT" javaType="$"/>
+	<result property="MTD_PAYMENT" javaType="$"/>
+	<result property="MTD_PAYMENT_GREATER_THAN_ZERO" javaType="boolean"/>
+	<result property="ACTUAL_DECLASS_PAYMENT" javaType="$"/>
+	<result property="MTD_PAYMENT_GREATER_OR_EQUAL_THAN_REVISED_AMOUNT" javaType="boolean"/>
+	<result property="IS_TREATMENT_EXIST" javaType="boolean"/>
+	</resultMap>
+			
+	<select id="getCamOutlookDetails" resultMap="getCamOutlookDetails">
+	SELECT 
+	out.ACCOUNT_TYPE as ACCOUNT_TYPE,
+	npl.description as NPL_STATUS,
+	0 as ZERO,
+	-1 as NEGATIVE_ONE,
+	coalesce(wla.OUTSTANDING_BALANCE,0) as OPENING_OS,
+	0 as ACTUAL_DECLASS_PAYMENT,
+	0 as NET_AMOUNT,
+	0 as OUTLOOK,
+	wla.NLB as OPENING_NLB,
+	ptc.CODE as PRODUCT_TYPE,
+	ptc.CODE,
+	0 as GLOBAL_NLB,
+	coalesce(cil.DESCRIPTION,cbdr.DESCRIPTION) as CONFIDENCE_LEVEL,
+	case when DECLARED_BDR_ID =1 then 'Yes' when out.DECLARED_BDR_ID=2 then 'No' else '' end as DECLARED_BDR,
+	out.DECLARED_DATE,
+	paymentType.DESCRIPTION AS DECLASS_PAYMENT_TYPE,
+	out.REVISED_AMOUNT as REVISED_AMOUNT,
+	reason.DESCRIPTION AS PAYMENT_REASON,
+	contact.DESCRIPTION AS SOURCE_OF_CONTACT,
+	out.OTHERS,
+	0.9 as PERCENTAGE_90,
+	0.5 as PERCENTAGE_50,
+	0 as CONFIDENCE_NET_AMOUNT,
+	mtd.MTD_PAYMENT as MTD_PAYMENT,
+	case when mtd.MTD_PAYMENT > 0 then 1 else 0 end as MTD_PAYMENT_GREATER_THAN_ZERO,
+	0 as ACTUAL_DECLASS_PAYMENT,
+	case when mtd.MTD_PAYMENT >= coalesce(out.REVISED_AMOUNT,0) then 1 else 0 end as MTD_PAYMENT_GREATER_OR_EQUAL_THAN_REVISED_AMOUNT,
+	case when out.ACCOUNT_ID is not null then 1 else 0 end as IS_TREATMENT_EXIST 
+	FROM PTRACCOUNT a
+    left join ptrnpl_status_ref npl on npl.id=a.npl_status_id
+    left join ptrproduct_type_ref pro on pro.id=a.product_type_id
+    left join ptrproduct_type_category_ref ptc on ptc.id=pro.category_id
+	left join PTRTREATMENT_OUTLOOK_SUMMARY out on out.ACCOUNT_ID=a.id and out.UPDATED_TIME between #START_OF_MONTH# and #END_OF_MONTH#
+	left join PTRPAYMENT_REASON_REF reason on  out.REASON_OF_PAYMENT_ID = reason.ID
+	left join PTROUTLOOK_CONTACT_SOURCE_REF contact on out.SOURCE_OF_CONTACT_ID = contact.ID
+	left join PTRDECLASS_TYPE_REF paymentType on out.DECLASS_PAYMENT_TYPE_ID = paymentType.ID
+	left join PTRCONFIDENCE_LEVEL_NPF_REF cil on out.CONFIDENCE_LEVEL_ID=cil.id and out.ACCOUNT_TYPE ='NPF'
+	left join PTRCONFIDENCE_LEVEL_BDR_REF cbdr on out.CONFIDENCE_LEVEL_ID=cbdr.id and out.ACCOUNT_TYPE='BDR'
+	left join PTRACCOUNT_WORK_LIST_ASSIGNMENT wla on wla.ACCOUNT_ID=a.ID and wla.WORK_LIST_ID is not null,
+    (values(0)) as mtd(MTD_PAYMENT)
+	where a.ID=#ACCOUNT_ID#	
+	</select>
+	
+	<resultMap class="hmap" id="getOutlookAmount">
+	<result property="OUTLOOK" javaType="$"/>
+	</resultMap>
+		
+	<select id="getOutlookAmount" resultMap="getOutlookAmount">
+	select round(CAST(#MTD_PAYMENT# as decimal(19,2)) + CAST(#CONFIDENCE_NET_AMOUNT# as decimal(19,3)),2) <include refid="fromdual"/>
+	</select>
+		
+</sqlMap>

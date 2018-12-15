@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec count="1" type="createlist"/>
+ <exec from="HIDE" to="_MODULE_1" type="copy"/>
+ <exec from="HIDE" to="_MODULE_2" type="copy"/>
+ <exec from="HIDE" to="_MODULE_3" type="copy"/>
+ <exec from="HIDE" to="_MODULE_4" type="copy"/>
+ <exec from="HIDE" to="_MODULE_5" type="copy"/>
+ <exec from="HIDE" to="_MODULE_6" type="copy"/>
+ <exec from="HIDE" to="_MODULE_7" type="copy"/>
+ <exec from="HIDE" to="_MODULE_8" type="copy"/>
+ <exec from="HIDE" to="_MODULE_9" type="copy"/>
+ <exec from="HIDE" to="_MODULE_10" type="copy"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Manage Roles&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 2&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_2_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 3&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_3_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 4&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_4_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 5&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_5_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 6&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_6_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 7&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_7_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 8&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_8_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 9&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_9_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 10&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_10_TITLE" type="formattext"/>
+ <exec from="0" type="authorized">
+  <exec from="SHOW" to="_MODULE_1" type="copy"/>
+ </exec>
+ <exec from="0" type="authorized">
+  <exec from="SHOW" to="_MODULE_2" type="copy"/>
+ </exec>
+ <exec from="0" type="authorized">
+  <exec from="SHOW" to="_MODULE_3" type="copy"/>
+ </exec>
+ <exec from="_MODULE_1" key="_MODULE_1" type="copyintolist"/>
+ <exec from="_MODULE_2" key="_MODULE_2" type="copyintolist"/>
+ <exec from="_MODULE_3" key="_MODULE_3" type="copyintolist"/>
+ <exec from="_MODULE_4" key="_MODULE_4" type="copyintolist"/>
+ <exec from="_MODULE_5" key="_MODULE_5" type="copyintolist"/>
+ <exec from="_MODULE_6" key="_MODULE_6" type="copyintolist"/>
+ <exec from="_MODULE_7" key="_MODULE_7" type="copyintolist"/>
+ <exec from="_MODULE_8" key="_MODULE_8" type="copyintolist"/>
+ <exec from="_MODULE_9" key="_MODULE_9" type="copyintolist"/>
+ <exec from="_MODULE_10" key="_MODULE_10" type="copyintolist"/>
+ <exec from="MODULE_1_TITLE" key="MODULE_1_TITLE" type="copyintolist"/>
+ <exec from="MODULE_2_TITLE" key="MODULE_2_TITLE" type="copyintolist"/>
+ <exec from="MODULE_3_TITLE" key="MODULE_3_TITLE" type="copyintolist"/>
+ <exec from="MODULE_4_TITLE" key="MODULE_4_TITLE" type="copyintolist"/>
+ <exec from="MODULE_5_TITLE" key="MODULE_5_TITLE" type="copyintolist"/>
+ <exec from="MODULE_6_TITLE" key="MODULE_6_TITLE" type="copyintolist"/>
+ <exec from="MODULE_7_TITLE" key="MODULE_7_TITLE" type="copyintolist"/>
+ <exec from="MODULE_8_TITLE" key="MODULE_8_TITLE" type="copyintolist"/>
+ <exec from="MODULE_9_TITLE" key="MODULE_9_TITLE" type="copyintolist"/>
+ <exec from="MODULE_10_TITLE" key="MODULE_10_TITLE" type="copyintolist"/>
+</event>

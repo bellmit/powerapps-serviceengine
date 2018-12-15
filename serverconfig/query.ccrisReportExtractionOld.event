@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EXTRACTION_TIME" truncate="false" type="date"/>
+ <exec argument="CCRIS_EXTRACTION_PATH" property="batchprocessservice.ccrisReportExtraction.path" type="serverproperty"/>
+ <exec statement="getExtractionEmptyContent" type="select"/>
+ <exec message="{0}" target="EMPTY_CONTENT" type="formattext">
+  <key value="EMPTY_CONTENT"/>
+ </exec>
+ <exec from="EMPTY_CONTENT" regex="null" replacement="" to="EMPTY_CONTENT" type="regexreplace"/>
+ <exec text="Comment - Render file based on piped delimited format" type="comment">
+  <exec argument="REPORT_LIST" index="RECORD_ID" type="loop">
+   <exec message="{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}" target="DELIMITED_CONTENT" type="formattext">
+    <key value="RECORD_ID"/>
+    <key value="CATEGORY"/>
+    <key value="CODE"/>
+    <key value="HOST_CCRIS_STATUS"/>
+    <key value="REMARKS_TAGGING_CCRIS"/>
+    <key value="DESCRIPTION"/>
+    <key value="PARENT_INSTRUCTION"/>
+    <key value="VISUAL_ACTION"/>
+    <key value="DISBURSEMENT"/>
+    <key value="REMARKS"/>
+    <key value="CREATED_BY"/>
+    <key value="CREATED_TIME"/>
+    <key value="UPDATED_BY"/>
+    <key value="UPDATED_TIME"/>
+    <key value="DISABLED"/>
+   </exec>
+   <exec from="DELIMITED_CONTENT" regex="null" replacement="" to="DELIMITED_CONTENT" type="regexreplace"/>
+  </exec>
+ </exec>
+ <exec from="REPORT_LIST" key="DELIMITED_CONTENT" to="CONTENT" type="extract"/>
+ <exec message="mbsbCCRIS_Report_{0}_{1,date,yyyyMMdd}" target="FILE_NAME" type="formattext">
+  <key value="CONTEXT"/>
+  <key value="EXTRACTION_TIME"/>
+ </exec>
+ <exec fileextension=".txt" filenameprefix="FILE_NAME" from="CONTENT" path="CCRIS_EXTRACTION_PATH" type="textfilewriter"/>
+ <exec fileextension=".control" filenameprefix="FILE_NAME" from="EMPTY_CONTENT" path="CCRIS_EXTRACTION_PATH" type="textfilewriter"/>
+</event>

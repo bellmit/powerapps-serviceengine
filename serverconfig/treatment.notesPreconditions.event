@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="NOTE_TEXT" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec code="TREATMENT_SAVE_MISSING_PARAMETER" type="error"/>
+ </exec>
+</event>

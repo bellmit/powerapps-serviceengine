@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" truncate="true" type="date"/>
+ <exec adddays="NEGATIVE_ONE" ceiling="false" endmonth="false" from="CURRENT_DATE" nextweekday="false" startmonth="false" to="YESTERDAY" truncate="true" type="date"/>
+ <exec addmonths="NEGATIVE_ONE" ceiling="false" endmonth="false" from="START_OF_MONTH" nextweekday="false" startmonth="false" to="START_OF_LAST_MONTH" truncate="true" type="date"/>
+ <exec ceiling="true" endmonth="true" from="START_OF_LAST_MONTH" nextweekday="false" startmonth="false" to="END_OF_LAST_MONTH" truncate="false" type="date"/>
+ <exec addmonths="NEGATIVE_ONE" ceiling="false" endmonth="false" from="START_OF_LAST_MONTH" nextweekday="false" startmonth="false" to="START_OF_LAST_TWO_MONTH" truncate="true" type="date"/>
+ <exec ceiling="true" endmonth="true" from="START_OF_LAST_TWO_MONTH" nextweekday="false" startmonth="false" to="END_OF_LAST_TWO_MONTH" truncate="false" type="date"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY" operator="=" rhsvalue="RECEIVABLE_SUMMARY"/>
+  </conditions>
+  <exec event="kpi.receivablesSummary" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY" operator="=" rhsvalue="RECEIVABLE_DETAILS"/>
+  </conditions>
+  <exec event="kpi.ecaReceivablesDetail" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY" operator="=" rhsvalue="PAYMENT_SUMMARY"/>
+  </conditions>
+  <exec event="kpi.ecaPaymentSummary" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY" operator="=" rhsvalue="PAYMENT_REPORTS"/>
+  </conditions>
+  <exec type="parallelquery">
+   <query value="getAgencyMtdPaymentsReport"/>
+   <query value="getAgencyPmePaymentsReport"/>
+   <target value="PAYMENT_REPORTS_MTD"/>
+   <target value="PAYMENT_REPORTS_PME"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CATEGORY" operator="=" rhsvalue="_ATTEMPTS"/>
+  </conditions>
+  <exec event="kpi.attempts" ignoreresult="true" type="raise"/>
+ </exec>
+ <exec from="ACCOUNT_LIST_DAILY" key="ACCOUNT_LIST_DAILY" type="copyintolist"/>
+ <exec from="ACCOUNT_LIST_MONTH" key="ACCOUNT_LIST_MONTH" type="copyintolist"/>
+ <exec from="ACCOUNT_LIST_PMTD" key="ACCOUNT_LIST_PMTD" type="copyintolist"/>
+ <exec from="ACCOUNT_LIST_PME" key="ACCOUNT_LIST_PME" type="copyintolist"/>
+ <exec from="DAILY_RECEIVABLE_DETAILS" key="DAILY_RECEIVABLE_DETAILS" type="copyintolist"/>
+ <exec from="MTD_RECEIVABLE_DETAILS" key="MTD_RECEIVABLE_DETAILS" type="copyintolist"/>
+ <exec from="PMTD_RECEIVABLE_DETAILS" key="PMTD_RECEIVABLE_DETAILS" type="copyintolist"/>
+ <exec from="PME_RECEIVABLE_DETAILS" key="PME_RECEIVABLE_DETAILS" type="copyintolist"/>
+ <exec from="MTD_PAYMENT_SUMMARY" key="MTD_PAYMENT_SUMMARY" type="copyintolist"/>
+ <exec from="PME_PAYMENT_SUMMARY" key="PME_PAYMENT_SUMMARY" type="copyintolist"/>
+ <exec from="PAYMENT_REPORTS_MTD" key="PAYMENT_REPORTS_MTD" type="copyintolist"/>
+ <exec from="PAYMENT_REPORTS_PME" key="PAYMENT_REPORTS_PME" type="copyintolist"/>
+ <exec from="ACCOUNT_ATTEMPTS_SUMMARY" key="ACCOUNT_ATTEMPTS_SUMMARY" type="copyintolist"/>
+ <exec from="ACCOUNT_PTP_ATTEMPTS" key="ACCOUNT_PTP_ATTEMPTS" type="copyintolist"/>
+ <exec from="ACCOUNT_ATTEMPTS_DETAILS" key="ACCOUNT_ATTEMPTS_DETAILS" type="copyintolist"/>
+</event>

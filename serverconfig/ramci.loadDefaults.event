@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="loop">
+  <exec argument="TYPE_LIST" query="getRamciType" type="query"/>
+  <exec message="SHOW" target="SHOW" type="formattext"/>
+  <exec message="HIDE" target="HIDE" type="formattext"/>
+  <exec from="HIDE" key="CONTACT_NUMBER" to="TYPE_LIST" type="copyintolist"/>
+  <exec from="HIDE" key="ADDRESS" to="TYPE_LIST" type="copyintolist"/>
+  <exec from="SHOW" key="SHOW" to="TYPE_LIST" type="copyintolist"/>
+  <exec from="HIDE" key="HIDE" to="TYPE_LIST" type="copyintolist"/>
+  <exec argument="TYPE_LIST" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+    </conditions>
+    <exec from="SHOW" to="CONTACT_NUMBER" type="copy"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+    </conditions>
+    <exec from="SHOW" to="ADDRESS" type="copy"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

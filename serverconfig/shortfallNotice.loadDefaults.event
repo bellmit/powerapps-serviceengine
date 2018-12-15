@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROCESS_TYPE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+  <exec type="parallelquery">
+   <query value="getDefaultTreatmentStatusType"/>
+   <query value="getDefaultTreatmentSubType"/>
+   <query value="getTreatmentTemplate"/>
+   <target value="TYPE_STATUS_LIST"/>
+   <target value="SUBTYPE_LIST"/>
+   <target value="TEMPLATE_LIST"/>
+  </exec>
+  <exec statement="getShortfallValidationSetup" type="select"/>
+  <exec statement="getShortfallDayValidationSetup" type="select"/>
+  <exec statement="getSaleProceeedAmount" type="select"/>
+  <exec statement="getShortfallTlastIndicator" type="select"/>
+  <exec statement="getShortfallTlastIndicatorNotShorfall" type="select"/>
+  <exec statement="getShortfallAccountIndicator" type="select"/>
+  <exec from="CURRENT_DATE" key="PRINTING_DATE" type="copyintolist"/>
+  <exec from="TYPE_STATUS_LIST" key="TYPE_STATUS_LIST" type="copyintolist"/>
+  <exec from="SUBTYPE_LIST" key="SUBTYPE_LIST" type="copyintolist"/>
+  <exec from="TEMPLATE_LIST" key="TEMPLATE_LIST" type="copyintolist"/>
+  <exec from="SHORTFALL_DAY" key="SHORTFALL_DAY" type="copyintolist"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_1" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_1" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_1" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_3" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_3" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_3" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_4" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_4" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_4" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_10" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_10" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_10" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_12" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_12" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_12" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_16" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_16" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_16" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_17" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_17" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_17" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_18" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_18" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_18" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_19" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_19" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_19" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_51" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_51" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_51" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_58" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_58" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_58" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_59" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_59" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_59" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_60" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_60" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_60" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TLAST_66" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_TLAST_66" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_TLAST_66" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="LAST_PAYMENT_DATE_IS_GREATER" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_LAST_PAYMENT_DATE_IS_GREATER" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_PAYMENT_IS_GREATER" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DAYS_IS_LOWER" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_DAYS_IS_LOWER" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_DAYS_IS_LOWER" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="OS_BALANCE_IS_LOWER" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_OS_BALANCE_IS_LOWER" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_OS_BALANCE_IS_LOWER" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="HOLD_MAIL_IS_Y" operator="=" rhsvalue="true"/>
+   <condition lhsfield="DISABLE_HOLD_MAIL_IS_Y" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_HOLD_MAIL_IS_Y" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SALES_PROCEED_AMOUNT" operator="is empty" rhsvalue=""/>
+   <condition lhsfield="DISABLE_SALES_PROCEED_AMOUNT" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="VALIDATE_SALES_PROCEED_AMOUNT" type="copy"/>
+ </exec>
+ <exec from="VALIDATE_TLAST_1" key="VALIDATE_TLAST_1" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_3" key="VALIDATE_TLAST_3" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_4" key="VALIDATE_TLAST_4" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_10" key="VALIDATE_TLAST_10" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_12" key="VALIDATE_TLAST_12" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_16" key="VALIDATE_TLAST_16" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_17" key="VALIDATE_TLAST_17" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_18" key="VALIDATE_TLAST_18" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_19" key="VALIDATE_TLAST_19" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_51" key="VALIDATE_TLAST_51" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_58" key="VALIDATE_TLAST_58" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_59" key="VALIDATE_TLAST_59" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_60" key="VALIDATE_TLAST_60" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_TLAST_66" key="VALIDATE_TLAST_66" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_PAYMENT_IS_GREATER" key="VALIDATE_PAYMENT_IS_GREATER" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_DAYS_IS_LOWER" key="VALIDATE_DAYS_IS_LOWER" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_OS_BALANCE_IS_LOWER" key="VALIDATE_OS_BALANCE_IS_LOWER" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_HOLD_MAIL_IS_Y" key="VALIDATE_HOLD_MAIL_IS_Y" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="VALIDATE_SALES_PROCEED_AMOUNT" key="VALIDATE_SALES_PROCEED_AMOUNT" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="SALE_PROCEED_AMOUNT" key="SALE_PROCEED_AMOUNT" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="DATE_SOLD" key="DATE_SOLD" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="SHORTFALL_DAY" key="SHORTFALL_DAY" to="DEFAULT_LIST" type="copyintolist"/>
+ <exec from="PAYOFF_AMOUNTx" key="PAYOFF_AMOUNT" to="DEFAULT_LIST" type="copyintolist"/>
+</event>

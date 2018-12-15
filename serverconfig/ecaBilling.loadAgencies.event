@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="AGENCY_TYPE" to="CODE" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="AGENCY_TYPE" operator="&lt;&gt;" rhsvalue="ADHOC"/>
+  </conditions>
+  <exec argument="AGENCIES" query="getAgencyByCode" type="query"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="AGENCY_TYPE" operator="=" rhsvalue="ADHOC"/>
+  </conditions>
+  <exec argument="AGENCIES" query="getAdhocAgencies" type="query"/>
+ </exec>
+ <exec from="AGENCIES" key="AGENCIES" type="copyintolist"/>
+</event>

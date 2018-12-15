@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getLegalFirmForAssignment"/>
+  <query value="getAbortReasonForMonitoring"/>
+  <query value="getStatusForAbort"/>
+  <query value="getKivReasonForMonitoring"/>
+  <target value="AGENCIES"/>
+  <target value="ABORT_REASONS"/>
+  <target value="STATUSES"/>
+  <target value="KIV_REASONS"/>
+ </exec>
+ <exec from="ABORT_REASONS" key="ABORT_REASONS" type="copyintolist"/>
+ <exec from="KIV_REASONS" key="KIV_REASONS" type="copyintolist"/>
+ <exec from="STATUSES" key="STATUSES" type="copyintolist"/>
+ <exec from="SELECTED_ACCOUNTS" key="ACCOUNT_LIST" type="copyintolist"/>
+</event>

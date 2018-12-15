@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec text="Paid Accounts" type="comment">
+  <exec argument="UPL_PAID_ACCOUNT_LIST" query="getPaidAccountsForWorkListqueryresult" type="query"/>
+ </exec>
+ <exec text="R &amp; R Paid Accounts" type="comment">
+  <exec argument="RNR_PAID_LIST" query="getPaidRnrAccount" type="query"/>
+ </exec>
+ <exec text="Paid Off Accounts" type="comment">
+  <exec argument="PAID_OFF_ACCOUNT" query="getPaidOffAccountsForWorkListqueryresult" type="query"/>
+ </exec>
+ <exec from="PAID_OFF_ACCOUNT" to="UPL_PAID_ACCOUNT_LIST" type="append"/>
+ <exec from="RNR_PAID_LIST" to="UPL_PAID_ACCOUNT_LIST" type="append"/>
+ <exec from="UPL_PAID_ACCOUNT_LIST" key="ACCOUNT_ID" to="PAID_ACCOUNT_ID_LIST" type="extract"/>
+ <exec argument="PAID_ACCOUNT_LIST" query="getFinalPaidAccountlistForWorkList" type="query"/>
+</event>

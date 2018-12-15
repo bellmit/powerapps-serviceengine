@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec message="PromiseEvaluation" target="PROCESS_NAME" type="formattext"/>
+ <exec to="USER_ID" type="user"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="false" type="date"/>
+ </exec>
+ <exec argument="GRACE_PERIOD" property="batchprocessservice.promiseEvaluation.grace" type="serverproperty"/>
+ <exec statement="getTrueAndFalse" type="select"/>
+ <exec argument="IN_PROGRESS_LIST" query="getInprogressTreatmentPTP" type="query"/>
+ <exec from="EFFECTIVE_DATE" key="UPDATED_TIME" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec from="EFFECTIVE_DATE" key="END_DATE" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec from="USER_ID" key="UPDATED_USER_ID" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec from="FALSE" key="FALSE" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec statement="getPromiseEvaluationSuccessfulStatuses" type="select"/>
+ <exec statement="getPromiseEvaluationUnsuccessfulStatuses" type="select"/>
+ <exec from="SUCCESSFUL_TYPE_STATUS_ID" key="SUCCESSFUL_TYPE_STATUS_ID" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec from="SUCCESSFUL_STATUS_ID" key="SUCCESSFUL_STATUS_ID" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec from="UNSUCCESSFUL_TYPE_STATUS_ID" key="UNSUCCESSFUL_TYPE_STATUS_ID" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec from="UNSUCCESSFUL_STATUS_ID" key="UNSUCCESSFUL_STATUS_ID" to="IN_PROGRESS_LIST" type="copyintolist"/>
+ <exec argument="IN_PROGRESS_LIST" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="BROKEN_PROMISE" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec from="FALSE" to="IS_KEPT" type="copy"/>
+   <exec from="EFFECTIVE_DATE" to="LAST_BROKEN_PROMISE_DATE" type="copy"/>
+   <exec from="UNSUCCESSFUL_TYPE_STATUS_ID" to="TYPE_STATUS_ID" type="copy"/>
+   <exec from="UNSUCCESSFUL_STATUS_ID" to="STATUS_ID" type="copy"/>
+   <exec event="treatment.save" ignoreresult="true" type="raise"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="BROKEN_PROMISE" operator="=" rhsvalue="false"/>
+   </conditions>
+   <exec from="TRUE" to="IS_KEPT" type="copy"/>
+   <exec from="SUCCESSFUL_TYPE_STATUS_ID" to="TYPE_STATUS_ID" type="copy"/>
+   <exec from="SUCCESSFUL_STATUS_ID" to="STATUS_ID" type="copy"/>
+   <exec event="treatment.save" ignoreresult="true" type="raise"/>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="AGENCIES" query="getAuctionSetupAgencies" type="query"/>
+ <exec from="TRUE" key="LOAD_DATES" to="AGENCIES" type="copyintolist"/>
+ <exec from="AGENCIES" key="AGENCIES" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+ </exec>
+</event>

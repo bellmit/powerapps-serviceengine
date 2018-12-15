@@ -1,0 +1,43 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="customerLock">
+<resultMap id="getCustomerIdForLock" class="hmap">
+ <result property="CUSTOMER_ID" javaType="string"/>
+ <result property="LOCK_EXPIRATION_TIME" javaType="date"/>
+ <result property="LOCK_SINCE_TIME" javaType="ts"/>
+</resultMap>
+<select id="getCustomerIdForLock" resultMap="getCustomerIdForLock">
+ select ID, d.LOCK_EXPIRATION_TIME + (CAST(#CUSTOMER_LOCK# as SMALLINT) || 'minutes')::interval,
+ d.LOCK_EXPIRATION_TIME
+ from PTRCUSTOMER,
+ (VALUES( CAST(#TODAY_DATE:TIMESTAMP# as TIMESTAMP) )) AS d(LOCK_EXPIRATION_TIME)
+ where ID = CAST(#CUSTOMER_ID# as BIGINT)
+</select>
+ <resultMap id="getCustomerLock" class="hmap">
+  <result property="CURRENT_LOCK_USER_ID" javaType="string"/>
+  <result property="CURRENT_LOCK_USER_FIRST_NAME" javaType="string"/>
+  <result property="CURRENT_LOCK_SINCE_TIME" javaType="date"/>
+  <result property="CURRENT_LOCK_EXPIRATION_TIME" javaType="date"/>
+ </resultMap>
+ <select id="getCustomerLock" resultMap="getCustomerLock" parameterClass="map">
+  select c.USER_ID, e.FIRST_NAME, c.LOCK_SINCE_TIME, c.LOCK_EXPIRATION_TIME from ptrcustomer_lock c
+  inner join PTRUSER us on us.USER_ID=c.USER_ID
+  inner join PTREMPLOYEE e on e.id=us.EMPLOYEE_ID
+  where not c.USER_ID = CAST(#USER_ID# AS VARCHAR(25)) and LOCK_EXPIRATION_TIME > CAST(#TODAY_DATE:TIMESTAMP# as TIMESTAMP) and CUSTOMER_ID = CAST(#CUSTOMER_ID# as VARCHAR(20))
+ </select>
+ 
+ <insert id="insertCustomerLock" parameterClass="map">
+  insert into ptrcustomer_lock (USER_ID, LOCK_EXPIRATION_TIME, LOCK_SINCE_TIME, CUSTOMER_ID)
+  values
+  (#USER_ID#, #LOCK_EXPIRATION_TIME#, #LOCK_SINCE_TIME#, #CUSTOMER_ID#)
+ </insert>
+ 
+ <update id="updateCustomerLock" parameterClass="map">
+  update ptrcustomer_lock 
+  set USER_ID = #USER_ID#, LOCK_EXPIRATION_TIME = #LOCK_EXPIRATION_TIME#, LOCK_SINCE_TIME=#LOCK_SINCE_TIME#
+  where CUSTOMER_ID = #CUSTOMER_ID#
+ </update>
+ <delete id="removeCustomerLock" parameterClass="map">
+  delete from ptrcustomer_lock where USER_ID = #USER_ID#
+ </delete>
+ 
+</sqlMap>

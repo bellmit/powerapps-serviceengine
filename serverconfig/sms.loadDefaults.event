@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PROCESS_TYPE_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec type="parallelquery">
+   <query value="getDefaultTreatmentStatusType"/>
+   <query value="getDefaultTreatmentSubType"/>
+   <query value="getTreatmentTemplate"/>
+   <query value="getTreatmentSmsContactNumbers"/>
+   <query value="getContactRelationshipTypeRef"/>
+   <target value="TYPE_STATUS_LIST"/>
+   <target value="SUBTYPE_LIST"/>
+   <target value="TEMPLATE_LIST"/>
+   <target value="CONTACT_LIST"/>
+   <target value="RELATIONSHIP_TYPE_LIST"/>
+  </exec>
+  <exec from="TYPE_STATUS_LIST" key="TYPE_STATUS_LIST" type="copyintolist"/>
+  <exec from="SUBTYPE_LIST" key="SUBTYPE_LIST" type="copyintolist"/>
+  <exec from="TEMPLATE_LIST" key="TEMPLATE_LIST" type="copyintolist"/>
+  <exec from="CONTACT_LIST" key="CONTACT_LIST" type="copyintolist"/>
+  <exec from="RELATIONSHIP_TYPE_LIST" key="RELATIONSHIP_TYPE_LIST" type="copyintolist"/>
+ </exec>
+</event>

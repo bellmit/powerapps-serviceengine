@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="nullify">
+  <key value="ASSIGNED_ACCESS_RIGHTS"/>
+ </exec>
+ <exec from="TRUE" key="TRUE" to="AVAILABLE_ACCESS_RIGHTS" type="copyintolist"/>
+ <exec from="FALSE" key="ENABLE_ADD" to="AVAILABLE_ACCESS_RIGHTS" type="copyintolist"/>
+ <exec argument="AVAILABLE_ACCESS_RIGHTS" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PARENT_ACCESS_RIGHTS_ID" operator="is empty" rhsvalue=""/>
+   </conditions>
+   <exec from="TRUE" to="ENABLE_ADD" type="copy"/>
+  </exec>
+ </exec>
+ <exec from="ASSIGNED_ACCESS_RIGHTS" key="ASSIGNED_ACCESS_RIGHTS" type="copyintolist"/>
+ <exec from="AVAILABLE_ACCESS_RIGHTS" key="AVAILABLE_ACCESS_RIGHTS" type="copyintolist"/>
+</event>

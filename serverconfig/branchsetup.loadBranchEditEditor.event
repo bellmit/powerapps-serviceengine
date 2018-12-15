@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getAgencyStatesForEditing"/>
+  <target value="STATES"/>
+ </exec>
+ <exec statement="getBranch" type="select"/>
+ <exec from="CODE" key="CODE" type="copyintolist"/>
+ <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+ <exec from="IS_COLLECTION" key="IS_COLLECTION" type="copyintolist"/>
+ <exec from="BRANCH_TYPE" key="BRANCH_TYPE" type="copyintolist"/>
+ <exec from="HEAD_OF_UNIT" key="HEAD_OF_UNIT" type="copyintolist"/>
+ <exec from="STATE_ID" key="STATE_ID" type="copyintolist"/>
+ <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+ <exec from="STATES" key="STATES" type="copyintolist"/>
+</event>

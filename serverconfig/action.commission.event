@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec content="TERM_DOCUMENT" documentid="DOCUMENT_ID" documenttype="9" type="fetchdecisiontree"/>
+  <exec document="DOCUMENT_ID" key="COMMISSION_AMOUNT" type="executedecisiontree"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="COMMISSION_AMOUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    <condition lhsfield="COMMISSION_AMOUNT" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec lhs="COMMISSION_AMOUNT" rhs="SST_PERCENT" target="SST_AMOUNT" type="multiply"/>
+   <exec recordcount="" statement="setLegalCommission" type="update"/>
+  </exec>
+ </exec>
+</event>

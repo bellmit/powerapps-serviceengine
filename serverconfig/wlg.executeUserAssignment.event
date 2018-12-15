@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="true" type="date"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="1"/>
+  </conditions>
+  <exec type="transaction">
+   <exec statement="deleteUserWorklistOnMainGeneration" type="delete"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="9"/>
+  </conditions>
+  <exec type="transaction">
+   <exec statement="deleteUserWorklistOnAppendixAReassignment" type="delete"/>
+  </exec>
+ </exec>
+ <exec argument="USER_ASSIGNMENT_LIST" query="getUsersForWorkListAssignment" type="query"/>
+ <exec list="USER_ASSIGNMENT_LIST" to="USER_ASSIGNMENT_LIST" type="unique"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec from="EFFECTIVE_DATE" key="EFFECTIVE_DATE" to="USER_ASSIGNMENT_LIST" type="copyintolist"/>
+ <exec from="LOGON_USER" key="LOGON_USER" to="USER_ASSIGNMENT_LIST" type="copyintolist"/>
+ <exec argument="USER_ASSIGNMENT_LIST" type="loop">
+  <exec type="transaction">
+   <exec statement="insertUserWorkListAssignmentOnExecute" type="insert"/>
+  </exec>
+ </exec>
+ <exec type="transaction">
+  <exec statement="deleteTodayAssignHistory" type="delete"/>
+  <exec statement="insertTodayUserAssignmentHistory" type="insert"/>
+ </exec>
+</event>

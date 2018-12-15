@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PARTY_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec from="PARTY_ID" key="PARTY_ID" type="copyintolist"/>
+  <exec type="loop">
+   <exec statement="getPartiesDetail" type="select"/>
+   <exec type="parallelquery">
+    <query value="getPartiesSecondaryIc"/>
+    <query value="getPartiesEmploymentDetails"/>
+    <query value="getPartiesContactDetails"/>
+    <target value="SECONDARY_IDENTIFICATION"/>
+    <target value="EMPLOYMENT_DETAILS"/>
+    <target value="CONTACT_DETAILS_TBL"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

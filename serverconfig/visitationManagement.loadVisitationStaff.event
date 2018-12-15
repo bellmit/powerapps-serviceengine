@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="USER_ID" type="user"/>
+ <exec from="STATE_ID" key="STATE_ID" type="copyintolist"/>
+ <exec from="AREA_ID" key="AREA_ID" type="copyintolist"/>
+ <exec from="USER_ID" key="USER_ID" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec type="loop">
+  <exec argument="VISITATION_STAFF" query="getVmsVisitationStaff" type="query"/>
+ </exec>
+</event>

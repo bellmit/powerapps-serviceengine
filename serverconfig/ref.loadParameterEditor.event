@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getParameterForEditing" type="select"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec from="HIDE" to="_STANDARD_EDITOR" type="copy"/>
+ <exec from="HIDE" to="_CUSTOM_EDITOR" type="copy"/>
+ <exec from="HIDE" to="_DEFAULT" type="copy"/>
+ <exec from="HIDE" to="_TREATMENT_TYPE_STATUS" type="copy"/>
+ <exec from="HIDE" to="_STATE" type="copy"/>
+ <exec from="HIDE" to="_CITY" type="copy"/>
+ <exec from="HIDE" to="_ACCOUNT_CLASSIFICATION_SUBTYPE" type="copy"/>
+ <exec from="HIDE" to="_FACILITY_TYPE" type="copy"/>
+ <exec from="HIDE" to="_SHORTFALL" type="copy"/>
+ <exec from="HIDE" to="_MANAGEMENT_APPROVAL_ACTION_TYPE" type="copy"/>
+ <exec from="HIDE" to="_DECISION_TREE_CONDITION" type="copy"/>
+ <exec from="HIDE" to="_SPTF" type="copy"/>
+ <exec from="HIDE" to="_ABORT_REASON" type="copy"/>
+ <exec from="HIDE" to="_WITHHOLD_REASON" type="copy"/>
+ <exec from="HIDE" to="_ABORT_PERIOD" type="copy"/>
+ <exec from="HIDE" to="_DISCONTINUED_ABORT_REASON" type="copy"/>
+ <exec from="HIDE" to="_DISCONTINUED_ABORT_STATUS" type="copy"/>
+ <exec from="HIDE" to="_POSTPONEMENT_REASON" type="copy"/>
+ <exec from="HIDE" to="_POSTPONEMENT_STATUS" type="copy"/>
+ <exec from="HIDE" to="_LEGAL_ACTION_AUCTION_STATUS" type="copy"/>
+ <exec from="HIDE" to="_LEGAL_ACTION_UNSUCCESSFUL_REASONS" type="copy"/>
+ <exec from="HIDE" to="_ESCALATION_TYPE" type="copy"/>
+ <exec from="HIDE" to="_TREATMENT_SUBTYPE" type="copy"/>
+ <exec from="HIDE" to="_REASON_OF_DEFAULT" type="copy"/>
+ <exec from="HIDE" to="_LEGAL_BILLING_TAT" type="copy"/>
+ <exec from="HIDE" to="_LEGAL_EXCLUSION_REASON" type="copy"/>
+ <exec from="HIDE" to="_VISITATION_AREA" type="copy"/>
+ <exec from="HIDE" to="_MBSB_PROFILE" type="copy"/>
+ <exec from="HIDE" to="_LEGAL_CONTRACT_TAG" type="copy"/>
+ <exec from="HIDE" to="_TRANSACTION_TYPE" type="copy"/>
+ <exec from="HIDE" to="_REASON_OF_CALL" type="copy"/>
+ <exec from="HIDE" to="_PRINTER_SETTINGS" type="copy"/>
+ <exec from="HIDE" to="_BANK_BRANCH" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_STANDARD" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_STANDARD_EDITOR" type="copy"/>
+  <exec from="TRUE" key="LOAD_STANDARD_EDITOR" type="copyintolist"/>
+  <exec argument="REFERENCE" query="getStandardTableContent" type="query"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_STANDARD" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_CUSTOM_EDITOR" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTREATMENT_TYPE_STATUS_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getTreatmentTypeStatusContent"/>
+    <query value="getTreatmentStatusRef"/>
+    <query value="getTreatmentTypeRef"/>
+    <query value="getCallSubtypeRef"/>
+    <target value="REFERENCE"/>
+    <target value="STATUSES"/>
+    <target value="TYPES"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="STATUSES" type="loop">
+    <exec from="ID" to="STATUS_ID" type="copy"/>
+   </exec>
+   <exec argument="TYPES" type="loop">
+    <exec from="ID" to="TYPE_ID" type="copy"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="TYPES" key="TYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="STATUSES" key="STATUSES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="TREATMENT_TYPE_STATUS" type="copyintolist"/>
+   <exec from="SHOW" to="_TREATMENT_TYPE_STATUS" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRSTATE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getStateContent"/>
+    <query value="getCountryRef"/>
+    <query value="getRegionRef"/>
+    <target value="REFERENCE"/>
+    <target value="COUNTRIES"/>
+    <target value="REGIONS"/>
+   </exec>
+   <exec argument="COUNTRIES" type="loop">
+    <exec from="ID" to="COUNTRY_ID" type="copy"/>
+   </exec>
+   <exec argument="REGIONS" type="loop">
+    <exec from="ID" to="REGION_ID" type="copy"/>
+   </exec>
+   <exec from="COUNTRIES" key="COUNTRIES" to="REFERENCE" type="copyintolist"/>
+   <exec from="REGIONS" key="REGIONS" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="STATE" type="copyintolist"/>
+   <exec from="SHOW" to="_STATE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTREATMENT_ACCOUNT_CLASSIFICATION_TYPE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getAccountClassificationSubtypeContent"/>
+    <query value="getAccountClassificationSubtypeRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="ACCOUNT_CLASSIFICATION_SUBTYPE" type="copyintolist"/>
+   <exec from="SHOW" to="_ACCOUNT_CLASSIFICATION_SUBTYPE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRFACILITY_CODE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getFacilityTypeContent"/>
+    <query value="getFacilityGroupRef"/>
+    <target value="REFERENCE"/>
+    <target value="GROUPS"/>
+   </exec>
+   <exec argument="GROUPS" type="loop">
+    <exec from="ID" to="GROUP_ID" type="copy"/>
+   </exec>
+   <exec from="GROUPS" key="GROUPS" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="FACILITY_TYPE" type="copyintolist"/>
+   <exec from="SHOW" to="_FACILITY_TYPE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTREMPLOYER_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getEmployerContent"/>
+    <query value="getEmployerGroupRef"/>
+    <target value="REFERENCE"/>
+    <target value="GROUPS"/>
+   </exec>
+   <exec argument="GROUPS" type="loop">
+    <exec from="ID" to="GROUP_ID" type="copy"/>
+   </exec>
+   <exec from="GROUPS" key="GROUPS" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="EMPLOYER" type="copyintolist"/>
+   <exec from="SHOW" to="_EMPLOYER" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPRODUCT_TYPE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getProductTypeContent"/>
+    <query value="getProductGroupRef"/>
+    <target value="REFERENCE"/>
+    <target value="CATEGORIES"/>
+   </exec>
+   <exec argument="CATEGORIES" type="loop">
+    <exec from="ID" to="CATEGORY_ID" type="copy"/>
+   </exec>
+   <exec from="CATEGORIES" key="CATEGORIES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="PRODUCT_TYPE" type="copyintolist"/>
+   <exec from="SHOW" to="_PRODUCT_TYPE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRBANK_BRANCH_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getBankBranchContent"/>
+    <query value="getBankRef"/>
+    <query value="getRegionRef"/>
+    <target value="REFERENCE"/>
+    <target value="BANKS"/>
+    <target value="REGIONS"/>
+   </exec>
+   <exec argument="BANKS" type="loop">
+    <exec from="ID" to="BANK_ID" type="copy"/>
+   </exec>
+   <exec argument="REGIONS" type="loop">
+    <exec from="ID" to="REGION_ID" type="copy"/>
+   </exec>
+   <exec from="REGIONS" key="REGIONS" to="REFERENCE" type="copyintolist"/>
+   <exec from="BANKS" key="BANKS" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="BANK_BRANCH" type="copyintolist"/>
+   <exec from="SHOW" to="_BANK_BRANCH" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRCITY_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getCityContent"/>
+    <query value="getStateRef"/>
+    <target value="REFERENCE"/>
+    <target value="STATES"/>
+   </exec>
+   <exec argument="COUNTRIES" type="loop">
+    <exec from="ID" to="COUNTRY_ID" type="copy"/>
+   </exec>
+   <exec argument="REGIONS" type="loop">
+    <exec from="ID" to="REGION_ID" type="copy"/>
+   </exec>
+   <exec from="STATES" key="STATES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="CITY" type="copyintolist"/>
+   <exec from="SHOW" to="_CITY" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRSHORTFALL_VALIDATION_SETUP_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getShortfallValidationContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="SHORTFALL" type="copyintolist"/>
+   <exec from="SHOW" to="_SHORTFALL" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRMANAGEMENT_APPROVAL_ACTION_TYPE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getManagementApprovalActionTypeContent"/>
+    <query value="getManagementApprovalSubtypeRef"/>
+    <target value="REFERENCE"/>
+    <target value="ACTION_TYPES"/>
+   </exec>
+   <exec argument="ACTION_TYPES" type="loop">
+    <exec from="ID" to="ACTION_TYPE_ID" type="copy"/>
+   </exec>
+   <exec from="ACTION_TYPES" key="ACTION_TYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="MANAGEMENT_APPROVAL_ACTION_TYPE" type="copyintolist"/>
+   <exec from="SHOW" to="_MANAGEMENT_APPROVAL_ACTION_TYPE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRDECISION_TREE_CONDITION_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getDecisionTreeConditionContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="DECISION_TREE_CONDITION" type="copyintolist"/>
+   <exec from="SHOW" to="_DECISION_TREE_CONDITION" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRSPTF_TYPE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getSptfTypeContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="SPTF" type="copyintolist"/>
+   <exec from="SHOW" to="_SPTF" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_ABORT_REASON_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getLegalAbortReasonContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="ABORT_REASON" type="copyintolist"/>
+   <exec from="SHOW" to="_ABORT_REASON" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRESCALATION_TYPE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getEscalationTypeContent"/>
+    <query value="getEmployeePositionRef"/>
+    <query value="getEscalationTypeRef"/>
+    <target value="REFERENCE"/>
+    <target value="POSITIONS"/>
+    <target value="ESCALATION_TYPES"/>
+   </exec>
+   <exec argument="ESCALATION_TYPES" type="loop">
+    <exec from="ID" to="ESCALATION_TYPE_ID" type="copy"/>
+   </exec>
+   <exec argument="POSITIONS" type="loop">
+    <exec from="ID" to="POSITION_ID" type="copy"/>
+   </exec>
+   <exec from="ESCALATION_TYPES" key="ESCALATION_TYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="POSITIONS" key="POSITIONS" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="ESCALATION_TYPE" type="copyintolist"/>
+   <exec from="SHOW" to="_ESCALATION_TYPE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTREATMENT_SUBTYPE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getTreatmentSubtypeContent"/>
+    <query value="getTreatmentTypeRef"/>
+    <target value="REFERENCE"/>
+    <target value="TYPES"/>
+   </exec>
+   <exec argument="TYPES" type="loop">
+    <exec from="ID" to="TYPE_ID" type="copy"/>
+   </exec>
+   <exec from="TYPES" key="TYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="TREATMENT_SUBTYPE" type="copyintolist"/>
+   <exec from="SHOW" to="_TREATMENT_SUBTYPE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRREASON_OF_DEFAULT_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getReasonOfDefaultContent"/>
+    <query value="getTreatmentCallTypeStatusRef"/>
+    <target value="REFERENCE"/>
+    <target value="TYPE_STATUSES"/>
+   </exec>
+   <exec argument="TYPE_STATUSES" type="loop">
+    <exec from="ID" to="TYPE_STATUS_ID" type="copy"/>
+   </exec>
+   <exec from="TYPE_STATUSES" key="TYPE_STATUSES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="REASON_OF_DEFAULT" type="copyintolist"/>
+   <exec from="SHOW" to="_REASON_OF_DEFAULT" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRASSIGNMENT_ABORT_PERIOD_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getAssignmentAbortPeriodLegalContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="ABORT_PERIOD" type="copyintolist"/>
+   <exec from="SHOW" to="_ABORT_PERIOD" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRWITHHOLD_REASON_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getWithholdReasonContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="WITHHOLD_REASON" type="copyintolist"/>
+   <exec from="SHOW" to="_WITHHOLD_REASON" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRDISCONTINUED_ABORT_REASON_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getDiscontinuedAbortReasonContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="DISCONTINUED_ABORT_REASON" type="copyintolist"/>
+   <exec from="SHOW" to="_DISCONTINUED_ABORT_REASON" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRDISCONTINUED_ABORT_STATUS_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getDiscontinuedAbortStatusContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="DISCONTINUED_ABORT_STATUS" type="copyintolist"/>
+   <exec from="SHOW" to="_DISCONTINUED_ABORT_STATUS" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPOSTPONEMENT_REASON_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getPostponementReasonContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="POSTPONEMENT_REASON" type="copyintolist"/>
+   <exec from="SHOW" to="_POSTPONEMENT_REASON" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPOSTPONEMENT_STATUS_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getPostponementStatusContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="POSTPONEMENT_STATUS" type="copyintolist"/>
+   <exec from="SHOW" to="_POSTPONEMENT_STATUS" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_ACTION_AUCTION_STATUS_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getLegalActionAuctionStatusContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="LEGAL_ACTION_AUCTION_STATUS" type="copyintolist"/>
+   <exec from="SHOW" to="_LEGAL_ACTION_AUCTION_STATUS" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_ACTION_UNSUCCESSFUL_REASONS_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getLegalActionUnsuccessfulReasonContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="LEGAL_ACTION_UNSUCCESSFUL_REASONS" type="copyintolist"/>
+   <exec from="SHOW" to="_LEGAL_ACTION_UNSUCCESSFUL_REASONS" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRBILLING_TAT_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getBillingTatLegalContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="LEGAL_BILLING_TAT" type="copyintolist"/>
+   <exec from="SHOW" to="_LEGAL_BILLING_TAT" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_EXCLUSION_REASON_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getLegalExclusionReasonContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="LEGAL_EXCLUSION_REASON" type="copyintolist"/>
+   <exec from="SHOW" to="_LEGAL_EXCLUSION_REASON" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRAREA_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getVisitationAreaContent"/>
+    <query value="getVisitationStateRef"/>
+    <query value="getVisitationStaffRef"/>
+    <query value="getVisitationStaffRef"/>
+    <target value="REFERENCE"/>
+    <target value="STATES"/>
+    <target value="VISITATION_STAFF_LIST"/>
+    <target value="SUPERVISOR_LIST"/>
+   </exec>
+   <exec argument="STATES" type="loop">
+    <exec from="ID" to="STATE_ID" type="copy"/>
+   </exec>
+   <exec argument="VISITATION_STAFF_LIST" type="loop">
+    <exec from="ID" to="VISITATION_STAFF_ID" type="copy"/>
+   </exec>
+   <exec argument="SUPERVISOR_LIST" type="loop">
+    <exec from="ID" to="SUPERVISOR_ID" type="copy"/>
+   </exec>
+   <exec from="VISITATION_STAFF_LIST" key="VISITATION_STAFF_LIST" to="REFERENCE" type="copyintolist"/>
+   <exec from="SUPERVISOR_LIST" key="SUPERVISOR_LIST" to="REFERENCE" type="copyintolist"/>
+   <exec from="STATES" key="STATES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="VISITATION_AREA" type="copyintolist"/>
+   <exec from="SHOW" to="_VISITATION_AREA" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRMBSB_PROFILE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getMBSBprofile"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="MBSB_PROFILE" type="copyintolist"/>
+   <exec from="SHOW" to="_MBSB_PROFILE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRCONTRACT_TAG_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getContractTagLegalContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="LEGAL_CONTRACT_TAG" type="copyintolist"/>
+   <exec from="SHOW" to="_LEGAL_CONTRACT_TAG" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTRANSACTION_TYPE_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getTransactionTypeContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="TRANSACTION_TYPE" type="copyintolist"/>
+   <exec from="SHOW" to="_TRANSACTION_TYPE" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRREASON_OF_CALL_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getReasonOfCallContent"/>
+    <query value="getTreatmentCallTypeStatusRef"/>
+    <target value="REFERENCE"/>
+    <target value="TYPE_STATUSES"/>
+   </exec>
+   <exec argument="TYPE_STATUSES" type="loop">
+    <exec from="ID" to="TYPE_STATUS_ID" type="copy"/>
+   </exec>
+   <exec from="TYPE_STATUSES" key="TYPE_STATUSES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="REASON_OF_CALL" type="copyintolist"/>
+   <exec from="SHOW" to="_REASON_OF_CALL" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPRINTER_SETTINGS"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getPrinterSettingsContent"/>
+    <target value="REFERENCE"/>
+   </exec>
+   <exec from="TRUE" key="PRINTER_SETTINGS" type="copyintolist"/>
+   <exec from="SHOW" to="_PRINTER_SETTINGS" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_KIV_REASON_REF"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getLegalKivReasonContent"/>
+    <query value="getAbortReasonRef"/>
+    <target value="REFERENCE"/>
+    <target value="SUBTYPES"/>
+   </exec>
+   <exec argument="SUBTYPES" type="loop">
+    <exec from="ID" to="SUBTYPE_ID" type="copy"/>
+   </exec>
+   <exec from="SUBTYPES" key="SUBTYPES" to="REFERENCE" type="copyintolist"/>
+   <exec from="TRUE" key="ABORT_REASON" type="copyintolist"/>
+   <exec from="SHOW" to="_ABORT_REASON" type="copy"/>
+  </exec>
+ </exec>
+ <exec from="_CUSTOM_EDITOR" key="_CUSTOM_EDITOR" type="copyintolist"/>
+ <exec from="_STANDARD_EDITOR" key="_STANDARD_EDITOR" type="copyintolist"/>
+ <exec from="_DEFAULT" key="_DEFAULT" type="copyintolist"/>
+ <exec from="_DEFAULT" key="_DEFAULT" type="copyintolist"/>
+ <exec from="TABLE_NAME" key="TABLE_NAME" type="copyintolist"/>
+ <exec from="IS_STANDARD" key="IS_STANDARD" type="copyintolist"/>
+ <exec from="REFERENCE" key="REFERENCE" type="copyintolist"/>
+ <exec from="SEQUENCE_NAME" key="SEQUENCE_NAME" type="copyintolist"/>
+ <exec from="ALLOW_ADD" key="ALLOW_ADD" type="copyintolist"/>
+ <exec from="CODE_PARAMETER" key="CODE_PARAMETER" type="copyintolist"/>
+ <exec from="_TREATMENT_TYPE_STATUS" key="_TREATMENT_TYPE_STATUS" type="copyintolist"/>
+ <exec from="_STATE" key="_STATE" type="copyintolist"/>
+ <exec from="_CITY" key="_CITY" type="copyintolist"/>
+ <exec from="_ACCOUNT_CLASSIFICATION_SUBTYPE" key="_ACCOUNT_CLASSIFICATION_SUBTYPE" type="copyintolist"/>
+ <exec from="_FACILITY_TYPE" key="_FACILITY_TYPE" type="copyintolist"/>
+ <exec from="_EMPLOYER" key="_EMPLOYER" type="copyintolist"/>
+ <exec from="_PRODUCT_TYPE" key="_PRODUCT_TYPE" type="copyintolist"/>
+ <exec from="_BANK_BRANCH" key="_BANK_BRANCH" type="copyintolist"/>
+ <exec from="_SHORTFALL" key="_SHORTFALL" type="copyintolist"/>
+ <exec from="_MANAGEMENT_APPROVAL_ACTION_TYPE" key="_MANAGEMENT_APPROVAL_ACTION_TYPE" type="copyintolist"/>
+ <exec from="_DECISION_TREE_CONDITION" key="_DECISION_TREE_CONDITION" type="copyintolist"/>
+ <exec from="_SPTF" key="_SPTF" type="copyintolist"/>
+ <exec from="_ABORT_REASON" key="_ABORT_REASON" type="copyintolist"/>
+ <exec from="_WITHHOLD_REASON" key="_WITHHOLD_REASON" type="copyintolist"/>
+ <exec from="_DISCONTINUED_ABORT_REASON" key="_DISCONTINUED_ABORT_REASON" type="copyintolist"/>
+ <exec from="_DISCONTINUED_ABORT_STATUS" key="_DISCONTINUED_ABORT_STATUS" type="copyintolist"/>
+ <exec from="_POSTPONEMENT_REASON" key="_POSTPONEMENT_REASON" type="copyintolist"/>
+ <exec from="_POSTPONEMENT_STATUS" key="_POSTPONEMENT_STATUS" type="copyintolist"/>
+ <exec from="_LEGAL_ACTION_AUCTION_STATUS" key="_LEGAL_ACTION_AUCTION_STATUS" type="copyintolist"/>
+ <exec from="_LEGAL_ACTION_UNSUCCESSFUL_REASONS" key="_LEGAL_ACTION_UNSUCCESSFUL_REASONS" type="copyintolist"/>
+ <exec from="_ABORT_PERIOD" key="_ABORT_PERIOD" type="copyintolist"/>
+ <exec from="_ESCALATION_TYPE" key="_ESCALATION_TYPE" type="copyintolist"/>
+ <exec from="_TREATMENT_SUBTYPE" key="_TREATMENT_SUBTYPE" type="copyintolist"/>
+ <exec from="_LEGAL_BILLING_TAT" key="_LEGAL_BILLING_TAT" type="copyintolist"/>
+ <exec from="_LEGAL_EXCLUSION_REASON" key="_LEGAL_EXCLUSION_REASON" type="copyintolist"/>
+ <exec from="_VISITATION_AREA" key="_VISITATION_AREA" type="copyintolist"/>
+ <exec from="_MBSB_PROFILE" key="_MBSB_PROFILE" type="copyintolist"/>
+ <exec from="_LEGAL_CONTRACT_TAG" key="_LEGAL_CONTRACT_TAG" type="copyintolist"/>
+ <exec from="_TRANSACTION_TYPE" key="_TRANSACTION_TYPE" type="copyintolist"/>
+ <exec from="_REASON_OF_CALL" key="_REASON_OF_CALL" type="copyintolist"/>
+ <exec from="_PRINTER_SETTINGS" key="_PRINTER_SETTINGS" type="copyintolist"/>
+</event>

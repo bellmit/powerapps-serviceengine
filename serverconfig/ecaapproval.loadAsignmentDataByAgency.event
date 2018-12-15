@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getEcaAssignmentVerification"/>
+  <query value="getEcaAssignedSummaryAssignmentVerification"/>
+  <query value="getEcaNewAssignmentForApproval"/>
+  <target value="AGENCY_REF"/>
+  <target value="ASSIGNED_SUMMARY"/>
+  <target value="DATA"/>
+ </exec>
+ <exec from="ASSIGNED_SUMMARY" key="AGENCY_ID" to="DATA" type="merge"/>
+ <exec from="AGENCY_REF" key="AGENCY_ID" to="DATA" type="merge"/>
+ <exec argument="DATA" type="loop">
+  <exec lhs="ASSIGNED_ACCOUNT" rhs="NEW_ACCOUNT" target="TOTAL_ACCOUNT" type="add"/>
+  <exec lhs="ASSIGNED_GROSS" rhs="NEW_GROSS" target="TOTAL_GROSS" type="add"/>
+ </exec>
+ <exec from="DATA" key="DATA" type="copyintolist"/>
+ <exec from="TRUE" key="CLEAR_BREAKDOWN" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DATA" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+  <exec message="No record found" target="MESSAGE" type="formattext"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ </exec>
+ <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+</event>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="TEAMS" query="getTeams" type="query"/>
+ <exec from="TEAMS" key="TEAMS" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SELECTED_TEAM" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="SELECTED_TEAM" key="SELECTED_TEAM" type="copyintolist"/>
+ </exec>
+</event>

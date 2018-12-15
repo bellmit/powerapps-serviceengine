@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="5TH_SCHEDULE_SENDING_DATE" key="5TH_SCHEDULE_SENDING_DATE" type="copyintolist"/>
+ <exec from="NOTICE_DATE" key="NOTICE_DATE" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="5TH_SCHEDULE_SENDING_DATE" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="NOTICE_DATE" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec statement="getNotice14DaysDateCalculation" type="select"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="21DAYS" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec from="TRUE" to="LOAD_VALIDATION" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="5TH_SCHEDULE_SENDING_DATE" operator="not present" rhsvalue=""/>
+   </conditions>
+   <exec from="TRUE" to="LOAD_VALIDATION" type="copy"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="21DAYS" operator="=" rhsvalue="0"/>
+   </conditions>
+   <exec from="TRUE" to="VALIDATION" type="copy"/>
+  </exec>
+ </exec>
+</event>

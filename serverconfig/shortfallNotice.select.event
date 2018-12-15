@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getTrue" type="select"/>
+ <exec statement="getTreatmentShortfallNotice" type="select"/>
+ <exec statement="getShortfallDayValidationSetup" type="select"/>
+ <exec lhs="PAYOFF_AMOUNT" rhs="PROVISION_CHARGES" target="SHORTFALL_OUTSTANDING_BALANCE" type="add"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="STATUS_ID" operator="=" rhsvalue="15007"/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="PRINTING_DATE" truncate="false" type="date"/>
+  <exec event="shortfallNotice.getShortfallOutstanding" ignoreresult="true" type="raisewith">
+   <sources value="PAYOFF_AMOUNT"/>
+   <sources value="PROVISION_CHARGES"/>
+   <sources value="SHORTFALL_OUTSTANDING_BALANCE"/>
+   <targets value="PAYOFF_AMOUNT"/>
+   <targets value="PROVISION_CHARGES"/>
+   <targets value="SHORTFALL_OUTSTANDING_BALANCE"/>
+  </exec>
+ </exec>
+ <exec from="FALSE" key="VALIDATE_TLAST_1" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_3" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_4" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_10" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_12" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_16" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_17" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_18" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_19" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_51" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_58" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_59" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_60" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_66" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_PAYMENT_IS_GREATER" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_DAYS_IS_LOWER" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_OS_IS_LOWER" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_SALES_PROCEED_AMOUNT" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_HOLD_MAIL_IS_Y" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_1_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_3_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_4_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_10_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_12_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_16_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_17_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_18_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_19_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_51_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_58_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_59_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_60_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_TLAST_66_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_PAYMENT_IS_GREATER_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_DAYS_IS_LOWER_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_OS_BALANCE_IS_LOWER_FIELD" type="copyintolist"/>
+ <exec from="FALSE" key="VALIDATE_HOLD_MAIL_IS_Y_FIELD" type="copyintolist"/>
+ <exec from="SHORTFALL_DAY" key="SHORTFALL_DAY" type="copyintolist"/>
+</event>

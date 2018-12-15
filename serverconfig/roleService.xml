@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="roleService">
+	<resultMap id="getRoleTypes" class="hmap" extends="global.ref">
+		<result property="LOAD_ROLES" javaType="boolean" />
+	</resultMap>
+	<select id="getRoleTypes" resultMap="getRoleTypes">
+		<include refid="selectAllRef" />
+		,
+		<include refid="true" />
+		<include refid="fromdual" />
+		union
+		<include refid="refselect" />
+		,
+		<include refid="true" />
+		from ptrrole_type_ref
+	</select>
+	<resultMap id="getRoleList" class="hmap">
+		<result property="ROLE_ID" javaType="long" />
+		<result property="ROLE_NAME" javaType="string" />
+		<result property="ROLE_DESC" javaType="string" />
+		<result property="ROLE_TYPE" javaType="string" />
+		<result property="ROLE_EXPIRY_DATE" javaType="date" />
+		<result property="CREATED_DATE" javaType="ts" />
+		<result property="CREATED_BY" javaType="string" />
+		<result property="UPDATED_DATE" javaType="ts" />
+		<result property="UPDATED_BY" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+	</resultMap>
+	<select id="getRoleList" resultMap="getRoleList">
+		SELECT R.ROLE_ID,R.ROLE_NAME,R.ROLE_DESC,TR.DESCRIPTION AS ROLE_TYPE,R.ROLE_EXPIRY_DATE,R.ROLE_CREATE_DATE,
+		R.ROLE_CREATE_BY,R.UPDATED_TIME,R.UPDATED_BY,R.DISABLE 
+		FROM PTRUSER_ROLE_REF R
+		INNER JOIN PTRROLE_TYPE_REF TR ON TR.ID=R.ROLE_TYPE_ID
+		where 1=1
+		<isNotEqual property="INCLUDE_ALL" compareValue="true">
+		and r.DISABLE = 0
+		</isNotEqual>
+		<isNotNull property="ROLE_TYPE_ID">
+		and R.ROLE_TYPE_ID = #ROLE_TYPE_ID#
+		</isNotNull>
+		<isNotEmpty property="ROLE_NAME">
+		and upper(R.ROLE_NAME) like '%'||upper(#ROLE_NAME#)||'%'
+		</isNotEmpty>
+		<isNotEmpty property="ROLE_DESCRIPTION">
+		and upper(R.ROLE_DESC) like '%'||upper(#ROLE_DESCRIPTION#)||'%'
+		</isNotEmpty>
+		order by R.ROLE_ID		
+	</select>
+	<resultMap id="getRoleTypesForEditing" class="hmap" extends="global.ref">
+		<result property="LOAD_ACCESS_RIGHT" javaType="boolean" />
+	</resultMap>
+	<select id="getRoleTypesForEditing" resultMap="getRoleTypesForEditing">
+		<include refid="refselect" />
+		,
+		<include refid="true" />
+		from ptrrole_type_ref
+	</select>
+	
+	<resultMap id="getLevelOneAccessRights" class="hmap">
+		<result property="LEVEL_1" javaType="long" />
+		<result property="LEVEL_1_DESCRIPTION" javaType="string" />
+		<result property="ACCESS_RIGHTS_ID" javaType="long" />
+		<result property="PARENT_ACCESS_RIGHTS_ID" javaType="long" />
+	</resultMap>
+	<select id="getLevelOneAccessRights" resultMap="getLevelOneAccessRights">
+		select access_rights_id,access_rights_desc,access_rights_id ,parent_access_rights_id
+		from ptraccess_rights_ref
+		where parent_access_rights_id is null
+		and disable = 0 and role_type_id = #ROLE_TYPE_ID#	
+	</select>
+	<resultMap id="getLevelTwoAccessRights" class="hmap">
+		<result property="LEVEL_1" javaType="long" />
+		<result property="LEVEL_2" javaType="long" />
+		<result property="LEVEL_2_DESCRIPTION" javaType="string" />
+		<result property="ACCESS_RIGHTS_ID" javaType="long" />
+		<result property="PARENT_ACCESS_RIGHTS_ID" javaType="long" />
+	</resultMap>
+	<select id="getLevelTwoAccessRights" resultMap="getLevelTwoAccessRights">
+		select parent_access_rights_id,access_rights_id,access_rights_desc,access_rights_id,parent_access_rights_id
+		from ptraccess_rights_ref
+		where parent_access_rights_id in (0 <iterate prepend="," property="LEVEL_1" conjunction=",">#LEVEL_1[]#</iterate>)
+		and disable = 0 and role_type_id = #ROLE_TYPE_ID#	
+	</select>
+	<resultMap id="getLevelThreeAccessRights" class="hmap">
+		<result property="LEVEL_1" javaType="long" />
+		<result property="LEVEL_2" javaType="long" />
+		<result property="LEVEL_3" javaType="long" />
+		<result property="LEVEL_3_DESCRIPTION" javaType="string" />
+		<result property="ACCESS_RIGHTS_ID" javaType="long" />
+		<result property="PARENT_ACCESS_RIGHTS_ID" javaType="long" />
+	</resultMap>
+	<select id="getLevelThreeAccessRights" resultMap="getLevelThreeAccessRights">
+		select p.parent_access_rights_id,r.parent_access_rights_id,r.access_rights_id,r.access_rights_desc,r.access_rights_id,r.parent_access_rights_id
+		from ptraccess_rights_ref r
+		inner join ptraccess_rights_ref p on p.access_rights_id = r.parent_access_rights_id
+		where r.parent_access_rights_id in (0 <iterate prepend="," property="LEVEL_2" conjunction=",">#LEVEL_2[]#</iterate>)
+		and r.disable = 0 and r.role_type_id = #ROLE_TYPE_ID#	
+		order by r.sort_priority
+	</select>
+	<resultMap id="getLevelFourAccessRights" class="hmap">
+		<result property="LEVEL_1" javaType="long" />
+		<result property="LEVEL_2" javaType="long" />
+		<result property="LEVEL_3" javaType="long" />
+		<result property="LEVEL_4" javaType="long" />
+		<result property="LEVEL_4_DESCRIPTION" javaType="string" />
+		<result property="ACCESS_RIGHTS_ID" javaType="long" />
+		<result property="PARENT_ACCESS_RIGHTS_ID" javaType="long" />
+	</resultMap>
+	<select id="getLevelFourAccessRights" resultMap="getLevelFourAccessRights">
+		select p1.parent_access_rights_id,p.parent_access_rights_id,r.parent_access_rights_id,
+		r.access_rights_id,r.access_rights_desc,r.access_rights_id,r.parent_access_rights_id
+		from ptraccess_rights_ref r
+		inner join ptraccess_rights_ref p on p.access_rights_id = r.parent_access_rights_id
+		inner join ptraccess_rights_ref p1 on p1.access_rights_id = p.parent_access_rights_id
+		where r.parent_access_rights_id in (0 <iterate prepend="," property="LEVEL_3" conjunction=",">#LEVEL_3[]#</iterate>)
+		and r.disable = 0 and r.role_type_id = #ROLE_TYPE_ID#	
+	</select>
+	<resultMap id="getLevelFiveAccessRights" class="hmap">
+		<result property="LEVEL_1" javaType="long" />
+		<result property="LEVEL_2" javaType="long" />
+		<result property="LEVEL_3" javaType="long" />
+		<result property="LEVEL_4" javaType="long" />
+		<result property="LEVEL_5" javaType="long" />
+		<result property="LEVEL_5_DESCRIPTION" javaType="string" />
+		<result property="ACCESS_RIGHTS_ID" javaType="long" />
+		<result property="PARENT_ACCESS_RIGHTS_ID" javaType="long" />
+	</resultMap>
+	<select id="getLevelFiveAccessRights" resultMap="getLevelFiveAccessRights">
+		select p2.parent_access_rights_id,p1.parent_access_rights_id,p.parent_access_rights_id,
+		r.parent_access_rights_id,r.access_rights_id,r.access_rights_desc,r.access_rights_id,r.parent_access_rights_id
+		from ptraccess_rights_ref r
+		inner join ptraccess_rights_ref p on p.access_rights_id = r.parent_access_rights_id
+		inner join ptraccess_rights_ref p1 on p1.access_rights_id = p.parent_access_rights_id
+		inner join ptraccess_rights_ref p2 on p2.access_rights_id = p1.parent_access_rights_id
+		where r.parent_access_rights_id in (0 <iterate prepend="," property="LEVEL_4" conjunction=",">#LEVEL_4[]#</iterate>)
+		and r.disable = 0 and r.role_type_id = #ROLE_TYPE_ID#	
+	</select>
+	<resultMap id="getRoleForEditing" class="hmap">
+		<result property="ROLE_ID" javaType="long" />
+		<result property="ROLE_TYPE_ID" javaType="long" />
+		<result property="ROLE_NAME" javaType="string" />
+		<result property="ROLE_DESCRIPTION" javaType="string" />
+		<result property="EXPIRY_DATE" javaType="date" />
+		<result property="CREATED_DATE" javaType="ts" />
+		<result property="CREATED_BY" javaType="string" />
+		<result property="UPDATED_DATE" javaType="ts" />
+		<result property="UPDATED_BY" javaType="string" />
+		<result property="DISABLE" javaType="boolean" />
+	</resultMap>
+	<select id="getRoleForEditing" resultMap="getRoleForEditing">
+		SELECT R.ROLE_ID,R.ROLE_TYPE_ID,R.ROLE_NAME,R.ROLE_DESC,R.ROLE_EXPIRY_DATE,R.ROLE_CREATE_DATE,
+		R.ROLE_CREATE_BY,R.UPDATED_TIME,R.UPDATED_BY,R.DISABLE 
+		FROM PTRUSER_ROLE_REF R
+		WHERE R.ROLE_ID = #ROLE_ID#		
+	</select>
+	<insert id="insertRoleForEditing" parameterClass="map">
+		<selectKey keyProperty="ID" resultClass="long">
+			<include refid="sequencePrefix" />
+			PTRUSER_ROLE_REF_ID
+			<include refid="sequenceSuffix" />
+		</selectKey>
+		INSERT INTO  PTRUSER_ROLE_REF (ROLE_ID,ROLE_NAME,ROLE_DESC,ROLE_EXPIRY_DATE,ROLE_CREATE_DATE,ROLE_CREATE_BY,SORT_PRIORITY,ROLE_TYPE_ID)
+		values (#ID#, #ROLE_NAME#, #ROLE_DESCRIPTION#,#EXPIRY_DATE#,#CREATED_TIME#,#LOGON_USER#,#ID#,#ROLE_TYPE_ID#)
+	</insert>
+	<delete id="deleteCurrentRoleAccessRights">
+		delete from ptrrole_access_rel where role_id=#ROLE_ID#
+	</delete>
+	<insert id="insertRoleAccessRel">
+		insert into ptrrole_access_rel (access_rights_id,role_id)
+		values(#ACCESS_RIGHTS_ID#,#ROLE_ID#)
+	</insert>
+	<resultMap id="getRoleAssignedAccessRights" class="hmap">
+		<result property="ACCESS_RIGHTS_ID" javaType="long" />
+	</resultMap>
+	<select id="getRoleAssignedAccessRights" resultMap="getRoleAssignedAccessRights">
+		select access_rights_id from ptrrole_access_rel where role_id=#ROLE_ID#	
+	</select>	
+	<select id="getRoleAssignedParentAccessRights" resultMap="getRoleAssignedAccessRights">
+		select distinct pa.access_rights_id from ptrrole_access_rel r
+		inner join ptraccess_rights_ref ar on ar.access_rights_id=r.access_rights_id
+		inner join ptraccess_rights_ref pa on ar.parent_access_rights_id=pa.access_rights_id
+		where r.role_id=#ROLE_ID#	
+	</select>	
+
+	<update id="updateRoleForEditing" parameterClass="map">
+		update PTRUSER_ROLE_REF set ROLE_NAME = #ROLE_NAME#,ROLE_DESC = #ROLE_DESCRIPTION#,
+		ROLE_EXPIRY_DATE = #EXPIRY_DATE#, UPDATED_TIME=#CURRENT_TIME#,UPDATED_BY = #LOGON_USER#,
+		DISABLE = case when #DISABLE# =<include refid="true"/> then 1 else 0 end
+		where ROLE_ID=#ROLE_ID#
+	</update>
+</sqlMap>

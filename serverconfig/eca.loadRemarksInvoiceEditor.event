@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec statement="getLoginUserType" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="INVOICE_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="INVOICE_ID" operator="&lt;&gt;" rhsvalue="parent.INVOICE_ID"/>
+   <condition lhsfield="TRANSACTION_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="TRANSACTION_ID" operator="&lt;&gt;" rhsvalue="parent.TRANSACTION_ID"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="USER_TYPE_ID" operator="&lt;&gt;" rhsvalue="2"/>
+   </conditions>
+   <exec statement="getRemarksInvoicesTransaction" type="select"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="USER_TYPE_ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec statement="getAppealFromAgencyInvoicesTransaction" type="select"/>
+  </exec>
+ </exec>
+ <exec from="REMARKS" key="REMARKS" type="copyintolist"/>
+</event>

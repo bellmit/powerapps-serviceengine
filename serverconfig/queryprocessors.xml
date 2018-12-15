@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<queryprocessors>
+
+<query name="getTreatmentImages">
+  <processor  
+implementation="com.profitera.services.business.query.DocumentByteRetrievalQueryProcessor">
+    <properties>
+      <property name="DOCUMENT_ID" value="DOCUMENT_ID"/>
+      <property name="DOCUMENT_KEY" value="DOCUMENT_BYTES"/>
+    </properties>
+  </processor>
+</query>
+
+
+</queryprocessors>

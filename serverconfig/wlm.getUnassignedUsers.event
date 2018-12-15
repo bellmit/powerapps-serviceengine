@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec event="wlm.getUserType" ignoreresult="true" type="raise"/>
+ <exec from="USER_LIST" to="WLM_USER_LIST" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="&lt;&gt;" rhsvalue="RNR"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec argument="USER_GROUPS" query="getWlmUserGroup" type="query"/>
+   <exec from="USER_GROUPS" key="USER_GROUP_ID" to="USER_GROUPS" type="extract"/>
+   <exec argument="ASSIGN_USER_LIST" query="getWlmCollectorUsers" type="query"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="agencyuser"/>
+   </conditions>
+   <exec argument="ASSIGN_USER_LIST" query="getWlmCollectorUsersLite" type="query"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+  </conditions>
+  <exec argument="ASSIGN_USER_LIST" query="getRnRCounsellorsUsers" type="query"/>
+ </exec>
+ <exec argument="ASSIGN_USER_LIST" type="loop">
+  <exec from="NAME" to="USER_NAME" type="copy"/>
+ </exec>
+ <exec list="WLM_USER_LIST" to="WLM_USER_LIST_COUNT" type="countlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLM_USER_LIST_COUNT" operator="exists" rhsvalue=""/>
+   <condition lhsfield="WLM_USER_LIST_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+  </conditions>
+  <exec key="USER_ID" minuend="ASSIGN_USER_LIST" subtrahend="WLM_USER_LIST" to="ASSIGN_USER_LIST" type="remove"/>
+ </exec>
+ <exec from="ASSIGN_USER_LIST" type="copy"/>
+</event>

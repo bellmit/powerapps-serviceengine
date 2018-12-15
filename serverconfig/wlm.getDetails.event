@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+ <exec ceiling="false" endmonth="true" nextweekday="false" startmonth="false" to="END_OF_MONTH" truncate="true" type="date"/>
+ <exec list="ACCOUNT_LIST" to="COUNT_ACCOUNT_LIST" type="countlist"/>
+ <exec message="false" target="IS_CTI_EXTRACTION" type="formattext"/>
+ <exec text="Not Implemented" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="COUNT_ACCOUNT_LIST" operator="&lt;&gt;" rhsvalue="0"/>
+   </conditions>
+   <exec type="parallelquery">
+    <query value="getWlmCallStatus"/>
+    <query value="getWlmAccountClassification"/>
+    <query value="getWlmMobilePhone"/>
+    <query value="getWlmOffice"/>
+    <query value="getWlmHome"/>
+    <query value="getTotalCurrentMonthWlm"/>
+    <query value="getLastPaymentMethodWlm"/>
+    <query value="getAccountShortPaymentWlm"/>
+    
+    
+    
+    <target value="WLM_CALL_STATUS_LIST"/>
+    <target value="WLM_ACCOUNT_CLASS_LIST"/>
+    <target value="MOBILE_LIST"/>
+    <target value="OFFICE_LIST"/>
+    <target value="HOME_LIST"/>
+    <target value="PAYMENT_STATUS_SHORTFALL_LIST"/>
+    <target value="PAYMENT_METHOD_LIST"/>
+    <target value="SHORT_PAYMENT_LIST"/>
+   </exec>
+   <exec statement="getWlmDefaultUser" type="select"/>
+   <exec from="WLM_ACCOUNT_CLASS_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="WLM_CALL_STATUS_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   
+   <exec from="MOBILE_LIST" key="CUSTOMER_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="OFFICE_LIST" key="CUSTOMER_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="HOME_LIST" key="CUSTOMER_ID" to="ACCOUNT_LIST" type="merge"/>
+   
+   <exec from="PAYMENT_STATUS_SHORTFALL_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="PAYMENT_METHOD_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="SHORT_PAYMENT_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   
+   
+   <exec from="DEFAULT_USER_NAME" key="DEFAULT_USER_NAME" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="DEFAULT_USER_NAME" key="DEFAULT_USER_ID" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="FS_DATE" operator="is empty" rhsvalue=""/>
+     </conditions>
+     <exec type="nullify">
+      <key value="NI_DATE"/>
+     </exec>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="NI_DATE" operator="is not empty" rhsvalue=""/>
+      <condition lhsfield="FS_DATE" operator="is not empty" rhsvalue=""/>
+     </conditions>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="NI_DATE" operator="less than value of" rhsvalue="FS_DATE"/>
+      </conditions>
+      <exec type="nullify">
+       <key value="NI_DATE"/>
+      </exec>
+     </exec>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="NI_DATE" operator="is empty" rhsvalue=""/>
+     </conditions>
+     <exec type="nullify">
+      <key value="RO_DATE"/>
+     </exec>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="RO_DATE" operator="is not empty" rhsvalue=""/>
+      <condition lhsfield="NI_DATE" operator="is not empty" rhsvalue=""/>
+     </conditions>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="RO_DATE" operator="less than value of" rhsvalue="NI_DATE"/>
+      </conditions>
+      <exec type="nullify">
+       <key value="RO_DATE"/>
+      </exec>
+     </exec>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+</event>

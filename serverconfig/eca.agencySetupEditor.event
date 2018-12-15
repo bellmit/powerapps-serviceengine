@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getECAAgencyTypeForSetup"/>
+  <query value="getAgencyStatusForEditing"/>
+  <query value="getGenerationDays"/>
+  <query value="getAgencyStatesForEditing"/>
+  <query value="getECACountriesForSetup"/>
+  <target value="TYPES"/>
+  <target value="STATUS_LIST"/>
+  <target value="GENERATION_DAYS"/>
+  <target value="STATES"/>
+  <target value="COUNTRIES"/>
+ </exec>
+ <exec type="parallelquery">
+  <query value="getECARegionsForSetup"/>
+  <query value="getECAAgencySubtypeForSetup"/>
+  <query value="getECABankCoordinator"/>
+  <target value="REGIONS"/>
+  <target value="SUBTYPES"/>
+  <target value="BANK_COORDINATORS"/>
+ </exec>
+ <exec count="31" to="GENERATION_DAY" type="createlist"/>
+ <exec argument="GENERATION_DAY" index="ID" type="loop">
+  <exec message="{0}th" target="DESCRIPTION" type="formattext">
+   <key value="ID"/>
+  </exec>
+  <exec from="ID" to="SORT_PRIORITY" type="copy"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="1"/>
+   </conditions>
+   <exec message="{0}st" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="2"/>
+   </conditions>
+   <exec message="{0}nd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="3"/>
+   </conditions>
+   <exec message="{0}rd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="21"/>
+   </conditions>
+   <exec message="{0}st" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="22"/>
+   </conditions>
+   <exec message="{0}nd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="23"/>
+   </conditions>
+   <exec message="{0}rd" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="ID" operator="=" rhsvalue="31"/>
+   </conditions>
+   <exec message="{0}st" target="DESCRIPTION" type="formattext">
+    <key value="ID"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec statement="getDouble" type="select"/>
+ <exec from="GENERATION_DAY" to="GENERATION_DAYS" type="append"/>
+ <exec count="1" type="createlist"/>
+ <exec from="TYPES" key="TYPES" type="copyintolist"/>
+ <exec from="STATES" key="STATES" type="copyintolist"/>
+ <exec from="GENERATION_DAYS" key="GENERATION_DAYS" type="copyintolist"/>
+ <exec from="STATUS_LIST" key="STATUSES" type="copyintolist"/>
+ <exec from="COUNTRIES" key="COUNTRIES" type="copyintolist"/>
+ <exec from="REGIONS" key="REGIONS" type="copyintolist"/>
+ <exec from="SUBTYPES" key="SUBTYPES" type="copyintolist"/>
+ <exec from="AGENCY_ID" key="AGENCY_ID" type="copyintolist"/>
+ <exec from="BANK_COORDINATORS" key="BANK_COORDINATORS" type="copyintolist"/>
+ <exec from="ZERO" key="SST_RATE" type="copyintolist"/>
+ <exec type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="AGENCY_ID" operator="is not empty" rhsvalue=""/>
+    <condition lhsfield="AGENCY_ID" operator="&lt;&gt;" rhsvalue="parent.AGENCY_ID"/>
+   </conditions>
+   <exec statement="getAgencyForEditing" type="select"/>
+  </exec>
+ </exec>
+</event>

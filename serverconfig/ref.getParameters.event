@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="PARAMETERS" query="getParameters" type="query"/>
+ <exec from="BASE_HEADER" key="BASE_HEADER" to="PARAMETERS" type="copyintolist"/>
+ <exec from="TRUE" key="LOAD_EDITOR" to="PARAMETERS" type="copyintolist"/>
+ <exec argument="PARAMETERS" type="loop">
+  <exec message="{0} &gt; {1}" target="HEADER" type="formattext">
+   <key value="BASE_HEADER"/>
+   <key value="DESCRIPTION"/>
+  </exec>
+ </exec>
+ <exec from="PARAMETERS" type="copy"/>
+</event>

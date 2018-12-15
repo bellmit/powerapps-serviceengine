@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Work List tabs parent event" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WORK_LIST_ID" operator="exists" rhsvalue=""/>
+    <condition lhsfield="WORK_LIST_ID" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec count="1" to="RESULT_LIST" type="createlist"/>
+   <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_CURRENT_MONTH" truncate="true" type="date"/>
+   <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
+   <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_DATE" truncate="true" type="date"/>
+   <exec to="USER_ID" type="user"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="USER_ID" operator="not present" rhsvalue=""/>
+    </conditions>
+    <exec from="agentId" to="USER_ID" type="copy"/>
+   </exec>
+   <exec text="A shared event to resolve the user type" type="comment">
+    <exec event="wlm.getUserType" ignoreresult="true" type="raise"/>
+   </exec>
+   <exec from="ACCOUNT_LIST" to="ACCOUNT_LIST_COPY" type="copy"/>
+   <exec type="nullify">
+    <key value="ACCOUNT_LIST"/>
+   </exec>
+   <exec message="getPagingArguments" target="PAGING_CONDITION" type="formattext"/>
+   <exec message="WLT" target="FUNCTIONALITY" type="formattext"/>
+   <exec statement="getWorklistGroup" type="select"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PAGING_CONDITION" operator="=" rhsvalue="getPagingArguments"/>
+    </conditions>
+    <exec event="wlt.searchPaging" ignoreresult="true" type="raise"/>
+   </exec>
+   <exec text="Process flow for UPL tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="UPL"/>
+     </conditions>
+     <exec event="wlt.getAccountsUpl" ignoreresult="true" type="raise"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for HP tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="HP"/>
+     </conditions>
+     <exec event="wlt.getAccountsHp" ignoreresult="true" type="raise"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for MG tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="MG"/>
+     </conditions>
+     <exec event="wlt.getAccountsMg" ignoreresult="true" type="raise"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for R &amp; R tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+     </conditions>
+     <exec event="wlt.getAccountsRnR" ignoreresult="true" type="raise"/>
+     <exec key="ACCOUNT_ID" list="ACCOUNT_LIST" to="ACCOUNT_LIST" type="unique"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for outbox tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="OUTBOX"/>
+     </conditions>
+     <exec event="wlt.getOutBoxAccounts" ignoreresult="true" type="raise"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for myalerts tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="MYALERT"/>
+     </conditions>
+     <exec event="wlt.getMyAlertAccounts" ignoreresult="true" type="raise"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for schedule call tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="SCHEDULE_CALL"/>
+     </conditions>
+     <exec event="wltQuery.getScheduleCall" ignoreresult="true" type="raise"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for approval tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="APPROVAL"/>
+     </conditions>
+     <exec event="wlt.getLegalApprovalAccounts" ignoreresult="true" type="raise"/>
+     <exec key="ACCOUNT_ID" list="ACCOUNT_LIST" to="ACCOUNT_LIST" type="unique"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for agency tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="agencyWorkListTabs"/>
+     </conditions>
+     <exec event="wlt.getAgencyAccounts" ignoreresult="true" type="raise"/>
+     <exec key="ACCOUNT_ID" list="ACCOUNT_LIST" to="ACCOUNT_LIST" type="unique"/>
+    </exec>
+   </exec>
+   <exec text="Process flow for supervisory tab" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="SUPERVISOR"/>
+     </conditions>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="TEAM_LEADER_USER_ID" operator="exists" rhsvalue=""/>
+       <condition lhsfield="TEAM_LEADER_USER_ID" operator="is not empty" rhsvalue=""/>
+      </conditions>
+      <exec argument="TEAM_LEADER_WORK_LIST" query="getSupervisorTeamLeaderWorklistId" type="query"/>
+      <exec from="TEAM_LEADER_WORK_LIST" to="TL_WORK_LIST" type="copy"/>
+      <exec argument="TL_WORK_LIST" type="loop">
+       <exec event="supervisor.accountExclusion" ignoreresult="true" type="raise"/>
+       <exec event="wlt.getWltPacLimitBreachedAccount" ignoreresult="true" type="raise"/>
+      </exec>
+      <exec from="TL_WORK_LIST" key="ACCOUNT_EXCLUSION_LIST" to="ACCOUNT_EXCLUSION_LIST" type="extract"/>
+      <exec from="TL_WORK_LIST" key="PAC_LIMIT_BREACHED_LIST" to="PAC_LIMIT_BREACHED_LIST" type="extract"/>
+      <exec argument="SUPERVISOR_TEAM_LIST" query="getSupervisorTeamMembers" type="query"/>
+      <exec argument="ACCOUNT_LIST" query="getWorklistSupervisoryTeamLeaderAccount" type="query"/>
+      <exec argument="DEFAULT_USER_SUPERVISOR_LIST" query="getWlmDefaultUserSupervisor" type="query"/>
+      <exec from="DEFAULT_USER_SUPERVISOR_LIST" key="WORK_LIST_ID" to="ACCOUNT_LIST" type="merge"/>
+      <exec argument="INFO_SPECIAL_LIST" query="getSpecialStatusForWorkListSupervisor" type="query"/>
+      <exec from="INFO_SPECIAL_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+      <exec argument="SEGMENTATION_CATEGORY_LIST" query="getSegmentationCategoryForWorkListSupervisor" type="query"/>
+      <exec from="SEGMENTATION_CATEGORY_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+      <exec argument="CALL_STATUS_LIST" query="getWorkListCallStatus" type="query"/>
+      <exec from="CALL_STATUS_LIST" key="CALL_TYPE_STATUS_ID" to="ACCOUNT_LIST" type="merge"/>
+      <exec argument="INFO_CONFIDENCE_LIST" query="getConfidenceForUPLWorkListSupervisor" type="query"/>
+      <exec from="INFO_CONFIDENCE_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+      <exec argument="INFO_CLASS_LIST" query="getAccountClassificationforWorklistSupervisor" type="query"/>
+      <exec from="INFO_CLASS_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+      <exec argument="TOTAL_PAYMENT_LIST" query="getMonthlyTotalPaymentSupervisor" type="query"/>
+      <exec from="TOTAL_PAYMENT_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+      <exec key="ACCOUNT_ID" list="ACCOUNT_LIST" to="ACCOUNT_LIST" type="unique"/>
+      <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="ACCOUNT_EXCLUSION_LIST" to="ACCOUNT_LIST" type="remove"/>
+      <exec key="ACCOUNT_ID" minuend="ACCOUNT_LIST" subtrahend="PAC_LIMIT_BREACHED_LIST" to="ACCOUNT_LIST" type="remove"/>
+     </exec>
+    </exec>
+   </exec>
+   <exec from="ACCOUNT_LIST" key="ACCOUNT_LIST" to="RESULT_LIST" type="copyintolist"/>
+   <exec list="ACCOUNT_LIST" to="COUNT_ACCOUNT_LIST" type="countlist"/>
+   <exec from="COUNT_ACCOUNT_LIST" key="COUNT_ACCOUNT_LIST" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="PAGE_NUMBER" key="PAGE_NUMBER" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="DISABLE_PREV" key="DISABLE_PREV" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="DISABLE_NEXT" key="DISABLE_NEXT" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="TOTAL_PAGE_COUNT" key="TOTAL_PAGE_COUNT" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="WLT_TABLE_TITLE" key="WLT_TABLE_TITLE" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="TOTAL_COUNT" key="TOTAL_COUNT" to="RESULT_LIST" type="copyintolist"/>
+   <exec from="RESULT_LIST" type="copy"/>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="EFFECTIVE_DATE" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="EFFECTIVE_DATE" truncate="false" type="date"/>
+ </exec>
+ <exec argument="LETTER_PATH" property="LETTER_PATH" type="serverproperty"/>
+ <exec argument="TREATMENT_LIST" query="getDefaultLetterInProgress" type="query"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TREATMENT_LIST" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec to="LOGON_USER" type="user"/>
+  <exec from="LOGON_USER" key="UPDATED_USER_ID" to="TREATMENT_LIST" type="copyintolist"/>
+  <exec from="EFFECTIVE_DATE" key="UPDATED_TIME" to="TREATMENT_LIST" type="copyintolist"/>
+  <exec from="EFFECTIVE_DATE" key="EFFECTIVE_DATE" to="TREATMENT_LIST" type="copyintolist"/>
+  <exec from="LETTER_PATH" key="LETTER_PATH" to="TREATMENT_LIST" type="copyintolist"/>
+  <exec argument="TREATMENT_LIST" type="loop">
+   <exec type="transaction">
+    <exec message="defaultLetter{0,date,yyyy-MM-dd-hh-mm-ss}-{1}" target="FILE_NAME" type="formattext">
+     <key value="EFFECTIVE_DATE"/>
+     <key value="ACCOUNT_NUMBER"/>
+    </exec>
+    <exec directorydatepattern="yyyy-MM-dd" exportformat="PDF" filenameprefix="FILE_NAME" from="DOCUMENT_ID" path="LETTER_PATH" type="generate3_6_1"/>
+    <exec event="treatment.save" ignoreresult="true" type="raise"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

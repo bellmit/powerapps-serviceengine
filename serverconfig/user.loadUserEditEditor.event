@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getUserForEditing" type="select"/>
+ <exec type="parallelquery">
+  <query value="getUserAssignedRoles"/>
+  <query value="availableUserRoles"/>
+  <query value="getUserGroups"/>
+  <query value="getUserTypesForEditing"/>
+  <query value="getEmployeeCitizenships"/>
+  <target value="ASSIGNED_ROLES"/>
+  <target value="ROLES"/>
+  <target value="USER_GROUPS"/>
+  <target value="USER_TYPES"/>
+  <target value="COUNTRIES"/>
+ </exec>
+ <exec type="parallelquery">
+  <query value="getEmployeeAgencies"/>
+  <target value="AGENCIES"/>
+ </exec>
+ <exec event="settings.getEmployeeForUserEditing2" ignoreresult="true" type="raise"/>
+ <exec from="ROLES" key="ROLES" to="ASSIGNED_ROLES" type="copyintolist"/>
+ <exec count="1" type="createlist"/>
+ <exec from="COUNTRIES" key="COUNTRIES" type="copyintolist"/>
+ <exec from="AGENCIES" key="AGENCIES" type="copyintolist"/>
+ <exec from="EMPLOYEES" key="EMPLOYEES" type="copyintolist"/>
+ <exec from="EMPLOYEE_ID" key="EMPLOYEE_ID" type="copyintolist"/>
+ <exec from="USER_TYPE" key="USER_TYPE" type="copyintolist"/>
+ <exec from="PASSWORD" key="PASSWORD" type="copyintolist"/>
+ <exec from="PASSWORD" key="CONFIRM_PASSWORD" type="copyintolist"/>
+ <exec from="PASSWORD" key="ORIGINAL_PASSWORD" type="copyintolist"/>
+ <exec from="ASSIGNED_ROLES" key="ASSIGNED_ROLES" type="copyintolist"/>
+ <exec from="ACTIVE_STATUS" key="ACTIVE_STATUS" type="copyintolist"/>
+ <exec from="LOGON_STATUS" key="LOGON_STATUS" type="copyintolist"/>
+ <exec from="AGENCY_NAME" key="AGENCY_NAME" type="copyintolist"/>
+ <exec from="PASSWORD_EXPIRY" key="PASSWORD_EXPIRY" type="copyintolist"/>
+ <exec from="USER_EXPIRED" key="USER_EXPIRED" type="copyintolist"/>
+ <exec from="REMARKS" key="REMARKS" type="copyintolist"/>
+ <exec from="FIRST_NAME" key="FIRST_NAME" type="copyintolist"/>
+ <exec from="MIDDLE_NAME" key="MIDDLE_NAME" type="copyintolist"/>
+ <exec from="LAST_NAME" key="LAST_NAME" type="copyintolist"/>
+ <exec from="DATE_OF_BIRTH" key="DATE_OF_BIRTH" type="copyintolist"/>
+ <exec from="HIRED_DATE" key="HIRED_DATE" type="copyintolist"/>
+ <exec from="IC_NUMBER" key="IC_NUMBER" type="copyintolist"/>
+ <exec from="OLD_IC_NUMBER" key="OLD_IC_NUMBER" type="copyintolist"/>
+ <exec from="DEPARTMENT" key="DEPARTMENT" type="copyintolist"/>
+ <exec from="DESIGNATION" key="DESIGNATION" type="copyintolist"/>
+ <exec from="EMAIL_ADDRESS" key="EMAIL_ADDRESS" type="copyintolist"/>
+ <exec from="CITIZENSHIP" key="CITIZENSHIP" type="copyintolist"/>
+ <exec from="PASSWORD_EXPIRY_DATE" key="PASSWORD_EXPIRY_DATE" type="copyintolist"/>
+ <exec from="USER_EXPIRY_DATE" key="USER_EXPIRY_DATE" type="copyintolist"/>
+ <exec from="USER_TYPES" key="USER_TYPES" type="copyintolist"/>
+ <exec from="USER_TYPE_ID" key="USER_TYPE_ID" type="copyintolist"/>
+ <exec from="USER_GROUPS" key="USER_GROUPS" type="copyintolist"/>
+ <exec from="USER_GROUP_ID" key="USER_GROUP_ID" type="copyintolist"/>
+</event>

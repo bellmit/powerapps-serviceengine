@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="parallelquery">
+  <query value="getUserTypesForEditing"/>
+  <query value="getEmployeeCitizenships"/>
+  <query value="getEmployeeAgencies"/>
+  <query value="getUserGroups"/>
+  <target value="USER_TYPES"/>
+  <target value="COUNTRIES"/>
+  <target value="AGENCIES"/>
+  <target value="USER_GROUPS"/>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="USER_TYPES" key="USER_TYPES" type="copyintolist"/>
+ <exec from="COUNTRIES" key="COUNTRIES" type="copyintolist"/>
+ <exec from="AGENCIES" key="AGENCIES" type="copyintolist"/>
+ <exec from="USER_GROUPS" key="USER_GROUPS" type="copyintolist"/>
+</event>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="TYPES" query="getDocumentTypesForEditing" type="query"/>
+ <exec count="1" type="createlist"/>
+ <exec from="TYPES" key="TYPES" type="copyintolist"/>
+</event>

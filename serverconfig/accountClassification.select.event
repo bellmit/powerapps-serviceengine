@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getTreatmentAccountClassification" type="select"/>
+ <exec type="parallelquery">
+  <query value="getAccountClassificationSourceOfContact"/>
+  <query value="getAccountClassificationReasonForPayment"/>
+  <target value="CONTACT_LIST"/>
+  <target value="REASON_PAYMENT_LIST"/>
+ </exec>
+</event>

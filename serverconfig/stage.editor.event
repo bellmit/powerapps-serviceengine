@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="STAGE_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="STAGE_ID" operator="&lt;&gt;" rhsvalue="parent.STAGE_ID"/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec statement="getStageForEditing" type="select"/>
+  <exec from="CODE" key="CODE" type="copyintolist"/>
+  <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+  <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+  <exec from="TAT" key="TAT" type="copyintolist"/>
+ </exec>
+</event>

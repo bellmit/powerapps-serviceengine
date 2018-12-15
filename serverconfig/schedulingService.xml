@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="schedulingService">
+  <select id="getLastActiveEventScheduleId" resultClass="long">
+	SELECT
+	MAX(S.ID)
+	FROM PTREVENT_SCHEDULE S
+	INNER JOIN PTRREPORT_DESIGN RPTDSG ON CAST(S.REQUEST_ID AS BIGINT) = RPTDSG.ID
+	WHERE S.SCHEDULE_STATUS_ID = 1
+	AND RPTDSG.DISABLE = <include refid="false"/>
+  </select>
+  <resultMap id="getEventSchedulesByStatus-map" class="java.util.HashMap">
+    <result property="ID" javaType="long"/>
+    <result property="SCHEDULE_STATUS_ID" javaType="long"/>
+    <result property="REQUEST_ID" javaType="string"/>
+    <result property="REQUESTING_SERVICE" javaType="string"/>
+    <result property="REQUEST_DATE_TIME" javaType="date"/>
+    <result property="SCHEDULE_CRON" javaType="string"/>
+  </resultMap>
+
+  <select id="getActiveEventSchedules"
+resultMap="getEventSchedulesByStatus-map">
+    SELECT 
+    S.ID, 
+    S.SCHEDULE_STATUS_ID, 
+    S.REQUEST_ID, 
+    S.REQUESTING_SERVICE,
+    S.REQUEST_DATE_TIME, 
+    S.SCHEDULE_CRON
+    FROM PTREVENT_SCHEDULE S
+    INNER JOIN PTRREPORT_DESIGN RPTDSG ON CAST(S.REQUEST_ID AS BIGINT) = RPTDSG.ID
+    WHERE S.SCHEDULE_STATUS_ID = 1
+    AND RPTDSG.DISABLE = <include refid="false"/> OR RPTDSG.DISABLE IS NULL
+  </select>
+   	<select id="getEventScheduleStatus" resultClass="long">
+   	select SCHEDULE_STATUS_ID from PTREVENT_SCHEDULE where ID = #VALUE#
+  	</select>
+</sqlMap>

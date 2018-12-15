@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="loginTrackerService">
+<resultMap class="hmap" id="getLastUserLoginAndLogout">
+ <result property="LAST_LOGIN_TIME" javaType="date" />
+ <result property="LAST_LOGOUT_TIME" javaType="date" />
+</resultMap>
+<select id="getLastUserLoginAndLogout" resultMap="getLastUserLoginAndLogout">
+select MAX(i.LOGIN_TIME), MAX(o.LOGOFF_TIME)
+from PTRUSER_LOGIN_HISTORY i, PTRUSER_LOGOFF_HISTORY o
+where o.USER_ID = #USER_ID#
+  and i.USER_ID = #USER_ID#
+</select>
+<resultMap class="hmap" id="getLastLoginTime">
+ <result property="LAST_LOGIN_ID" javaType="long" />
+ <result property="LAST_LOGIN_TIME" javaType="date" />
+</resultMap>
+<select id="getLastLoginTime" resultMap="getLastLoginTime">
+select i.ID, i.LOGIN_TIME
+from PTRUSER_LOGIN_HISTORY i
+where i.USER_ID = #USER_ID#
+  and i.LOGIN_TIME =
+     (select MAX(LOGIN_TIME)
+      from PTRUSER_LOGIN_HISTORY h
+      where h.USER_ID = i.USER_ID)
+</select>
+
+ <insert id="insertUserLogin" parameterClass="map">
+  insert into PTRUSER_LOGIN_HISTORY (USER_ID, LOGIN_TIME) values (#USER_ID#,
+  #LOGIN_TIME#)
+ </insert>
+
+ <insert id="insertUserLogoff" parameterClass="map">
+  insert into PTRUSER_LOGOFF_HISTORY (USER_ID, LOGOFF_TIME, LOGIN_TIME, LOGIN_HISTORY_ID) values (#USER_ID#,
+  #LOGOFF_TIME#, #LAST_LOGIN_TIME#, #LAST_LOGIN_ID#)
+ </insert>
+ <insert id="insertDerivedUserLogoff" parameterClass="map">
+  insert into PTRUSER_LOGOFF_HISTORY (USER_ID, LOGOFF_TIME, LOGIN_TIME, LOGIN_HISTORY_ID, IS_DERIVED)
+  select USER_ID, max(request_time), #LAST_LOGIN_TIME:TIMESTAMP#, #LAST_LOGIN_ID#, true from PTRAUDIT_LOG
+   where USER_ID = 'Admin' and #LOGIN_TIME# > REQUEST_TIME 
+   group by USER_ID
+ </insert>
+
+</sqlMap>

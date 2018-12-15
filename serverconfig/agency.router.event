@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="INIT_ROUTER" type="copyintolist"/>
+ <exec from="HIDE" to="VIEW_CREATE_ACTION" type="copy"/>
+ <exec from="HIDE" to="VIEW_ASSIGN_TO_AGENCY" type="copy"/>
+ <exec from="HIDE" to="VIEW_PENDING_RECOMMENDATION" type="copy"/>
+ <exec from="HIDE" to="VIEW_MANAGE_AGENCY" type="copy"/>
+ <exec from="HIDE" to="DEFAULT" type="copy"/>
+ <exec from="TRUE" key="ENABLE_CLOSE" type="copyintolist"/>
+ <exec from="SHOW" key="_HEADER" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CREATE_ACTION" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="VIEW_CREATE_ACTION" type="copy"/>
+  <exec from="TRUE" key="ENABLE_CREATE_ACTION" type="copyintolist"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Create Action&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="CREATE_ACTION_TITLE" type="formattext"/>
+  <exec message="Create Action" target="TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="ASSIGN_TO_AGENCY" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Assign To Agency&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="ASSIGN_TO_AGENCY_TITLE" type="formattext"/>
+  <exec message="Assign To Agency" target="TITLE" type="formattext"/>
+  <exec from="SHOW" to="VIEW_ASSIGN_TO_AGENCY" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PENDING_RECOMMENDATION" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Pending Recommendation&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="PENDING_RECOMMENDATION_TITLE" type="formattext"/>
+  <exec message="Pending Recommendation" target="TITLE" type="formattext"/>
+  <exec from="SHOW" to="VIEW_PENDING_RECOMMENDATION" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MANAGE_BUSINESS_UNIT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Manage Business Unit&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MANAGE_BUSINESS_UNIT_TITLE" type="formattext"/>
+  <exec message="Manage Business Unit" target="TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MANAGE_AGENCY" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Manage 3&lt;sup&gt;rd&lt;/sup&gt; Party Providers&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MANAGE_AGENCY_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;Manage 3&lt;sup&gt;rd&lt;/sup&gt; Party Providers&lt;/h4&gt;&lt;/html&gt;" target="TITLE" type="formattext"/>
+  <exec from="SHOW" to="VIEW_MANAGE_AGENCY" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MANAGE_CONTRACT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Manage 3rd Party Contract&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MANAGE_CONTRACT_TITLE" type="formattext"/>
+  <exec message="Manage Contract" target="TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MANAGE_PARAMETER" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Manage Parameters&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MANAGE_PARAMETER_TITLE" type="formattext"/>
+  <exec message="Manage Parameters" target="TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="SYSTEM_CONFIG" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Manage Password&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="SYSTEM_CONFIG_TITLE" type="formattext"/>
+  <exec message="Manage Password" target="TITLE" type="formattext"/>
+ </exec>
+ <exec from="DEFAULT" key="DEFAULT" type="copyintolist"/>
+ <exec from="VIEW_CREATE_ACTION" key="VIEW_CREATE_ACTION" type="copyintolist"/>
+ <exec from="VIEW_ASSIGN_TO_AGENCY" key="VIEW_ASSIGN_TO_AGENCY" type="copyintolist"/>
+ <exec from="VIEW_PENDING_RECOMMENDATION" key="VIEW_PENDING_RECOMMENDATION" type="copyintolist"/>
+ <exec from="VIEW_MANAGE_AGENCY" key="VIEW_MANAGE_AGENCY" type="copyintolist"/>
+ <exec from="CREATE_ACTION_TITLE" key="CREATE_ACTION_TITLE" type="copyintolist"/>
+ <exec from="ASSIGN_TO_AGENCY_TITLE" key="ASSIGN_TO_AGENCY_TITLE" type="copyintolist"/>
+ <exec from="PENDING_RECOMMENDATION_TITLE" key="PENDING_RECOMMENDATION_TITLE" type="copyintolist"/>
+ <exec from="MANAGE_BUSINESS_UNIT_TITLE" key="MANAGE_BUSINESS_UNIT_TITLE" type="copyintolist"/>
+ <exec from="MANAGE_AGENCY_TITLE" key="MANAGE_AGENCY_TITLE" type="copyintolist"/>
+ <exec from="MANAGE_CONTRACT_TITLE" key="MANAGE_CONTRACT_TITLE" type="copyintolist"/>
+ <exec from="MANAGE_PARAMETER_TITLE" key="MANAGE_PARAMETER_TITLE" type="copyintolist"/>
+ <exec from="SYSTEM_CONFIG_TITLE" key="SYSTEM_CONFIG_TITLE" type="copyintolist"/>
+ <exec from="TITLE" key="TITLE" type="copyintolist"/>
+</event>

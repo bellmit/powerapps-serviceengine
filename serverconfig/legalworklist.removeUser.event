@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="CONFIRM_UPDATE" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec to="LOGON_USER" type="user"/>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="true" type="date"/>
+  <exec statement="deleteUserFromWorklist" type="delete"/>
+  <exec recordcount="" statement="updateUserWorklistHistory" type="update"/>
+  <exec count="1" type="createlist"/>
+  <exec message="User(s) removed" target="MESSAGE" type="formattext"/>
+  <exec from="TRUE" key="LOAD" type="copyintolist"/>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="INIT" type="copyintolist"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ </exec>
+</event>

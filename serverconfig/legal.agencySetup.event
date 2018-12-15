@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="parallelquery">
+  <query value="getLegaAgencyTypeForSetup"/>
+  <target value="TYPES"/>
+ </exec>
+ <exec from="TRUE" key="LOAD_DATA" to="TYPES" type="copyintolist"/>
+ <exec from="TYPES" key="TYPES" type="copyintolist"/>
+</event>

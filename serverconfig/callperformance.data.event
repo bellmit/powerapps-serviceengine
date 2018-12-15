@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
+ <exec argument="BASE_DATA" query="getDailyPerformance" type="query"/>
+ <exec type="parallelquery">
+  <query value="getDailyCallPerformance"/>
+  <query value="getDailyCallPerformanceGrossBalance"/>
+  <query value="getDailyCallPerformanceByStatus"/>
+  <target value="CALL_DATA"/>
+  <target value="GROSS_DATA"/>
+  <target value="DAILY_CALL_PERFORMANCE_BREAKDOWN"/>
+ </exec>
+ <exec from="CALL_DATA" key="ID" to="BASE_DATA" type="merge"/>
+ <exec from="GROSS_DATA" key="ID" to="BASE_DATA" type="merge"/>
+ <exec from="TRUE" key="LOAD_BREAKDOWN" to="BASE_DATA" type="copyintolist"/>
+ <exec from="BASE_DATA" key="DAILY_CALL_PERFORMANCE" type="copyintolist"/>
+ <exec from="DAILY_CALL_PERFORMANCE_BREAKDOWN" key="DAILY_CALL_PERFORMANCE_BREAKDOWN" type="copyintolist"/>
+</event>

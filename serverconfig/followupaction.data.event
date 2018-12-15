@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="DATA" query="getFollowUpActionList" type="query"/>
+ <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+ <exec from="TRUE" key="TEAM_LIST" to="DATA" type="copyintolist"/>
+ <exec from="DATA" key="DATA" type="copyintolist"/>
+</event>

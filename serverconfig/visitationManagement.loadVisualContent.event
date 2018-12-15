@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="USER_ID" type="user"/>
+ <exec from="MODULE_ID" key="MODULE_ID" type="copyintolist"/>
+ <exec from="USER_ID" key="USER_ID" type="copyintolist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec type="loop">
+  <exec statement="getDecisionTreeTypeVisitation" type="select"/>
+  <exec argument="EVALUATION_TREE_LIST" query="getDecisionTreeByType" type="query"/>
+  <exec argument="TREE_CONDITIONS" query="getDecisionTreeCondition" type="query"/>
+ </exec>
+</event>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec statement="getTemplateVersionDocumentId" type="select"/>
+ <exec statement="getTrue" type="select"/>
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DOCUMENT_ID" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec directToDatabase="false" directorydatepattern="yyyy-MM-dd" exportformat="XML" filenamedatepattern="HH-mm-ss-" filenameprefix="" from="DOCUMENT_ID" to="LETTER_CONTENT" type="generatetemplate"/>
+  <exec from="LETTER_CONTENT" regex="&lt;br&gt;" replacement="" to="LETTER_CONTENT" type="regexreplace"/>
+  <exec directToDatabase="false" directorydatepattern="yyyy-MM-dd" exportformat="Text" filenamedatepattern="HH-mm-ss-" filenameprefix="" from="DOCUMENT_ID" to="EMAIL_CONTENT" type="generatetemplate"/>
+ </exec>
+ <exec from="TRUE" key="TEMPLATE_LOADED" type="copyintolist"/>
+ <exec from="LETTER_CONTENT" key="LETTER_CONTENT" type="copyintolist"/>
+</event>

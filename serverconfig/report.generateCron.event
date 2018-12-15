@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="1"/>
+  </conditions>
+  <exec message="0" target="MINUTES" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SELECTED_MINUTES" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec list="SELECTED_MINUTES" to="SELECTED_MINUTES_COUNT" type="countlist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SELECTED_MINUTES_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    </conditions>
+    <exec from="SELECTED_MINUTES" key="ID" to="MINUTES_CRON" type="extract"/>
+    <exec message="{0}" target="MINUTES_CRON" type="formattext">
+     <key value="MINUTES_CRON"/>
+    </exec>
+    <exec from="MINUTES_CRON" regex="\s" replacement="" to="MINUTES" type="regexreplace"/>
+   </exec>
+  </exec>
+  <exec message="*" target="HOUR" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SELECTED_HOURS" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec list="SELECTED_HOURS" to="SELECTED_HOURS_COUNT" type="countlist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SELECTED_HOURS_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    </conditions>
+    <exec from="SELECTED_HOURS" key="ID" to="HOURS_CRON" type="extract"/>
+    <exec message="{0}" target="HOURS_CRON" type="formattext">
+     <key value="HOURS_CRON"/>
+    </exec>
+    <exec from="HOURS_CRON" regex="\s" replacement="" to="HOUR" type="regexreplace"/>
+   </exec>
+  </exec>
+  <exec message="*" target="DAY_OF_MONTH" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SELECTED_DAYS_OF_MONTH" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec list="SELECTED_DAYS_OF_MONTH" to="SELECTED_DAYS_OF_MONTH_COUNT" type="countlist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SELECTED_DAYS_OF_MONTH_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    </conditions>
+    <exec from="SELECTED_DAYS_OF_MONTH" key="ID" to="DAY_OF_MONTH_CRON" type="extract"/>
+    <exec message="{0}" target="DAY_OF_MONTH_CRON" type="formattext">
+     <key value="DAY_OF_MONTH_CRON"/>
+    </exec>
+    <exec from="DAY_OF_MONTH_CRON" regex="\s" replacement="" to="DAY_OF_MONTH" type="regexreplace"/>
+   </exec>
+  </exec>
+  <exec message="*" target="DAY_OF_WEEK" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SELECTED_DAYS_OF_WEEK" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec list="SELECTED_DAYS_OF_WEEK" to="SELECTED_DAYS_OF_WEEK_COUNT" type="countlist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SELECTED_DAYS_OF_WEEK_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    </conditions>
+    <exec from="SELECTED_DAYS_OF_WEEK" key="ID" to="DAY_OF_WEEK_CRON" type="extract"/>
+    <exec message="{0}" target="DAY_OF_WEEK_CRON" type="formattext">
+     <key value="DAY_OF_WEEK_CRON"/>
+    </exec>
+    <exec from="DAY_OF_WEEK_CRON" regex="\s" replacement="" to="DAY_OF_WEEK" type="regexreplace"/>
+   </exec>
+  </exec>
+  <exec message="*" target="MONTH" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SELECTED_MONTHS" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec list="SELECTED_MONTHS" to="SELECTED_MONTHS_COUNT" type="countlist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SELECTED_MONTHS_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    </conditions>
+    <exec from="SELECTED_MONTHS" key="ID" to="MONTH_CRON" type="extract"/>
+    <exec message="{0}" target="MONTH_CRON" type="formattext">
+     <key value="MONTH_CRON"/>
+    </exec>
+    <exec from="MONTH_CRON" regex="\s" replacement="" to="MONTH" type="regexreplace"/>
+   </exec>
+  </exec>
+  <exec message="*" target="YEAR" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SELECTED_YEARS" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec list="SELECTED_YEARS" to="SELECTED_YEARS_COUNT" type="countlist"/>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="SELECTED_YEARS_COUNT" operator="&lt;&gt;" rhsvalue="0"/>
+    </conditions>
+    <exec from="SELECTED_YEARS" key="ID" to="YEAR_CRON" type="extract"/>
+    <exec message="{0}" target="YEAR_CRON" type="formattext">
+     <key value="YEAR_CRON"/>
+    </exec>
+    <exec from="YEAR_CRON" regex="\s" replacement="" to="YEAR" type="regexreplace"/>
+   </exec>
+  </exec>
+  <exec message="{0} {1} {2} {3} {4} {5}" target="SCHEDULE_CRON" type="formattext">
+   <key value="MINUTES"/>
+   <key value="HOUR"/>
+   <key value="DAY_OF_MONTH"/>
+   <key value="DAY_OF_WEEK"/>
+   <key value="MONTH"/>
+   <key value="YEAR"/>
+  </exec>
+ </exec>
+ <exec count="1" type="createlist"/>
+ <exec from="SCHEDULE_CRON" key="SCHEDULE_CRON" type="copyintolist"/>
+</event>

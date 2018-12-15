@@ -1,0 +1,122 @@
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="dspService.xml">
+<resultMap id="getcustomercheckpaymentfromhost" class="hmap">   
+<result property="RESUME_ON_ERROR" javaType="string"/>
+<result property="ACCOUNT_NUMBER"  javaType="string"/>
+<result property="ACCOUNT_ID"  javaType="long"/>
+</resultMap>
+
+<select id="getcustomercheckpaymentfromhost" resultMap="getcustomercheckpaymentfromhost" parameterClass="map">
+select 1 as RESUME_ON_ERROR, a.ACCOUNT_NO, a.id from ptraccount a where a.id = #ACCOUNT_ID# 
+</select>
+
+<resultMap id="getNoticeDayMaintenance-map" class="hmap">
+<result property="RESUME_ON_ERROR" column="RESUME_ON_ERROR" javaType="string"/>
+<result property="ACCOUNT_NUMBER" column="ACCOUNT_NUMBER" javaType="string"/>   
+</resultMap>
+
+<select id="getNoticeDayMaintenance" resultMap="getNoticeDayMaintenance-map" parameterClass="map">
+<![CDATA[
+select
+1 as RESUME_ON_ERROR, 
+a.account_no as ACCOUNT_NUMBER
+from  
+ptraccount a
+where 
+a.id = #ACCOUNT_ID:NUMERIC#
+]]>   
+</select>
+
+
+
+<resultMap id="getAccountPaymentsOnline-map" class="hmap">
+<result property="RESUME_ON_ERROR" javaType="string"/>
+<result property="LAST_PAYMT_DATE" javaType="date"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+
+</resultMap>
+
+<select id="getAccountPaymentsOnline" resultMap="getAccountPaymentsOnline-map" parameterClass="map">
+select 1 as RESUME_ON_ERROR, last_payment_date, account_no from ptraccount where id = #ACCOUNT_ID# 
+</select>
+
+<resultMap id="getPreviousDayPayments-map" class="hmap">
+<result property="RESUME_ON_ERROR" javaType="string"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+<result property="RECORDS_TO_RETRIEVE" javaType="string"/>
+<result property="POSTING_DATE" javaType="date"/>
+</resultMap>
+
+<select id="getPreviousDayPayments" resultMap="getPreviousDayPayments-map" parameterClass="map">
+select 1 as RESUME_ON_ERROR, ACCOUNT_NO, 8 as RECORDS_TO_RETRIEVE, current_date - interval '1 day' AS POSTING_DATE
+from ptraccount where id = #ACCOUNT_ID#
+</select>
+
+<resultMap id="getOutstationCheckPayment-map" class="hmap">
+<result property="RESUME_ON_ERROR" javaType="string"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>   
+</resultMap>
+
+<select id="getOutstationCheckPayment" resultMap="getOutstationCheckPayment-map" parameterClass="map">
+select 1 as RESUME_ON_ERROR, a.ACCOUNT_NO from ptraccount a where a.id = #ACCOUNT_ID#
+</select>
+
+<resultMap class="hmap" id="getwltabcheckedpayment">
+<result property="CHECK_PAYMENT" javaType="boolean"/>
+</resultMap>
+
+<select id="getwltabcheckedpayment" resultMap="getwltabcheckedpayment" parameterClass="map">
+select CHECK_PAYMENT FROM PTRACCOUNT WHERE ID = #ACCOUNT_ID#
+</select>
+
+<update id="updatepaymentandmessagescheck" parameterClass="map">
+update PTRACCOUNT set CHECK_PAYMENT = #CHECK_PAYMENT# where ID = #ACCOUNT_ID#
+</update>
+
+<resultMap id="getOnlineMessage-map" class="hmap">
+<result property="RESUME_ON_ERROR" javaType="string"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+</resultMap>
+
+<select id="getOnlineMessage" resultMap="getOnlineMessage-map" parameterClass="map">
+select 1 as RESUME_ON_ERROR, ACCOUNT_NO from ptraccount where id = #ACCOUNT_ID#
+</select>
+
+
+<resultMap id="getAccountStatusMaintenance-map" class="hmap">
+<result property="RESUME_ON_ERROR" javaType="string"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>
+<result property="ACCOUNT_ID" javaType="long"/>
+</resultMap>
+
+<select id="getAccountStatusMaintenance" resultMap="getAccountStatusMaintenance-map" parameterClass="map">
+select 1 as RESUME_ON_ERROR, ACCOUNT_NO, ID from  ptraccount where id = #ACCOUNT_ID#
+</select>
+
+
+
+<resultMap id="getAccountLoanPayOffInq-map" class="hmap">
+<result property="RESUME_ON_ERROR" javaType="string"/>
+<result property="LAST_PAYMT_DATE"  javaType="date"/>
+<result property="ACCOUNT_NUMBER" javaType="string"/>   
+</resultMap>
+
+<select id="getAccountLoanPayOffInq" resultMap="getAccountLoanPayOffInq-map" parameterClass="map">
+<![CDATA[
+select 
+1 as RESUME_ON_ERROR,
+A.last_payment_date AS LAST_PAYMT_DATE,
+A.ACCOUNT_NO
+from  
+ptraccount a
+where 
+a.id = #ACCOUNT_ID:NUMERIC#
+]]>   
+</select>
+
+
+
+</sqlMap>

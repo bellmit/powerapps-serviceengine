@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getTrue" type="select"/>
+ <exec statement="getLongZero" type="select"/>
+ <exec from="TRUE" key="OK" type="copyintolist"/>
+ <exec from="BUCKET_LIST1" to="BUCKET_LIST" type="copy"/>
+ <exec from="BUCKET_LIST" key="BUCKET_LIST" type="copyintolist"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="ZERO" key="SELECTED_BUCKET" type="copyintolist"/>
+</event>

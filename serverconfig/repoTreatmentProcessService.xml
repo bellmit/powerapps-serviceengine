@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="treatmentProcessService">
+
+<resultMap class="hmap"
+		id="getRepossessionOrderTreatmentProcessInformation-map">
+		<result property="TREATMENT_ID" javaType="long"/>
+		<result property="SUBTYPE_ID" javaType="long"/>
+		<result property="TYPE_STATUS_ID" javaType="long"/>
+		<result property="TYPE_ID" javaType="long"/>
+		<result property="AGENT_ID" javaType="long"/>
+		<result property="REPO_IC" javaType="string"/>
+		<result property="REPO_ID" javaType="string"/>
+		<result property="CONTACT_NUM" javaType="string"/>
+		<result property="TOWING" javaType="string"/>
+		<result property="REPOSSESSION_CHARGES" javaType="$"/>
+		<result property="ESTIMATION_VALUE" javaType="$"/>
+		<result property="CONTACT_TYPE" javaType="string"/>
+		<result property="ADDRESS_1" javaType="string"/>
+		<result property="ADDRESS_2" javaType="string"/>
+		<result property="ADDRESS_3" javaType="string"/>
+		<result property="STORE_YARD_ID" javaType="long"/>
+		<result property="AUCTION_HOUSE_ID" javaType="long"/>
+
+	</resultMap>
+	
+	<select id="getRepossessionOrderTreatmentProcessInformation"
+		resultMap="getRepossessionOrderTreatmentProcessInformation-map"> 
+ 
+      select
+		TREATMENT_ID,  
+		subtype_id, 
+		type_status_id,
+		type_id, 
+		Agent_id, 
+		REPO_IC,
+		REPO_ID, 
+		CONTACT_NUM, 
+		TOWING, 
+		REPOSSESSION_CHARGES,
+		ESTIMATION_VALUE, 
+		CONTACT_TYPE,
+		ADDRESS_1, 
+		ADDRESS_2, 
+		ADDRESS_3, 
+		auction_house_id, 
+		store_yard_id
+		from ptrtreatment_repossession 
+		where TREATMENT_ID = #ID#
+	</select>
+
+	<parameterMap id="RepossessionOrderTreatmentProcess-pmap" class="map" >
+		<parameter property="TREATMENT_ID" javaType="long"/>
+		<parameter property="ACCOUNT_ID" javaType="long"/>
+		<parameter property="SUBTYPE_ID" javaType="long"/>
+		<parameter property="TYPE_STATUS_ID" javaType="long"/>
+		<parameter property="TYPE_ID" javaType="long"/>
+		<parameter property="AGENT_ID" javaType="long"/>
+		<parameter property="REPO_IC" javaType="string"/>
+		<parameter property="REPO_ID" javaType="string"/>
+		<parameter property="CONTACT_NUM" javaType="string"/>
+		<parameter property="TOWING" javaType="string"/>
+		<parameter property="REPOSSESSION_CHARGES" javaType="$"/>
+		<parameter property="ESTIMATION_VALUE" javaType="$"/>
+		<parameter property="CONTACT_TYPE" javaType="string"/>
+		<parameter property="ADDRESS_1" javaType="string"/>
+		<parameter property="ADDRESS_2" javaType="string"/>
+		<parameter property="ADDRESS_3" javaType="string"/>
+		<parameter property="STORE_YARD_ID" javaType="long"/>
+		<parameter property="AUCTION_HOUSE_ID" javaType="long"/>
+
+	</parameterMap>
+	<insert id="insertRepossessionOrderTreatmentProcess"
+		parameterClass="map"> 
+    INSERT INTO	ptrtreatment_repossession (
+    TREATMENT_ID, 
+		ACCOUNT_ID, 
+		SUBTYPE_ID, 
+		TYPE_STATUS_ID,
+		TYPE_ID, 
+		AGENT_ID, 
+		REPO_IC,
+		REPO_ID, 
+		CONTACT_NUM, 
+		TOWING, 
+		REPOSSESSION_CHARGES,
+		ESTIMATION_VALUE, 
+		CONTACT_TYPE,
+		ADDRESS_1, 
+		ADDRESS_2, 
+		ADDRESS_3, 
+		AUCTION_HOUSE_ID, 
+		STORE_YARD_ID) values (#ID#,#ACCOUNT_ID#,#SUBTYPE_ID#,#TYPE_STATUS_ID#,#TYPE_ID#,#AGENT_ID#,#REPO_IC#,
+		#REPO_ID#,#CONTACT_NUM#,#TOWING#,#REPOSSESSION_CHARGES#,#ESTIMATION_VALUE#,#CONTACT_TYPE#,#ADDRESS_1#, 
+		#ADDRESS_2#,#ADDRESS_3#,#AUCTION_HOUSE_ID#,#STORE_YARD_ID#)
+	</insert>
+	
+	<!-- update Statement -->
+	<update id="updateRepossessionOrderTreatmentProcess"
+		parameterClass="map"> 
+    UPDATE ptrtreatment_repossession set  
+		SUBTYPE_ID = #SUBTYPE_ID#, 
+		TYPE_STATUS_ID =#TYPE_STATUS_ID#,
+		TYPE_ID = #TYPE_ID#, 
+		AGENT_ID = #AGENT_ID#, 
+		REPO_IC = #REPO_IC#,
+		REPO_ID = #REPO_ID#, 
+		CONTACT_NUM =#CONTACT_NUM# , 
+		TOWING = #TOWING#, 
+		REPOSSESSION_CHARGES = #REPOSSESSION_CHARGES#,
+		ESTIMATION_VALUE = #ESTIMATION_VALUE#, 
+		CONTACT_TYPE = #CONTACT_TYPE#,
+		ADDRESS_1 = #ADDRESS_1#, 
+		ADDRESS_2 = #ADDRESS_2#, 
+		ADDRESS_3 = #ADDRESS_3#, 
+		AUCTION_HOUSE_ID = #AUCTION_HOUSE_ID#, 
+		STORE_YARD_ID = #STORE_YARD_ID#
+	  where TREATMENT_ID = #ID#
+  </update>
+  
+  <resultMap class="hmap" id="getRepoCustomerInformation-map">
+		<result property="CONTACT_FIRST_NAME" />
+		<result property="CONTACT_TYPE" />
+		<result property="RELATIONSHIP" />
+		<result property="ADDRESS_1" jdbcType="VARCHAR" />
+		<result property="ADDRESS_2" jdbcType="VARCHAR" />
+		<result property="ADDRESS_3" jdbcType="VARCHAR" />
+		<result property="ADDRESS_4" jdbcType="VARCHAR" />
+		<result property="ADDRESS_5" jdbcType="VARCHAR" />
+		<result property="ZIPCODE" jdbcType="long" />
+		<result property="CITY" jdbcType="VARCHAR" />
+		<result property="STATE" jdbcType="VARCHAR" />
+		<result property="COUNTRY" jdbcType="VARCHAR" />
+		<result property="DISABLE" javaType="boolean" />
+	</resultMap>
+
+	<select id="getRepoCustomerInformation" resultMap="getRepoCustomerInformation-map"
+		parameterClass="map"> select distinct
+		addr.CONTACT_FIRST_NAME,
+		CONTACT_TYPE_CODE as CONTACT_TYPE,
+		ref.DESCRIPTION as RELATIONSHIP,
+		COALESCE(addr.ADDRESS_1, ''),
+		COALESCE(addr.ADDRESS_2, ''),
+		COALESCE(addr.STREET_NAME, ''),
+		COALESCE(addr.ADDRESS_4, ''),
+		COALESCE(addr.ADDRESS_5, ''),
+		coalesce(addr.zip_code,''),
+		COALESCE(addr.CITY, ''),
+		coalesce(str.state,''),
+		COALESCE(country.country_desc,''),
+		addr.DISABLE
+		from ptraddress_det addr
+		inner join ptrcustomer_contact_rel contactrel on (contactrel.contact_id =addr.contact_id)
+		inner join ptrcustomer_account_rel acctrel on (acctrel.customer_id =contactrel.customer_id)
+		inner join ptrcustomer_account_relation_type_ref ref on (ref.id =acctrel.RELATIONSHIP_TYPE_ID)
+		LEFT OUTER JOIN PTRCONTACT_TYPE_REF t0 on (t0.CONTACT_TYPE_ID =addr.CONTACT_TYPE_ID)
+		left join ptrstate_ref str on (addr.STATE_ID = str.STATE_ID)
+		LEFT JOIN PTRCOUNTRY_REF country ON (country.COUNTRY_ID = det.COUNTRY_ID)
+		where acctrel.account_id = #ACCOUNT_ID#
+		and addr.ADDRESS_1 not in ('Dummy
+		address for contact numbers')
+	</select>
+ <insert id="insertRepoActionDate" parameterClass="map">
+  insert into PTRREPO_ACTION_DATE (ACCOUNT_ID, PROCESS_SUBTYPE_ID, ACTION_DATE, STATUS_ID)
+  select ACCOUNT_ID, PROCESS_SUBTYPE_ID, date(EXPECTED_START_DATE), PROCESS_STATUS_ID
+  from PTRTREATMENT_PROCESS p
+   inner join PTRACC_TREATMENT_PLAN pl on pl.TREATMENT_PLAN_ID = p.TREATMENT_PLAN_ID
+   inner join ptrtreatproc_subtype_ref ref on ref.treatproc_subtype_id = p.process_subtype_id
+  where p.TREATMENT_PROCESS_ID = #TREATMENT_PROCESS_ID#
+   and ((p.process_type_id = 14 and ref.treatproc_type_code in ('FS', 'NI'))
+        or
+       (p.process_type_id = 23 and ref.treatproc_type_code='RA' and p.FROM_HOST=1)) 
+ </insert>
+
+ <resultMap id="getRepoActionDateOneTimeBatch" class="hmap">
+  <result property="ACCOUNT_ID" javaType="long"/>
+  <result property="TREATMENT_PROCESS_ID" javaType="long"/>
+ </resultMap>
+ <select id="getRepoActionDateOneTimeBatchFS" resultMap="getRepoActionDateOneTimeBatch">
+  select a.account_id, max(treatment_process_id)
+  from PTRTREATMENT_PROCESS p
+   inner join ptrtreatproc_subtype_ref ref on ref.treatproc_subtype_id = p.process_subtype_id
+   inner join ptracc_treatment_plan a on a.treatment_plan_id = p.treatment_plan_id
+  where p.process_type_id = 14 and ref.treatproc_type_code = 'FS'
+  group by a.account_id
+  order by a.account_id
+ </select>
+ <select id="getRepoActionDateOneTimeBatchNI" resultMap="getRepoActionDateOneTimeBatch">
+  select a.account_id, max(treatment_process_id)
+  from PTRTREATMENT_PROCESS p
+   inner join ptrtreatproc_subtype_ref ref on ref.treatproc_subtype_id = p.process_subtype_id
+   inner join ptracc_treatment_plan a on a.treatment_plan_id = p.treatment_plan_id
+  where p.process_type_id = 14 and ref.treatproc_type_code = 'NI'
+  group by a.account_id
+  order by a.account_id
+ </select>
+ <select id="getRepoActionDateOneTimeBatchRO" resultMap="getRepoActionDateOneTimeBatch">
+  select a.account_id, max(treatment_process_id)
+  from PTRTREATMENT_PROCESS p
+   inner join ptrtreatproc_subtype_ref ref on ref.treatproc_subtype_id = p.process_subtype_id
+   inner join ptracc_treatment_plan a on a.treatment_plan_id = p.treatment_plan_id
+  where p.process_type_id = 23 and ref.treatproc_type_code in ('RO_1','RO_2','RO_3','RO_4','RO_5','RO_6','RA')
+  group by a.account_id
+  order by a.account_id
+ </select>
+ 
+ <resultMap class="hmap" id="getReposisionTableAddress">
+		<result property="QL" javaType="boolean"/>
+		<result property="VCONTACT_ID" javaType="long"/>
+		<result property="CONTACT_FIRST_NAME"/>
+		<result property="CONTACT_TYPE"/>
+		<result property="RELATIONSHIP"/>
+		<result property="ADDRESS_1" jdbcType="VARCHAR"/>
+		<result property="ADDRESS_2" jdbcType="VARCHAR"/>
+		<result property="ADDRESS_3" jdbcType="VARCHAR"/>
+		<result property="ADDRESS_4" jdbcType="VARCHAR" />
+		<result property="ADDRESS_5" jdbcType="VARCHAR" />
+		<result property="ZIPCODE" jdbcType="long" />
+		<result property="CITY" jdbcType="VARCHAR" />
+		<result property="STATE" jdbcType="VARCHAR" />
+		<result property="COUNTRY" jdbcType="VARCHAR" />
+		<result property="DISABLE" javaType="boolean"/>
+	</resultMap>
+	
+	<select id="getReposisionTableAddress" resultMap="getReposisionTableAddress" parameterClass="map"> 
+    select 
+			'1' as QL,
+			cast(null as bigint) as VCONTACT_ID, 
+			'' as CONTACT_FIRST_NAME,
+			'' as CONTACT_TYPE, 
+			'' as RELATIONSHIP,
+			'' as ADDRESS_1, 
+			'' as ADDRESS_2, 
+			'' as ADDRESS_3,
+			'' as ADDRESS_4,
+			'' as ADDRESS_5,
+			'' as ZIPCODE,
+			'' as CITY,
+			'' as STATE,
+			'' as COUNTRY,
+			0 as DISABLE
+		from sysibm.sysdummy1 
+    UNION
+		select 
+			'1' as QL,
+			c.CONTACT_ID as VCONTACT_ID, 
+			c.CUSTOMER_NAME,
+			t0.CONTACT_TYPE_DESC as CONTACT_TYPE, 
+			ref.DESCRIPTION as RELATIONSHIP,
+			coalesce(addr.ADDRESS_1, '') as ADDRESS_1, 
+			coalesce(addr.ADDRESS_2, '') as ADDRESS_2, 
+			COALESCE(addr.STREET_NAME, '') as ADDRESS_3,
+		    COALESCE(addr.ADDRESS_4, '') as ADDRESS_4,
+		    COALESCE(addr.ADDRESS_5, '') as ADDRESS_5,
+		    coalesce(addr.zip_code,'') as ZIPCODE,
+		    COALESCE(addr.CITY, '') as CITY,
+		    coalesce(str.state_desc,'') as STATE,
+		    COALESCE(country.country_desc,'') as COUNTRY,
+			addr.DISABLE
+		from ptrcustomer c
+    	inner join ptraddress_det addr on (addr.contact_id=c.contact_id)
+		inner join PTRCUSTOMER_CONTACT_REL contactrel on (contactrel.CONTACT_ID = addr.CONTACT_ID)
+		inner join PTRCUSTOMER_ACCOUNT_REL acctrel on (acctrel.CUSTOMER_ID = contactrel.CUSTOMER_ID)
+		inner join ptrcustomer_account_relation_type_ref ref on (ref.ID = acctrel.RELATIONSHIP_TYPE_ID)
+		left outer join PTRCONTACT_TYPE_REF t0 on (t0.CONTACT_TYPE_ID = addr.CONTACT_TYPE_ID)
+		left join ptrstate_ref str on (addr.STATE_ID = str.STATE_ID)
+		LEFT JOIN PTRCOUNTRY_REF country ON (country.COUNTRY_ID = addr.COUNTRY_ID)
+		where acctrel.ACCOUNT_ID = #ACCOUNT_ID# 
+			  and addr.DISABLE = 0
+			  and addr.ADDRESS_1 not in ('Dummy address for contact numbers')
+			  
+			  </select>
+			  
+<resultMap class="hmap" id="getRepoReportDesignId">
+<result property="INVOICE_REPORT_DESIGN_ID" javaType="long"/>
+</resultMap>  
+
+<select id="getRepoReportDesignId" parameterClass="map" resultMap="getRepoReportDesignId">
+select max(id) AS INVOICE_REPORT_DESIGN_ID from ptrreport_design where name = 'repo' and DISABLE = 0
+</select>
+</sqlMap>

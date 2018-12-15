@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="TABLE_NAME" key="TABLE_NAME" to="REFERENCE" type="copyintolist"/>
+ <exec from="SEQUENCE_NAME" key="SEQUENCE_NAME" to="REFERENCE" type="copyintolist"/>
+ <exec from="CODE_PARAMETER" key="CODE_PARAMETER" to="REFERENCE" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="STANDARD" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec argument="REFERENCE" index="SORT_PRIORITY" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+    </conditions>
+    <exec recordcount="" statement="updateStandardRefData" type="update"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+    </conditions>
+    <exec statement="insertStandardRefData" type="insert"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="STANDARD" operator="&lt;&gt;" rhsvalue="true"/>
+  </conditions>
+  <exec argument="REFERENCE" index="SORT_PRIORITY" type="loop">
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTREATMENT_TYPE_STATUS_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateTreatmentTypeStatusRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertTreatmentTypeStatusRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRSTATE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateStateRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertStateRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTREATMENT_ACCOUNT_CLASSIFICATION_TYPE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateAccountClassificationSubtypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertAccountClassificationSubtypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRFACILITY_CODE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateFacilityTypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertFacilityTypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTREMPLOYER_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateEmployerRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertEmployerRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPRODUCT_TYPE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateProductTypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertProductTypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRBANK_BRANCH_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateBankBranchRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertBankBranchRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRCITY_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateCityRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertCityRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRSHORTFALL_VALIDATION_SETUP_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateShortfallValidationRefData" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRMANAGEMENT_APPROVAL_ACTION_TYPE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateManagementApprovalActionTypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertManagementApprovalActionTypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRDECISION_TREE_CONDITION_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateDecisionTreeConditionRefData" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRSPTF_TYPE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateSptfTypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertSptfTypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_ABORT_REASON_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec to="LOGON_USER" type="user"/>
+     <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+     <exec statement="insertLegalAbortReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRESCALATION_TYPE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateEscalationTypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertEscalationTypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTREATMENT_SUBTYPE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateTreatmentSubtypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertTreatmentSubtypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRREASON_OF_CALL_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateReasonOfDefaultRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertReasonOfDefaultRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRASSIGNMENT_ABORT_PERIOD_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateAssignmentAbortPeriodECARefData" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRAGENCY_TAT_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateAgencyTatRefData" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRBILLING_TAT_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateBillingTatRefData" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRWITHHOLD_REASON_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRDISCONTINUED_ABORT_REASON_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRDISCONTINUED_ABORT_STATUS_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPOSTPONEMENT_REASON_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPOSTPONEMENT_STATUS_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_ACTION_AUCTION_STATUS_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_ACTION_UNSUCCESSFUL_REASONS_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_EXCLUSION_REASON_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalAbortReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertWithholdReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRAREA_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateVisitationAreaRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertVisitationAreaRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRMBSB_PROFILE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateMbsbProfileRefData" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRCONTRACT_TAG_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="CODE_PARAMETER" operator="=" rhsvalue="LEGAL_CONTRACT_TAG"/>
+     </conditions>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+      </conditions>
+      <exec recordcount="" statement="updateStandardRefData" type="update"/>
+     </exec>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+      </conditions>
+      <exec statement="insertContractLegalRefData" type="insert"/>
+     </exec>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="CODE_PARAMETER" operator="=" rhsvalue="AGENCY_CONTRACT_TAG"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateStandardRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertContractECARefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRTRANSACTION_TYPE_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateTransactionTypeRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertTransactionTypeRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRPRINTER_SETTINGS"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updatePrinterSettingsRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertPrinterSettingsRefData" type="insert"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRAGENCY_INVOICE_NUMBER_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateECAInvoiceNumberRef" type="update"/>
+    </exec>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TABLE_NAME" operator="=" rhsvalue="PTRLEGAL_KIV_REASON_REF"/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="exists" rhsvalue=""/>
+     </conditions>
+     <exec recordcount="" statement="updateLegalKivReasonRefData" type="update"/>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ID" operator="not present" rhsvalue=""/>
+     </conditions>
+     <exec statement="insertLegalKivReasonRefData" type="insert"/>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="LOAD_EDITOR" type="copyintolist"/>
+ <exec message="Reference have been updated" target="MESSAGE" type="formattext"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+</event>

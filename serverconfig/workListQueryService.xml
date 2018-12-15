@@ -1,0 +1,307 @@
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="workListQueryService.xml">
+
+<resultMap id="getUserUserType" class="hmap">
+<result property="TYPE_ID" jdbcType="VARCHAR" />
+<result property="TYPE_CODE" jdbcType="VARCHAR" />
+<result property="AGENCY_ID" jdbcType="VARCHAR" />
+<result property="AGENCY_CODE" jdbcType="VARCHAR" />
+<result property="AGENCY_TYPE_ID" javaType="long"/>
+<result property="AGENCY_NAME" javaType="string"/>
+</resultMap>
+
+<select id="getUserUserType" parameterClass="map" resultMap="getUserUserType">
+select u.USER_TYPE_ID, 
+case when (u.USER_TYPE_ID in (1,3)) then 'bankuser' else
+'agencyuser' end as TYPE_CODE, u.agency_id ,  case when (a.TYPE_ID = 2) then 'legal' when
+(a.TYPE_ID = 3) then 'dca' end as AGENCY_CODE, a.TYPE_ID, a.description
+from PTRUSER u
+left join PTRAGENCY a on u.agency_id = a.id
+where u.USER_ID = #USER_ID#
+</select>
+
+<resultMap id="getWorkListManagementGroup" class="hmap">
+<result property="WORK_LIST_GROUP_ID" javaType="java.lang.Long"/>
+<result property="WORK_LIST_GROUP_CODE" javaType="java.lang.String"/>
+<result property="DESCRIPTION" javaType="java.lang.String"/>
+<result property="SORT" javaType="java.lang.Long"/>
+</resultMap>
+<select id="getWorkListManagementGroup" resultMap="getWorkListManagementGroup" parameterClass="hmap"> 
+select cast(null as bigint) as id, cast(null as text) as code, 'Please Select' as description, -1 as sort
+union
+select id, code, description, 0 as sort from ptrwork_list_group_ref order by sort
+</select>
+
+
+<resultMap id="getWlmWorkLists-map" class="hmap">
+<result property="EXTRACT_TO_DIALER" column="EXTRACT_TO_DIALER" javaType="java.lang.Boolean"/>
+<result property="BRANCH_CENTRE_ID" column="BRANCH_CENTRE_ID" javaType="long"/>
+<result property="WORK_LIST_ID" column="WORK_LIST_ID" javaType="long"/>
+<result property="WORK_LIST_CATEGORY_DESC" javaType="java.lang.String"/>
+<result property="WORK_LIST_CATEGORY_ID" javaType="java.lang.Long"/>
+<result property="WORK_LIST_NAME" column="WORK_LIST_NAME"/>
+<result property="DESCRIPTION" column="DESCRIPTION"/>
+<result property="CREATED" column="CREATED"/>
+<result property="CREATOR_ID" column="CREATOR_ID"/>
+<result property="IS_FOR_UNASSIGNED_AGENCY" column="IS_FOR_UNASSIGNED_AGENCY" javaType="boolean"/>
+<result property="AGENCY_TYPE_ID" column="AGENCY_TYPE_ID" javaType="long"/> 
+<result property="AGENCY_TYPE_CODE" column="AGENCY_TYPE_CODE"/> 
+<result property="AGENCY_TYPE_DESC" column="AGENCY_TYPE_DESC"/> 
+<result property="TOTAL_ACCOUNTS" column="TOTAL_ACCOUNTS" javaType="long"/> 
+</resultMap>
+
+
+<select id="getWlmWorkLists" resultMap="getWlmWorkLists-map">
+select
+a.EXTRACT_TO_DIALER,
+a.BRANCH_CENTRE_ID,
+a.WORK_LIST_ID,
+a.WORK_LIST_CATEGORY_DESC,
+a.WORK_LIST_CATEGORY_ID,
+a.WORK_LIST_NAME,
+a.DESCRIPTION,
+a.CREATED,
+a.CREATOR_ID,
+a.IS_FOR_UNASSIGNED_AGENCY,
+a.AGENCY_TYPE_ID,
+a.AGENCY_TYPE_CODE,
+a.AGENCY_TYPE_DESC,
+coalesce(b.TOTAL_ACCOUNTS,0) as TOTAL_ACCOUNTS
+from
+(
+SELECT
+EXTRACT_TO_DIALER,
+BRANCH_CENTRE_ID,
+WORK_LIST_ID,
+catref.DESCRIPTION as WORK_LIST_CATEGORY_DESC,
+w.WORK_LIST_CATEGORY as WORK_LIST_CATEGORY_ID,
+WORK_LIST_NAME as WORK_LIST_NAME,
+WORK_LIST_DESC as DESCRIPTION,
+WORK_LIST_CREATE_DATE as CREATED,
+WORK_LIST_CREATOR_ID as CREATOR_ID,
+FOR_UNASSIGNED as IS_FOR_UNASSIGNED_AGENCY,
+w.AGENCY_TYPE_ID,
+a.code as AGENCY_TYPE_CODE,
+a.description as AGENCY_TYPE_DESC
+FROM PTRWORK_LIST w
+left join ptragency_type_ref a on (w.agency_type_id = a.id)
+left join PTRWORK_LIST_CATEGORY_REF catref on w.WORK_LIST_CATEGORY = catref.id
+WHERE (w.DISABLE is null or w.DISABLE != true)
+and w.work_list_group =  #WORK_LIST_GROUP_ID#
+)
+a left outer
+join
+(
+select
+w.work_list_id, count(*) as TOTAL_ACCOUNTS
+from PTRACCOUNT_WORK_LIST_ASSIGNMENT a left outer
+join PTRWORK_LIST w on (a.work_list_id = w.WORK_LIST_ID)
+group by w.WORK_LIST_ID
+)
+b on (b.WORK_LIST_ID = a.work_list_id)
+order by upper(a.WORK_LIST_NAME) asc
+</select>
+
+
+<resultMap class="hmap" id="getWlmDefaultUser">
+<result javaType="string" property="DEFAULT_USER_NAME"/>
+</resultMap>
+<select id="getWlmDefaultUser" resultMap="getWlmDefaultUser">
+SELECT usr.USER_ID ||' - '||emp.FIRST_NAME as DEFAULT_USER_NAME
+
+FROM
+PTRWORK_LIST wl
+inner join PTRUSER_WL_ASSIGN uwl on (wl.WORK_LIST_ID = uwl.WORK_LIST_ID)
+inner join PTRUSER usr on (uwl.USER_ID = usr.USER_ID)
+left join PTREMPLOYEE emp on (usr.EMPLOYEE_ID = emp.id)
+WHERE 
+wl.WORK_LIST_ID = #WORK_LIST_ID:BIGINT#
+and usr.ACTIVE_STATUS = 'Y' 
+and uwl.IS_DEFAULT_USER = true
+</select>
+
+
+  <parameterMap id="insertWlmWorkList-map" class="map">
+    <parameter property="WORK_LIST_ID"  javaType="long"/>
+  <parameter property="WORK_LIST_NAME" jdbcType="VARCHAR"/>
+  <parameter property="WORK_LIST_CREATE_DATE" jdbcType="TIMESTAMP"/>
+  <parameter property="USER_ID" jdbcType="VARCHAR"/>
+  <parameter property="DESCRIPTION" jdbcType="VARCHAR"/>
+  <parameter property="WORK_LIST_GROUP"  javaType="long"/> 
+  <parameter property="EXTRACT_TO_DIALER"  jdbcType="NUMERIC"/> 
+  <parameter property="BRANCH_CENTRE_ID"  jdbcType="NUMERIC"/> 
+  <parameter property="WORK_LIST_CATEGORY_ID"  jdbcType="NUMERIC"/>
+  </parameterMap>
+  <insert id="insertWlmWorkList" parameterMap="insertWlmWorkList-map">
+  <selectKey resultClass="long" keyProperty="WORK_LIST_ID">
+     <include refid="sequencePrefix"/>PTRWORK_LIST_ID<include refid="sequenceSuffix"/>
+  </selectKey>
+    INSERT INTO PTRWORK_LIST (
+    WORK_LIST_ID, 
+    WORK_LIST_NAME, 
+    WORK_LIST_CREATE_DATE, 
+    WORK_LIST_CREATOR_ID, 
+    WORK_LIST_DESC, 
+    TREATMENT_STAGE_ID, 
+    FOR_UNASSIGNED, 
+    DISABLE, 
+    SORT_PRIORITY, 
+    WORK_LIST_GROUP, 
+    EXTRACT_TO_DIALER,
+    BRANCH_CENTRE_ID,
+    WORK_LIST_CATEGORY)
+    VALUES 
+    (?, ?, ?, ?, ?, 80001, 0, false, 0, ?,?,?,?)
+  </insert>
+  
+  <parameterMap id="updateWorkList-map" class="map">
+  <parameter property="WORK_LIST_NAME" jdbcType="VARCHAR"/>
+  <parameter property="UPDATE_TIME" jdbcType="TIMESTAMP"/>
+  <parameter property="USER_ID" jdbcType="VARCHAR"/>
+  <parameter property="DESCRIPTION" jdbcType="VARCHAR"/>
+  <parameter property="EXTRACT_TO_DIALER"  jdbcType="NUMERIC"/> 
+  <parameter property="BRANCH_CENTRE_ID"  jdbcType="NUMERIC"/> 
+  <parameter property="WORK_LIST_CATEGORY_ID"  jdbcType="NUMERIC"/>
+    <parameter property="WORK_LIST_ID" jdbcType="NUMERIC"/>
+  </parameterMap>
+  <update id="updateWorkList" parameterMap="updateWorkList-map">
+    UPDATE PTRWORK_LIST SET WORK_LIST_NAME = ?, WORK_LIST_CREATE_DATE = ?, WORK_LIST_CREATOR_ID = ?, WORK_LIST_DESC = ?,
+    EXTRACT_TO_DIALER = ?,
+    BRANCH_CENTRE_ID = ?,
+    WORK_LIST_CATEGORY = ?
+    WHERE WORK_LIST_ID = ?
+  </update>
+  
+  
+  
+  
+<resultMap class="java.util.HashMap" id="getWlmIlTreeRunId">
+<result property="TREE_RUN_ID" javaType="java.lang.Long"/>
+</resultMap>
+<select id="getWlmIlTreeRunId" resultMap="getWlmIlTreeRunId">
+select -7772 AS TREE_RUN_ID
+</select>
+
+
+<parameterMap id="updateAccountWorkListForCurrentAssignment" class="map">
+<parameter property="WORK_LIST_ID" jdbcType="NUMERIC"/>
+<parameter property="OUTSTANDING_AMT" jdbcType="NUMERIC"/>
+<parameter property="NLB" jdbcType="NUMERIC"/>
+<parameter property="OUTSTANDING_BALANCE" jdbcType="NUMERIC"/>
+<parameter property="TOTAL_DELQ_AMT" jdbcType="NUMERIC"/>
+<parameter property="CYC_DEL_ID" jdbcType="NUMERIC"/>
+<parameter property="OLDEST_OVERDUE_DATE" jdbcType="DATE"/>
+<parameter property="MONTHS_IN_ARREARS" jdbcType="NUMERIC"/>
+<parameter property="CONFIDENCE_LEVEL_ID" jdbcType="NUMERIC"/>
+<parameter property="PAYMENT_DUE_DATE" jdbcType="DATE"/>
+<parameter property="CSCORE_ID" jdbcType="NUMERIC"/>
+<parameter property="CSCORE_DATE" jdbcType="DATE"/>
+<parameter property="ASSIGNMENT_DATE" jdbcType="DATE"/>
+<parameter property="USER_ID" jdbcType="VARCHAR"/>
+<parameter property="WRITE_OFF_AMOUNT" jdbcType="NUMERIC"/>
+<parameter property="TOTAL_AMOUNT_DUE" jdbcType="NUMERIC"/>
+<parameter property="INTEREST_REBATE" jdbcType="NUMERIC"/>
+<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+
+</parameterMap>
+
+<update id="updateAccountWorkListForCurrentAssignment" parameterMap="updateAccountWorkListForCurrentAssignment">
+update PTRACCOUNT_WORK_LIST_ASSIGNMENT
+set
+WORK_LIST_ID = ?, 
+OUTSTANDING_AMT = ?,
+NLB = ?,
+OUTSTANDING_BALANCE = ?,
+TOTAL_DELQ_AMT = ?, 
+CYC_DEL_ID = ?, 
+OLDEST_OVERDUE_DATE = ?, 
+MONTHS_IN_ARREARS = ?, 
+SCORING_ID = ?, 
+PAYMENT_DUE_DATE = ?, 
+ASSIGNMENT_TYPE_ID = 2,
+CSCORE_ID = ?, 
+CSCORE_DATE = ?,
+ASSIGNMENT_DATE = ?,
+USER_ID = ?,
+WRITE_OFF_AMOUNT = ?,
+TOTAL_AMOUNT_DUE = ?,
+INTEREST_REBATE = ?
+where ACCOUNT_ID = ?
+</update>
+
+<update id="updateAccountWorklistId" parameterClass="java.util.Map">
+update ptraccount set work_list_id = cast(#WORK_LIST_ID# AS BIGINT) 
+WHERE ID = cast(#ACCOUNT_ID# AS BIGINT)
+</update>
+
+<parameterMap id="insertAccountWorkListHistory-map" class="map">
+<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+<parameter property="WORK_LIST_ID" jdbcType="NUMERIC"/>
+<parameter property="OUTSTANDING_AMT" jdbcType="NUMERIC"/>
+<parameter property="OUTSTANDING_BALANCE" jdbcType="NUMERIC"/>
+<parameter property="NLB" jdbcType="NUMERIC"/>
+<parameter property="TOTAL_DELQ_AMT" jdbcType="NUMERIC"/>
+<parameter property="CYC_DEL_ID" jdbcType="NUMERIC"/>
+<parameter property="ASSIGNMENT_SOURCE_ID" jdbcType="NUMERIC"/>
+<parameter property="OLDEST_OVERDUE_DATE" jdbcType="DATE"/>
+<parameter property="ASSIGNMENT_DATE" jdbcType="DATE"/>
+<parameter property="DAYS_PAST_DUE" jdbcType="NUMERIC"/>
+<parameter property="ASS_LATE_CHARGES" jdbcType="NUMERIC"/>
+<parameter property="PAID_LATE_CHARGES" jdbcType="NUMERIC"/>
+<parameter property="MISC_CHARGES" jdbcType="NUMERIC"/>
+<parameter property="OTHER_CHARGES" jdbcType="NUMERIC"/>
+<parameter property="INTEREST_REBATE" jdbcType="NUMERIC"/>
+<parameter property="ACCRUED_LATE_CHARGES" jdbcType="NUMERIC"/>
+<parameter property="MONTHS_IN_ARREARS" jdbcType="NUMERIC"/>
+<parameter property="CONFIDENCE_LEVEL_ID" jdbcType="NUMERIC"/>
+<parameter property="PAYMENT_DUE_DATE" jdbcType="DATE"/>
+<parameter property="SELF_CURE" jdbcType="NUMERIC"/>
+<parameter property="CSCORE_ID" jdbcType="NUMERIC"/>
+<parameter property="CSCORE_DATE" jdbcType="DATE"/>
+<parameter property="TREE_RUN_ID" jdbcType="NUMERIC"/>
+<parameter property="USER_ID" jdbcType="VARCHAR"/>
+</parameterMap>
+
+
+<insert id="insertAccountWorkListCurrentAssignment" parameterMap="insertAccountWorkListHistory-map">
+insert into PTRACCOUNT_WORK_LIST_ASSIGNMENT
+(ACCOUNT_ID, WORK_LIST_ID, OUTSTANDING_AMT, OUTSTANDING_BALANCE, NLB, TOTAL_DELQ_AMT, CYC_DEL_ID, ASSIGNMENT_SOURCE_ID, OLDEST_OVERDUE_DATE, ASSIGNMENT_DATE, DAYS_PAST_DUE, 
+ASS_LATE_CHARGES, PAID_LATE_CHARGES, MISC_CHARGES, OTHER_CHARGES,INTEREST_REBATE, ACCRUED_LATE_CHARGES, MONTHS_IN_ARREARS, SCORING_ID, 
+PAYMENT_DUE_DATE, ASSIGNMENT_TYPE_ID, SELF_CURE, CSCORE_ID, CSCORE_DATE, TREE_RUN_ID, USER_ID)
+values
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?, ?, ?, ?)
+</insert>
+
+<insert id="insertAccountWorkListRecentAssignment" parameterMap="insertAccountWorkListHistory-map">
+insert into PTRACC_WL_RECENT_ASSIGN
+(ACCOUNT_ID, WORK_LIST_ID, OUTSTANDING_AMT, OUTSTANDING_BALANCE, NLB, TOTAL_DELQ_AMT, CYC_DEL_ID, ASSIGNMENT_SOURCE_ID, OLDEST_OVERDUE_DATE, ASSIGNMENT_DATE, DAYS_PAST_DUE, 
+ASS_LATE_CHARGES, PAID_LATE_CHARGES, MISC_CHARGES, OTHER_CHARGES,INTEREST_REBATE, ACCRUED_LATE_CHARGES, MONTHS_IN_ARREARS, SCORING_ID, 
+PAYMENT_DUE_DATE, ASSIGNMENT_TYPE_ID, SELF_CURE, CSCORE_ID, CSCORE_DATE, TREE_RUN_ID, USER_ID)
+values
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?, ?, ?, ?)
+</insert>
+
+<insert id="insertAccountWorkListAssignmentHistory" parameterMap="insertAccountWorkListHistory-map">
+insert into PTRACC_WL_ASSIGN_HISTORY
+(ACCOUNT_ID, WORK_LIST_ID, OUTSTANDING_AMT, OUTSTANDING_BALANCE, NLB, TOTAL_DELQ_AMT, CYC_DEL_ID, ASSIGNMENT_SOURCE_ID, OLDEST_OVERDUE_DATE, ASSIGNMENT_DATE, DAYS_PAST_DUE, 
+ASS_LATE_CHARGES, PAID_LATE_CHARGES, MISC_CHARGES, OTHER_CHARGES,INTEREST_REBATE, ACCRUED_LATE_CHARGES, MONTHS_IN_ARREARS, SCORING_ID, 
+PAYMENT_DUE_DATE, ASSIGNMENT_TYPE_ID, SELF_CURE, CSCORE_ID, CSCORE_DATE, TREE_RUN_ID, USER_ID)
+values
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?, ?, ?,?)
+</insert>
+
+<resultMap id="getWlmAuthorizationArgs" class="hmap">
+  <result property="ACCESS_RIGHTS_ID" javaType="long"/>
+  <result property="WLM_AUTH_FALSE" javaType="java.lang.Long"/>
+  <result property="WLM_AUTH_TRUE" javaType="java.lang.Long"/>
+ </resultMap>
+ <select id="getWlmAuthorizationArgs" resultMap="getWlmAuthorizationArgs" parameterClass="map">
+  select 1024 as ACCESS_RIGHTS_ID, 0, 1 <include refid="fromdual" />
+ </select>
+
+
+
+</sqlMap>

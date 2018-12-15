@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec statement="getInstructionForEditing" type="select"/>
+ <exec argument="ADDITIONAL_DETAILS" query="getAssignedAdditionalDetails" type="query"/>
+ <exec from="CODE" key="CODE" type="copyintolist"/>
+ <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+ <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+ <exec from="ADDITIONAL_DETAILS" key="ADDITIONAL_DETAILS" type="copyintolist"/>
+ <exec from="REMEDIAL_INITIATION" key="REMEDIAL_INITIATION" type="copyintolist"/>
+</event>

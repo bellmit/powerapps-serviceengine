@@ -1,0 +1,212 @@
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="tpsService">
+
+	<resultMap class="hmap" id="getTreatmentTpsCustomers">
+	<result property="CUSTOMER_ID" javaType="string" />
+	<result property="ACCOUNT_NUMBER" javaType="string" />
+	<result property="CUSTOMER_NAME" javaType="string" />
+	<result property="RELATIONSHIP" javaType="string" />
+	<result property="IC_NO" javaType="string" />
+</resultMap>
+
+	<select id="getTreatmentTpsCustomers" resultMap="getTreatmentTpsCustomers">
+		select
+		cust.CUSTOMER_NO,
+		acc.ACCOUNT_NO,
+		coalesce(cust.CUSTOMER_NAME,''),
+		relref.DESCRIPTION as RELATIONSHIP,
+		cust.customer_id_no
+		from ptrcustomer cust
+		left join ptrcustomer_account_rel acctrel on (acctrel.customer_id =cust.id)
+		left join ptrcustomer_account_relation_type_ref relref on (relref.ID =acctrel.TYPE_ID and relref.CODE='P')
+		left JOIN PTRACCOUNT acc on (acc.id = acctrel.account_id)
+		where acctrel.account_id = #ACCOUNT_ID#
+	</select>
+
+<insert id="insertTreatmentTps" parameterClass="map">
+insert into PTRTREATMENT_TPS
+(TREATMENT_ID,ACCOUNT_ID,TYPE_STATUS_ID,SUBTYPE_ID,DOB,
+VEHICLE_NO,CHASSIS_NO,ENGINE_NO,REGISTRY_OF_COMPANY,COMPANY_REGISTRATION,
+EXPECTED_END_DATE,SEARCH_TO_ID,
+E,SO,IT,IC,TE,
+TN,AST,MB,P,J,
+FIS,JPJ,CCRIS,FILE,CTOS,
+ROC,PROPERTY,
+TEMPLATE_VERSION_ID)
+values
+(#ID#, #ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#DOB#,
+#VEHICLE_NO#,#CHASSIS_NO#,#ENGINE_NO#,#REGISTRY_OF_COMPANY#,#COMPANY_REGISTRATION#,
+#EXPECTED_END_DATE#,#SEARCH_TO_ID#,
+#E#,#SO#,#IT#,#IC#,#TE#,
+#TN#,#AST#,#MB#,#P#,#J#,
+COALESCE(#FIS#,FALSE),COALESCE(#JPJ#,FALSE),COALESCE(#CCRIS#,FALSE),COALESCE(#FILE#,FALSE),COALESCE(#CTOS#,FALSE),
+COALESCE(#ROC#,FALSE),COALESCE(#PROPERTY#,FALSE),
+0)
+</insert>
+
+<update id="updateTreatmentTps" parameterClass="map">
+update PTRTREATMENT_TPS set
+TYPE_STATUS_ID=#TYPE_STATUS_ID#,SUBTYPE_ID=#SUBTYPE_ID#,DOB=#DOB#,VEHICLE_NO=#VEHICLE_NO#,CHASSIS_NO=#CHASSIS_NO#,
+ENGINE_NO=#ENGINE_NO#,REGISTRY_OF_COMPANY=#REGISTRY_OF_COMPANY#,COMPANY_REGISTRATION=#COMPANY_REGISTRATION#,
+EXPECTED_END_DATE=#EXPECTED_END_DATE#,SEARCH_TO_ID=#SEARCH_TO_ID#,E=#E#,SO=#SO#,IT=#IT#,IC=#IC#,TE=#TE#,TN=#TN#,
+AST=#AST#,MB=#MB#,P=#P#,J=#J#,FIS=COALESCE(#FIS#,FALSE),JPJ=COALESCE(#JPJ#,FALSE),CCRIS=COALESCE(#CCRIS#,FALSE),
+FILE=COALESCE(#FILE#,FALSE),CTOS=COALESCE(#CTOS#,FALSE),ROC=COALESCE(#ROC#,FALSE),PROPERTY=COALESCE(#PROPERTY#,FALSE),
+TEMPLATE_VERSION_ID=#TEMPLATE_VERSION_ID#
+where TREATMENT_ID=#ID#
+</update>
+
+<resultMap class="hmap" id="getTreatmentTps">
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="DOB" javaType="date"/>
+<result property="VEHICLE_NO" javaType="string"/>
+<result property="CHASSIS_NO" javaType="string"/>
+<result property="ENGINE_NO" javaType="string"/>
+<result property="REGISTRY_OF_COMPANY" javaType="string"/>
+<result property="COMPANY_REGISTRATION" javaType="string"/>
+<result property="EXPECTED_END_DATE" javaType="date"/>
+<result property="SEARCH_TO_ID" javaType="string"/>
+<result property="E" javaType="int"/>
+<result property="SO" javaType="int"/>
+<result property="IT" javaType="int"/>
+<result property="IC" javaType="int"/>
+<result property="TE" javaType="int"/>
+<result property="TN" javaType="int"/>
+<result property="AST" javaType="int"/>
+<result property="MB" javaType="int"/>
+<result property="P" javaType="int"/>
+<result property="J" javaType="int"/>
+<result property="FIS" javaType="boolean"/>
+<result property="JPJ" javaType="boolean"/>
+<result property="CCRIS" javaType="boolean"/>
+<result property="FILE" javaType="boolean"/>
+<result property="CTOS" javaType="boolean"/>
+<result property="ROC" javaType="boolean"/>
+<result property="PROPERTY" javaType="boolean"/>
+<result property="FIS_TABLE" javaType="string"/>
+<result property="JPJ_TABLE" javaType="string"/>
+<result property="CCRIS_TABLE" javaType="string"/>
+<result property="CTOS_TABLE" javaType="string"/>
+<result property="ROC_TABLE" javaType="string"/>
+<result property="PROPERTY_TABLE" javaType="string"/>
+<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+</resultMap>
+
+<select id="getTreatmentTps" resultMap="getTreatmentTps">
+select TYPE_STATUS_ID,SUBTYPE_ID,DOB,
+VEHICLE_NO,CHASSIS_NO,ENGINE_NO,REGISTRY_OF_COMPANY,COMPANY_REGISTRATION,
+EXPECTED_END_DATE,SEARCH_TO_ID,E,SO,IT,IC,TE,TN,AST,MB,P,J,FIS,JPJ,CCRIS,
+FILE,CTOS,ROC,PROPERTY,
+case when FIS=true then 'SHOW' else 'HIDE' end,
+case when JPJ=true then 'SHOW' else 'HIDE' end,
+case when CCRIS=true then 'SHOW' else 'HIDE' end,
+case when CTOS=true then 'SHOW' else 'HIDE' end,
+case when ROC=true then 'SHOW' else 'HIDE' end,
+case when PROPERTY=true then 'SHOW' else 'HIDE' end,
+TEMPLATE_VERSION_ID
+ from PTRTREATMENT_TPS where TREATMENT_ID=#ID#
+</select>
+
+<parameterMap class="map" id="insertTreatmentTpsInternal">
+		<parameter property="ID" javaType="long"/>
+		<parameter property="FINANCIER" javaType="string"/>
+		<parameter property="VEH_NO" javaType="string"/>
+		<parameter property="MODEL" javaType="string"/>
+		<parameter property="AGRT_DATE" javaType="date"/>
+		<parameter property="TENOR" javaType="string"/>
+		<parameter property="OLD_REGISTRATION_NO" javaType="string"/>
+		<parameter property="INSURANCE_CO" javaType="string"/>
+		<parameter property="EXPIRY_DATE" javaType="date"/>
+		<parameter property="PLANTIF_NAME" javaType="string"/>
+		<parameter property="CIVIL_STATUS" javaType="string"/>
+		<parameter property="AMOUNT" jdbcType="NUMERIC"/>
+		<parameter property="PETITON" javaType="date"/>
+		<parameter property="DISC_DATE" javaType="date"/>
+		<parameter property="ORDER_DATE" javaType="date"/>
+		<parameter property="LAWYER" javaType="string"/>
+		<parameter property="LAW_CONTACT_NO" javaType="string"/>
+		<parameter property="ROB" javaType="date"/>
+		<parameter property="SHAREHOLDER_PN" javaType="string"/>
+		<parameter property="SHAREHOLDER_PA" javaType="string"/>
+		<parameter property="DIRECTOR_NAME" javaType="string"/>
+		<parameter property="DIRECTOR_ADD" javaType="string"/>
+		<parameter property="COM_PAID" javaType="double"/>
+		<parameter property="SUBMITTED_DATE" javaType="date"/>
+		<parameter property="STATUS" javaType="string"/>
+		<parameter property="CATEGORY" javaType="string"/>
+		<parameter property="OWNER_NAME" javaType="string"/>
+		<parameter property="OWNER_ADD" javaType="string"/>
+		<parameter property="TREATMENT_ID" javaType="long"/>
+	</parameterMap>
+	
+	<insert id="insertTreatmentTpsInternal" parameterMap="insertTreatmentTpsInternal">
+	<selectKey keyProperty="ID" resultClass="long">
+	<include refid="sequencePrefix"/>ptrtreatment_tps_internal_id<include refid="sequenceSuffix"/>
+	</selectKey>
+	 INSERT INTO
+		ptrtreatment_tps_internal (ID,FINANCIER,VEH_NO,MODEL,AGRT_DATE,TENOR,OLD_REGISTRATION_NO,INSURANCE_COM,
+		EXPIRY_DATE,PLAINTIFF_NAME,SIVIL_STATUS,AMOUNT,PETITION_DATE,DISC_DATE,ORDER_DATE, PLAINTIFF_LAWYER, LAWYER_CONTACT_NO,
+		REGISTRATION_EXPIRY_DATE, SHAREHOLDER_NAME, SHAREHOLDER_ADDRESS, DIRECTOR_NAME, DIRECTOR_ADDRESS, PAID_UP, SUBMITTED_DATE,
+		STATUS, CATEGORY, OWNER_NAME, OWNER_ADDRESS, TREATMENT_ID)
+		values (?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+	</insert>
+	
+	<delete id="deleteTreatmentTpsInternal" parameterClass="map">
+	delete from ptrtreatment_tps_internal where TREATMENT_ID=#ID#
+	</delete>
+	
+	
+	<resultMap class="hmap" id="getTreatmentTpsInternal">
+		<result property="FINANCIER" javaType="string"/>
+		<result property="VEH_NO" javaType="string"/>
+		<result property="MODEL" javaType="string"/>
+		<result property="AGRT_DATE" javaType="date"/>
+		<result property="TENOR" javaType="string"/>
+		<result property="OLD_REGISTRATION_NO" javaType="string"/>
+		<result property="INSURANCE_CO" javaType="string"/>
+		<result property="EXPIRY_DATE" javaType="date"/>
+		<result property="PLANTIF_NAME" javaType="string"/>
+		<result property="CIVIL_STATUS" javaType="string"/>
+		<result property="AMOUNT" javaType="$"/>
+		<result property="PETITON" javaType="date"/>
+		<result property="DISC_DATE" javaType="date"/>
+		<result property="ORDER_DATE" javaType="date"/>
+		<result property="LAWYER" javaType="string"/>
+		<result property="LAW_CONTACT_NO" javaType="string"/>
+		<result property="ROB" javaType="date"/>
+		<result property="SHAREHOLDER_PN" javaType="string"/>
+		<result property="SHAREHOLDER_PA" javaType="string"/>
+		<result property="DIRECTOR_NAME" javaType="string"/>
+		<result property="DIRECTOR_ADD" javaType="string"/>
+		<result property="COM_PAID" javaType="long"/>
+		<result property="SUBMITTED_DATE" javaType="date"/>
+		<result property="STATUS" javaType="string"/>
+		<result property="CATEGORY" javaType="string"/>
+		<result property="OWNER_NAME" javaType="string"/>
+		<result property="OWNER_ADD" javaType="string"/>
+	</resultMap>
+	
+	<select id="getTreatmentTpsInternal" resultMap="getTreatmentTpsInternal" parameterClass="map">
+		SELECT FINANCIER,VEH_NO,MODEL,AGRT_DATE,TENOR,OLD_REGISTRATION_NO,INSURANCE_COM,
+		EXPIRY_DATE,PLAINTIFF_NAME,SIVIL_STATUS,AMOUNT,PETITION_DATE,DISC_DATE,ORDER_DATE, PLAINTIFF_LAWYER, LAWYER_CONTACT_NO,
+		REGISTRATION_EXPIRY_DATE, SHAREHOLDER_NAME, SHAREHOLDER_ADDRESS, DIRECTOR_NAME, DIRECTOR_ADDRESS, PAID_UP, SUBMITTED_DATE,
+		STATUS, CATEGORY, OWNER_NAME, OWNER_ADDRESS FROM ptrtreatment_tps_internal WHERE 
+		TREATMENT_ID=#ID#
+	
+	</select>
+	
+	<resultMap class="hmap" id="getTpsSecondaryIc">
+	<result property="SECONDARY_IC" javaType="string"/>
+	<result property="IC_TYPE" javaType="string"/>
+	</resultMap>
+	
+	<select id="getTpsSecondaryIc" resultMap="getTpsSecondaryIc">
+	select ci.customer_id_no, ci.customer_id_no_type_id 
+	from PTRCUSTOMER c
+	inner join PTRCUSTOMER_IDENTIFICATION_NO ci on ci.CUSTOMER_ID=c.ID
+	inner join PTRACCOUNT a on a.CUSTOMER_ID=c.ID
+	where a.ID=#ACCOUNT_ID#
+	</select>
+
+
+</sqlMap>

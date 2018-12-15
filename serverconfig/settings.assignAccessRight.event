@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TO_BE_ASSIGNED" operator="is not empty" rhsvalue=""/>
+  </conditions>
+  <exec from="TRUE" key="ENABLE_REMOVE" to="TO_BE_ASSIGNED" type="copyintolist"/>
+  <exec from="TO_BE_ASSIGNED" to="ASSIGNED_ACCESS_RIGHTS" type="append"/>
+  <exec count="1" to="DISABLE_ASSIGNED_PARENT" type="createlist"/>
+  <exec from="PARENT_ACCESS_RIGHTS_ID" key="ACCESS_RIGHTS_ID" to="DISABLE_ASSIGNED_PARENT" type="copyintolist"/>
+  <exec from="FALSE" key="ENABLE_REMOVE" to="DISABLE_ASSIGNED_PARENT" type="copyintolist"/>
+  <exec from="DISABLE_ASSIGNED_PARENT" key="ACCESS_RIGHTS_ID" to="ASSIGNED_ACCESS_RIGHTS" type="merge"/>
+  <exec count="1" to="ENABLE_CHILD" type="createlist"/>
+  <exec from="ACCESS_RIGHTS_ID" key="PARENT_ACCESS_RIGHTS_ID" to="ENABLE_CHILD" type="copyintolist"/>
+  <exec from="TRUE" key="ENABLE_ADD" to="ENABLE_CHILD" type="copyintolist"/>
+  <exec from="ENABLE_CHILD" key="PARENT_ACCESS_RIGHTS_ID" to="AVAILABLE_ACCESS_RIGHTS" type="merge"/>
+  <exec count="1" to="DISABLE_SELF" type="createlist"/>
+  <exec from="ACCESS_RIGHTS_ID" key="ACCESS_RIGHTS_ID" to="DISABLE_SELF" type="copyintolist"/>
+  <exec from="FALSE" key="ENABLE_ADD" to="DISABLE_SELF" type="copyintolist"/>
+  <exec from="DISABLE_SELF" key="ACCESS_RIGHTS_ID" to="AVAILABLE_ACCESS_RIGHTS" type="merge"/>
+ </exec>
+ <exec from="ASSIGNED_ACCESS_RIGHTS" key="ASSIGNED_ACCESS_RIGHTS" type="copyintolist"/>
+ <exec from="AVAILABLE_ACCESS_RIGHTS" key="AVAILABLE_ACCESS_RIGHTS" type="copyintolist"/>
+</event>

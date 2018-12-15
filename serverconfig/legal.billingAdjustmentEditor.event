@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec statement="getTransactionForAdjustment" type="select"/>
+ <exec from="FALSE" to="ENABLE_DISBURSEMENT" type="copy"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="DISBURSEMENT" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="TRUE" to="ENABLE_DISBURSEMENT" type="copy"/>
+ </exec>
+ <exec type="parallelquery">
+  <query value="getActionExpenseReference"/>
+  <query value="getActionSavedExpenses"/>
+  <target value="EXPENSES"/>
+  <target value="SAVED_EXPENSES"/>
+ </exec>
+ <exec from="SAVED_EXPENSES" key="EXPENSE_ID" to="EXPENSES" type="merge"/>
+ <exec count="1" type="createlist"/>
+ <exec from="GST_AMOUNT" key="GST_AMOUNT" type="copyintolist"/>
+ <exec from="LEGAL_FEE_AMOUNT" key="LEGAL_FEE_AMOUNT" type="copyintolist"/>
+ <exec from="DISBURSEMENT_AMOUNT" key="DISBURSEMENT_AMOUNT" type="copyintolist"/>
+ <exec from="COMMISSION_AMOUNT" key="COMMISSION_AMOUNT" type="copyintolist"/>
+ <exec from="EXPENSES" key="EXPENSES" type="copyintolist"/>
+ <exec from="ENABLE_DISBURSEMENT" key="ENABLE_DISBURSEMENT" type="copyintolist"/>
+ <exec from="SST_PERCENT" key="SST_PERCENT" type="copyintolist"/>
+</event>

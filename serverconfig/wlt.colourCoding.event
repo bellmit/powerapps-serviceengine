@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec from="CURRENT_DATE" key="CURRENT_DATE" to="ACCOUNT_LIST" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="WLT_TYPE_CODE" operator="=" rhsvalue="open"/>
+  </conditions>
+ </exec>
+ <exec statement="getWltTypeCode" type="select"/>
+ <exec text="Open Tab colour coding" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_TYPE_CODE" operator="=" rhsvalue="open"/>
+   </conditions>
+   <exec argument="CHARGE_OFF_PARTIAL_PAID_LIST" query="getChargeOffpartialpaidForWorkList" type="query"/>
+   <exec argument="RNR_IMPLEMENTED_LIST" query="getRandRImplementedAccount" type="query"/>
+   <exec from="RNR_IMPLEMENTED_LIST" key="ACCOUNT_ID" to="RNR_IMPLEMENTED_ACCOUNTS" type="extract"/>
+   <exec message="F41105" target="ALLCOLOUR_FILTER" type="formattext"/>
+   <exec from="ALLCOLOUR_FILTER" key="ALLCOLOUR_FILTER" to="CHARGE_OFF_PARTIAL_PAID_LIST" type="copyintolist"/>
+   <exec from="CHARGE_OFF_PARTIAL_PAID_LIST" key="ACCOUNT_ID" to="ACCOUNT_LIST" type="merge"/>
+   <exec from="CURRENT_DATE" key="CURRENT_DATE" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="RNR_IMPLEMENTED_ACCOUNTS" key="RNR_IMPLEMENTED_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="ALLCOLOUR_FILTER" operator="&lt;&gt;" rhsvalue="F41105"/>
+     </conditions>
+     <exec event="wlt.colourCodingParameterCheck" ignoreresult="true" type="raise"/>
+     <exec statement="getWltColourCoding" type="select"/>
+    </exec>
+    <exec from="ALLCOLOUR_FILTER" to="HIGHLIGHT_KEY" type="copy"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec text="PTP Tab colour coding" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_TYPE_CODE" operator="=" rhsvalue="ptp"/>
+   </conditions>
+   <exec argument="RNR_IMPLEMENTED_LIST" query="getRandRImplementedAccount" type="query"/>
+   <exec from="RNR_IMPLEMENTED_LIST" key="ACCOUNT_ID" to="RNR_IMPLEMENTED_ACCOUNTS" type="extract"/>
+   <exec from="RNR_IMPLEMENTED_ACCOUNTS" key="RNR_IMPLEMENTED_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+   <exec event="wlt.colourCodingParameterCheck" ignoreresult="true" type="raise"/>
+    <exec statement="getWltColourCoding" type="select"/>
+    <exec from="ALLCOLOUR_FILTER" to="HIGHLIGHT_KEY" type="copy"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec text="Unpaid Tab" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_TYPE_CODE" operator="=" rhsvalue="unpaid"/>
+   </conditions>
+   <exec argument="OUTLOOK_ACCOUNT_LIST" query="getInProgressOutlookAccount" type="query"/>
+   <exec argument="AUCTION_ACCOUNT_LIST" query="getInProgressAuctionAccount" type="query"/>
+   <exec argument="REPO_ACCOUNT_LIST" query="getInProgressAccountDataForRepo" type="query"/>
+   <exec argument="SHORTFALL_ACCOUNT_LIST" query="getInProgressAccountDataForShortfall" type="query"/>
+   <exec argument="COURT_ORDER_LIST" query="getInProgressCourtOrderAccount" type="query"/>
+   <exec argument="RNR_IMPLEMENTED_LIST" query="getRandRImplementedAccount" type="query"/>
+   <exec from="OUTLOOK_ACCOUNT_LIST" key="ACCOUNT_ID" to="OUTLOOK_ACCOUNTS" type="extract"/>
+   <exec from="AUCTION_ACCOUNT_LIST" key="ACCOUNT_ID" to="AUCTION_ACCOUNTS" type="extract"/>
+   <exec from="REPO_ACCOUNT_LIST" key="ACCOUNT_ID" to="REPO_ACCOUNTS" type="extract"/>
+   <exec from="SHORTFALL_ACCOUNT_LIST" key="ACCOUNT_ID" to="SHORTFALL_ACCOUNTS" type="extract"/>
+   <exec from="COURT_ORDER_LIST" key="ACCOUNT_ID" to="COURT_ORDER_ACCOUNTS" type="extract"/>
+   <exec from="RNR_IMPLEMENTED_LIST" key="ACCOUNT_ID" to="RNR_IMPLEMENTED_ACCOUNTS" type="extract"/>
+   <exec from="PDC_ACCOUNTS" key="PDC_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="SI_ACCOUNTS" key="SI_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="AUCTION_ACCOUNTS" key="AUCTION_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="OUTLOOK_ACCOUNTS" key="OUTLOOK_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="REPO_ACCOUNTS" key="REPO_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="SHORTFALL_ACCOUNTS" key="SHORTFALL_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="COURT_ORDER_ACCOUNTS" key="COURT_ORDER_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec from="RNR_IMPLEMENTED_ACCOUNTS" key="RNR_IMPLEMENTED_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+   <exec argument="ACCOUNT_LIST" type="loop">
+   <exec event="wlt.colourCodingParameterCheck" ignoreresult="true" type="raise"/>
+    <exec statement="getWltColourCoding" type="select"/>
+    <exec from="ALLCOLOUR_FILTER" to="HIGHLIGHT_KEY" type="copy"/>
+   </exec>
+  </exec>
+ </exec>
+ <exec text="WIP Tab colour coding" type="comment">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="WLT_TYPE_CODE" operator="=" rhsvalue="wip"/>
+   </conditions>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PROCESS_CODE" operator="=" rhsvalue="all"/>
+    </conditions>
+    <exec argument="OUTLOOK_ACCOUNT_LIST" query="getInProgressOutlookAccount" type="query"/>
+    <exec argument="AUCTION_ACCOUNT_LIST" query="getInProgressAuctionAccount" type="query"/>
+    <exec argument="REPO_ACCOUNT_LIST" query="getInProgressAccountDataForRepo" type="query"/>
+    <exec argument="SHORTFALL_ACCOUNT_LIST" query="getInProgressAccountDataForShortfall" type="query"/>
+    <exec argument="COURT_ORDER_LIST" query="getInProgressCourtOrderAccount" type="query"/>
+    <exec argument="RNR_IMPLEMENTED_LIST" query="getRandRImplementedAccount" type="query"/>
+    <exec from="OUTLOOK_ACCOUNT_LIST" key="ACCOUNT_ID" to="OUTLOOK_ACCOUNTS" type="extract"/>
+    <exec from="AUCTION_ACCOUNT_LIST" key="ACCOUNT_ID" to="AUCTION_ACCOUNTS" type="extract"/>
+    <exec from="REPO_ACCOUNT_LIST" key="ACCOUNT_ID" to="REPO_ACCOUNTS" type="extract"/>
+    <exec from="SHORTFALL_ACCOUNT_LIST" key="ACCOUNT_ID" to="SHORTFALL_ACCOUNTS" type="extract"/>
+    <exec from="COURT_ORDER_LIST" key="ACCOUNT_ID" to="COURT_ORDER_ACCOUNTS" type="extract"/>
+    <exec from="RNR_IMPLEMENTED_LIST" key="ACCOUNT_ID" to="RNR_IMPLEMENTED_ACCOUNTS" type="extract"/>
+    <exec from="PDC_ACCOUNTS" key="PDC_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="SI_ACCOUNTS" key="SI_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="AUCTION_ACCOUNTS" key="AUCTION_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="OUTLOOK_ACCOUNTS" key="OUTLOOK_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="REPO_ACCOUNTS" key="REPO_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="SHORTFALL_ACCOUNTS" key="SHORTFALL_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="COURT_ORDER_ACCOUNTS" key="COURT_ORDER_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec from="RNR_IMPLEMENTED_ACCOUNTS" key="RNR_IMPLEMENTED_ACCOUNTS" to="ACCOUNT_LIST" type="copyintolist"/>
+    <exec argument="ACCOUNT_LIST" type="loop">
+    <exec event="wlt.colourCodingParameterCheck" ignoreresult="true" type="raise"/>
+     <exec statement="getWltColourCoding" type="select"/>
+     <exec from="ALLCOLOUR_FILTER" to="HIGHLIGHT_KEY" type="copy"/>
+    </exec>
+   </exec>
+   <exec text="Individual filters" type="comment">
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="PROCESS_CODE" operator="=" rhsvalue="pdc"/>
+     </conditions>
+     <exec list="PDC_ACCOUNTS" to="COUNT_PDC_ACCOUNTS" type="countlist"/>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="COUNT_PDC_ACCOUNTS" operator="&lt;&gt;" rhsvalue="0"/>
+      </conditions>
+      <exec message="008000" target="ALLCOLOUR_FILTER" type="formattext"/>
+      <exec from="ALLCOLOUR_FILTER" key="ALLCOLOUR_FILTER" to="ACCOUNT_LIST" type="copyintolist"/>
+      <exec from="ALLCOLOUR_FILTER" key="HIGHLIGHT_KEY" to="ACCOUNT_LIST" type="copyintolist"/>
+     </exec>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="PROCESS_CODE" operator="=" rhsvalue="si"/>
+     </conditions>
+     <exec list="SI_ACCOUNTS" to="COUNT_SI_ACCOUNTS" type="countlist"/>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="COUNT_SI_ACCOUNTS" operator="&lt;&gt;" rhsvalue="0"/>
+      </conditions>
+      <exec message="008000" target="ALLCOLOUR_FILTER" type="formattext"/>
+      <exec from="ALLCOLOUR_FILTER" key="ALLCOLOUR_FILTER" to="ACCOUNT_LIST" type="copyintolist"/>
+      <exec from="ALLCOLOUR_FILTER" key="HIGHLIGHT_KEY" to="ACCOUNT_LIST" type="copyintolist"/>
+     </exec>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="PROCESS_CODE" operator="=" rhsvalue="outlook"/>
+     </conditions>
+     <exec argument="OUTLOOK_ACCOUNT_LIST" query="getInProgressOutlookAccount" type="query"/>
+     <exec from="OUTLOOK_ACCOUNT_LIST" key="ACCOUNT_ID" to="OUTLOOK_ACCOUNTS" type="extract"/>
+     <exec list="OUTLOOK_ACCOUNTS" to="COUNT_OUTLOOK_ACCOUNTS" type="countlist"/>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="COUNT_OUTLOOK_ACCOUNTS" operator="&lt;&gt;" rhsvalue="0"/>
+      </conditions>
+      <exec message="E0B0FF" target="ALLCOLOUR_FILTER" type="formattext"/>
+      <exec from="ALLCOLOUR_FILTER" key="ALLCOLOUR_FILTER" to="ACCOUNT_LIST" type="copyintolist"/>
+      <exec from="ALLCOLOUR_FILTER" key="HIGHLIGHT_KEY" to="ACCOUNT_LIST" type="copyintolist"/>
+     </exec>
+    </exec>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="PROCESS_CODE" operator="=" rhsvalue="auction"/>
+     </conditions>
+     <exec argument="AUCTION_ACCOUNT_LIST" query="getInProgressAuctionAccount" type="query"/>
+     <exec list="AUCTION_ACCOUNT_LIST" to="COUNT_AUCTION_ACCOUNTS" type="countlist"/>
+     <exec type="guard">
+      <conditions>
+       <condition lhsfield="COUNT_AUCTION_ACCOUNTS" operator="&lt;&gt;" rhsvalue="0"/>
+      </conditions>
+      <exec message="82CAFA" target="ALLCOLOUR_FILTER" type="formattext"/>
+      <exec from="ALLCOLOUR_FILTER" key="ALLCOLOUR_FILTER" to="ACCOUNT_LIST" type="copyintolist"/>
+      <exec from="ALLCOLOUR_FILTER" key="HIGHLIGHT_KEY" to="ACCOUNT_LIST" type="copyintolist"/>
+     </exec>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec to="LOGON_USER" type="user"/>
+ <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="CURRENT_TIME" truncate="false" type="date"/>
+ <exec statement="insertHoliday" type="insert"/>
+ <exec from="ID" key="HOLIDAY_ID" to="STATES" type="copyintolist"/>
+ <exec argument="STATES" type="loop">
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="CHECKED" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec statement="insertHolidayState" type="insert"/>
+  </exec>
+ </exec>
+ <exec message="New holiday added" target="MESSAGE" type="formattext"/>
+ <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ <exec from="TRUE" key="CLOSE" type="copyintolist"/>
+ <exec from="TRUE" key="LOAD" type="copyintolist"/>
+</event>

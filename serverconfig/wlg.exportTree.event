@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec type="loop">
+  <exec from="TRUE" to="CLOSE" type="copy"/>
+  <exec from="TRUE" to="OPEN_MESSAGE" type="copy"/>
+  <exec message="Export Completed" target="MESSAGE" type="formattext"/>
+ </exec>
+</event>

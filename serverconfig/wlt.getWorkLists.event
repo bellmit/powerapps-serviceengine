@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="USER_ID" type="user"/>
+ <exec statement="getUserUserType" type="select"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="UPL"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec query="getWorkListUpl" type="query"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="HP"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec query="getWorkListHp" type="query"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="MG"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec query="getWorkListMg" type="query"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="OD"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec query="getWorkListOd" type="query"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="RNR"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="bankuser"/>
+   </conditions>
+   <exec query="getWorkListRnR" type="query"/>
+  </exec>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_NAME" operator="=" rhsvalue="agencyWorkListTabs"/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_CODE" operator="=" rhsvalue="agencyuser"/>
+   </conditions>
+   <exec query="getWorkListAgency" type="query"/>
+  </exec>
+ </exec>
+</event>

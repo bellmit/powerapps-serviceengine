@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="INIT" type="copyintolist"/>
+ <exec from="HIDE" to="_PAGE_1" type="copy"/>
+ <exec from="HIDE" to="_PAGE_2" type="copy"/>
+ <exec from="HIDE" to="_PAGE_3" type="copy"/>
+ <exec from="HIDE" to="_PAGE_4" type="copy"/>
+ <exec from="HIDE" to="_PAGE_5" type="copy"/>
+ <exec from="HIDE" to="_PAGE_6" type="copy"/>
+ <exec from="HIDE" to="_PAGE_7" type="copy"/>
+ <exec from="HIDE" to="_PAGE_8" type="copy"/>
+ <exec from="HIDE" to="_PAGE_9" type="copy"/>
+ <exec from="HIDE" to="_PAGE_10" type="copy"/>
+ <exec from="HIDE" to="_PAGE_11" type="copy"/>
+ <exec from="HIDE" to="_PAGE_12" type="copy"/>
+ <exec from="HIDE" to="_PAGE_13" type="copy"/>
+ <exec from="HIDE" to="_PAGE_14" type="copy"/>
+ <exec from="HIDE" to="_PAGE_15" type="copy"/>
+ <exec from="HIDE" to="_PAGE_16" type="copy"/>
+ <exec from="HIDE" to="_PAGE_17" type="copy"/>
+ <exec from="HIDE" to="_PAGE_18" type="copy"/>
+ <exec from="HIDE" to="_PAGE_19" type="copy"/>
+ <exec from="HIDE" to="_PAGE_20" type="copy"/>
+ <exec from="HIDE" to="_SUB_SIDEBAR" type="copy"/>
+ <exec from="HIDE" to="_INHOUSE_SIDEBAR" type="copy"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Template Designs&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_2_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Generated Reports&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_3_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 4&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_4_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 5&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_5_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 6&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_6_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 7&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_7_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 8&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_8_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 9&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_9_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Module 10&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_10_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Call Performance&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_11_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Calls Made / &lt;br/&gt;Account Attended&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_12_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Contact Status&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_13_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Self Cure&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_14_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Top / Bottom &lt;br/&gt;Performers (Inflow %)&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_15_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Top / Bottom &lt;br/&gt;Performers (Productivity)&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_16_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Login Info&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_17_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Collector Receivables&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_18_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Action Performance&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_19_TITLE" type="formattext"/>
+ <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px&quot;&gt;&lt;h4&gt;Payment By Worklist&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_20_TITLE" type="formattext"/>
+ <exec from="HIDE" to="_DEFAULT" type="copy"/>
+ <exec from="SHOW" key="_HEADER" type="copyintolist"/>
+ <exec from="SHOW" key="_MAIN_HEADER" type="copyintolist"/>
+ <exec from="SHOW" key="_CLOSE" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_1" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_1" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="Inhouse" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_2" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_2" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Template Designs&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_2_TITLE" type="formattext"/>
+  <exec message="Template Designs" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_3" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_3" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Generated Reports&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_3_TITLE" type="formattext"/>
+  <exec message="Regenerated Reports" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_4" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_4" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Module 4&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_4_TITLE" type="formattext"/>
+  <exec message="Module 4" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_5" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_5" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Module 5&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_5_TITLE" type="formattext"/>
+  <exec message="Module 5" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_6" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_6" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Module 6&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_6_TITLE" type="formattext"/>
+  <exec message="Module 6" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_7" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_7" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Module 7&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_7_TITLE" type="formattext"/>
+  <exec message="Module 7" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_8" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_8" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Module 8&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_8_TITLE" type="formattext"/>
+  <exec message="Module 8" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_9" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_9" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Module 9&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_9_TITLE" type="formattext"/>
+  <exec message="Module 9" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_10" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_10" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Module 10&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_10_TITLE" type="formattext"/>
+  <exec message="Module 10" target="HEADER_TITLE" type="formattext"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_11" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_11" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Call Performance&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_11_TITLE" type="formattext"/>
+  <exec message="Inhouse - Call Performance" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_12" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_12" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Calls Made / &lt;br/&gt;Account Attended&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_12_TITLE" type="formattext"/>
+  <exec message="Inhouse - Calls Made / Account Attended" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_13" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_13" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Contact Status&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_13_TITLE" type="formattext"/>
+  <exec message="Inhouse - Contact Status" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_14" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_14" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Self Cure&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_14_TITLE" type="formattext"/>
+  <exec message="Inhouse - Self Cure" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_15" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_15" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Top / Bottom&lt;br/&gt;Performers (Inflow %)&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_15_TITLE" type="formattext"/>
+  <exec message="Inhouse - Top / Bottom Performers (Inflow %)" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_16" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_16" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Top / Bottom&lt;br/&gt;Performers (Productivity)&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_16_TITLE" type="formattext"/>
+  <exec message="Inhouse - Top / Bottom Performers (Productivity)" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_17" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_17" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Login Info&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_17_TITLE" type="formattext"/>
+  <exec message="Inhouse - Login Info" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_18" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_18" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Collector Receivables&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_18_TITLE" type="formattext"/>
+  <exec message="Inhouse - Collector Receivables" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_19" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_19" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Action Performance&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_19_TITLE" type="formattext"/>
+  <exec message="Inhouse - Action Performance" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="MODULE_20" operator="=" rhsvalue="true"/>
+  </conditions>
+  <exec from="SHOW" to="_PAGE_20" type="copy"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:0px; color:#839192;&quot;&gt;&lt;h4&gt;Inhouse&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_1_TITLE" type="formattext"/>
+  <exec message="&lt;html&gt;&lt;div style=&quot;align: left;width:250px;margin-left:16px; color:#839192;&quot;&gt;&lt;h4&gt;Payment By Worklist&lt;/h4&gt;&lt;/div&gt;&lt;/html&gt;" target="MODULE_20_TITLE" type="formattext"/>
+  <exec message="Inhouse - Payment By Worklist" target="HEADER_TITLE" type="formattext"/>
+  <exec message="images/1020.png" target="ICON" type="formattext"/>
+  <exec from="SHOW" to="_SUB_SIDEBAR" type="copy"/>
+  <exec from="SHOW" to="_INHOUSE_SIDEBAR" type="copy"/>
+ </exec>
+ <exec from="HEADER_TITLE" key="HEADER_TITLE" type="copyintolist"/>
+ <exec from="_DEFAULT" key="_DEFAULT" type="copyintolist"/>
+ <exec from="_SUB_SIDEBAR" key="_SUB_SIDEBAR" type="copyintolist"/>
+ <exec from="_PAGE_1" key="_PAGE_1" type="copyintolist"/>
+ <exec from="_PAGE_2" key="_PAGE_2" type="copyintolist"/>
+ <exec from="_PAGE_3" key="_PAGE_3" type="copyintolist"/>
+ <exec from="_PAGE_4" key="_PAGE_4" type="copyintolist"/>
+ <exec from="_PAGE_5" key="_PAGE_5" type="copyintolist"/>
+ <exec from="_PAGE_6" key="_PAGE_6" type="copyintolist"/>
+ <exec from="_PAGE_7" key="_PAGE_7" type="copyintolist"/>
+ <exec from="_PAGE_8" key="_PAGE_8" type="copyintolist"/>
+ <exec from="_PAGE_9" key="_PAGE_9" type="copyintolist"/>
+ <exec from="_PAGE_10" key="_PAGE_10" type="copyintolist"/>
+ <exec from="_PAGE_11" key="_PAGE_11" type="copyintolist"/>
+ <exec from="_PAGE_12" key="_PAGE_12" type="copyintolist"/>
+ <exec from="_PAGE_13" key="_PAGE_13" type="copyintolist"/>
+ <exec from="_PAGE_14" key="_PAGE_14" type="copyintolist"/>
+ <exec from="_PAGE_15" key="_PAGE_15" type="copyintolist"/>
+ <exec from="_PAGE_16" key="_PAGE_16" type="copyintolist"/>
+ <exec from="_PAGE_17" key="_PAGE_17" type="copyintolist"/>
+ <exec from="_PAGE_18" key="_PAGE_18" type="copyintolist"/>
+ <exec from="_PAGE_19" key="_PAGE_19" type="copyintolist"/>
+ <exec from="_PAGE_20" key="_PAGE_20" type="copyintolist"/>
+ <exec from="MODULE_1_TITLE" key="MODULE_1_TITLE" type="copyintolist"/>
+ <exec from="MODULE_2_TITLE" key="MODULE_2_TITLE" type="copyintolist"/>
+ <exec from="MODULE_3_TITLE" key="MODULE_3_TITLE" type="copyintolist"/>
+ <exec from="MODULE_4_TITLE" key="MODULE_4_TITLE" type="copyintolist"/>
+ <exec from="MODULE_5_TITLE" key="MODULE_5_TITLE" type="copyintolist"/>
+ <exec from="MODULE_6_TITLE" key="MODULE_6_TITLE" type="copyintolist"/>
+ <exec from="MODULE_7_TITLE" key="MODULE_7_TITLE" type="copyintolist"/>
+ <exec from="MODULE_8_TITLE" key="MODULE_8_TITLE" type="copyintolist"/>
+ <exec from="MODULE_9_TITLE" key="MODULE_9_TITLE" type="copyintolist"/>
+ <exec from="MODULE_10_TITLE" key="MODULE_10_TITLE" type="copyintolist"/>
+ <exec from="MODULE_11_TITLE" key="MODULE_11_TITLE" type="copyintolist"/>
+ <exec from="MODULE_12_TITLE" key="MODULE_12_TITLE" type="copyintolist"/>
+ <exec from="MODULE_13_TITLE" key="MODULE_13_TITLE" type="copyintolist"/>
+ <exec from="MODULE_14_TITLE" key="MODULE_14_TITLE" type="copyintolist"/>
+ <exec from="MODULE_15_TITLE" key="MODULE_15_TITLE" type="copyintolist"/>
+ <exec from="MODULE_16_TITLE" key="MODULE_16_TITLE" type="copyintolist"/>
+ <exec from="MODULE_17_TITLE" key="MODULE_17_TITLE" type="copyintolist"/>
+ <exec from="MODULE_18_TITLE" key="MODULE_18_TITLE" type="copyintolist"/>
+ <exec from="MODULE_19_TITLE" key="MODULE_19_TITLE" type="copyintolist"/>
+ <exec from="MODULE_20_TITLE" key="MODULE_20_TITLE" type="copyintolist"/>
+ <exec from="ICON" key="ICON" type="copyintolist"/>
+</event>

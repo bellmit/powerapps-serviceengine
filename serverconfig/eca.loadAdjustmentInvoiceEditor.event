@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec argument="INVOICE_STAGES" query="getEcaInvoiceStageForAdhoc" type="query"/>
+ <exec argument="INVOICE_STAGES" type="loop">
+  <exec from="CODE" to="STAGE_CODE" type="copy"/>
+ </exec>
+ <exec from="INVOICE_STAGES" key="INVOICE_STAGES" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="INVOICE_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="INVOICE_ID" operator="&lt;&gt;" rhsvalue="parent.INVOICE_ID"/>
+   <condition lhsfield="ACCOUNT_ID" operator="is not empty" rhsvalue=""/>
+   <condition lhsfield="ACCOUNT_ID" operator="&lt;&gt;" rhsvalue="parent.ACCOUNT_ID"/>
+  </conditions>
+  <exec argument="ADJUSTMENTS" query="getAdjustmentInvoicesTransaction" type="query"/>
+  <exec count="100" to="EMPTY_LIST" type="createlist"/>
+  <exec from="ADJUSTMENTS" key="ADJUSTMENTS" type="copyintolist"/>
+  <exec statement="getCustomerDetailsForAdjustment" type="select"/>
+  <exec from="ACCOUNT_ID" key="ACCOUNT_ID" to="EMPTY_LIST" type="copyintolist"/>
+  <exec from="CUSTOMER_NAME" key="CUSTOMER_NAME" to="EMPTY_LIST" type="copyintolist"/>
+  <exec from="CUSTOMER_NO" key="CUSTOMER_NO" to="EMPTY_LIST" type="copyintolist"/>
+  <exec from="ACCOUNT_NUMBER" key="ACCOUNT_NUMBER" to="EMPTY_LIST" type="copyintolist"/>
+  <exec from="COMMISSION_RATE" key="COMMISSION_RATE" to="EMPTY_LIST" type="copyintolist"/>
+  <exec from="EMPTY_LIST" key="EMPTY_LIST" type="copyintolist"/>
+ </exec>
+</event>

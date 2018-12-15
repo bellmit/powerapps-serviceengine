@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec text="Comment - Render file based on piped delimited format" type="comment">
+  <exec argument="CTI_EXTRACTION_LIST" index="RECORD_ID" type="loop">
+   <exec message="{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}|{20}|{21}|{22}|{23}|{24}|{25}|{26}|{27}|{28}|{29}|{30}|{31}|{32}|{33}|{34}|{35}|{36}|{37}|{38}|{39}|{40}|{41}|{42}|{43}|{44}|{45}|{46}|{47}|{48}|{49}|{50}|{51}|{52}|{53}" target="DELIMITED_CONTENT" type="formattext">
+<key value="ACCOUNT_ID"/>
+<key value="ACCOUNT_NO"/>
+<key value="CUSTOMER_NO"/>
+<key value="CUSTOMER_NAME"/>
+<key value="CUSTOMER_IC_NO"/>
+<key value="MOBILE_NUMBER"/>
+<key value="OFFICE_NUMBER"/>
+<key value="HOME_NUMBER"/>
+<key value="PRODUCT_CATEGORY"/>
+<key value="ACCOUNT_STATUS_DESC"/>
+<key value="OS_BALANCE"/>
+<key value="GROSS_BALANCE"/>
+<key value="MIA"/>
+<key value="NPDD_DD"/>
+<key value="NPDD"/>
+<key value="LAST_PAYMENT_DATE"/>
+<key value="DATE_LAST_ACTIVE"/>
+<key value="FULL_RELEASE_DATE"/>
+<key value="ORIGINAL_MATURITY_DATE"/>
+<key value="MATURITY_DATE"/>
+<key value="NO_PYMT_SINCE_FUNDING"/>
+<key value="RACE"/>
+<key value="STATE_CODE"/>
+<key value="RR_EFFECTIVE_DATE"/>
+<key value="RR_EXPIRY_DATE"/>
+<key value="WORK_LIST_NAME"/>
+<key value="TAB_OPEN"/>
+<key value="TAB_PAID"/>
+<key value="TAB_PTP"/>
+<key value="TAB_BROKEN_PROMISE"/>
+<key value="TAB_FOLLOW_UP"/>
+<key value="TAB_LOST_CONTACT"/>
+<key value="TAB_AGENCY"/>
+<key value="LAST_ACTION_DATE"/>
+<key value="PTP_EXIST"/>
+<key value="PTP_DATE"/>
+<key value="PTP_AMOUNT"/>
+<key value="BROKEN_PROMISE_DATE"/>
+<key value="LAST_PAC_DATE"/>
+<key value="LAST_PAC_STATUS"/>
+<key value="SCHEDULED_DATE"/>
+<key value="SCHEDULED_CALL_CONTACT_NO"/>
+<key value="SELFCURE"/>
+<key value="OCA_ASSIGN"/>
+<key value="OCA_ASSIGN_DATE"/>
+<key value="SPECIAL_STATUS"/>
+<key value="MOBILE_NUMBER_2"/>
+<key value="OFFICE_NUMBER_2"/>
+<key value="HOME_NUMBER_2"/>
+<key value="LAST_PAYMENT_METHOD"/>
+
+<key value="WORK_LIST_TAB_MOVEMENT_TYPE"/>
+<key value="EMPLOYER_NAME"/>
+<key value="FACILITY_TYPE"/>
+<key value="PAYMENT_TREND"/>
+   </exec>
+   <exec from="DELIMITED_CONTENT" regex="null" replacement="" to="DELIMITED_CONTENT" type="regexreplace"/>
+  </exec>
+ </exec>
+ <exec from="CTI_EXTRACTION_LIST" key="DELIMITED_CONTENT" to="CONTENT" type="extract"/>
+</event>

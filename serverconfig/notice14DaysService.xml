@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="14DaysNoticeService">
+
+	<select id="getNotice14DaysAuctionHouse" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		union
+		select g.id, g.code, g.description, g.disable, g.sort_priority from
+		ptragency g
+		inner join ptragency_type_ref t on t.id=g.type_id
+		where t.code='AUC'
+	</select>
+
+	<select id="getNotice14DaysCollectionCentre" resultMap="global.ref">
+		<include refid="pleaseSelectRef" />
+		union
+		select id, code, description, disable, sort_priority from ptrbusiness_unit
+	</select>
+
+	<resultMap id="getNotice14DaysAuctionTime" class="hmap">
+	<result property="ID" column="ID" javaType="long" />
+	<result property="FIRST_AUCTION_COMBO" javaType="string" />
+	<result property="FIRST_AUCTION_DT" jdbcType="ts" />
+	<result property="DISABLE" javaType="boolean" />
+</resultMap>
+
+
+	<select id="getNotice14DaysAuctionTime" resultMap="getNotice14DaysAuctionTime">
+		select ID,
+		to_char(auction_time,'dd-mm-yyyy HH12:MI AM ') as FIRST_AUCTION_COMBO ,
+		auction_time as FIRST_AUCTION_DATE,
+		DISABLE
+		from ptrauction_date_setup
+		where auction_time >cast(#NOTICE_DATE# as date) + 16 and AGENCY_ID = #AGENCY_ID#
+		order by FIRST_AUCTION_DATE
+	</select>
+
+	<select id="getNotice14DaysFirstAuctionDate" resultMap="getNotice14DaysAuctionTime">
+		select
+		ID, 
+		to_char(auction_time,'dd-mm-yyyy HH12:MI AM ') as FIRST_AUCTION_COMBO ,
+		auction_time as FIRST_AUCTION_DATE,
+		DISABLE 
+		from ptrauction_date_setup
+		where
+		auction_time &gt; cast(#NOTICE_DATE# as date) + 16 and AGENCY_ID = #AGENCY_ID# and disable=false
+		order by FIRST_AUCTION_DATE
+	</select>
+
+<resultMap id="getNotice14DaysTentativeAuctionDates" class="hmap">
+	    <result property="AGENCY_ID"  javaType="java.lang.Long" />
+	    
+		<result property="SECOND_AUCTION_DATE"  javaType="string" />
+		<result property="THIRD_AUCTION_DATE"  javaType="string" />
+		<result property="FOURTH_AUCTION_DATE"  javaType="string" />
+		<result property="FIFTH_AUCTION_DATE"  javaType="string" />
+		<result property="SIXTH_AUCTION_DATE"  javaType="string" />
+		<result property="SEVENTH_AUCTION_DATE"  javaType="string" />
+		<result property="EIGHTH_AUCTION_DATE"  javaType="string" />
+		<result property="NINTH_AUCTION_DATE"  javaType="string" />
+		<result property="TENTH_AUCTION_DATE"  javaType="string" />
+
+		<result property="ELEVENTH_AUCTION_DATE"  javaType="string" />		
+		<result property="TWELFTH_AUCTION_DATE"  javaType="string" />
+		<result property="THIRTEENTH_AUCTION_DATE"  javaType="string" />
+		<result property="FOURTEENTH_AUCTION_DATE"  javaType="string" />
+		<result property="FIFTEENTH_AUCTION_DATE"  javaType="string" />
+		<result property="SIXTEENTH_AUCTION_DATE"  javaType="string" />
+		<result property="SEVENTEENTH_AUCTION_DATE"  javaType="string" />
+		<result property="EIGHTEENTH_AUCTION_DATE"  javaType="string" />
+		<result property="NINETEENTH_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTIETH_AUCTION_DATE"  javaType="string" />
+		
+		<result property="TWENTY_FIRST_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_SECOND_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_THIRD_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_FOURTH_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_FIFTH_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_SIXTH_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_SEVENTH_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_EIGHTH_AUCTION_DATE"  javaType="string" />
+		<result property="TWENTY_NINTH_AUCTION_DATE"  javaType="string" />
+		<result property="THIRTIETH_AUCTION_DATE"  javaType="string" />
+		
+		<result property="THIRTY_FIRST_AUCTION_DATE"  javaType="string" />
+		
+		<result property="SECOND_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="THIRD_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="FOURTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="FIFTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="SIXTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="SEVENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="EIGHTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="NINTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TENTH_AUCTION_DATE_TS"  javaType="ts" />
+		
+		<result property="ELEVENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWELFTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="THIRTEENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="FOURTEENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="FIFTEENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="SIXTEENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="SEVENTEENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="EIGHTEENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="NINETEENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTIETH_AUCTION_DATE_TS"  javaType="ts" />
+		
+		<result property="TWENTY_FIRST_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_SECOND_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_THIRD_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_FOURTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_FIFTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_SIXTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_SEVENTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_EIGHTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="TWENTY_NINTH_AUCTION_DATE_TS"  javaType="ts" />
+		<result property="THIRTIETH_AUCTION_DATE_TS"  javaType="ts" />
+		
+		<result property="THIRTY_FIRST_AUCTION_DATE_TS"  javaType="ts" />
+	</resultMap>
+	
+	<select id="getNotice14DaysTentativeAuctionDates" resultMap="getNotice14DaysTentativeAuctionDates">
+			select
+			agency_id,
+			
+			to_char(crosstab.q2,'dd-mm-yyyy HH12:MI AM ') as tentative_auction_time_2,
+			to_char(crosstab.q3,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_3,
+			to_char(crosstab.q4,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_4,
+			to_char(crosstab.q5,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_5,
+			to_char(crosstab.q6,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_6,
+			to_char(crosstab.q7,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_7,
+			to_char(crosstab.q8,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_8,
+			to_char(crosstab.q9,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_9,
+			to_char(crosstab.q10,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_10,
+			
+			to_char(crosstab.q11,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_11,
+			to_char(crosstab.q12,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_12,
+			to_char(crosstab.q13,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_13,
+			to_char(crosstab.q14,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_14,
+			to_char(crosstab.q15,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_15,
+			to_char(crosstab.q16,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_16,
+			to_char(crosstab.q17,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_17,
+			to_char(crosstab.q18,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_18,
+			to_char(crosstab.q19,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_19,
+			to_char(crosstab.q20,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_20,
+			
+			to_char(crosstab.q21,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_21,
+			to_char(crosstab.q22,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_22,
+			to_char(crosstab.q23,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_23,
+			to_char(crosstab.q24,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_24,
+			to_char(crosstab.q25,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_25,
+			to_char(crosstab.q26,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_26,
+			to_char(crosstab.q27,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_27,
+			to_char(crosstab.q28,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_28,
+			to_char(crosstab.q29,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_29,
+			to_char(crosstab.q30,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_30,
+			
+			to_char(crosstab.q31,'dd-mm-yyyy HH12:MI AM ')  as tentative_auction_time_31,
+			
+			crosstab.q2 as tentative_auction_time_2,
+			crosstab.q3  as tentative_auction_time_3,
+			crosstab.q4  as tentative_auction_time_4,
+			crosstab.q5  as tentative_auction_time_5,
+			crosstab.q6  as tentative_auction_time_6,
+			crosstab.q7  as tentative_auction_time_7,
+			crosstab.q8  as tentative_auction_time_8,
+			crosstab.q9  as tentative_auction_time_9,
+			crosstab.q10  as tentative_auction_time_10,
+			
+			crosstab.q11  as tentative_auction_time_11,	
+			crosstab.q12  as tentative_auction_time_12,
+			crosstab.q13  as tentative_auction_time_13,
+			crosstab.q14  as tentative_auction_time_14,
+			crosstab.q15  as tentative_auction_time_15,
+			crosstab.q16  as tentative_auction_time_16,
+			crosstab.q17  as tentative_auction_time_17,
+			crosstab.q18  as tentative_auction_time_18,
+			crosstab.q19  as tentative_auction_time_19,
+			crosstab.q20  as tentative_auction_time_20,
+			
+			crosstab.q21  as tentative_auction_time_21,
+			crosstab.q22  as tentative_auction_time_22,
+			crosstab.q23  as tentative_auction_time_23,
+			crosstab.q24  as tentative_auction_time_24,
+			crosstab.q25  as tentative_auction_time_25,
+			crosstab.q26  as tentative_auction_time_26,
+			crosstab.q27  as tentative_auction_time_27,
+			crosstab.q28  as tentative_auction_time_28,
+			crosstab.q29  as tentative_auction_time_29,
+			crosstab.q30  as tentative_auction_time_30,
+			
+			crosstab.q31  as tentative_auction_time_31
+			from
+			(
+			   select 
+			   setup.agency_id,
+			   max(case when setup.row_number = 1 then setup.auction_time end) AS Q2,
+			   max(case when setup.row_number = 2 then setup.auction_time end) AS Q3,
+			   max(case when setup.row_number = 3 then setup.auction_time end) AS Q4,
+			   max(case when setup.row_number = 4 then setup.auction_time end) AS Q5,
+			   max(case when setup.row_number = 5 then setup.auction_time end) AS Q6,
+			   max(case when setup.row_number = 6 then setup.auction_time end) AS Q7,
+			   max(case when setup.row_number = 7 then setup.auction_time end) AS Q8,
+			   max(case when setup.row_number = 8 then setup.auction_time end) AS Q9,
+			   max(case when setup.row_number = 9 then setup.auction_time end) AS Q10,
+			   max(case when setup.row_number = 10 then setup.auction_time end) AS Q11,
+			   max(case when setup.row_number = 11 then setup.auction_time end) AS Q12,
+			   max(case when setup.row_number = 12 then setup.auction_time end) AS Q13,
+			   max(case when setup.row_number = 13 then setup.auction_time end) AS Q14,
+			   max(case when setup.row_number = 14 then setup.auction_time end) AS Q15,
+			   max(case when setup.row_number = 15 then setup.auction_time end) AS Q16,
+			   max(case when setup.row_number = 16 then setup.auction_time end) AS Q17,
+			   max(case when setup.row_number = 17 then setup.auction_time end) AS Q18,
+			   max(case when setup.row_number = 18 then setup.auction_time end) AS Q19,
+			   max(case when setup.row_number = 19 then setup.auction_time end) AS Q20,
+			   max(case when setup.row_number = 20 then setup.auction_time end) AS Q21,
+			   max(case when setup.row_number = 21 then setup.auction_time end) AS Q22,
+			   max(case when setup.row_number = 22 then setup.auction_time end) AS Q23,
+			   max(case when setup.row_number = 23 then setup.auction_time end) AS Q24,
+			   max(case when setup.row_number = 24 then setup.auction_time end) AS Q25,
+			   max(case when setup.row_number = 25 then setup.auction_time end) AS Q26,
+			   max(case when setup.row_number = 26 then setup.auction_time end) AS Q27,
+			   max(case when setup.row_number = 27 then setup.auction_time end) AS Q28,
+			   max(case when setup.row_number = 28 then setup.auction_time end) AS Q29,
+			   max(case when setup.row_number = 29 then setup.auction_time end) AS Q30,
+			   max(case when setup.row_number = 30 then setup.auction_time end) AS Q31
+			   from
+			   (
+			      select
+			      row_number() over(order by auction_time asc) as row_number, agency_id, auction_time
+			      from ptrauction_date_setup
+			      where agency_id = #AGENCY_ID#
+			      and cast(auction_time as date) > cast(#FIRST_AUCTION_DATE# as date)
+			      and disable=false
+			   )
+			   setup group by setup.agency_id
+			)
+			crosstab
+	</select>
+
+	<resultMap id="getNotice14DaysDateCalculation" class="hmap">
+	<result property="21DAYS" javaType="long" />
+</resultMap>
+
+	<select id="getNotice14DaysDateCalculation" resultMap="getNotice14DaysDateCalculation">
+		SELECT case when CAST(#NOTICE_DATE# AS DATE)-CAST(#5TH_SCHEDULE_SENDING_DATE# AS DATE) &lt; 22 then 1 else 0
+		end
+		<include refid="fromdual" />
+	</select> 
+
+<parameterMap id="insertTreatmentNotice14Days" class="map">
+		<parameter property="PRINTING_DATE" jdbcType="DATE" />
+		<parameter property="5TH_SCHEDULE_SENDING_DATE" jdbcType="DATE" />
+		<parameter property="NOTICE_DATE" jdbcType="DATE" />
+		<parameter property="AGENCY_ID" jdbcType="long" />
+		<parameter property="FIRST_AUCTION_DATE" jdbcType="TIMESTAMP"/>
+		<parameter property="SECOND_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="THIRD_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="FOURTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="FIFTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="SIXTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		
+		<parameter property="SEVENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="EIGHTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="NINTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="TENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="ELEVENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP"/>
+		<parameter property="TWELFTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="THIRTEENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="FOURTEENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="FIFTEENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="SIXTEENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		
+		<parameter property="SEVENTEENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="EIGHTEENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="NINETEENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTIETH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_FIRST_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_SECOND_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_THIRD_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_FOURTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_FIFTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_SIXTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		
+		<parameter property="TWENTY_SEVENTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_EIGHTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="TWENTY_NINTH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="THIRTIETH_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="THIRTY_FIRST_AUCTION_DATE_TS" jdbcType="TIMESTAMP" />
+		<parameter property="BRANCH_ID" javaType="long"/>
+		<parameter property="TEMPLATE_VERSION_ID" jdbcType="NUMERIC"/>
+		<parameter property="ACCOUNT_ID" jdbcType="NUMERIC"/>
+		<parameter property="TYPE_STATUS_ID" jdbcType="NUMERIC"/>
+		<parameter property="SUBTYPE_ID" jdbcType="NUMERIC"/>
+		
+		<parameter property="ID" javaType="long" />
+	</parameterMap>
+	
+	<insert id="insertTreatmentNotice14Days" parameterMap="insertTreatmentNotice14Days">
+		insert into ptrtreatment_14_days_notice
+		(
+		PRINTING_DATE, 
+		FIFTH_SCHED_SEND_DATE, 
+		NOTICE_DATE, 
+		AGENCY_ID, 
+		FIRST_AUCTION_DATE, 
+		SECOND_AUCTION_DATE, 
+		THIRD_AUCTION_DATE, 
+		FOURTH_AUCTION_DATE, 
+		FIFTH_AUCTION_DATE,
+		SIXTH_AUCTION_DATE, 
+		
+		SEVENTH_AUCTION_DATE, 
+		EIGHT_AUCTION_DATE, 
+		NINTH_AUCTION_DATE, 
+		TENTH_AUCTION_DATE, 
+		ELEVENTH_AUCTION_DATE, 
+		TWELFTH_AUCTION_DATE,
+		THIRTEENTH_AUCTION_DATE,
+		FOURTEENTH_AUCTION_DATE,
+		FIFTEENTH_AUCTION_DATE,
+		SIXTEENTH_AUCTION_DATE,
+		
+		SEVENTEENTH_AUCTION_DATE,
+		EIGHTEENTH_AUCTION_DATE,
+		NINETEENTH_AUCTION_DATE,
+		TWENTIETH_AUCTION_DATE,
+		TWENTY_FIRST_AUCTION_DATE,
+		TWENTY_SECOND_AUCTION_DATE,
+		TWENTY_THIRD_AUCTION_DATE,
+		TWENTY_FOURTH_AUCTION_DATE,
+		TWENTY_FIFTH_AUCTION_DATE,
+		TWENTY_SIXTH_AUCTION_DATE,
+		
+		TWENTY_SEVENTH_AUCTION_DATE,
+		TWENTY_EIGHTH_AUCTION_DATE,
+		TWENTY_NINTH_AUCTION_DATE,
+		THIRTIETH_AUCTION_DATE,
+		THIRTY_FIRST_AUCTION_DATE,
+		BRANCH_ID, 
+		TEMPLATE_VERSION_ID,
+		ACCOUNT_ID,
+		TYPE_STATUS_ID,
+		SUBTYPE_ID,
+		
+		TREATMENT_ID
+		) values (?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?,?,?,?,?,?, ?)
+	</insert>
+	
+	<update id="updateTreatmentNotice14Days" parameterMap="insertTreatmentNotice14Days">
+		update ptrtreatment_14_days_notice
+		set
+		PRINTING_DATE = ?, 
+		FIFTH_SCHED_SEND_DATE = ?, 
+		NOTICE_DATE = ?, 
+		AGENCY_ID = ?, 
+		FIRST_AUCTION_DATE = ?,
+		SECOND_AUCTION_DATE = ?,
+		THIRD_AUCTION_DATE = ?,
+		FOURTH_AUCTION_DATE = ?,
+		FIFTH_AUCTION_DATE = ?,
+		SIXTH_AUCTION_DATE = ?,
+		
+		SEVENTH_AUCTION_DATE = ?,
+		EIGHT_AUCTION_DATE = ?,
+		NINTH_AUCTION_DATE = ?,
+		TENTH_AUCTION_DATE = ?,
+		ELEVENTH_AUCTION_DATE = ?,
+		TWELFTH_AUCTION_DATE = ?,
+		THIRTEENTH_AUCTION_DATE = ?,
+		FOURTEENTH_AUCTION_DATE = ?,
+		FIFTEENTH_AUCTION_DATE = ?,
+		SIXTEENTH_AUCTION_DATE = ?,
+		
+		SEVENTEENTH_AUCTION_DATE = ?,
+		EIGHTEENTH_AUCTION_DATE = ?,
+		NINETEENTH_AUCTION_DATE = ?,
+		TWENTIETH_AUCTION_DATE = ?,
+		TWENTY_FIRST_AUCTION_DATE = ?,
+		TWENTY_SECOND_AUCTION_DATE = ?,
+		TWENTY_THIRD_AUCTION_DATE = ?,
+		TWENTY_FOURTH_AUCTION_DATE = ?,
+		TWENTY_FIFTH_AUCTION_DATE = ?,
+		TWENTY_SIXTH_AUCTION_DATE = ?,
+		
+		TWENTY_SEVENTH_AUCTION_DATE = ?, 
+		TWENTY_EIGHTH_AUCTION_DATE = ?,
+		TWENTY_NINTH_AUCTION_DATE = ?,
+		THIRTIETH_AUCTION_DATE = ?,
+		THIRTY_FIRST_AUCTION_DATE = ?,
+		BRANCH_ID = ?,
+		TEMPLATE_VERSION_ID = ?,
+		ACCOUNT_ID = ?,
+		TYPE_STATUS_ID = ?,
+		SUBTYPE_ID = ?
+		where TREATMENT_ID = ?
+  	</update>
+  	
+  	<resultMap class="hmap" id="getTreatmentNotice14Days">
+		<result property="PRINTING_DATE" javaType="date"/>
+		<result property="5TH_SCHEDULE_SENDING_DATE" javaType="date"/>
+		<result property="NOTICE_DATE" javaType="date"/>
+		<result property="AGENCY_ID" javaType="long" />
+		<result property="FIRST_AUCTION_DATE" javaType="ts" />
+		<result property="SECOND_AUCTION_DATE" javaType="string"  />
+		<result property="THIRD_AUCTION_DATE" javaType="string"  />
+		<result property="FOURTH_AUCTION_DATE" javaType="string" />
+		<result property="FIFTH_AUCTION_DATE" javaType="string"  />
+		<result property="SIXTH_AUCTION_DATE" javaType="string" />
+		
+		<result property="SEVENTH_AUCTION_DATE" javaType="string" />
+		<result property="EIGHTH_AUCTION_DATE" javaType="string" />
+		<result property="NINTH_AUCTION_DATE" javaType="string" />
+		<result property="TENTH_AUCTION_DATE" javaType="string" />
+		<result property="ELEVENTH_AUCTION_DATE" javaType="string" />
+		<result property="TWELFTH_AUCTION_DATE" javaType="string" />
+		<result property="THIRTEENTH_AUCTION_DATE" javaType="string" />
+		<result property="FOURTEENTH_AUCTION_DATE" javaType="string" />
+		<result property="FIFTEENTH_AUCTION_DATE" javaType="string" />
+		<result property="SIXTEENTH_AUCTION_DATE" javaType="string" />
+		
+		<result property="SEVENTEENTH_AUCTION_DATE" javaType="string" />
+		<result property="EIGHTEENTH_AUCTION_DATE" javaType="string" />
+		<result property="NINETEENTH_AUCTION_DATE" javaType="string" />
+		<result property="TWENTIETH_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_FIRST_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_SECOND_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_THIRD_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_FOURTH_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_FIFTH_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_SIXTH_AUCTION_DATE" javaType="string" />
+		
+		<result property="TWENTY_SEVENTH_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_EIGHTH_AUCTION_DATE" javaType="string" />
+		<result property="TWENTY_NINTH_AUCTION_DATE" javaType="string" />
+		<result property="THIRTIETH_AUCTION_DATE" javaType="string" />
+		<result property="THIRTY_FIRST_AUCTION_DATE" javaType="string" />
+		<result property="SECOND_AUCTION_DATE_TS" javaType="ts"/>
+		<result property="THIRD_AUCTION_DATE_TS" javaType="ts"/>
+		<result property="FOURTH_AUCTION_DATE_TS" javaType="ts"/>
+		<result property="FIFTH_AUCTION_DATE_TS" javaType="ts"/>
+		<result property="SIXTH_AUCTION_DATE_TS" jdbcType="ts"/>
+		
+		<result property="SEVENTH_AUCTION_DATE_TS" jdbcType="ts"/>
+		<result property="EIGHTH_AUCTION_DATE_TS" jdbcType="ts"/>
+		<result property="NINTH_AUCTION_DATE_TS" jdbcType="ts"/>
+		<result property="TENTH_AUCTION_DATE_TS" jdbcType="ts"/>
+		<result property="ELEVENTH_AUCTION_DATE_TS" jdbcType="ts"/>
+		<result property="TWELFTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="THIRTEENTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="FOURTEENTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="FIFTEENTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="SIXTEENTH_AUCTION_DATE_TS" javaType="ts" />
+		
+		<result property="SEVENTEENTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="EIGHTEENTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="NINETEENTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTIETH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_FIRST_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_SECOND_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_THIRD_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_FOURTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_FIFTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_SIXTH_AUCTION_DATE_TS" javaType="ts" />
+		
+		<result property="TWENTY_SEVENTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_EIGHTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="TWENTY_NINTH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="THIRTIETH_AUCTION_DATE_TS" javaType="ts" />
+		<result property="THIRTY_FIRST_AUCTION_DATE_TS" javaType="ts" />
+		<result property="BRANCH_ID" javaType="long" />
+		<result property="TEMPLATE_VERSION_ID" javaType="long"/>
+	</resultMap>
+
+	<select id="getTreatmentNotice14Days" resultMap="getTreatmentNotice14Days">
+		select
+		PRINTING_DATE, 
+		FIFTH_SCHED_SEND_DATE, 
+		NOTICE_DATE, 
+		AGENCY_ID,
+		FIRST_AUCTION_DATE, 
+		to_char(SECOND_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(THIRD_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(FOURTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(FIFTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(SIXTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		
+		to_char(SEVENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(EIGHT_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(NINTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(TENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(ELEVENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(TWELFTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(THIRTEENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(FOURTEENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(FIFTEENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(SIXTEENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		 
+		to_char(SEVENTEENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(EIGHTEENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(NINETEENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(TWENTIETH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(TWENTY_FIRST_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(TWENTY_SECOND_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(TWENTY_THIRD_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(TWENTY_FOURTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(TWENTY_FIFTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(TWENTY_SIXTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		 
+		to_char(TWENTY_SEVENTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(TWENTY_EIGHTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		to_char(TWENTY_NINTH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(THIRTIETH_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '), 
+		to_char(THIRTY_FIRST_AUCTION_DATE,'dd-mm-yyyy HH12:MI AM '),
+		SECOND_AUCTION_DATE,
+		THIRD_AUCTION_DATE,
+		FOURTH_AUCTION_DATE, 
+		FIFTH_AUCTION_DATE,
+		SIXTH_AUCTION_DATE,
+		
+		SEVENTH_AUCTION_DATE,
+		EIGHT_AUCTION_DATE,
+		NINTH_AUCTION_DATE,
+		TENTH_AUCTION_DATE, 
+		ELEVENTH_AUCTION_DATE,
+		TWELFTH_AUCTION_DATE,
+		THIRTEENTH_AUCTION_DATE,
+		FOURTEENTH_AUCTION_DATE,
+		FIFTEENTH_AUCTION_DATE,
+		SIXTEENTH_AUCTION_DATE,
+		
+		SEVENTEENTH_AUCTION_DATE,
+		EIGHTEENTH_AUCTION_DATE,
+		NINETEENTH_AUCTION_DATE,
+		TWENTIETH_AUCTION_DATE,
+		TWENTY_FIRST_AUCTION_DATE,
+		TWENTY_SECOND_AUCTION_DATE,
+		TWENTY_THIRD_AUCTION_DATE,
+		TWENTY_FOURTH_AUCTION_DATE,
+		TWENTY_FIFTH_AUCTION_DATE,
+		TWENTY_SIXTH_AUCTION_DATE,
+		
+		TWENTY_SEVENTH_AUCTION_DATE,
+		TWENTY_EIGHTH_AUCTION_DATE,
+		TWENTY_NINTH_AUCTION_DATE,
+		THIRTIETH_AUCTION_DATE,
+		THIRTY_FIRST_AUCTION_DATE,
+		BRANCH_ID,
+		TEMPLATE_VERSION_ID,
+        TYPE_STATUS_ID
+        SUBTYPE_ID
+		from ptrtreatment_14_days_notice
+		where TREATMENT_ID = #ID#
+ 	</select>
+
+
+</sqlMap>
+

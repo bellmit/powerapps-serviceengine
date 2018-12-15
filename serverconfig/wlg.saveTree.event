@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="true" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="TRUE" key="TRUE" type="copyintolist"/>
+ <exec from="PRODUCT_TYPE_FILTER" key="PRODUCT_CATEGORY_ID" type="copyintolist"/>
+ <exec from="TREE_TYPE_FILTER" key="TYPE_ID" type="copyintolist"/>
+ <exec from="TREE_ID" key="TREE_ID" type="copyintolist"/>
+ <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+ <exec from="IS_CUSTOMER_LEVEL" key="IS_CUSTOMER_LEVEL" type="copyintolist"/>
+ <exec from="LETTER_EXTRACTION" key="LETTER_EXTRACTION" type="copyintolist"/>
+ <exec from="WLG_ASSIGNMENT_TYPE_ID" key="WLG_ASSIGNMENT_TYPE_ID" type="copyintolist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="IS_BATCH" operator="is empty" rhsvalue=""/>
+  </conditions>
+  <exec from="FALSE" to="IS_BATCH" type="copy"/>
+ </exec>
+ <exec from="IS_BATCH" key="IS_BATCH" type="copyintolist"/>
+ <exec type="loop">
+  <exec from="TRUE" to="CLOSE" type="copy"/>
+  <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="UPDATED_TIME" truncate="false" type="date"/>
+  <exec to="UPDATED_USER_ID" type="user"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="&lt;&gt;" rhsvalue="10"/>
+   </conditions>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TREE_ID" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_BATCH" operator="=" rhsvalue="true"/>
+     </conditions>
+     <exec recordcount="" statement="setIsbatchToFalse" type="update"/>
+    </exec>
+    <exec recordcount="" statement="updateWlgTree" type="update"/>
+    <exec from="TRUE" to="OPEN_MESSAGE" type="copy"/>
+    <exec message="Existing tree updated" target="MESSAGE" type="formattext"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TREE_ID" operator="is empty" rhsvalue=""/>
+    </conditions>
+    <exec from="UPDATED_TIME" to="CREATED_TIME" type="copy"/>
+    <exec from="UPDATED_USER_ID" to="CREATED_USER_ID" type="copy"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_BATCH" operator="=" rhsvalue="true"/>
+     </conditions>
+     <exec recordcount="" statement="setIsbatchToFalse" type="update"/>
+    </exec>
+    <exec statement="insertWlgTree" type="insert"/>
+    <exec from="TRUE" to="OPEN_MESSAGE" type="copy"/>
+    <exec message="New tree added" target="MESSAGE" type="formattext"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="TYPE_ID" operator="=" rhsvalue="10"/>
+   </conditions>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TREE_ID" operator="is not empty" rhsvalue=""/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_BATCH" operator="=" rhsvalue="true"/>
+     </conditions>
+     <exec recordcount="" statement="setIsbatchToFalseAdhoc" type="update"/>
+    </exec>
+    <exec recordcount="" statement="updateWlgTree" type="update"/>
+    <exec from="TRUE" to="OPEN_MESSAGE" type="copy"/>
+    <exec message="Existing tree updated" target="MESSAGE" type="formattext"/>
+   </exec>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="TREE_ID" operator="is empty" rhsvalue=""/>
+    </conditions>
+    <exec from="UPDATED_TIME" to="CREATED_TIME" type="copy"/>
+    <exec from="UPDATED_USER_ID" to="CREATED_USER_ID" type="copy"/>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="IS_BATCH" operator="=" rhsvalue="true"/>
+     </conditions>
+     <exec recordcount="" statement="setIsbatchToFalseAdhoc" type="update"/>
+    </exec>
+    <exec statement="insertWlgTree" type="insert"/>
+    <exec from="TRUE" to="OPEN_MESSAGE" type="copy"/>
+    <exec message="New tree added" target="MESSAGE" type="formattext"/>
+   </exec>
+  </exec>
+ </exec>
+</event>

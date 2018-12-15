@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="ACCOUNT_ID" key="ACCOUNT_ID" type="copyintolist"/>
+ <exec from="CUSTOMER_ID" key="CUSTOMER_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec argument="ADDRESS_LIST" query="getCustomerAddress" type="query"/>
+  <exec message="Select an address" target="FULL_ADDRESS" type="formattext"/>
+  <exec argument="ADDRESS_LIST" type="loop">
+   <exec event="letter.getFullAddress" ignoreresult="true" type="raisewith"/>
+  </exec>
+ </exec>
+</event>

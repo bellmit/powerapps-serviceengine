@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="PAYOFF_AMOUNT" operator="exists" rhsvalue=""/>
+  </conditions>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PAYOFF_AMOUNT" operator="is not empty" rhsvalue=""/>
+   </conditions>
+   <exec type="guard">
+    <conditions>
+     <condition lhsfield="PROVISION_CHARGES" operator="exists" rhsvalue=""/>
+    </conditions>
+    <exec type="guard">
+     <conditions>
+      <condition lhsfield="PROVISION_CHARGES" operator="is not empty" rhsvalue=""/>
+     </conditions>
+     <exec lhs="PAYOFF_AMOUNT" rhs="PROVISION_CHARGES" target="SHORTFALL_OUTSTANDING_BALANCE" type="add"/>
+     <exec from="SHORTFALL_OUTSTANDING_BALANCE" type="copy"/>
+    </exec>
+   </exec>
+  </exec>
+ </exec>
+</event>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec argument="TYPES" query="getReportProductCategoriesForEditing" type="query"/>
+ <exec statement="getReportForEditing" type="select"/>
+ <exec count="1" type="createlist"/>
+ <exec from="TYPES" key="TYPES" type="copyintolist"/>
+ <exec from="NAME" key="NAME" type="copyintolist"/>
+ <exec from="DESCRIPTION" key="DESCRIPTION" type="copyintolist"/>
+ <exec from="TYPE_ID" key="TYPE_ID" type="copyintolist"/>
+ <exec from="CURRENT_DOCUMENT_ID" key="CURRENT_DOCUMENT_ID" type="copyintolist"/>
+ <exec from="PRODUCT_CATEGORY_ID" key="PRODUCT_CATEGORY_ID" type="copyintolist"/>
+ <exec from="REMARKS" key="REMARKS" type="copyintolist"/>
+ <exec from="DISABLE" key="DISABLE" type="copyintolist"/>
+</event>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec text="Financing Info (Debt Crystalization)" type="comment">
+  <exec statement="getCamRnrLatestDebtCrystalization" type="select"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="IS_DEBT_CRYSTALIZATION" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec statement="getCamRnrDebtCrystalization" type="select"/>
+  </exec>
+  <exec message="With Further Interest" target="withfurther_lbl" type="formattext"/>
+  <exec message="Memo L/Charges after the R &amp; R effective date" target="memo_label" type="formattext"/>
+  <exec message="C/F Accrued Interest" target="cf_accrued_lbl" type="formattext"/>
+  <exec message="Approved Interest Rate" target="TABLE_TITLE" type="formattext"/>
+  <exec message="C/F Late Charges" target="cf_late_charges_lbl" type="formattext"/>
+  <exec message="C/F Memo Late Charge" target="cf_memo_lbl" type="formattext"/>
+  <exec message="C/F Accrued Late Charge" target="cf_accrued_late_lbl" type="formattext"/>
+  <exec message="Late Charges" target="late_charges_lbl" type="formattext"/>
+  <exec message="Accrued L/Charge after the R &amp; R effective date" target="accrued_effective_date_label" type="formattext"/>
+  <exec message="L/Charges after the R &amp; R effective date" target="effective_date_label" type="formattext"/>
+  <exec message="HIDE" target="tableIslamic" type="formattext"/>
+  <exec message="SHOW" target="tableC" type="formattext"/>
+  <exec message="HIDE" target="title_islamic" type="formattext"/>
+  <exec message="SHOW" target="title_conventional" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="IS_ISLAMIC" operator="=" rhsvalue="Y"/>
+   </conditions>
+   <exec message="Approved Profit Rate" target="TABLE_TITLE" type="formattext"/>
+   <exec message="Compensation Charges" target="late_charges_lbl" type="formattext"/>
+   <exec message="C/F Compensation Charges" target="cf_late_charges_lbl" type="formattext"/>
+   <exec message="C/F Accrued Profit" target="cf_accrued_lbl" type="formattext"/>
+   <exec message="C/F Accrued Compensation Charges" target="cf_accrued_late_lbl" type="formattext"/>
+   <exec message="C/F Memo Compensation Charges" target="cf_memo_lbl" type="formattext"/>
+   <exec message="Accrued C/Charges after the R &amp; R effective date" target="accrued_effective_date_label" type="formattext"/>
+   <exec message="C/Charges after the R &amp; R effective date" target="effective_date_label" type="formattext"/>
+   <exec message="Memo C/Charges after the R &amp; R effective date" target="memo_label" type="formattext"/>
+   <exec message="With Further Profit" target="withfurther_lbl" type="formattext"/>
+   <exec message="SHOW" target="tableIslamic" type="formattext"/>
+   <exec message="HIDE" target="tableC" type="formattext"/>
+   <exec message="SHOW" target="title_islamic" type="formattext"/>
+   <exec message="HIDE" target="title_conventional" type="formattext"/>
+  </exec>
+ </exec>
+</event>

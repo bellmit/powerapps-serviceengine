@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TYPE_ID" operator="not present" rhsvalue=""/>
+  </conditions>
+  <exec from="PROCESS_TYPE_ID" to="TYPE_ID" type="copy"/>
+ </exec>
+ <exec statement="getTreatmentAccountProductCategory" type="select"/>
+ <exec message="SHOW" target="SHOW" type="formattext"/>
+ <exec message="HIDE" target="HIDE" type="formattext"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TYPE_ID" operator="=" rhsvalue="8"/>
+  </conditions>
+  <exec message="SHOW" target="ReasonOfDefaults" type="formattext"/>
+  <exec message="HIDE" target="ReasonOfDefaults_" type="formattext"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PRODUCT_CATEGORY_CODE" operator="=" rhsvalue="PFI"/>
+   </conditions>
+   <exec from="SHOW" to="ReasonOfDefaults_" type="copy"/>
+  </exec>
+ </exec>
+</event>

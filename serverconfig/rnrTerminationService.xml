@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="rnrTerminationService">
+
+
+
+
+
+
+<select id="getRnrTerminationReason" resultMap="global.ref">
+<include refid="pleaseSelectRef"/> <include refid="fromdual"/> 
+union
+<include refid="refselect"/> from ptrrnr_termination_reason_ref
+</select>
+
+<resultMap class="hmap" id="getRnrDetails">
+<result property="LAST_PAYMENT_METHOD_ID" javaType="long"/>
+<result property="LAST_PAYMENT_METHOD" javaType="string"/>
+<result property="REVISED_MIA" javaType="int"/>
+<result property="LAST_PAYMENT_DATE" javaType="date"/>
+</resultMap>
+
+
+<select id="getRnrDetails" resultMap="getRnrDetails">
+select 
+payment.last_payment_method_id, 
+ref.description as last_payment_method,
+<include refid="rnrMonthsInArrears"/> as REVISED_MIA,
+a.last_payment_date
+from ptraccount a
+left join ptrvw_account_last_payment_method payment on payment.account_id=a.id
+left join ptrpayment_method_ref ref on payment.last_payment_method_id = ref.id
+<include refid="rnrMiaJoin"/>
+where a.id=#ACCOUNT_ID#
+</select>
+
+<resultMap class="hmap" id="getTreatmentRnrTermination">
+<result property="TYPE_STATUS_ID" javaType="long"/>
+<result property="SUBTYPE_ID" javaType="long"/>
+<result property="LAST_PAYMENT_METHOD_ID" javaType="long"/>
+<result property="LAST_PAYMENT_METHOD" javaType="string"/>
+<result property="REVISED_MIA" javaType="int"/>
+<result property="LAST_PAYMENT_DATE" javaType="date"/>
+<result property="TERMINATION_REASON_ID" javaType="long"/>
+</resultMap>
+
+<select id="getTreatmentRnrTermination" resultMap="getTreatmentRnrTermination">
+select
+rnr.type_status_id,
+rnr.subtype_id,
+rnr.last_payment_method_id,
+pay.description as last_payment_method,
+rnr.revised_mia,
+rnr.last_payment_date,
+rnr.termination_reason_id
+from ptrtreatment_rnr_termination rnr
+left join ptrpayment_method_ref pay on pay.id=rnr.last_payment_method_id
+where rnr.treatment_id=#ID#
+</select>
+
+<insert id="insertTreatmentRnrTermination" parameterClass="map">
+insert into ptrtreatment_rnr_termination 
+(treatment_id,account_id,type_status_id,subtype_id,revised_mia,last_payment_method_id,last_payment_date,termination_reason_id)
+values(#ID#,#ACCOUNT_ID#,#TYPE_STATUS_ID#,#SUBTYPE_ID#,#REVISED_MIA#,#LAST_PAYMENT_METHOD_ID#,#LAST_PAYMENT_DATE#,#TERMINATION_REASON_ID#)
+</insert>
+
+
+
+
+
+
+
+</sqlMap>
+	

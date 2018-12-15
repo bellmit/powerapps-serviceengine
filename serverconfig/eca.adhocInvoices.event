@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec to="LOGON_USER" type="user"/>
+ <exec statement="getLoginUserType" type="select"/>
+ <exec argument="DATA" query="getAdhocInvoices" type="query"/>
+ <exec text="Report Design" type="comment">
+  <exec message="ECA_ADHOC_INVOICE" target="REPORT_DESIGN" type="formattext"/>
+  <exec statement="getEcaBillingReportDesign" type="select"/>
+  <exec from="REPORT_DESIGN_ID" key="REPORT_DESIGN_ID" to="DATA" type="copyintolist"/>
+ </exec>
+ <exec list="DATA" to="TOTAL_RECORD" type="countlist"/>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TOTAL_RECORD" operator="&lt;&gt;" rhsvalue="0"/>
+  </conditions>
+  <exec from="DATA" key="INVOICE_ID" to="INVOICES" type="extract"/>
+  <exec type="parallelquery">
+   <query value="getAdhocInvoiceRemarksHistory"/>
+   <target value="BILLING_HISTORY"/>
+  </exec>
+  <exec count="1" type="createlist"/>
+  <exec from="BILLING_HISTORY" key="INVOICE_ID" target="BILLING_HISTORY" to="DATA" type="groupedmerge"/>
+  <exec from="DATA" key="DATA" type="copyintolist"/>
+  <exec from="TOTAL_RECORD" key="TOTAL_RECORD" type="copyintolist"/>
+  <exec from="TRUE" key="INIT" type="copyintolist"/>
+  <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
+ </exec>
+ <exec type="guard">
+  <conditions>
+   <condition lhsfield="TOTAL_RECORD" operator="=" rhsvalue="0"/>
+  </conditions>
+  <exec count="1" type="createlist"/>
+  <exec from="ZERO" key="TOTAL_RECORD" type="copyintolist"/>
+  <exec message="No record found!!!" target="MESSAGE" type="formattext"/>
+  <exec from="MESSAGE" key="MESSAGE" type="copyintolist"/>
+  <exec from="TRUE" key="OPEN_MESSAGE" type="copyintolist"/>
+ </exec>
+</event>

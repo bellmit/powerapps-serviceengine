@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<event transactional="false" type="event">
+ <exec count="1" type="createlist"/>
+ <exec from="PAGE_NUMBER" key="PAGE_NUMBER" type="copyintolist"/>
+ <exec from="LIMIT_RESULT" key="LIMIT_RESULT" type="copyintolist"/>
+ <exec from="SEARCH" key="SEARCH" type="copyintolist"/>
+ <exec from="PREVIOUS" key="PREVIOUS" type="copyintolist"/>
+ <exec from="NEXT" key="NEXT" type="copyintolist"/>
+ <exec from="NUMBER_OF_ACCOUNTS" key="NUMBER_OF_ACCOUNTS" type="copyintolist"/>
+ <exec from="INSTRUCTION_TYPE_ID" key="INSTRUCTION_TYPE_ID" type="copyintolist"/>
+ <exec from="STATE_ID" key="STATE_ID" type="copyintolist"/>
+ <exec from="AREA_ID" key="AREA_ID" type="copyintolist"/>
+ <exec from="VISITATION_STAFF_ID" key="VISITATION_STAFF_ID" type="copyintolist"/>
+ <exec type="loop">
+  <exec statement="booleanvalues" type="select"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="SEARCH" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec statement="getVmsNOA" type="select"/>
+   <exec type="nullify">
+    <key value="PREVIOUS"/>
+    <key value="NEXT"/>
+    <key value="PAGE_NUMBER"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="PREVIOUS" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec type="nullify">
+    <key value="SEARCH"/>
+    <key value="NEXT"/>
+   </exec>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NEXT" operator="=" rhsvalue="true"/>
+   </conditions>
+   <exec type="nullify">
+    <key value="PREVIOUS"/>
+    <key value="SEARCH"/>
+   </exec>
+  </exec>
+  <exec from="NUMBER_OF_ACCOUNTS" to="FIRST_NUMBER" type="copy"/>
+  <exec from="LIMIT_RESULT" to="SECOND_NUMBER" type="copy"/>
+  <exec event="pagination.select" ignoreresult="true" type="raise"/>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NUMBER_OF_ACCOUNTS" operator="&lt;&gt;" rhsvalue="0"/>
+   </conditions>
+   <exec event="visitationManagement.supervisoryResults" ignoreresult="true" type="raisewith"/>
+  </exec>
+  <exec type="guard">
+   <conditions>
+    <condition lhsfield="NUMBER_OF_ACCOUNTS" operator="=" rhsvalue="0"/>
+   </conditions>
+   <exec from="TRUE" to="OPEN_MESSAGE" type="copy"/>
+   <exec message="No Records Found" target="MESSAGE" type="formattext"/>
+  </exec>
+ </exec>
+</event>
