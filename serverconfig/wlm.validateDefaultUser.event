@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec list="WLM_USER_LIST_INDX" to="WLM_USER_LIST_INDX_COUNT" type="countlist"/>
- <exec from="WLM_USER_LIST_INDX_COUNT" to="ENABLE_SET_DEFAULT" type="copy"/>
- <exec from="ENABLE_SET_DEFAULT" type="copy"/>
-</event>

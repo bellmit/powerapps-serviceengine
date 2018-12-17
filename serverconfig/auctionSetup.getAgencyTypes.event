@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" type="createlist"/>
- <exec argument="AGENCY_TYPES" query="getAuctionSetupAgencyTypes" type="query"/>
- <exec from="TRUE" key="LOAD_AGENCIES" to="AGENCY_TYPES" type="copyintolist"/>
- <exec from="AGENCY_TYPES" key="AGENCY_TYPES" type="copyintolist"/>
-</event>

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" to="NEW_ROW" type="createlist"/>
- <exec from="TRUE" key="ALLOW_DELETE" to="NEW_ROW" type="copyintolist"/>
- <exec from="NEW_ROW" to="REFERENCE" type="append"/>
- <exec from="REFERENCE" type="copy"/>
-</event>

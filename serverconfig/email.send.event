@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec text="Office365.com SMTP requires that the sender be the address that is associated with the account so we will read that from the server properties." type="comment">
-  <exec argument="SENDER" property="mail.smtp.sender" type="serverproperty"/>
- </exec>
- <exec type="email"/>
-</event>

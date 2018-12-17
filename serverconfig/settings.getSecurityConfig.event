@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec argument="DATA" query="getSecurityConfig" type="query"/>
- <exec list="DATA" name="COLUMN" type="pivotlist" value="VALUE"/>
-</event>

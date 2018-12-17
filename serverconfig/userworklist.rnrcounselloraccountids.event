@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="true" to="FIRST_OF_MONTH" truncate="true" type="date"/>
- <exec argument="COUNSELLOR_ACCOUNT_LIST" query="getRnRCounsellorAccounts" type="query"/>
-</event>

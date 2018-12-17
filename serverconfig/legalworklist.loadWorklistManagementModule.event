@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" type="createlist"/>
- <exec argument="CATEGORIES" query="getLegalWorklistCategory" type="query"/>
- <exec from="TRUE" key="LOAD_DATA" to="CATEGORIES" type="copyintolist"/>
- <exec from="CATEGORIES" key="CATEGORIES" type="copyintolist"/>
-</event>

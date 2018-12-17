@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec from="SELECTED_USER" to="SELECTED_USER_INDX" type="copy"/>
- <exec list="SELECTED_USER_INDX" to="SELECTED_USER_INDX_COUNT" type="countlist"/>
- <exec from="SELECTED_USER_INDX_COUNT" to="ENABLE_SET_DEFAULT" type="copy"/>
- <exec from="ENABLE_SET_DEFAULT" type="copy"/>
-</event>

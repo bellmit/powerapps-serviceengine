@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" to="SELECT_LIST" type="createlist"/>
- <exec count="1" to="ALL_LIST" type="createlist"/>
- <exec message="Please Select" target="PLEASE_SELECT" type="formattext"/>
- <exec message="All" target="ALL" type="formattext"/>
- <exec from="PLEASE_SELECT" key="DESCRIPTION" to="SELECT_LIST" type="copyintolist"/>
- <exec from="ALL" key="DESCRIPTION" to="ALL_LIST" type="copyintolist"/>
-</event>

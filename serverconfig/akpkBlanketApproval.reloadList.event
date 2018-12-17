@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" type="createlist"/>
- <exec from="CATEGORY_ID" key="CATEGORY_ID" type="copyintolist"/>
- <exec type="loop">
-  <exec argument="PRODUCT_TYPES" query="getakpkProductTypes" type="query"/>
- </exec>
-</event>

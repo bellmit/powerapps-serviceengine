@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec statement="getTreatmentRnrRequest" type="select"/>
- <exec type="parallelquery">
-  <query value="getRnrRequestRejectedReason"/>
-  <target value="REJECTED_REQUEST_REASON_LIST"/>
- </exec>
-</event>

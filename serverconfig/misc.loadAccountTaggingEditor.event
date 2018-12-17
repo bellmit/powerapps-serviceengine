@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" type="createlist"/>
- <exec type="parallelquery">
-  <query value="getDefaultTreatmentStatusType"/>
-  <target value="TYPE_STATUS_LIST"/>
- </exec>
- <exec from="TYPE_STATUS_LIST" key="TYPE_STATUS_LIST" type="copyintolist"/>
-</event>

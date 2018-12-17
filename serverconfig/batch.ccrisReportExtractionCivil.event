@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec message="CIVIL" target="CONTEXT" type="formattext"/>
- <exec argument="REPORT_LIST" query="getCcrisReportCivil" type="query"/>
- <exec event="query.ccrisReportExtraction" ignoreresult="true" type="raise"/>
-</event>

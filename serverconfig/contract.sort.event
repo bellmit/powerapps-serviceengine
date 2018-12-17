@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="true" type="event">
- <exec argument="DATA" index="SORT_PRIORITY" type="loop">
-  <exec recordcount="" statement="updateContractPriority" type="update"/>
- </exec>
- <exec count="1" type="createlist"/>
- <exec from="TRUE" key="INIT" type="copyintolist"/>
-</event>

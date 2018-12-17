@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec text="Get net WIP accounts" type="comment">
-  <exec minuend="ACCOUNT_ID_LIST" subtrahend="PAID_ACCOUNT_ID_LIST" to="ACCOUNT_ID_LIST" type="remove"/>
-  <exec minuend="ACCOUNT_ID_LIST" subtrahend="PTP_ACCOUNT_ID_LIST" to="ACCOUNT_ID_LIST" type="remove"/>
-  <exec minuend="ACCOUNT_ID_LIST" subtrahend="BROKEN_PROMISE_ACCOUNT_ID_LIST" to="ACCOUNT_ID_LIST" type="remove"/>
- </exec>
-</event>

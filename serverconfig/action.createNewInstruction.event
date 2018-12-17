@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec statement="insertInstruction" type="insert"/>
- <exec from="ID" to="PROCESS_ID" type="copy"/>
- <exec recordcount="" statement="updateAssignmentLastAction" type="update"/>
- <exec statement="monitorInstruction" type="insert"/>
- <exec event="action.lastLegalActionUpdate" ignoreresult="true" type="raise"/>
-</event>

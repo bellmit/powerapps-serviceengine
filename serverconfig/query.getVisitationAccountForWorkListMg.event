@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec event="userworklist.mgvisitationaccountlist" ignoreresult="true" type="raise"/>
- <exec from="INFO_INFO_LIST" type="copy"/>
-</event>

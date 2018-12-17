@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec argument="REPORTS" query="getReportList" type="query"/>
- <exec count="1" type="createlist"/>
- <exec from="REPORTS" key="REPORTS" type="copyintolist"/>
- <exec from="SELECTED" key="SELECTED" type="copyintolist"/>
-</event>

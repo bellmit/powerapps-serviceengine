@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" type="createlist"/>
- <exec statement="getVisualTree100PercentChecker" type="select"/>
- <exec from="IS_ENABLED" key="IS_ENABLED" type="copyintolist"/>
-</event>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec argument="BASE" query="getAgencyForKPIData" type="query"/>
- <exec event="receivablesummary.pre" ignoreresult="true" type="raise"/>
- <exec event="eca.dailyReceivables" ignoreresult="true" type="raise"/>
- <exec event="eca.monthlyReceivables" ignoreresult="true" type="raise"/>
- <exec event="eca.pmtdReceivables" ignoreresult="true" type="raise"/>
- <exec event="eca.pmeReceivables" ignoreresult="true" type="raise"/>
-</event>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec argument="STATEMENTS" query="getAccountStatement" type="query"/>
- <exec count="1" type="createlist"/>
- <exec from="STATEMENTS" key="STATEMENTS" type="copyintolist"/>
-</event>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec type="guard">
-  <conditions>
-   <condition lhsfield="IS_NEW_TREATMENT" operator="=" rhsvalue="true"/>
-  </conditions>
-  <exec statement="insertTreatmentRnrTermination" type="insert"/>
- </exec>
-</event>

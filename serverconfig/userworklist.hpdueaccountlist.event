@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec event="userworklist.hppaidaccountids" ignoreresult="true" type="raise"/>
- <exec event="userworklist.hpdueaccountids" ignoreresult="true" type="raise"/>
- <exec from="DUE_ACCOUNT_ID_LIST" to="ACCOUNTS" type="copy"/>
- <exec query="getDueAccountsForWorkList" type="query"/>
- <exec to="ACCOUNT_LIST" type="copy"/>
- <exec event="userworklist.getinfo" ignoreresult="true" type="raise"/>
-</event>

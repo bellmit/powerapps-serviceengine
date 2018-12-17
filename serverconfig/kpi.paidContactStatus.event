@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec type="parallelquery">
-  <query value="getKpiMtdPaidContactStatus"/>
-  <query value="getKpiDailyPaidContactStatus"/>
-  <target value="MONTH_TO_DATE_CONTACT_STATUS_PAID"/>
-  <target value="DAILY_CONTACT_STATUS_PAID"/>
- </exec>
-</event>

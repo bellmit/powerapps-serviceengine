@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" type="createlist"/>
- <exec argument="SUBTYPES" query="getSubtypeForSetup" type="query"/>
- <exec from="TRUE" key="LOAD_DATA" to="SUBTYPES" type="copyintolist"/>
- <exec from="SUBTYPES" key="SUBTYPES" type="copyintolist"/>
-</event>

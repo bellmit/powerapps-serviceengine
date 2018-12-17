@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec text="Get all account" type="comment">
-  <exec argument="UNPAID_ACCOUNT_LIST" query="getWorkListAccountIds" type="query"/>
- </exec>
- <exec text="Get net Unpaid account" type="comment">
-  <exec event="wltQuery.excludeAccount" ignoreresult="true" type="raise"/>
- </exec>
-</event>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec to="USER_ID" type="user"/>
- <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" to="LOGOFF_TIME" truncate="false" type="date"/>
- <exec statement="getLastLoginTime" type="select"/>
- <exec type="transaction">
-  <exec statement="insertUserLogoff" type="insert"/>
- </exec>
-</event>

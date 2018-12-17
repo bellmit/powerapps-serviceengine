@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec argument="ACCOUNT_VISITATION_LIST" query="getVisitationAccountIdsMg" type="query"/>
- <exec argument="ACCOUNT_APPOINTMENT_LIST" query="getAppointmentAccountIdsMg" type="query"/>
- <exec from="ACCOUNT_VISITATION_LIST" to="ACCOUNT_APPOINTMENT_LIST" type="append"/>
- <exec from="ACCOUNT_APPOINTMENT_LIST" to="ACCOUNT_LIST" type="copy"/>
- <exec list="ACCOUNT_LIST" to="ACCOUNT_LIST" type="unique"/>
- <exec event="userworklist.mggetinfo" ignoreresult="true" type="raise"/>
-</event>

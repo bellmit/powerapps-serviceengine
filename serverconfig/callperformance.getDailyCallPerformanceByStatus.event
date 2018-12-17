@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec to="LOGON_USER" type="user"/>
- <exec ceiling="false" endmonth="false" nextweekday="false" startmonth="false" truncate="true" type="date"/>
- <exec query="getDailyCallPerformanceByStatus" type="query"/>
-</event>

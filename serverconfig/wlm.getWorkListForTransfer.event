@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec from="SELECTED_WORK_LIST_ID" to="WORK_LIST_ID" type="copy"/>
- <exec minuend="WORK_LIST" subtrahend="SELECTED_TRANSFER_WORK_LIST" to="TRANSFER_WORK_LIST" type="remove"/>
- <exec from="TRANSFER_WORK_LIST" type="copy"/>
-</event>

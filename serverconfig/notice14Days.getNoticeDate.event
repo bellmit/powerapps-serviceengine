@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec count="1" type="createlist"/>
- <exec from="5TH_SCHEDULE_SENDING_DATE" key="5TH_SCHEDULE_SENDING_DATE" type="copyintolist"/>
- <exec from="TWENTY_TWO" key="TWENTY_TWO" type="copyintolist"/>
- <exec type="loop">
-  <exec adddays="TWENTY_TWO" ceiling="false" endmonth="false" from="5TH_SCHEDULE_SENDING_DATE" nextweekday="false" startmonth="false" to="NOTICE_DATE" truncate="false" type="date"/>
- </exec>
-</event>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<event transactional="false" type="event">
- <exec type="transaction">
-  <exec message="MYR" target="CURRENCY" type="formattext"/>
-  <exec query="getGeneralAccountTypeCodes" type="query"/>
-  <exec key="CODE" to="CODE_LIST" type="extract"/>
-  <exec addedtypes="CODE_LIST" commodity="CURRENCY" type="financialgeneralinit"/>
- </exec>
-</event>
