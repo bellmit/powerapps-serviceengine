@@ -47,9 +47,20 @@ public class RequestDispatcherServlet extends HttpServlet {
     TransferObject transfer = null;
     // set response headers
     response.setContentType("application/json");
-    response.addHeader("WWW-Authenticate", "Basic realm=\"User Visible Realm\"");
+    //response.addHeader("WWW-Authenticate", "Basic realm=\"User Visible Realm\"");
     response.setCharacterEncoding("UTF-8");
     final String eventName = request.getParameter("eventName");
+    final String auth = request.getHeader("Authorization");
+    System.out.println(auth);
+    boolean isAuthorized  = (auth.equals("am9zaHVhOnZpdmFsZWU=")) ? true : false;
+    if (!isAuthorized) {
+      response.addHeader("WWW-Authenticate", "Basic realm=\"User Visible Realm\"");
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error unauthorized");
+      
+      //response.setHeader(name, value);
+      return;
+    }
     EventNameValidator validateEvent = new EventNameValidator(new StringUtils());
     boolean isValid = validateEvent.isValid(eventName);
     

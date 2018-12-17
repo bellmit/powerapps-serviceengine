@@ -15,6 +15,125 @@
     </properties>
 
     <dependencies>
+
+
+        <dependency>
+            <artifactId>ftp</artifactId>
+            <groupId>com.powerapps</groupId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>ptrserver</artifactId>
+
+
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>ptrform</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>pcclientlib</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>pcinterface</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>ptribatis</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>ptrutil</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>ptrwebclient</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>slinterface</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>slserver</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>slserverlib</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>toplink</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>bouncy-castle-api</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.powerapps</groupId>
+            <artifactId>xhtml-core-renderer</artifactId>
+
+            <version>1.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -94,144 +213,7 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.powerapps</groupId>
-            <artifactId>ftp</artifactId>
-            <version>..</version>
-            <systemPath>${basedir}/lib/ftp.jar</systemPath>
-            <scope>system</scope>
-        </dependency>
 
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>ptrserver</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/ptrserver.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>ptrform</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/ptrform.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>pcclientlib</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/pcclientlib.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>pcinterface</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/pcinterface.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>ptribatis</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/ptribatis.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>ptrutil</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/ptrutil.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>ptrwebclient</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/ptrwebclient.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>slinterface</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/slinterface.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>slserver</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/slserver.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>slserverlib</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/slserverlib.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>toplink</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/toplink.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-        <!--     <dependency> -->
-        <!--       <artifactId>com.powerapps</artifactId> -->
-        <!--       <groupId>pcserver</groupId> -->
-        <!--       <scope>system</scope> -->
-        <!--       <systemPath>${basedir}/lib/pcserver.jar</systemPath> -->
-        <!--       <version>..</version> -->
-        <!--     </dependency> -->
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>bouncy-castle-api</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/bouncy-castle-api.jar</systemPath>
-            <version>..</version>
-        </dependency>
-
-
-
-        <dependency>
-            <artifactId>com.powerapps</artifactId>
-            <groupId>xhtml-core-renderer</groupId>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/xhtml-core-renderer.jar</systemPath>
-            <version>..</version>
-        </dependency>
 
 
 
@@ -304,19 +286,19 @@
     <build>
         <testResources>
             <testResource>
-                <directory>src/test/resources</directory>
+                <directory>src/main/resources</directory>
             </testResource>
         </testResources>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
-            <resource>
+            <!-- <resource>
                 <directory>config</directory>
             </resource>
             <resource>
                 <directory>serverconfig</directory>
-            </resource>
+            </resource> -->
         </resources>
         <plugins>
             <!-- maven checkstyle plugin -->
@@ -402,12 +384,16 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass />
-                    <addResourcesToClasspath>true</addResourcesToClasspath>
+                    <executable>java</executable>
                     <arguments>
-                        <argument />
-                        <argument />
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>com.profitera.server.ServiceEngine</argument>
                     </arguments>
+                    <addResourcesToClasspath>true</addResourcesToClasspath>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>src/main/resourcesxx</additionalClasspathElement>
+                    </additionalClasspathElements>
                 </configuration>
             </plugin>
         </plugins>
