@@ -1,0 +1,27 @@
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="queryService.xml">
+
+
+ <resultMap id="getPacReason" class="java.util.HashMap">
+  <result property="ID" javaType="long" />
+  <result property="CODE" javaType="string" />
+  <result property="DESCRIPTION" javaType="string" />
+  <result property="DISABLE" javaType="boolean" />
+  <result property="SORT_PRIORITY" javaType="long" />
+ </resultMap>
+
+
+
+
+    <select id="getPacReason" resultMap="getPacReason">
+select null, ' ', ' Please Select ' as description, false , -1 as sort_priority         
+union         
+select id, code, description, disable, 1 as sort_priority         
+from ptrreason_of_call_ref order by sort_priority asc, description asc
+    </select>
+    
+    
+    </sqlMap>

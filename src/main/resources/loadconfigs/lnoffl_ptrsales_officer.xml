@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><load>
+    <table>PTRSALES_OFFICER</table>
+    <generatedkey>ID</generatedkey>
+	<generatedkeyseqname>PTRSALES_OFFICER_ID</generatedkeyseqname>
+    <header>
+        <value>HDR</value></header>
+    <trailer>
+        <value>TRL</value></trailer>
+    <field iskey="true">
+        <name>APPLICATION_NUMBER_ID</name>
+        <location end="20" start="2"/>
+        <lookup>
+            <query>select ID from PTRLOAN_APPLICATION where APPLICATION_NUMBER = #APPLICATION_NUMBER_ID# and FACILITY_NAME = #FACILITY_CODE# and SEQUENCE_NUMBER = #SEQUENCE_NUMBER:NUMERIC#</query></lookup></field>
+    <field iskey="true">
+        <name>FACILITY_CODE</name>
+        <location end="23" start="21"/>
+        <handler>
+            com.profitera.dc.handler.LongHandler</handler></field>
+    <field iskey="true">
+        <name>SEQUENCE_NUMBER</name>
+        <location end="42" start="24"/>
+        <handler>
+            com.profitera.dc.handler.LongHandler</handler></field>
+    <field>
+        <name>OFFICER_CODE_ID</name>
+        <location end="52" start="43"/>
+        <lookup><query>select ID from PTRSALES_OFFICER_REF where OFFICER_CODE = #OFFICER_CODE_ID#</query></lookup>
+    </field>
+    <field isoptional="true">
+        <name>RELATIONSHIP_ID</name>
+        <location end="54" start="53"/>
+        <lookup>
+            <query>select RELATION_ID from PTRPERSON_RELATIONSHIP_REF where CODE = #RELATIONSHIP_ID#</query>
+			<insert>insert into PTRPERSON_RELATIONSHIP_REF(RELATION_ID,CODE,DESCRIPTION,DISABLE,SORT_PRIORITY) values(#ID#,#RELATIONSHIP_ID#,'Unknown',0,0)</insert>
+            <insertkey>select nextval('ptrperson_relationship_ref_id')</insertkey></lookup></field>
+    <field>
+        <name>COMMENT_ONE</name>
+        <location end="104" start="55"/></field>
+    <field>
+        <name>COMMENT_TWO</name>
+        <location end="154" start="105"/></field>
+	<field>
+		<name>OFFICER_SEQUENCE</name>
+		<location end="173" start="155">
+		<handler>com.profitera.dc.handler.LongHandler</handler>
+		</location>
+	</field>     
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>VALUES NEXTVAL FOR PTRLOAD_EXECUTION_ID</insertkey>
+  </lookup>
+ </field>
+</load>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="" fullcache="false" mode="mixed" padline="true" type="fixed" verifyfilekey="false">
+ <doc/>
+ <table>PTRINSURANCE_POLICY</table>
+ <recordindicatortag/>
+ <xquery/>
+ <generatedkey>ID</generatedkey>
+ <generatedkeyseqname>PTRINSURANCE_POLICY_ID</generatedkeyseqname>
+ <querywhere>
+  <select/>
+  <update/>
+ </querywhere>
+ <post>
+  <insertinsertion/>
+  <insertupdate/>
+  <updateinsertion/>
+  <updateupdate/> 
+ </post>
+ <header/>
+ <trailer/>
+
+<field iskey="true">
+ <name>COLLATERAL_ID</name>
+ <default/>
+ <location end="20" start="2"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup>
+  <query>select max(ID) from PTRCOLLATERAL where HOST_ID = #COLLATERAL_ID#</query>
+ </lookup>
+ <remarks/>
+ </field>
+
+<field iskey="true">
+ <name>SEQUENCE_NO</name>
+ <default/>
+ <location end="23" start="21"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup
+ remarks/>
+ </field>
+
+<field isoptional="true">
+ <name>INSURANCE_COMPANY_ID</name>
+ <default/>
+ <location end="26" start="24"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup><query>select ID from PTRINSURANCE_COMPANY_REF where CODE = #INSURANCE_COMPANY_ID:VARCHAR#</query>
+   <insert>insert into PTRINSURANCE_COMPANY_REF (id,code,description,disable,sort_priority) values (#ID#, #INSURANCE_COMPANY_ID#,concat(#INSURANCE_COMPANY_ID#, ' - Unknown'),0,0)</insert>
+   <insertkey>select nextval('ptrinsurance_company_ref_id')</insertkey>
+  </lookup>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>COVER_NOTE_NO</name>
+ <default/><location end="46" start="27"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>INSURED_AMOUNT</name>
+ <default/>
+ <location end="62" start="47"/>
+ <handler config="" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>REMARK_1</name>
+ <default/>
+ <location end="122" start="63"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>REMARK_2</name>
+ <default/>
+ <location end="182" start="123"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>COLLATERAL_DESCRIPTION</name>
+ <default/>
+ <location end="232" start="183"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>INSURANCE_PREMIUM_AMOUNT</name>
+ <default/>
+ <location end="246" start="234"/>
+ <handler config="2" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+ 
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('PTRLOAD_EXECUTION_ID')</insertkey>
+  </lookup>
+ </field>
+</load>

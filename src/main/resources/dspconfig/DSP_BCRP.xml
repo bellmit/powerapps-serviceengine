@@ -1,0 +1,1115 @@
+<?xml version="1.0"?>
+<DSP>
+  <register>
+    <handler>
+      <abbreviation>binary</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.BinaryHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>packed</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.PackedDecimalHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>zoned</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.ZonedDecimalHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>datetime</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.DatetimeHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>char</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.CharHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>numeric</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.NumericHandler
+      </implementation>
+    </handler>
+  </register>
+  <send>
+    <fieldlist repeat="false">
+      <field>
+        <name>SKTHEAD_HEADER_TYPE</name>
+        <length>5</length>
+        <handler type="char"></handler>
+        <value>*KOL</value>
+      </field>
+     <field>
+        <name>SKTDEVN_DEVICE_NAME</name>
+        <length>15</length>
+        <handler type="char">
+          <properties>
+            <property name="method">getIP</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>SKTSKNB_SOCKET_NUMBER</name>
+        <length>9</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>000000000</value>
+      </field>
+     <field>
+        <name>SKTPORT_PORT_NUMBER</name>
+        <length>5</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>00000</value>
+      </field>
+      <field>
+        <name>SKTFILL_FILL_ONE_CHARACTER</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13HLEN_HEADER_LENGTH</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0312</value>
+      </field>
+      <field>
+        <name>I13MLEN_MESSAGE_LENGTH</name>
+        <length>6</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>000000</value>
+      </field>
+       <field>
+        <name>I13VERS_VERSION_NUMBER</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0800</value>
+      </field>
+      <field>
+        <name>I13HFMID_HEADER_FORMAT_ID</name>
+        <length>4</length>
+        <handler type="char"></handler>
+        <value>*DSP</value>
+      </field>
+      <field>
+        <name>I13FMID_DATA_FORMAT_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value>MBASE</value>
+      </field>
+      <field>
+        <name>I13SID_SOURCE_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value>*KOL</value>
+      </field>
+      <field>
+        <name>I13DID_DESTINATION_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RTGN_ROUTING_NUMBER</name>
+        <length>6</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13MSTA_MESSAGE_STATUS</name>
+        <length>8</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13BIN_BANK_ID_NUMBER</name>
+        <length>11</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>00000000000</value>
+      </field>
+      <field>
+        <name>I13NODE_NODE</name>
+        <length>2</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>00</value>
+      </field>
+      <field>
+        <name>I13XID_EXCHANGE_ID</name>
+        <length>20</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13SSNO_SCENARIO_NUMBER</name>
+        <length>16</length>
+        <handler type="char"></handler>
+        <value>PWK.MBS.LN.I</value>
+      </field>
+      <field>
+        <name>TRANSACTION_CODE</name>
+        <length>4</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RRNO</name>
+        <length>22</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13ACQN</name>
+        <length>12</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13TMNO</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0000</value>
+      </field>
+      <field>
+        <name>I13NREC</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0000</value>
+      </field>
+      <field>
+        <name>I13NERR</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0000</value>
+      </field>
+      <field>
+        <name>I13USER</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13TMID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13SUPV</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13MORE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>0</value>
+      </field>
+      <field>
+        <name>I13CUTO</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13UDTA</name>
+        <length>20</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13SDTA</name>
+        <length>36</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+       <field>
+        <name>I13TTYP</name>
+        <length>2</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RCNF</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RCNM</name>
+        <length>16</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+
+     <field>
+        <name>RESPONSE_RESULT_CODE</name>
+        <length>2</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDUSID_USER_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value>U3TL2A</value>
+      </field>
+      <field>
+        <name>HDRNUM_REFERENCE_NUMBER</name>
+        <length>4</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>3006</value>
+      </field>
+      <field>
+        <name>HDRBID_REBID_NUMBER</name>
+        <length>3</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0</value>
+      </field>
+      <field>
+        <name>HDEGPI_END_OF_GROUP_INDICATOR</name>
+        <length>4</length>
+        <handler type="char"></handler>
+        <value>*END</value>
+      </field>
+      <field>
+        <name>HDBMSG_BLOCKED_MESSAGE_NUMBER</name>
+        <length>2</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0</value>
+      </field>
+      <field>
+        <name>HDSRID_SOURCE_ID</name>
+        <length>3</length>
+        <handler type="char"></handler>
+        <value>BTS</value>
+      </field>
+      <field>
+        <name>HDDSID_DESTINATION</name>
+        <length>3</length>
+        <handler type="char"></handler>
+        <value>RBK</value>
+      </field>
+      <field>
+        <name>HDRTDQ_RETURN_DATA_QUEUE_NAME</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDTMID_TERMINAL_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDBKNO_BANK_NUMBER</name>
+        <length>2</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>30</value>
+      </field>
+      <field>
+        <name>HDBRNO_BRANCH_NUMBER</name>
+        <length>3</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>5007</value>
+      </field>
+      <field>
+        <name>HDRSID_REVIEW_SUPERVISOR_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDTSID_TRANSMIT_SUPERVISOR_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDHSID_HOST_SUPERVISOR_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>TRANSACTION_CODE</name>
+        <length>3</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>86868</value>
+      </field>
+      <field>
+        <name>HDACCD_ACTION_CODE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>I</value>
+      </field>
+      <field>
+        <name>HDTMOD_TRANSACTION_MODE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>R</value>
+      </field>
+      <field>
+        <name>RECORDS_TO_RETRIEVE</name>
+        <length>2</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>10</value>
+      </field>
+      <field>
+        <name>HDMREC_MORE_RECORDS_INDICATOR</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>N</value>
+      </field>
+       <field>
+        <name>HDSMTD_SEARCH_METHOD</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>F</value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_1</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_1</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_2</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_2</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_3</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_3</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_4</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_4</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_5</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_5</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDDTIN_DATE_IN_FROM_CLIENT_DDMMYYYY</name>
+        <length>5</length>
+        <handler type="datetime">
+          <properties>
+            <property name="datetimeFormat">ddMMyyyy</property>
+            <property name="method">getDate</property>
+            <property name="handler">packed</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+     <field>
+        <name>HDTMIN_TIME_IN_FROM_CLIENT_HHMMSS</name>
+        <length>4</length>
+        <handler type="datetime">
+          <properties>
+            <property name="datetimeFormat">HHmmss</property>
+            <property name="method">getDate</property>
+            <property name="handler">packed</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDACTN_ACCOUNT_NUMBER</name>
+        <length>10</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDACTY_ACCOUNT_TYPE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDCIFN_CIF_NO</name>
+        <length>10</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDNXTA_NEXT_ACTION_CODE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDFILR_FILLER</name>
+        <length>9</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+    </fieldlist>
+  </send>
+
+
+
+<receive>
+    <fieldlist repeat="false">
+      <field>
+        <name>SOCKET_MESSAGE_LENGTH</name>
+        <length>9</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>000000000</value>
+      </field>
+
+            <field>
+        <name>SKTHEAD_HEADER_TYPE</name>
+        <length>5</length>
+        <handler type="char"></handler>
+        <value>*KOL</value>
+      </field>
+     <field>
+        <name>SKTDEVN_DEVICE_NAME</name>
+        <length>15</length>
+        <handler type="char">
+          <properties>
+            <property name="method">getIP</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>SKTSKNB_SOCKET_NUMBER</name>
+        <length>9</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>000000000</value>
+      </field>
+     <field>
+        <name>SKTPORT_PORT_NUMBER</name>
+        <length>5</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>00000</value>
+      </field>
+      <field>
+        <name>SKTFILL_FILL_ONE_CHARACTER</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13HLEN_HEADER_LENGTH</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0312</value>
+      </field>
+      <field>
+        <name>I13MLEN_MESSAGE_LENGTH</name>
+        <length>6</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>000000</value>
+      </field>
+       <field>
+        <name>I13VERS_VERSION_NUMBER</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0800</value>
+      </field>
+      <field>
+        <name>I13HFMID_HEADER_FORMAT_ID</name>
+        <length>4</length>
+        <handler type="char"></handler>
+        <value>*DSP</value>
+      </field>
+      <field>
+        <name>I13FMID_DATA_FORMAT_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value>MBASE</value>
+      </field>
+      <field>
+        <name>I13SID_SOURCE_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value>*KOL</value>
+      </field>
+      <field>
+        <name>I13DID_DESTINATION_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RTGN_ROUTING_NUMBER</name>
+        <length>6</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13MSTA_MESSAGE_STATUS</name>
+        <length>8</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13BIN_BANK_ID_NUMBER</name>
+        <length>11</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>00000000000</value>
+      </field>
+      <field>
+        <name>I13NODE_NODE</name>
+        <length>2</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>00</value>
+      </field>
+      <field>
+        <name>I13XID_EXCHANGE_ID</name>
+        <length>20</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13SSNO_SCENARIO_NUMBER</name>
+        <length>16</length>
+        <handler type="char"></handler>
+        <value>PWK.MBS.LN.I</value>
+      </field>
+      <field>
+        <name>TRANSACTION_CODE</name>
+        <length>4</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RRNO</name>
+        <length>22</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13ACQN</name>
+        <length>12</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13TMNO</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0000</value>
+      </field>
+      <field>
+        <name>I13NREC</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0000</value>
+      </field>
+      <field>
+        <name>I13NERR</name>
+        <length>4</length>
+        <handler type="zoned">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0000</value>
+      </field>
+      <field>
+        <name>I13USER</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13TMID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13SUPV</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13MORE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>0</value>
+      </field>
+      <field>
+        <name>I13CUTO</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13UDTA</name>
+        <length>20</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13SDTA</name>
+        <length>36</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+       <field>
+        <name>I13TTYP</name>
+        <length>2</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RCNF</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>I13RCNM</name>
+        <length>16</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+
+     <field>
+        <name>RESPONSE_RESULT_CODE</name>
+        <length>2</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDUSID_USER_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value>U3TL2A</value>
+      </field>
+      <field>
+        <name>HDRNUM_REFERENCE_NUMBER</name>
+        <length>4</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>3006</value>
+      </field>
+      <field>
+        <name>HDRBID_REBID_NUMBER</name>
+        <length>3</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0</value>
+      </field>
+      <field>
+        <name>HDEGPI_END_OF_GROUP_INDICATOR</name>
+        <length>4</length>
+        <handler type="char"></handler>
+        <value>*END</value>
+      </field>
+      <field>
+        <name>HDBMSG_BLOCKED_MESSAGE_NUMBER</name>
+        <length>2</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>0</value>
+      </field>
+      <field>
+        <name>HDSRID_SOURCE_ID</name>
+        <length>3</length>
+        <handler type="char"></handler>
+        <value>BTS</value>
+      </field>
+      <field>
+        <name>HDDSID_DESTINATION</name>
+        <length>3</length>
+        <handler type="char"></handler>
+        <value>RBK</value>
+      </field>
+      <field>
+        <name>HDRTDQ_RETURN_DATA_QUEUE_NAME</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDTMID_TERMINAL_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDBKNO_BANK_NUMBER</name>
+        <length>2</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>30</value>
+      </field>
+      <field>
+        <name>HDBRNO_BRANCH_NUMBER</name>
+        <length>3</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>5007</value>
+      </field>
+      <field>
+        <name>HDRSID_REVIEW_SUPERVISOR_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDTSID_TRANSMIT_SUPERVISOR_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDHSID_HOST_SUPERVISOR_ID</name>
+        <length>10</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>TRANSACTION_CODE</name>
+        <length>3</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>86868</value>
+      </field>
+      <field>
+        <name>HDACCD_ACTION_CODE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>I</value>
+      </field>
+      <field>
+        <name>HDTMOD_TRANSACTION_MODE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>R</value>
+      </field>
+      <field>
+        <name>RECORDS_TO_RETRIEVE</name>
+        <length>2</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value>10</value>
+      </field>
+      <field>
+        <name>HDMREC_MORE_RECORDS_INDICATOR</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>N</value>
+      </field>
+       <field>
+        <name>HDSMTD_SEARCH_METHOD</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value>F</value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_1</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_1</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_2</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_2</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_3</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_3</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_4</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_4</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_ERROR_CODE_5</name>
+        <length>7</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>RESPONSE_REASON_FOR_CODE_5</name>
+        <length>50</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDDTIN_DATE_IN_FROM_CLIENT_DDMMYYYY</name>
+        <length>5</length>
+        <handler type="datetime">
+          <properties>
+            <property name="datetimeFormat">ddMMyyyy</property>
+            <property name="method">getDate</property>
+            <property name="handler">packed</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+     <field>
+        <name>HDTMIN_TIME_IN_FROM_CLIENT_HHMMSS</name>
+        <length>4</length>
+        <handler type="datetime">
+          <properties>
+            <property name="datetimeFormat">HHmmss</property>
+            <property name="method">getDate</property>
+            <property name="handler">packed</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDACTN_ACCOUNT_NUMBER</name>
+        <length>10</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDACTY_ACCOUNT_TYPE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDCIFN_CIF_NO</name>
+        <length>10</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDNXTA_NEXT_ACTION_CODE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+      <field>
+        <name>HDFILR_FILLER</name>
+        <length>9</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+
+    </fieldlist>
+
+  </receive>
+</DSP>

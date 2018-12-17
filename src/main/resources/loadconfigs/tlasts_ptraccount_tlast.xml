@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="" fullcache="false" mode="mixed" padline="true" type="fixed" verifyfilekey="false">
+    <table>PTRACCOUNT_TLAST</table>
+    <header>
+        <value>HDR</value></header>
+    <trailer>
+        <value>TRL</value></trailer>
+
+<post>
+<insertinsertion></insertinsertion>
+<updateupdate></updateupdate>
+</post>
+<field isexternal="true">
+      <name>ACCOUNT_NUMBER</name>
+      <location end="20" start="2"/>
+      <handler>com.profitera.dc.handler.StringHandler<config></config></handler></field>
+<field isexternal="true">
+        <name>ACCOUNT_TYPE_ID</name>
+        <lookup>
+            <query>select ID from PTRACCOUNT_TYPE_REF where CODE = #ACCOUNT_TYPE_ID:VARCHAR#</query></lookup>
+        <location end="21" start="21"/><handler>com.profitera.dc.handler.LongHandler<config></config></handler>
+</field>
+<field iskey="true">
+      <name>ACCOUNT_ID</name>
+      <lookup><query>select account_id from ptraccount where account_number = cast(#ACCOUNT_NUMBER# as varchar(25))  and ACCOUNT_TYPE_ID = #ACCOUNT_TYPE_ID#</query></lookup>
+      <location end="0" start="0"/><handler>com.profitera.dc.handler.LongHandler<config></config></handler></field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_1</name>
+    <location end="22" start="22"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_2</name>
+    <location end="23" start="23"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_3</name>
+    <location end="24" start="24"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_4</name>
+    <location end="25" start="25"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_5</name>
+    <location end="26" start="26"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_6</name>
+    <location end="27" start="27"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_7</name>
+    <location end="28" start="28"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_8</name>
+    <location end="29" start="29"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_9</name>
+    <location end="30" start="30"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_10</name>
+    <location end="31" start="31"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_11</name>
+    <location end="32" start="32"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_12</name>
+    <location end="33" start="33"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_13</name>
+    <location end="34" start="34"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_14</name>
+    <location end="35" start="35"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_15</name>
+    <location end="36" start="36"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_16</name>
+    <location end="37" start="37"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_17</name>
+    <location end="38" start="38"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_18</name>
+    <location end="39" start="39"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_19</name>
+    <location end="40" start="40"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_20</name>
+    <location end="41" start="41"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_21</name>
+    <location end="42" start="42"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_22</name>
+    <location end="43" start="43"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_23</name>
+    <location end="44" start="44"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_24</name>
+    <location end="45" start="45"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_25</name>
+    <location end="46" start="46"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_26</name>
+    <location end="47" start="47"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_27</name>
+    <location end="48" start="48"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_28</name>
+    <location end="49" start="49"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_29</name>
+    <location end="50" start="50"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_30</name>
+    <location end="51" start="51"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_31</name>
+    <location end="52" start="52"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_32</name>
+    <location end="53" start="53"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_33</name>
+    <location end="54" start="54"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_34</name>
+    <location end="55" start="55"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_35</name>
+    <location end="56" start="56"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_36</name>
+    <location end="57" start="57"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_37</name>
+    <location end="58" start="58"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_38</name>
+    <location end="59" start="59"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_39</name>
+    <location end="60" start="60"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_40</name>
+    <location end="61" start="61"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_41</name>
+    <location end="62" start="62"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_42</name>
+    <location end="63" start="63"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_43</name>
+    <location end="64" start="64"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_44</name>
+    <location end="65" start="65"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_45</name>
+    <location end="66" start="66"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_46</name>
+    <location end="67" start="67"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_47</name>
+    <location end="68" start="68"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_48</name>
+    <location end="69" start="69"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_49</name>
+    <location end="70" start="70"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_50</name>
+    <location end="71" start="71"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_51</name>
+    <location end="72" start="72"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_52</name>
+    <location end="73" start="73"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_53</name>
+    <location end="74" start="74"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_54</name>
+    <location end="75" start="75"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_55</name>
+    <location end="76" start="76"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_56</name>
+    <location end="77" start="77"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_57</name>
+    <location end="78" start="78"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_58</name>
+    <location end="79" start="79"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_59</name>
+    <location end="80" start="80"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_60</name>
+    <location end="81" start="81"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_61</name>
+    <location end="82" start="82"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_62</name>
+    <location end="83" start="83"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_63</name>
+    <location end="84" start="84"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_64</name>
+    <location end="85" start="85"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_65</name>
+    <location end="86" start="86"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_66</name>
+    <location end="87" start="87"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_67</name>
+    <location end="88" start="88"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_68</name>
+    <location end="89" start="89"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_69</name>
+    <location end="90" start="90"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_70</name>
+    <location end="91" start="91"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_71</name>
+    <location end="92" start="92"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_72</name>
+    <location end="93" start="93"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_73</name>
+    <location end="94" start="94"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_74</name>
+    <location end="95" start="95"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_75</name>
+    <location end="96" start="96"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_76</name>
+    <location end="97" start="97"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_77</name>
+    <location end="98" start="98"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_78</name>
+    <location end="99" start="99"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_79</name>
+    <location end="100" start="100"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_80</name>
+    <location end="101" start="101"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_81</name>
+    <location end="102" start="102"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_82</name>
+    <location end="103" start="103"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_83</name>
+    <location end="104" start="104"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_84</name>
+    <location end="105" start="105"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_85</name>
+    <location end="106" start="106"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_86</name>
+    <location end="107" start="107"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_87</name>
+    <location end="108" start="108"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_88</name>
+    <location end="109" start="109"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_89</name>
+    <location end="110" start="110"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_90</name>
+    <location end="111" start="111"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_91</name>
+    <location end="112" start="112"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_92</name>
+    <location end="113" start="113"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_93</name>
+    <location end="114" start="114"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_94</name>
+    <location end="115" start="115"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_95</name>
+    <location end="116" start="116"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_96</name>
+    <location end="117" start="117"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_97</name>
+    <location end="118" start="118"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_98</name>
+    <location end="119" start="119"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+<field isexternal="false" isoptional="true"><name>TLAST_VALUE_99</name>
+    <location end="120" start="120"/><handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+</field>
+</load>

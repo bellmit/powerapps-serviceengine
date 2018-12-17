@@ -1,0 +1,2143 @@
+<?xml version="1.0"?>
+<MBASE>
+  <register>
+    <handler>
+      <abbreviation>packed</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.PackedDecimalHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>char</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.CharHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>datetime</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.DatetimeHandler
+      </implementation>
+    </handler>
+    <handler>
+      <abbreviation>zoned</abbreviation>
+      <implementation>
+        com.profitera.services.system.dsp.handler.ZonedDecimalHandler
+      </implementation>
+    </handler>
+  </register>
+  <send>
+    <fieldlist repeat="false">
+      <field>
+        <name>ACCOUNT_NUMBER</name>
+        <length>10</length>
+        <handler type="packed">
+          <properties>
+            <property name="decimal">0</property>
+          </properties>
+        </handler>
+        <value></value>
+      </field>
+
+      <field>
+        <name>ACCOUNT_TYPE</name>
+        <length>1</length>
+        <handler type="char"></handler>
+        <value></value>
+      </field>
+    </fieldlist>
+  </send>
+
+
+<receive>
+
+
+
+    <fieldlist repeat="true">
+	
+
+	
+        <field start="12" end="12">
+            <name>TLSC01</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="13" end="13">
+            <name>TLSC02</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="14" end="14">
+            <name>TLSC03</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="15" end="15">
+            <name>TLSC04</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="16" end="16">
+            <name>TLSC05</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="17" end="17">
+            <name>TLSC06</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="18" end="18">
+            <name>TLSC07</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="19" end="19">
+            <name>TLSC08</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="20" end="20">
+            <name>TLSC09</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="21" end="21">
+            <name>TLSC10</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="22" end="22">
+            <name>TLSC11</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="23" end="23">
+            <name>TLSC12</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="24" end="24">
+            <name>TLSC13</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="25" end="25">
+            <name>TLSC14</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="26" end="26">
+            <name>TLSC15</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="27" end="27">
+            <name>TLSC16</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="28" end="28">
+            <name>TLSC17</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="29" end="29">
+            <name>TLSC18</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="30" end="30">
+            <name>TLSC19</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="31" end="31">
+            <name>TLSC20</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="32" end="32">
+            <name>TLSC21</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="33" end="33">
+            <name>TLSC22</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="34" end="34">
+            <name>TLSC23</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="35" end="35">
+            <name>TLSC24</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="36" end="36">
+            <name>TLSC25</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="37" end="37">
+            <name>TLSC26</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="38" end="38">
+            <name>TLSC27</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="39" end="39">
+            <name>TLSC28</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="40" end="40">
+            <name>TLSC29</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="41" end="41">
+            <name>TLSC30</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="42" end="42">
+            <name>TLSC31</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="43" end="43">
+            <name>TLSC32</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="44" end="44">
+            <name>TLSC33</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="45" end="45">
+            <name>TLSC34</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="46" end="46">
+            <name>TLSC35</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="47" end="47">
+            <name>TLSC36</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="48" end="48">
+            <name>TLSC37</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="49" end="49">
+            <name>TLSC38</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="50" end="50">
+            <name>TLSC39</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="51" end="51">
+            <name>TLSC40</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="52" end="52">
+            <name>TLSC41</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="53" end="53">
+            <name>TLSC42</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="54" end="54">
+            <name>TLSC43</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="55" end="55">
+            <name>TLSC44</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="56" end="56">
+            <name>TLSC45</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="57" end="57">
+            <name>TLSC46</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="58" end="58">
+            <name>TLSC47</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="59" end="59">
+            <name>TLSC48</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="60" end="60">
+            <name>TLSC49</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="61" end="61">
+            <name>TLSC50</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="62" end="62">
+            <name>TLSC51</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="63" end="63">
+            <name>TLSC52</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="64" end="64">
+            <name>TLSC53</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="65" end="65">
+            <name>TLSC54</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="66" end="66">
+            <name>TLSC55</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="67" end="67">
+            <name>TLSC56</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="68" end="68">
+            <name>TLSC57</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="69" end="69">
+            <name>TLSC58</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="70" end="70">
+            <name>TLSC59</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="71" end="71">
+            <name>TLSC60</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="72" end="72">
+            <name>TLSC61</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="73" end="73">
+            <name>TLSC62</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="74" end="74">
+            <name>TLSC63</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="75" end="75">
+            <name>TLSC64</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="76" end="76">
+            <name>TLSC65</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="77" end="77">
+            <name>TLSC66</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="78" end="78">
+            <name>TLSC67</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="79" end="79">
+            <name>TLSC68</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="80" end="80">
+            <name>TLSC69</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="81" end="81">
+            <name>TLSC70</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="82" end="82">
+            <name>TLSC71</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="83" end="83">
+            <name>TLSC72</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="84" end="84">
+            <name>TLSC73</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="85" end="85">
+            <name>TLSC74</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="86" end="86">
+            <name>TLSC75</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="87" end="87">
+            <name>TLSC76</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="88" end="88">
+            <name>TLSC77</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="89" end="89">
+            <name>TLSC78</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="90" end="90">
+            <name>TLSC79</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="91" end="91">
+            <name>TLSC80</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="92" end="92">
+            <name>TLSC81</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="93" end="93">
+            <name>TLSC82</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="94" end="94">
+            <name>TLSC83</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="95" end="95">
+            <name>TLSC84</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="96" end="96">
+            <name>TLSC85</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="97" end="97">
+            <name>TLSC86</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="98" end="98">
+            <name>TLSC87</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="99" end="99">
+            <name>TLSC88</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="100" end="100">
+            <name>TLSC89</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="101" end="101">
+            <name>TLSC90</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="102" end="102">
+            <name>TLSC91</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="103" end="103">
+            <name>TLSC92</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="104" end="104">
+            <name>TLSC93</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="105" end="105">
+            <name>TLSC94</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="106" end="106">
+            <name>TLSC95</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="107" end="107">
+            <name>TLSC96</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="108" end="108">
+            <name>TLSC97</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="109" end="109">
+            <name>TLSC98</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="110" end="110">
+            <name>TLSC99</name>
+            <length>1</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="111" end="112">
+            <name>TLSR01</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="113" end="114">
+            <name>TLSR02</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="115" end="116">
+            <name>TLSR03</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="117" end="118">
+            <name>TLSR04</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="119" end="120">
+            <name>TLSR05</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="121" end="122">
+            <name>TLSR06</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="123" end="124">
+            <name>TLSR07</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="125" end="126">
+            <name>TLSR08</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="127" end="128">
+            <name>TLSR09</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="129" end="130">
+            <name>TLSR10</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="131" end="132">
+            <name>TLSR11</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="133" end="134">
+            <name>TLSR12</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="135" end="136">
+            <name>TLSR13</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="137" end="138">
+            <name>TLSR14</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="139" end="140">
+            <name>TLSR15</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="141" end="142">
+            <name>TLSR16</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="143" end="144">
+            <name>TLSR17</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="145" end="146">
+            <name>TLSR18</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="147" end="148">
+            <name>TLSR19</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="149" end="150">
+            <name>TLSR20</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="151" end="152">
+            <name>TLSR21</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="153" end="154">
+            <name>TLSR22</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="155" end="156">
+            <name>TLSR23</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="157" end="158">
+            <name>TLSR24</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="159" end="160">
+            <name>TLSR25</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="161" end="162">
+            <name>TLSR26</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="163" end="164">
+            <name>TLSR27</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="165" end="166">
+            <name>TLSR28</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="167" end="168">
+            <name>TLSR29</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="169" end="170">
+            <name>TLSR30</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="171" end="172">
+            <name>TLSR31</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="173" end="174">
+            <name>TLSR32</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="175" end="176">
+            <name>TLSR33</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="177" end="178">
+            <name>TLSR34</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="179" end="180">
+            <name>TLSR35</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="181" end="182">
+            <name>TLSR36</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="183" end="184">
+            <name>TLSR37</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="185" end="186">
+            <name>TLSR38</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="187" end="188">
+            <name>TLSR39</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="189" end="190">
+            <name>TLSR40</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="191" end="192">
+            <name>TLSR41</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="193" end="194">
+            <name>TLSR42</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="195" end="196">
+            <name>TLSR43</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="197" end="198">
+            <name>TLSR44</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="199" end="200">
+            <name>TLSR45</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="201" end="202">
+            <name>TLSR46</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="203" end="204">
+            <name>TLSR47</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="205" end="206">
+            <name>TLSR48</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="207" end="208">
+            <name>TLSR49</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="209" end="210">
+            <name>TLSR50</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="211" end="212">
+            <name>TLSR51</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="213" end="214">
+            <name>TLSR52</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="215" end="216">
+            <name>TLSR53</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="217" end="218">
+            <name>TLSR54</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="219" end="220">
+            <name>TLSR55</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="221" end="222">
+            <name>TLSR56</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="223" end="224">
+            <name>TLSR57</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="225" end="226">
+            <name>TLSR58</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="227" end="228">
+            <name>TLSR59</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="229" end="230">
+            <name>TLSR60</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="231" end="232">
+            <name>TLSR61</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="233" end="234">
+            <name>TLSR62</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="235" end="236">
+            <name>TLSR63</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="237" end="238">
+            <name>TLSR64</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="239" end="240">
+            <name>TLSR65</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="241" end="242">
+            <name>TLSR66</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="243" end="244">
+            <name>TLSR67</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="245" end="246">
+            <name>TLSR68</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="247" end="248">
+            <name>TLSR69</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="249" end="250">
+            <name>TLSR70</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="251" end="252">
+            <name>TLSR71</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="253" end="254">
+            <name>TLSR72</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="255" end="256">
+            <name>TLSR73</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="257" end="258">
+            <name>TLSR74</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="259" end="260">
+            <name>TLSR75</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="261" end="262">
+            <name>TLSR76</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="263" end="264">
+            <name>TLSR77</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="265" end="266">
+            <name>TLSR78</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="267" end="268">
+            <name>TLSR79</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="269" end="270">
+            <name>TLSR80</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="271" end="272">
+            <name>TLSR81</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="273" end="274">
+            <name>TLSR82</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="275" end="276">
+            <name>TLSR83</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="277" end="278">
+            <name>TLSR84</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="279" end="280">
+            <name>TLSR85</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="281" end="282">
+            <name>TLSR86</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="283" end="284">
+            <name>TLSR87</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="285" end="286">
+            <name>TLSR88</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="287" end="288">
+            <name>TLSR89</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="289" end="290">
+            <name>TLSR90</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="291" end="292">
+            <name>TLSR91</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="293" end="294">
+            <name>TLSR92</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="295" end="296">
+            <name>TLSR93</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="297" end="298">
+            <name>TLSR94</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="299" end="300">
+            <name>TLSR95</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="301" end="302">
+            <name>TLSR96</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="303" end="304">
+            <name>TLSR97</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="305" end="306">
+            <name>TLSR98</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="307" end="308">
+            <name>TLSR99</name>
+            <length>2</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="309" end="338">
+            <name>TLSD01</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="339" end="368">
+            <name>TLSD02</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="369" end="398">
+            <name>TLSD03</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="399" end="428">
+            <name>TLSD04</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="429" end="458">
+            <name>TLSD05</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="459" end="488">
+            <name>TLSD06</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="489" end="518">
+            <name>TLSD07</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="519" end="548">
+            <name>TLSD08</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="549" end="578">
+            <name>TLSD09</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="579" end="608">
+            <name>TLSD10</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="609" end="638">
+            <name>TLSD11</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="639" end="668">
+            <name>TLSD12</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="669" end="698">
+            <name>TLSD13</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="699" end="728">
+            <name>TLSD14</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="729" end="758">
+            <name>TLSD15</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="759" end="788">
+            <name>TLSD16</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="789" end="818">
+            <name>TLSD17</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="819" end="848">
+            <name>TLSD18</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="849" end="878">
+            <name>TLSD19</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="879" end="908">
+            <name>TLSD20</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="909" end="938">
+            <name>TLSD21</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="939" end="968">
+            <name>TLSD22</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="969" end="998">
+            <name>TLSD23</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="999" end="1028">
+            <name>TLSD24</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1029" end="1058">
+            <name>TLSD25</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1059" end="1088">
+            <name>TLSD26</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1089" end="1118">
+            <name>TLSD27</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1119" end="1148">
+            <name>TLSD28</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1149" end="1178">
+            <name>TLSD29</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1179" end="1208">
+            <name>TLSD30</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1209" end="1238">
+            <name>TLSD31</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1239" end="1268">
+            <name>TLSD32</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1269" end="1298">
+            <name>TLSD33</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1299" end="1328">
+            <name>TLSD34</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1329" end="1358">
+            <name>TLSD35</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1359" end="1388">
+            <name>TLSD36</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1389" end="1418">
+            <name>TLSD37</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1419" end="1448">
+            <name>TLSD38</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1449" end="1478">
+            <name>TLSD39</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1479" end="1508">
+            <name>TLSD40</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1509" end="1538">
+            <name>TLSD41</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1539" end="1568">
+            <name>TLSD42</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1569" end="1598">
+            <name>TLSD43</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1599" end="1628">
+            <name>TLSD44</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1629" end="1658">
+            <name>TLSD45</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1659" end="1688">
+            <name>TLSD46</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1689" end="1718">
+            <name>TLSD47</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1719" end="1748">
+            <name>TLSD48</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1749" end="1778">
+            <name>TLSD49</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1779" end="1808">
+            <name>TLSD50</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1809" end="1838">
+            <name>TLSD51</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1839" end="1868">
+            <name>TLSD52</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1869" end="1898">
+            <name>TLSD53</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1899" end="1928">
+            <name>TLSD54</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1929" end="1958">
+            <name>TLSD55</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1959" end="1988">
+            <name>TLSD56</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="1989" end="2018">
+            <name>TLSD57</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2019" end="2048">
+            <name>TLSD58</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2049" end="2078">
+            <name>TLSD59</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2079" end="2108">
+            <name>TLSD60</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2109" end="2138">
+            <name>TLSD61</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2139" end="2168">
+            <name>TLSD62</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2169" end="2198">
+            <name>TLSD63</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2199" end="2228">
+            <name>TLSD64</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2229" end="2258">
+            <name>TLSD65</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2259" end="2288">
+            <name>TLSD66</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2289" end="2318">
+            <name>TLSD67</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2319" end="2348">
+            <name>TLSD68</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2349" end="2378">
+            <name>TLSD69</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2379" end="2408">
+            <name>TLSD70</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2409" end="2438">
+            <name>TLSD71</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2439" end="2468">
+            <name>TLSD72</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2469" end="2498">
+            <name>TLSD73</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2499" end="2528">
+            <name>TLSD74</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2529" end="2558">
+            <name>TLSD75</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2559" end="2588">
+            <name>TLSD76</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2589" end="2618">
+            <name>TLSD77</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2619" end="2648">
+            <name>TLSD78</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2649" end="2678">
+            <name>TLSD79</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2679" end="2708">
+            <name>TLSD80</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2709" end="2738">
+            <name>TLSD81</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2739" end="2768">
+            <name>TLSD82</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2769" end="2798">
+            <name>TLSD83</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2799" end="2828">
+            <name>TLSD84</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2829" end="2858">
+            <name>TLSD85</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2859" end="2888">
+            <name>TLSD86</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2889" end="2918">
+            <name>TLSD87</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2919" end="2948">
+            <name>TLSD88</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2949" end="2978">
+            <name>TLSD89</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="2979" end="3008">
+            <name>TLSD90</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3009" end="3038">
+            <name>TLSD91</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3039" end="3068">
+            <name>TLSD92</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3069" end="3098">
+            <name>TLSD93</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3099" end="3128">
+            <name>TLSD94</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3129" end="3158">
+            <name>TLSD95</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3159" end="3188">
+            <name>TLSD96</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3189" end="3218">
+            <name>TLSD97</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3219" end="3248">
+            <name>TLSD98</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+        <field start="3249" end="3278">
+            <name>TLSD99</name>
+            <length>30</length>
+            <handler
+                type="com.profitera.services.system.dsp.handler.CharHandler" />
+            <value />
+        </field>
+    </fieldlist>
+</receive>
+
+
+</MBASE>

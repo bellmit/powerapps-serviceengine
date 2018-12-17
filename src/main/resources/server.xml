@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig 
+  PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN" 
+  "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+<sqlMapConfig>
+ <properties resource="server.properties"/>
+
+ <settings cacheModelsEnabled="true" 
+ enhancementEnabled="true" 
+ lazyLoadingEnabled="true" 
+ errorTracingEnabled="true"
+ useStatementNamespaces="false"/>
+ <transactionManager type="JDBC">
+ <dataSource type="SIMPLE">
+  <property name="JDBC.Driver" value="${DRIVER}"/>
+  <property name="JDBC.ConnectionURL" value="${URL}"/>
+  <property name="JDBC.Username" value="${USERNAME}"/>
+  <property name="JDBC.Password" value="${DB_PASSWORD}"/>
+  <property name="JDBC.DefaultAutoCommit" value="false"/>
+  <property name="Pool.MaximumActiveConnections" value="250"/>
+  <property name="Pool.MaximumIdleConnections" value="20"/>
+  <property name="Pool.MaximumCheckoutTime" value="120000"/>
+  <property name="Pool.TimeToWait" value="500"/>
+  <property name="Pool.PingQuery" value="select 1"/>
+  <property name="Pool.PingEnabled" value="false"/>
+  <property name="Pool.PingConnectionsOlderThan" value="1"/>
+  <property name="Pool.PingConnectionsNotUsedFor" value="1"/>
+  <property name="Pool.QuietMode" value="true"/>
+ </dataSource>
+ </transactionManager>
+
+ <sqlMap resource="queryService.xml"/>
+</sqlMapConfig>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<load padline="true">
+	<table>PTRHOST_PHONE_NO</table>
+	<header>
+		<value>HDR</value>
+	</header>
+	<trailer>
+		<value>TRL</value>
+	</trailer>
+	<generatedkey>ID</generatedkey>
+	
+	<field>
+		<name>USER_ID</name>
+		<location end="0" start="0"/>
+		<default>Admin</default>
+	</field>
+	
+	<field>
+		<name>UPDATE_TIME</name>
+		<location end="0" start="0"/>
+		<handler>com.profitera.dc.handler.DefaultDateHandler</handler>
+		<default>current_date</default>
+	</field>
+	
+	<field>
+		<name>CUSTOMER_ID</name>
+		<location start="0" end="0"/>
+		<lookup type="string">
+			<query>select customer_id from ptraccount where account_id = #ACCOUNT_ID#
+			</query>
+		</lookup>
+		<handler>com.profitera.dc.handler.StringHandler</handler>
+	</field>
+	
+	<field iskey="true">
+		<name>ACCOUNT_ID</name>
+		<location start="21" end="39"/>
+		<lookup>
+			<query>select account_id from ptraccount where account_number = #ACCOUNT_ID# and account_type_id = #ACCOUNT_TYPE_ID#
+			</query>
+		</lookup>
+	</field>
+	
+	<field iskey="true">
+		<name>ACCOUNT_TYPE_ID</name>
+		<location end="40" start="40"/>
+		<filteron><value>L</value>
+				  <value>D</value>
+		</filteron>
+		<lookup>
+			<query>select ID from PTRACCOUNT_TYPE_REF where CODE = #ACCOUNT_TYPE_ID#</query>
+		</lookup>
+	</field>
+
+	<field iskey="true">
+		<name>SEQUENCE</name>
+		<location start="41" end="45"/>
+		<handler>com.profitera.dc.handler.IntegerHandler</handler>
+	</field>
+  
+	<field>
+		<name>PHONE_TYPE_ID</name>
+		<location end="47" start="46"/>
+		<lookup>
+			<query>select ID from PTRPHONE_TYPE_REF where CODE = #PHONE_TYPE_ID:VARCHAR#</query>
+		</lookup>
+		<default>ZZ</default>
+	</field>
+   
+	<field>
+		<name>NO</name>
+		<location start="48" end="77"/>
+	</field>
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('ptrload_execution_id')</insertkey>
+  </lookup>
+ </field>
+</load>

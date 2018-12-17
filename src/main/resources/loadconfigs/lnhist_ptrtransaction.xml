@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load>
+
+    <table>PTRTRANSACTION</table>
+    <header>
+        <value>HDR</value></header>
+    <trailer>
+        <value>TRL</value></trailer>
+    <generatedkey>ID</generatedkey>
+    <querywhere>
+        <select>where ACCOUNT_ID = #ACCOUNT_ID:NUMERIC# and TRANSACTION_TYPE = #TRANSACTION_TYPE:NUMERIC# and POSTING_DATE = #POSTING_DATE:DATE# and POSTING_ORDER = #POSTING_ORDER:VARCHAR#</select>
+        <!--#selectQueryWhere=where 1=2--></querywhere>
+<!--
+	<field>
+        <name>DISABLE</name>
+        <location end="1" start="1"/>
+        <handler>
+            com.profitera.dc.handler.YNBooleanHandler
+            <config>D</config></handler></field>
+-->
+	<field isexternal="true">
+		<name>ACCOUNT_NUMBER</name>
+        <location end="20" start="2"/></field>
+    <field iskey="true">
+        <name>ACCOUNT_ID</name>
+        <lookup>
+            <query>select account_id from ptraccount where account_number = #ACCOUNT_NUMBER:VARCHAR# and ACCOUNT_TYPE_ID = #ACCOUNT_TYPE_ID:VARCHAR#</query></lookup>
+        <location end="0" start="0"/></field>
+    <field isexternal="true">
+        <name>ACCOUNT_TYPE_ID</name>
+        <lookup>
+            <query>select ID from PTRACCOUNT_TYPE_REF where CODE = #ACCOUNT_TYPE_ID:VARCHAR#</query></lookup>
+        <location end="21" start="21"/></field>
+    <field iskey="true">
+        <name>TRANSACTION_TYPE</name>
+        <lookup>
+            <query>select ID from ptrtransaction_type_ref where CODE = #TRANSACTION_TYPE:VARCHAR# and ACCOUNT_TYPE_ID = 1</query>
+            <fullcache>select ID, CODE from PTRTRANSACTION_TYPE_REF where ACCOUNT_TYPE_ID = 1</fullcache>
+            <insert>insert into ptrtransaction_type_ref (id,code,description,disable,sort_priority,account_type_id) values (#ID#,#TRANSACTION_TYPE#,concat(#TRANSACTION_TYPE#, ' - Unknown'),0,0,#ACCOUNT_TYPE_ID#)</insert>
+            <insertkey>select nextval('ptrtransaction_type_ref_id')</insertkey></lookup>
+        <location end="24" start="22"/></field>
+
+	<field>
+        <name>DEBIT_CREDIT_FLAG</name>
+        <handler>
+            com.profitera.dc.handler.DebitCreditHandler</handler>
+        <location end="25" start="25"/></field>
+    <field iskey="true">
+        <name>POSTING_DATE</name>
+        <handler>com.profitera.dc.handler.DefaultDateHandler<config>ddMMyy</config></handler>
+        <location end="31" start="26"/></field>
+    <field>
+        <name>AMOUNT</name>
+        <handler>com.profitera.dc.handler.CurrencyHandler<config>2</config></handler>
+        <location end="47" start="32"/></field>
+    <field>
+        <name>EFFECTIVE_DATE</name>
+        <handler>com.profitera.dc.handler.DefaultDateHandler<config>ddMMyy</config></handler>
+        <location end="53" start="48"/>
+        <!--#TRANSACTION_DATE_default=111105-->
+        <!--#TRANSACTION_DATE_isKey=true--></field>
+    <field>
+        <name>INPUT_SOURCE</name>
+        <location end="54" start="54"/></field>
+    <field>
+        <name>CONTROLLER_BRANCH</name>
+        <location end="59" start="55"/></field>
+    <field>
+        <name>AUXILARY_TRANSACTION_CODE</name>
+        <location end="69" start="60"/></field>
+    <field>
+        <name>USER_ID</name>
+        <location end="79" start="70"/></field>
+    <field iskey="true">
+        <name>POSTING_ORDER</name>
+        <handler>com.profitera.dc.handler.LongHandler</handler>
+        <location end="84" start="80"/></field>
+    <field>
+        <name>CHEQUE_NUMBER</name>
+        <location end="91" start="85"/></field>
+    <field>
+        <name>PAYMENT_DUE_DATE</name>
+        <location end="97" start="92"/>
+        <handler>com.profitera.dc.handler.DefaultDateHandler<config>ddMMyy</config></handler></field>
+    <field>
+        <name>AFFECTS_CODE</name>
+        <location end="99" start="98"/></field>
+    <field>
+        <name>TRANSACTION_TIME</name>
+        <location end="105" start="100"/>
+        <handler>com.profitera.dc.handler.DefaultDateHandler<config>HHmmss</config></handler>
+        <!--#TRANSACTION_TIME_isKey=true--></field>
+    <field>
+        <name>ADDITIONAL_INFORMATION</name>
+        <location end="363" start="106"/></field>
+    <field>
+        <name>SUPERVISOR_ID</name>
+        <location end="373" start="364"/></field>
+	<field isoptional="true">
+        <name>IRC_CODE_STATUS_ID</name>
+        <lookup isoptional="true">
+            <query>select ID from PTRIRC_CODE_STATUS_REF where CODE = cast(#IRC_CODE_STATUS_ID:VARCHAR# as varchar(50))</query>
+            <fullcache>select ID, CODE from PTRIRC_CODE_STATUS_REF</fullcache>
+            <insert>insert into PTRIRC_CODE_STATUS_REF (id,code,description,disable,sort_priority) values (#ID#,#IRC_CODE_STATUS_ID#,'Unknown',0,0)</insert>
+            <insertkey>select nextval('ptrirc_code_status_ref_id')</insertkey></lookup>
+        <location end="376" start="374"/></field>
+
+	<field isoptional="true">
+        <name>CHARGE_TYPE_ID</name>
+        <location end="378" start="377"/>
+        <lookup isoptional="true">
+            <query>select ID from PTRCHARGE_TYPE_REF where CODE = cast(#CHARGE_TYPE_ID:VARCHAR# as varchar(50))</query>
+            <fullcache>select ID, CODE from PTRCHARGE_TYPE_REF</fullcache>
+            <insert>insert into PTRCHARGE_TYPE_REF (id,code,description,disable,sort_priority) values (#ID#,#CHARGE_TYPE_ID#,#CHARGE_TYPE_ID#,0,0)</insert>
+            <insertkey>select nextval('ptrcharge_type_ref_id')</insertkey>
+        </lookup>
+    </field>
+    <field>
+        <name>OLD_STATUS</name>
+        <location end="379" start="379"/>
+        <handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+     </field>
+     <field>
+        <name>NEW_STATUS</name>
+        <location end="380" start="380"/>
+        <handler>com.profitera.dc.handler.StringHandler<config></config></handler>
+     </field>
+     <field>
+        <name>OLD_RATE</name>
+        <location end="391" start="381"/>
+        <handler>com.profitera.dc.handler.CurrencyHandler<config>9</config></handler>
+     </field>
+     <field>
+        <name>NEW_RATE</name>
+        <location end="402" start="392"/>
+        <handler>com.profitera.dc.handler.CurrencyHandler<config>9</config></handler>
+     </field>	
+	
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('PTRLOAD_EXECUTION_ID')</insertkey>
+  </lookup>
+ </field>
+
+</load>

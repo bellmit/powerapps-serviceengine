@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="" fullcache="false" mode="mixed" padline="true" type="fixed" verifyfilekey="false">
+ <doc/>
+ <table>PTROVERDRAFT_TIER</table>
+ <recordindicatortag/>
+ <xquery/>
+ <generatedkey>ID</generatedkey>
+ <generatedkeyseqname>PTROVERDRAFT_TIER_ID</generatedkeyseqname>
+ <querywhere>
+  <select/>
+  <update/>
+ </querywhere>
+ <post>
+  <insertinsertion/>
+  <insertupdate/>
+  <updateinsertion/>
+  <updateupdate/> 
+ </post>
+ <header/>
+ <trailer/>
+
+<field isexternal="true">
+ <name>ACCOUNT_NUMBER</name>
+ <default/>
+ <location end="41" start="23"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isexternal="true">
+ <name>ACCOUNT_TYPE_ID</name>
+ <default/>
+ <location end="2" start="2"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup>
+  <query isoptional="false">
+   select id from ptraccount_type_ref where code = #ACCOUNT_TYPE_ID#</query>
+ </lookup>
+ <remarks/>
+ </field>
+<field iskey="true">
+ <name>ACCOUNT_ID</name>
+ <default/>
+ <location end="0" start="0"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup>
+  <query isoptional="false">
+   select id from ptraccount where account_no = #ACCOUNT_NUMBER:VARCHAR# and ACCOUNT_TYPE_ID = #ACCOUNT_TYPE_ID:VARCHAR#</query>
+ </lookup>
+ <remarks/>
+ </field>
+
+<field iskey="true">
+ <name>SEQUENCE_NO</name>
+ <default/>
+ <location end="21" start="3"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>TIER_TYPE_SEQUENCE_FLAG</name>
+ <default/>
+ <location end="22" start="22"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>DRAW_LIMIT_AMOUNT</name>
+ <default/>
+ <location end="56" start="42"/>
+ <handler config="2" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>AUTHORIZED_LIMIT_AMOUNT</name>
+ <default/>
+ <location end="71" start="57"/>
+ <handler config="2" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>AGREEMENT_DATE</name>
+ <default/>
+ <location end="77" start="72"/>
+ <handler config="ddMMyy" name="com.profitera.dc.handler.DefaultDateHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>EXPIRATION_DATE</name>
+ <default/>
+ <location end="83" start="78"/>
+ <handler config="ddMMyy" name="com.profitera.dc.handler.DefaultDateHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>REDUCTION_DATE</name>
+ <default/>
+ <location end="89" start="84"/>
+ <handler config="ddMMyy" name="com.profitera.dc.handler.DefaultDateHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>RATE_CEILING</name>
+ <default/>
+ <location end="100" start="90"/>
+ <handler config="9" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>EXECSS_LIMIT_TYPE_FLAG</name>
+ <default/>
+ <location end="101" start="101"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>RATE_FLOOR</name>
+ <default/>
+ <location end="112" start="102"/>
+ <handler config="9" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>RATE_VARIANCE</name>
+ <default/>
+ <location end="123" start="113"/>
+ <handler config="9" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>REDUCTION_AMOUNT_FLAG</name>
+ <default/>
+ <location end="124" start="124"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+ 
+<field isoptional="true">
+ <name>REDUCTION_AMOUNT</name>
+ <default/>
+ <location end="139" start="125"/>
+ <handler config="2" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>RATE_NUMBER</name>
+ <default/>
+ <location end="144" start="140"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>REDUCTION_FREQUENCY</name>
+ <default/>
+ <location end="147" start="145"/>
+ <handler config="" name="com.profitera.dc.handler.IntegerHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/><remarks/></field>
+<field isoptional="true">
+ <name>COMMITMENT_FEE_TYPE_FLAG</name>
+ <default/>
+ <location end="148" start="148"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>COMMITMENT_FEE_RATE_NUMBER</name>
+ <default/>
+ <location end="153" start="149"/>
+ <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true"> 
+ <name>RATE</name>
+ <default/>
+ <location end="164" start="154"/>
+ <handler config="9" name="com.profitera.dc.handler.CurrencyHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>ENTERED_DATE</name>
+ <default/>
+ <location end="170" start="165"/>
+ <handler config="ddMMyy" name="com.profitera.dc.handler.DefaultDateHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>TIER_TYPE</name>
+ <default/>
+ <location end="180" start="171"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>REDUCTION_FREQUENCY_CODE_FLAG</name>
+ <default/>
+ <location end="181" start="181"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+<field isoptional="true">
+ <name>COLLATERAL_CODE</name>
+ <default/>
+ <location end="184" start="182"/>
+ <handler config="" name="com.profitera.dc.handler.StringHandler"/>
+ <nulldefinition/>
+ <filteron/>
+ <lookup/>
+ <remarks/>
+ </field>
+
+
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('PTRLOAD_EXECUTION_ID')</insertkey>
+  </lookup>
+ </field>
+</load>

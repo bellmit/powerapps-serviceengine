@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<load delimiter="" fullcache="false" mode="mixed" padline="true" type="fixed">
+ <table>PTREMPLOYMENT_HISTORY</table>
+ <recordindicatortag/>
+ <xquery/>
+ <generatedkey>ID</generatedkey>
+ <generatedkeyseqname/>
+ <querywhere>
+  <select> where CUSTOMER_ID=#CUSTOMER_ID# and SEQUENCE=#SEQUENCE# </select>
+    <update/>
+ </querywhere>
+ <post>
+  <insertinsertion/>
+  <insertupdate/>
+  <updateinsertion/>
+  <updateupdate/>
+ </post>
+ <header>
+  <value>HDR</value>
+ </header>
+ <trailer>
+  <value>TRL</value>
+ </trailer>
+ <refreshdata key="false" timeout="-1"/>
+
+ <field isexternal="false" iskey="true">
+  <name>CUSTOMER_ID</name>
+  <default/>
+  <location end="20" start="2"/>
+  <handler config="" name="com.profitera.dc.handler.PassThroughHandler"/>
+  <nulldefinition/>
+  <filteron/>
+ </field>
+ <field isexternal="false" iskey="true">
+  <name>SEQUENCE</name>
+  <default/>
+  <location end="25" start="21"/>
+  <handler config="" name="com.profitera.dc.handler.IntegerHandler"/>
+  <nulldefinition/>
+  <filteron/>
+ </field>
+ <field cache="true" isexternal="false" iskey="false" isoptional="true">
+  <name>OCCUPATION_ID</name>
+  <default/>
+  <location end="29" start="26"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup>
+   <query>select OCCUPATION_ID from PTROCCUPATION_REF where OCCUPATION_CODE = #OCCUPATION_ID:VARCHAR#</query>
+   <fullcache/>
+   <insert>insert into PTROCCUPATION_REF (occupation_id,occupation_code,occupation_desc,disable,sort_priority) values (#ID#,#OCCUPATION_ID#,concat(#OCCUPATION_ID#, ' - Unknown'),0,0)</insert>
+   <insertkey>select nextval('ptroccupation_ref_id')</insertkey>
+  </lookup>
+ </field>
+ <field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>INCOME_BRACKET_ID</name>
+  <default>Z</default>
+  <location end="32" start="30"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup>
+   <query>select ID from PTRINCOME_BRACKET_REF where CODE = #INCOME_BRACKET_ID:VARCHAR#</query>
+   <fullcache/>
+   <insert/>
+   <insertkey/>
+  </lookup>
+ </field>
+ <field isexternal="false" iskey="false">
+  <name>EMPLOYER_NAME</name>
+  <default/>
+  <location end="72" start="33"/>
+  <handler config="" name="com.profitera.dc.handler.PassThroughHandler"/>
+  <nulldefinition/>
+  <filteron/>
+ </field>
+ <field cache="true" isexternal="false" iskey="false" isoptional="true">
+  <name>EMPLOYMENT_STATUS_ID</name>
+  <default/>
+  <location end="73" start="73"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup>
+   <query>select ID from PTREMPLOYMENT_STATUS_REF where CODE = #EMPLOYMENT_STATUS_ID:VARCHAR#</query>
+   <fullcache/>
+   <insert/>
+   <insertkey/>
+  </lookup>
+ </field>
+<field cache="true" isexternal="false" iskey="false" isoptional="false">
+  <name>LOAD_EXECUTION_ID</name>
+  <default>_</default>
+  <location end="0" start="0"/>
+  <handler config="" name="com.profitera.dc.handler.LongHandler"/>
+  <nulldefinition/>
+  <filteron/>
+  <lookup isoptional="false">
+   <query>select ID from PTRLOAD_EXECUTION where #LOAD_EXECUTION_ID# = null</query>
+   <fullcache/>
+   <insert>insert into PTRLOAD_EXECUTION (ID) values (#ID#)</insert>
+   <insertkey>select nextval('ptrload_execution_id')</insertkey>
+  </lookup>
+ </field>
+ </load>

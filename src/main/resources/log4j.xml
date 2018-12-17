@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+
+<log4j:configuration debug="false"
+ xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+ <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+  <param name="File" value="../logs/Server.log" />
+  <param name="MaxFileSize" value="10MB" />
+  <param name="MaxBackupIndex" value="5" />
+  <layout class="org.apache.log4j.PatternLayout">
+   <param name="ConversionPattern" value="%d{ISO8601} %-5p %m%n" />
+  </layout>
+ </appender>
+ <appender name="FILE_ERROR" class="org.apache.log4j.RollingFileAppender">
+  <param name="File" value="../logs/ServerError.log" />
+  <param name="MaxFileSize" value="5MB" />
+  <param name="MaxBackupIndex" value="3" />
+  <param name="Threshold" value="ERROR"/>
+  <layout class="org.apache.log4j.PatternLayout">
+   <param name="ConversionPattern" value="%d{ISO8601} %-5p %m%n" />
+  </layout>
+ </appender>
+
+ <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+  <layout class="org.apache.log4j.PatternLayout">
+   <param name="ConversionPattern" value="%d{ISO8601} %-5p %m%n" />
+  </layout>
+  <filter class="org.apache.log4j.varia.LevelRangeFilter">
+   <param name="LevelMin" value="DEBUG" />
+  </filter>
+ </appender>
+ <logger name="java.sql.ResultSet">
+  <level value="info" />
+ </logger>
+ <logger name="org.apache.commons">
+  <level value="info" />
+ </logger>
+ <logger
+  name="com.profitera.v5_5_0.jasperreports.engine.fill.SimpleTextLineWrapper">
+  <level value="info" />
+ </logger>
+ <!--Uncomment logger below to greatly reduce the logs produced by treatment -->
+ <!-- <logger name="com.profitera.rpm.treatment.GraphTreatmentAssigner"> 
+  <level value="info"/> </logger> -->
+ <logger name="com.profitera.services.business.http.WebServerService">
+  <level value="info" />
+ </logger>
+
+
+ <root>
+  <level value="DEBUG" />
+  <appender-ref ref="FILE" />
+  <appender-ref ref="FILE_ERROR" />
+  <appender-ref ref="CONSOLE" />
+ </root>
+
+</log4j:configuration>
